@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Tag Not Found — Safe-Tag{% endblock %}
+
+{% block content %}
+<div class="min-h-[70vh] flex items-center justify-center px-4">
+  <div class="text-center max-w-sm">
+    <div class="text-7xl mb-5">🔍</div>
+    <h1 class="font-display font-bold text-2xl text-gray-900 mb-3">Tag Not Found</h1>
+    <p class="text-gray-400 mb-3">
+      This Safe-Tag profile doesn't exist or hasn't been activated yet.
+    </p>
+    <p class="text-sm text-gray-300 font-mono mb-8">Error 404</p>
+    <a href="{{ url_for('index') }}"
+       class="bg-teal text-white font-semibold px-6 py-3 rounded-xl hover:bg-teal-dark transition-colors inline-block">
+      Go Home
+    </a>
+  </div>
+</div>
+{% endblock %}

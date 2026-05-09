@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Safe-Tag — Your Loved Ones Speak Through Us{% endblock %}</title>
+  <meta name="description" content="{% block meta_desc %}RFID + QR safety tags for children, elderly, travelers & pets. Instant identification & reunion across India.{% endblock %}">
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            teal:   { DEFAULT: '#0D9488', light: '#CCFBF1', dark: '#0F766E', xdark: '#134E4A' },
+            orange: { DEFAULT: '#F97316', light: '#FED7AA', dark: '#EA580C' },
+            slate:  { softest: '#F8FAFC' }
+          },
+          fontFamily: {
+            display: ['"Sora"', 'sans-serif'],
+            body:    ['"DM Sans"', 'sans-serif'],
+            mono:    ['"JetBrains Mono"', 'monospace'],
+          },
+          animation: {
+            'fade-up':   'fadeUp 0.5s ease forwards',
+            'pulse-soft':'pulseSoft 2s ease-in-out infinite',
+          },
+          keyframes: {
+            fadeUp:     { '0%': { opacity:'0', transform:'translateY(16px)' }, '100%': { opacity:'1', transform:'translateY(0)' } },
+            pulseSoft:  { '0%,100%': { opacity:'1' }, '50%': { opacity:'0.6' } },
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <style>
+    * { font-family: 'DM Sans', sans-serif; }
+    h1, h2, h3, .font-display { font-family: 'Sora', sans-serif; }
+    .font-mono { font-family: 'JetBrains Mono', monospace; }
+
+    /* Skeleton loader */
+    .skeleton {
+      background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+      border-radius: 6px;
+    }
+    @keyframes shimmer { 0%{ background-position:200% 0 } 100%{ background-position:-200% 0 } }
+
+    /* Flash messages */
+    .flash-success { background:#CCFBF1; color:#134E4A; border-left:4px solid #0D9488; }
+    .flash-error   { background:#FEE2E2; color:#7F1D1D; border-left:4px solid #EF4444; }
+    .flash-warning { background:#FEF3C7; color:#78350F; border-left:4px solid #F59E0B; }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width:6px; }
+    ::-webkit-scrollbar-thumb { background:#0D9488; border-radius:3px; }
+  </style>
+
+  {% block head_extra %}{% endblock %}
+</head>
+<body class="bg-white text-gray-800 min-h-screen flex flex-col">
+
+  <!-- Nav -->
+  {% if not hide_nav %}
+  <nav class="bg-white border-b border-gray-100 sticky top-0 z-50 shadow-sm">
+    <div class="max-w-6xl mx-auto px-4 flex items-center justify-between h-16">
+      <a href="{{ url_for('index') }}" class="flex items-center gap-2">
+        <span class="w-8 h-8 rounded-full bg-teal flex items-center justify-center text-white font-display font-bold text-sm">ST</span>
+        <span class="font-display font-bold text-teal text-lg tracking-tight">Safe-Tag</span>
+      </a>
+      <div class="flex items-center gap-3">
+        {% if session.get('user_id') %}
+          <a href="{{ url_for('dashboard') }}"
+             class="text-sm font-medium text-gray-600 hover:text-teal transition-colors px-3 py-1.5 rounded-lg hover:bg-teal-light">
+            Dashboard
+          </a>
+          <a href="{{ url_for('logout') }}"
+             class="text-sm font-medium text-white bg-teal hover:bg-teal-dark transition-colors px-4 py-1.5 rounded-full">
+            Log Out
+          </a>
+        {% else %}
+          <a href="{{ url_for('login') }}"
+             class="text-sm font-medium text-gray-600 hover:text-teal transition-colors">
+            Log In
+          </a>
+          <a href="{{ url_for('buy') }}"
+             class="text-sm font-medium text-white bg-teal hover:bg-teal-dark transition-colors px-4 py-2 rounded-full">
+            Get Safe-Tag
+          </a>
+        {% endif %}
+      </div>
+    </div>
+  </nav>
+  {% endif %}
+
+  <!-- Flash Messages -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="max-w-2xl mx-auto w-full px-4 pt-4 space-y-2">
+        {% for category, message in messages %}
+          <div class="flash-{{ category }} px-4 py-3 rounded-lg text-sm font-medium">
+            {{ message }}
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <!-- Main -->
+  <main class="flex-1">
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- Footer -->
+  {% if not hide_footer %}
+  <footer class="bg-teal-xdark text-white py-10 mt-16">
+    <div class="max-w-6xl mx-auto px-4">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
+        <div class="col-span-2 md:col-span-1">
+          <div class="flex items-center gap-2 mb-3">
+            <span class="w-8 h-8 rounded-full bg-white flex items-center justify-center text-teal font-display font-bold text-sm">ST</span>
+            <span class="font-display font-bold text-lg">Safe-Tag</span>
+          </div>
+          <p class="text-teal-light text-sm leading-relaxed">
+            Your loved ones can't always speak.<br><strong>Safe-Tag speaks for them.</strong>
+          </p>
+        </div>
+        <div>
+          <p class="font-semibold text-sm uppercase tracking-wider text-teal-light mb-3">Product</p>
+          <ul class="space-y-2 text-sm text-gray-300">
+            <li><a href="{{ url_for('buy') }}" class="hover:text-white transition-colors">Buy a Tag</a></li>
+            <li><a href="{{ url_for('activate') }}" class="hover:text-white transition-colors">Activate</a></li>
+            <li><a href="#" class="hover:text-white transition-colors">How It Works</a></li>
+          </ul>
+        </div>
+        <div>
+          <p class="font-semibold text-sm uppercase tracking-wider text-teal-light mb-3">Support</p>
+          <ul class="space-y-2 text-sm text-gray-300">
+            <li><a href="mailto:support@safe-tag.in" class="hover:text-white transition-colors">Email Support</a></li>
+            <li><a href="https://wa.me/911234567890" class="hover:text-white transition-colors">WhatsApp Help</a></li>
+          </ul>
+        </div>
+        <div>
+          <p class="font-semibold text-sm uppercase tracking-wider text-teal-light mb-3">Legal</p>
+          <ul class="space-y-2 text-sm text-gray-300">
+            <li><a href="#" class="hover:text-white transition-colors">Privacy Policy</a></li>
+            <li><a href="#" class="hover:text-white transition-colors">Terms of Service</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="border-t border-teal-dark pt-6 flex flex-col md:flex-row items-center justify-between gap-2">
+        <p class="text-sm text-gray-400">© 2026 Safe-Tag India. All rights reserved.</p>
+        <p class="text-sm text-gray-400">Made with ❤️ for India 🇮🇳</p>
+      </div>
+    </div>
+  </footer>
+  {% endif %}
+
+  {% block scripts %}{% endblock %}
+</body>
+</html>

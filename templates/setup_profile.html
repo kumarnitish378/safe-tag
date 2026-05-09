@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+{% block title %}Set Up Profile — Safe-Tag{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto px-4 py-10">
+  <div class="mb-8">
+    <p class="text-teal font-mono text-sm mb-1">Tag: {{ tag.serial_number }}</p>
+    <h1 class="font-display font-bold text-3xl text-gray-900">
+      {% if tag.medical %}Edit Profile{% else %}Set Up Profile{% endif %}
+    </h1>
+    <p class="text-gray-400 mt-1">This info appears when someone scans your tag.</p>
+  </div>
+
+  <form action="{{ url_for('setup_profile', tag_id=tag.id) }}" method="POST" class="space-y-6">
+
+    <!-- Section: Identity -->
+    <div class="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
+      <h2 class="font-display font-semibold text-gray-800 mb-5 flex items-center gap-2">
+        <span class="w-7 h-7 rounded-lg bg-teal-light flex items-center justify-center text-sm">👤</span>
+        Identity
+      </h2>
+      <div class="space-y-4">
+        <div class="grid grid-cols-2 gap-4">
+          <div class="col-span-2">
+            <label class="block text-sm font-medium text-gray-700 mb-1.5">Full Name *</label>
+            <input name="name" type="text" required
+                   value="{{ tag.medical.name if tag.medical else '' }}"
+                   placeholder="Aarav Sharma"
+                   class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-teal transition-all">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1.5">Date of Birth</label>
+            <input name="dob" type="text"
+                   value="{{ tag.medical.dob if tag.medical else '' }}"
+                   placeholder="15 Aug 2015"
+                   class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-teal transition-all">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1.5">Category</label>
+            <select name="category"
+                    class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-teal transition-all bg-white">
+              {% for val, label in [('child','👶 Child'), ('elderly','👴 Elderly'), ('traveler','🎒 Traveler'), ('pet','🐕 Pet')] %}
+              <option value="{{ val }}"
+                {% if tag.medical and tag.medical.category == val %}selected{% endif %}>
+                {{ label }}
+              </option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section: Medical -->
+    <div class="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
+      <h2 class="font-display font-semibold text-gray-800 mb-5 flex items-center gap-2">
+        <span class="w-7 h-7 rounded-lg bg-red-50 flex items-center justify-center text-sm">🏥</span>
+        Medical Information
+      </h2>
+      <div class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1.5">Blood Group</label>
+          <select name="blood_group"
+                  class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-teal transition-all bg-white">
+            <option value="">-- Select --</option>
+            {% for bg in ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'] %}
+            <option value="{{ bg }}"
+              {% if tag.medical and tag.medical.blood_group == bg %}selected{% endif %}>
+              {{ bg }}
+            </option>
+            {% endfor %}
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1.5">Allergies</label>
+          <input name="allergies" type="text"
+                 value="{{ tag.medical.allergies if tag.medical else '' }}"
+                 placeholder="Penicillin, Nuts, Latex..."
+                 class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-teal transition-all">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1.5">Medications / Notes</label>
+          <textarea name="medication_notes" rows="2"
+                    placeholder="Takes Insulin 10 units morning..."
+                    class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-teal transition-all resize-none">{{ tag.medical.medication_notes if tag.medical else '' }}</textarea>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1.5">Medical Conditions</label>
+          <input name="medical_conditions" type="text"
+                 value="{{ tag.medical.medical_conditions if tag.medical else '' }}"
+                 placeholder="Diabetes Type 1, Epilepsy..."
+                 class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-teal transition-all">
+        </div>
+      </div>
+    </div>
+
+    <!-- Section: Contacts -->
+    <div class="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
+      <h2 class="font-display font-semibold text-gray-800 mb-5 flex items-center gap-2">
+        <span class="w-7 h-7 rounded-lg bg-green-50 flex items-center justify-center text-sm">📞</span>
+        Emergency Contacts
+      </h2>
+      <div class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1.5">Primary Contact * <span class="text-gray-400">(shown after verification)</span></label>
+          <input name="emergency_contact_1" type="tel" required
+                 value="{{ tag.medical.emergency_contact_1 if tag.medical else '' }}"
+                 placeholder="+91 98765 43210"
+                 class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-teal transition-all font-mono">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1.5">Secondary Contact</label>
+          <input name="emergency_contact_2" type="tel"
+                 value="{{ tag.medical.emergency_contact_2 if tag.medical else '' }}"
+                 placeholder="+91 97654 32100"
+                 class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-teal transition-all font-mono">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1.5">WhatsApp Number <span class="text-gray-400">(for location alerts)</span></label>
+          <input name="owner_whatsapp" type="tel"
+                 value="{{ tag.medical.owner_whatsapp if tag.medical else '' }}"
+                 placeholder="+91 98765 43210"
+                 class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-teal transition-all font-mono">
+        </div>
+      </div>
+    </div>
+
+    <!-- Section: Message + Privacy -->
+    <div class="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
+      <h2 class="font-display font-semibold text-gray-800 mb-5 flex items-center gap-2">
+        <span class="w-7 h-7 rounded-lg bg-yellow-50 flex items-center justify-center text-sm">💬</span>
+        Custom Message & Privacy
+      </h2>
+      <div class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1.5">Custom Message to Finder</label>
+          <textarea name="custom_message" rows="3"
+                    placeholder="Please call my parents immediately. I live in Bandra, Mumbai. Do not leave me alone."
+                    class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-teal transition-all resize-none">{{ tag.medical.custom_message if tag.medical else '' }}</textarea>
+        </div>
+        <div class="flex items-start gap-3 bg-yellow-50 rounded-xl p-4">
+          <input name="privacy_mode" id="privacy_mode" type="checkbox"
+                 class="mt-0.5 w-4 h-4 accent-teal cursor-pointer"
+                 {% if not tag.medical or tag.medical.privacy_mode %}checked{% endif %}>
+          <label for="privacy_mode" class="text-sm text-yellow-800 cursor-pointer leading-relaxed">
+            <span class="font-semibold">Privacy Mode (Recommended)</span><br>
+            Mask phone number on the public page. Finder must solve a simple math captcha to reveal it. Protects against data scraping.
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Submit -->
+    <div class="flex gap-3">
+      <a href="{{ url_for('dashboard') }}"
+         class="flex-none border border-gray-200 text-gray-500 font-medium px-5 py-4 rounded-xl hover:border-gray-300 transition-colors text-sm">
+        Cancel
+      </a>
+      <button type="submit"
+              class="flex-1 bg-teal text-white font-semibold py-4 rounded-xl hover:bg-teal-dark transition-colors">
+        {% if tag.medical %}Save Changes{% else %}Activate Tag & Go Live 🚀{% endif %}
+      </button>
+    </div>
+  </form>
+</div>
+{% endblock %}

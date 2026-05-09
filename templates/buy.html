@@ -1,0 +1,201 @@
+{% extends "base.html" %}
+{% block title %}Buy Safe-Tag — Protect Your Loved Ones{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto px-4 py-14">
+  <div class="text-center mb-12">
+    <h1 class="font-display font-extrabold text-4xl text-gray-900 mb-3">Choose Your Pack</h1>
+    <p class="text-gray-400 text-lg">One-time purchase. Lifetime protection.</p>
+  </div>
+
+  <div class="grid md:grid-cols-2 gap-6 mb-10">
+    <!-- Single Tag -->
+    <div id="card-single"
+         class="pack-card border-2 border-gray-200 rounded-2xl p-8 cursor-pointer transition-all hover:border-teal hover:shadow-md"
+         onclick="selectPack('single', this)">
+      <div class="flex justify-between items-start mb-4">
+        <div>
+          <p class="font-semibold text-gray-400 text-xs uppercase tracking-widest mb-1">Single Tag</p>
+          <p class="font-display font-extrabold text-5xl text-gray-900">₹149</p>
+        </div>
+        <span class="w-12 h-12 rounded-2xl bg-teal-light flex items-center justify-center text-2xl">🏷️</span>
+      </div>
+      <ul class="space-y-2 text-sm text-gray-600 mb-6">
+        {% for f in ["1 RFID + QR Safe-Tag", "Free protective sleeve", "Waterproof & scratch-resistant", "Unlimited profile updates", "WhatsApp geolocation alerts", "Delivery in 3-5 days"] %}
+        <li class="flex items-center gap-2"><span class="text-teal">✓</span> {{ f }}</li>
+        {% endfor %}
+      </ul>
+      <div class="border-2 border-gray-200 rounded-xl p-3 text-center text-sm text-gray-400 transition-all" id="select-single">
+        Click to select
+      </div>
+    </div>
+
+    <!-- Family Pack -->
+    <div id="card-family"
+         class="pack-card border-2 border-gray-200 rounded-2xl p-8 cursor-pointer transition-all hover:border-teal hover:shadow-md relative"
+         onclick="selectPack('family', this)">
+      <span class="absolute -top-3 left-6 bg-orange text-white text-xs font-bold px-3 py-1 rounded-full">🔥 BEST VALUE</span>
+      <div class="flex justify-between items-start mb-4">
+        <div>
+          <p class="font-semibold text-gray-400 text-xs uppercase tracking-widest mb-1">Family Pack</p>
+          <p class="font-display font-extrabold text-5xl text-gray-900">₹499</p>
+          <p class="text-gray-400 text-sm">Save ₹97 vs buying separate</p>
+        </div>
+        <span class="w-12 h-12 rounded-2xl bg-orange/10 flex items-center justify-center text-2xl">👨‍👩‍👧‍👦</span>
+      </div>
+      <ul class="space-y-2 text-sm text-gray-600 mb-6">
+        {% for f in ["4 RFID + QR Safe-Tags", "4 protective sleeves", "Waterproof & scratch-resistant", "Separate profiles per tag", "WhatsApp geolocation alerts", "Priority support", "Delivery in 3-5 days"] %}
+        <li class="flex items-center gap-2"><span class="text-teal">✓</span> {{ f }}</li>
+        {% endfor %}
+      </ul>
+      <div class="border-2 border-gray-200 rounded-xl p-3 text-center text-sm text-gray-400 transition-all" id="select-family">
+        Click to select
+      </div>
+    </div>
+  </div>
+
+  <!-- Order Form -->
+  <div id="order-form" class="bg-white rounded-2xl border border-gray-100 shadow-sm p-8 hidden">
+    <h2 class="font-display font-semibold text-xl text-gray-900 mb-6">Delivery Details</h2>
+    <div class="space-y-4">
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1.5">Full Name</label>
+          <input id="buyer-name" type="text" placeholder="Rahul Sharma"
+                 class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-teal transition-all">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1.5">Mobile</label>
+          <input id="buyer-mobile" type="tel" placeholder="+91 98765 43210"
+                 class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-teal transition-all">
+        </div>
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1.5">Delivery Address</label>
+        <textarea id="buyer-address" rows="2" placeholder="Flat 4B, Sunrise Apartments, Bandra West, Mumbai 400050"
+                  class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-teal transition-all resize-none"></textarea>
+      </div>
+    </div>
+
+    <div class="mt-6 bg-teal-light rounded-xl p-4 flex items-center justify-between">
+      <div>
+        <p class="text-sm text-teal-dark font-medium" id="order-summary-text">1 × Single Tag</p>
+        <p class="font-display font-bold text-2xl text-teal" id="order-total">₹149</p>
+      </div>
+      <button id="pay-btn" onclick="initiatePayment()"
+              class="bg-orange hover:bg-orange-dark text-white font-bold px-6 py-3 rounded-xl transition-colors shadow-md">
+        Pay Now →
+      </button>
+    </div>
+
+    <!-- Mock payment note -->
+    <p class="text-xs text-gray-400 text-center mt-3">
+      🔒 Secured by Razorpay. Your payment is encrypted and safe.
+    </p>
+  </div>
+
+  <!-- Success State (hidden initially) -->
+  <div id="success-state" class="text-center py-12 hidden">
+    <div class="text-6xl mb-4">🎉</div>
+    <h2 class="font-display font-bold text-2xl text-gray-900 mb-2">Payment Successful!</h2>
+    <p class="text-gray-400 mb-6" id="success-message">Your tags are ready to activate.</p>
+    <a href="{% if session.get('user_id') %}{{ url_for('dashboard') }}{% else %}{{ url_for('login') }}{% endif %}"
+       class="bg-teal text-white font-semibold px-6 py-3 rounded-xl hover:bg-teal-dark transition-colors">
+      Go to Dashboard →
+    </a>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<!-- Razorpay SDK (loads for real payments) -->
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+  let selectedPack = null;
+  const prices = { single: 149, family: 499 };
+  const labels = { single: '1 × Single Tag', family: '4 × Family Pack' };
+
+  function selectPack(pack, el) {
+    selectedPack = pack;
+
+    // Reset all cards
+    document.querySelectorAll('.pack-card').forEach(c => {
+      c.classList.remove('border-teal', 'shadow-md');
+      c.classList.add('border-gray-200');
+    });
+    document.querySelectorAll('[id^=select-]').forEach(b => {
+      b.textContent = 'Click to select';
+      b.classList.remove('border-teal', 'bg-teal', 'text-white');
+      b.classList.add('border-gray-200', 'text-gray-400');
+    });
+
+    // Highlight selected
+    el.classList.add('border-teal', 'shadow-md');
+    el.classList.remove('border-gray-200');
+    const btn = document.getElementById(`select-${pack}`);
+    btn.textContent = '✓ Selected';
+    btn.classList.add('border-teal', 'bg-teal', 'text-white');
+    btn.classList.remove('border-gray-200', 'text-gray-400');
+
+    // Show form
+    document.getElementById('order-form').classList.remove('hidden');
+    document.getElementById('order-summary-text').textContent = labels[pack];
+    document.getElementById('order-total').textContent = `₹${prices[pack]}`;
+  }
+
+  async function initiatePayment() {
+    if (!selectedPack) { alert('Please select a pack.'); return; }
+
+    const btn = document.getElementById('pay-btn');
+    btn.textContent = 'Processing...';
+    btn.disabled = true;
+
+    // Get order from server
+    const res  = await fetch('/payment/initiate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ pack: selectedPack })
+    });
+    const order = await res.json();
+
+    // --- PRODUCTION: Open Razorpay checkout ---
+    // const rzp = new Razorpay({
+    //   key: 'rzp_live_XXXX',
+    //   amount: order.amount,
+    //   currency: 'INR',
+    //   order_id: order.order_id,
+    //   name: 'Safe-Tag India',
+    //   description: `Safe-Tag ${selectedPack} pack`,
+    //   handler: async (response) => {
+    //     await fetch('/payment/success', {
+    //       method: 'POST',
+    //       headers: { 'Content-Type': 'application/json' },
+    //       body: JSON.stringify({ pack: selectedPack, ...response })
+    //     });
+    //     showSuccess();
+    //   },
+    // });
+    // rzp.open();
+
+    // DEMO: Simulate success after 1.5s
+    setTimeout(async () => {
+      {% if session.get('user_id') %}
+      const sRes = await fetch('/payment/success', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pack: selectedPack })
+      });
+      const sData = await sRes.json();
+      document.getElementById('success-message').textContent = sData.message;
+      {% endif %}
+      showSuccess();
+    }, 1500);
+  }
+
+  function showSuccess() {
+    document.getElementById('order-form').classList.add('hidden');
+    document.querySelectorAll('.pack-card').forEach(c => c.classList.add('hidden'));
+    document.getElementById('success-state').classList.remove('hidden');
+  }
+</script>
+{% endblock %}
