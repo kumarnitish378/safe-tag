@@ -1,322 +1,214 @@
-{% extends "base.html" %}
-{% set hide_nav = true %}
-{% set hide_footer = true %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Emergency Profile — {{ profile.name }} | Safe-Tag</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    * { font-family: 'Inter', sans-serif; }
+    body { background: #EAEFF4; }
+    .card { background:white; border-radius:12px; box-shadow:0 1px 4px rgba(0,0,0,0.08); overflow:hidden; }
+    .id-header { background: linear-gradient(160deg, #0F172A 0%, #1E3A5F 100%); }
+    .photo-wrap { width:76px;height:76px;border-radius:50%;border:3px solid #F59E0B;overflow:hidden;background:#1E3A5F;display:flex;align-items:center;justify-content:center;font-size:2.2rem;flex-shrink:0; }
+    .row { display:flex;align-items:center;padding:11px 16px;border-bottom:1px solid #F1F5F9;gap:12px;min-height:44px; }
+    .row:last-child { border-bottom:none; }
+    .row-label { font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:#94A3B8;width:90px;flex-shrink:0; }
+    .row-value { font-size:14px;font-weight:500;color:#1E293B;flex:1; }
+    .blood-badge { font-family:'JetBrains Mono',monospace;font-size:17px;font-weight:700;color:#DC2626;background:#FEF2F2;border:1.5px solid #FECACA;padding:3px 12px;border-radius:6px; }
+    .allergy-tag { background:#FFF7ED;border:1px solid #FED7AA;color:#9A3412;font-size:12px;font-weight:600;padding:3px 10px;border-radius:20px;display:inline-block;margin:2px; }
+    .section-head { font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#94A3B8;padding:12px 16px 8px;background:#F8FAFC;border-bottom:1px solid #F1F5F9; }
+    .btn-call { display:flex;align-items:center;justify-content:center;gap:10px;background:#0D9488;color:white;border-radius:10px;padding:15px 16px;font-size:16px;font-weight:700;text-decoration:none;width:100%;transition:background 0.15s; }
+    .btn-call:active { background:#0F766E;transform:scale(0.98); }
+    .btn-wa { display:flex;align-items:center;justify-content:center;gap:10px;background:#15803D;color:white;border-radius:10px;padding:14px 16px;font-size:15px;font-weight:600;text-decoration:none;width:100%;transition:background 0.15s; }
+    .btn-wa:active { background:#166534;transform:scale(0.98); }
+    .btn-alt { display:flex;align-items:center;justify-content:center;gap:8px;background:white;color:#475569;border:1.5px solid #E2E8F0;border-radius:10px;padding:12px 16px;font-size:14px;font-weight:500;text-decoration:none;width:100%; }
+    .captcha-wrap { background:#F8FAFC;border:1.5px solid #E2E8F0;border-radius:10px;padding:14px 16px; }
+    input[type=number] { border:1.5px solid #CBD5E1;border-radius:8px;padding:9px 14px;font-size:20px;width:80px;text-align:center;font-family:'JetBrains Mono',monospace;outline:none;-moz-appearance:textfield; }
+    input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;}
+    input[type=number]:focus{border-color:#0D9488;}
+    .loc-bar{display:none;background:#F0FDF4;border:1px solid #BBF7D0;border-radius:10px;padding:10px 14px;font-size:13px;color:#166534;font-weight:500;align-items:center;gap:8px;}
+    .loc-bar.show{display:flex;}
+  </style>
+</head>
+<body>
+<div id="epage" data-slug="{{ tag.short_url_slug }}" class="max-w-md mx-auto min-h-screen flex flex-col">
 
-{% block title %}Safe-Tag — Found: {{ profile.name }}{% endblock %}
-{% block meta_desc %}Emergency profile for {{ profile.name }}. Please help reunite them.{% endblock %}
-
-{% block head_extra %}
-<style>
-  body { background: #F0FDFA; }
-
-  /* Emergency pulse ring around photo */
-  .pulse-ring {
-    animation: pulseRing 2s ease-out infinite;
-    border-radius: 9999px;
-    position: absolute;
-    inset: -6px;
-    border: 3px solid #F97316;
-    opacity: 0;
-  }
-  @keyframes pulseRing {
-    0%   { transform: scale(0.95); opacity: 0.7; }
-    70%  { transform: scale(1.1);  opacity: 0; }
-    100% { transform: scale(1.1);  opacity: 0; }
-  }
-
-  /* Slide in cards */
-  .card-slide { animation: slideUp 0.4s ease both; }
-  @keyframes slideUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
-
-  /* Blood group badge */
-  .blood-badge {
-    background: #FEE2E2;
-    color: #991B1B;
-    font-family: 'JetBrains Mono', monospace;
-    font-weight: 700;
-    font-size: 1.5rem;
-    padding: 0.25rem 0.75rem;
-    border-radius: 0.5rem;
-    border: 2px solid #FCA5A5;
-  }
-
-  /* Action buttons */
-  .btn-call {
-    background: linear-gradient(135deg, #0D9488, #0F766E);
-    color: white;
-    box-shadow: 0 4px 20px rgba(13,148,136,0.35);
-  }
-  .btn-whatsapp {
-    background: linear-gradient(135deg, #25D366, #128C7E);
-    color: white;
-    box-shadow: 0 4px 20px rgba(37,211,102,0.35);
-  }
-  .btn-call:active, .btn-whatsapp:active { transform: scale(0.97); }
-
-  /* Location banner */
-  .location-banner {
-    background: linear-gradient(135deg, #F97316, #EA580C);
-    animation: slideUp 0.6s 0.8s ease both;
-    opacity: 0;
-    animation-fill-mode: forwards;
-  }
-</style>
-{% endblock %}
-
-{% block content %}
-<div class="min-h-screen flex flex-col" id="emergency-page" data-slug="{{ tag.short_url_slug }}">
-
-  <!-- EMERGENCY TOP BAR -->
-  <div class="bg-orange text-white text-center py-3 px-4">
-    <p class="font-display font-bold text-lg tracking-wide">🚨 SAFE-TAG EMERGENCY PROFILE</p>
-    <p class="text-orange-light text-xs">This person may need help. Please assist them.</p>
+  <!-- BRAND BAR -->
+  <div style="background:#0D9488" class="px-4 py-2.5 flex items-center justify-between">
+    <div class="flex items-center gap-2">
+      <div class="w-7 h-7 rounded-full bg-white flex items-center justify-center">
+        <span style="color:#0D9488;font-weight:900;font-size:11px;">ST</span>
+      </div>
+      <span class="text-white font-bold text-sm tracking-wide">Safe-Tag India</span>
+    </div>
+    <div class="flex items-center gap-1.5">
+      <span style="width:7px;height:7px;background:#86EFAC;border-radius:50%;display:inline-block;"></span>
+      <span style="color:#CCFBF1;font-size:11px;font-weight:600;">VERIFIED PROFILE</span>
+    </div>
   </div>
 
-  <div class="max-w-md mx-auto w-full px-4 py-6 space-y-4 flex-1">
+  <!-- EMERGENCY BAR -->
+  <div style="background:#B91C1C" class="px-4 py-2.5 flex items-center gap-3">
+    <svg class="w-5 h-5 text-white flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:white;min-width:20px">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+    </svg>
+    <div class="flex-1">
+      <p style="color:white;font-weight:700;font-size:13px;line-height:1.2;">EMERGENCY IDENTIFICATION CARD</p>
+      <p style="color:#FECACA;font-size:11px;margin-top:1px;">This person may need immediate assistance</p>
+    </div>
+    <span style="font-family:'JetBrains Mono',monospace;color:#FCA5A5;font-size:10px;">{{ tag.serial_number }}</span>
+  </div>
 
-    <!-- IDENTITY CARD -->
-    <div class="card-slide bg-white rounded-2xl shadow-md p-6 text-center" style="animation-delay:0s">
-      <!-- Photo with pulse -->
-      <div class="relative inline-block mb-4">
-        <div class="pulse-ring"></div>
-        {% if profile.photo_url %}
-          <img src="{{ profile.photo_url }}" alt="{{ profile.name }}"
-               class="w-24 h-24 rounded-full object-cover border-4 border-orange relative z-10">
-        {% else %}
-          <div class="w-24 h-24 rounded-full bg-teal-light border-4 border-orange flex items-center justify-center relative z-10">
-            <span class="text-4xl">
-              {% if profile.category == 'child' %}👶
-              {% elif profile.category == 'elderly' %}👴
-              {% elif profile.category == 'pet' %}🐕
-              {% else %}🧳{% endif %}
+  <!-- CONTENT -->
+  <div class="flex-1 px-3 py-3 space-y-3">
+
+    <!-- Identity Card -->
+    <div class="card">
+      <div class="id-header px-4 py-4 flex items-center gap-4">
+        <div class="photo-wrap">
+          {% if profile.photo_url %}
+            <img src="{{ profile.photo_url }}" class="w-full h-full object-cover">
+          {% else %}
+            {% if profile.category == 'child' %}👶{% elif profile.category == 'elderly' %}👴{% elif profile.category == 'pet' %}🐕{% else %}🧳{% endif %}
+          {% endif %}
+        </div>
+        <div>
+          <p style="color:white;font-weight:800;font-size:20px;line-height:1.2;">{{ profile.name }}</p>
+          {% if profile.dob %}<p style="color:#94A3B8;font-size:13px;margin-top:3px;">Date of Birth: {{ profile.dob }}</p>{% endif %}
+          <div class="flex flex-wrap gap-1.5 mt-2">
+            <span style="background:rgba(245,158,11,0.15);color:#FCD34D;border:1px solid rgba(245,158,11,0.3);font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;">
+              {% if profile.category=='child' %}👶 CHILD{% elif profile.category=='elderly' %}👴 ELDERLY{% elif profile.category=='pet' %}🐕 PET{% else %}🧳 TRAVELER{% endif %}
             </span>
+            <span style="background:rgba(34,197,94,0.15);color:#86EFAC;border:1px solid rgba(34,197,94,0.3);font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;">✓ VERIFIED</span>
           </div>
-        {% endif %}
+        </div>
       </div>
-
-      <h1 class="font-display font-extrabold text-2xl text-gray-900 mb-1">{{ profile.name }}</h1>
-      {% if profile.dob %}
-        <p class="text-gray-400 text-sm mb-2">DOB: {{ profile.dob }}</p>
+      {% if profile.blood_group %}
+      <div class="row"><span class="row-label">🩸 Blood</span><span class="blood-badge">{{ profile.blood_group }}</span></div>
       {% endif %}
-
-      <!-- Category badge -->
-      <span class="inline-block bg-teal-light text-teal-dark text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider">
-        {% if profile.category == 'child' %}👶 Child
-        {% elif profile.category == 'elderly' %}👴 Elderly
-        {% elif profile.category == 'pet' %}🐕 Pet
-        {% else %}🎒 Traveler{% endif %}
-      </span>
-
-      <!-- Tag ID -->
-      <p class="font-mono text-xs text-gray-300 mt-3">{{ tag.serial_number }}</p>
-    </div>
-
-    <!-- MEDICAL INFO -->
-    <div class="card-slide bg-white rounded-2xl shadow-md p-5" style="animation-delay:0.1s">
-      <h2 class="font-display font-semibold text-gray-700 text-sm uppercase tracking-wide mb-4 flex items-center gap-2">
-        <span>🏥</span> Medical Information
-      </h2>
-      <div class="space-y-3">
-        {% if profile.blood_group %}
-        <div class="flex items-center justify-between">
-          <span class="text-gray-500 text-sm">Blood Group</span>
-          <span class="blood-badge">{{ profile.blood_group }}</span>
-        </div>
-        {% endif %}
-
-        {% if profile.allergies %}
-        <div class="bg-red-50 border border-red-100 rounded-xl p-3">
-          <p class="text-xs font-semibold text-red-600 uppercase tracking-wide mb-1">⚠️ Allergies</p>
-          <p class="text-red-800 text-sm">{{ profile.allergies }}</p>
-        </div>
-        {% endif %}
-
-        {% if profile.medication_notes %}
-        <div class="bg-yellow-50 border border-yellow-100 rounded-xl p-3">
-          <p class="text-xs font-semibold text-yellow-700 uppercase tracking-wide mb-1">💊 Medications</p>
-          <p class="text-yellow-900 text-sm">{{ profile.medication_notes }}</p>
-        </div>
-        {% endif %}
-
-        {% if profile.medical_conditions %}
-        <div class="bg-blue-50 border border-blue-100 rounded-xl p-3">
-          <p class="text-xs font-semibold text-blue-700 uppercase tracking-wide mb-1">📋 Conditions</p>
-          <p class="text-blue-900 text-sm">{{ profile.medical_conditions }}</p>
-        </div>
-        {% endif %}
-
-        {% if not profile.blood_group and not profile.allergies and not profile.medication_notes %}
-        <p class="text-gray-400 text-sm text-center py-2">No medical info on file.</p>
-        {% endif %}
+      {% if profile.allergies %}
+      <div class="row" style="align-items:flex-start;padding-top:12px;padding-bottom:12px;">
+        <span class="row-label" style="padding-top:2px;">⚠️ Allergies</span>
+        <div class="flex-1">{% for a in profile.allergies.split(',') %}<span class="allergy-tag">{{ a.strip() }}</span>{% endfor %}</div>
       </div>
+      {% endif %}
+      {% if profile.medication_notes and profile.medication_notes|lower != 'none' %}
+      <div class="row"><span class="row-label">💊 Meds</span><span class="row-value">{{ profile.medication_notes }}</span></div>
+      {% endif %}
+      {% if profile.medical_conditions %}
+      <div class="row"><span class="row-label">🩺 Condition</span><span class="row-value">{{ profile.medical_conditions }}</span></div>
+      {% endif %}
     </div>
 
-    <!-- CUSTOM MESSAGE -->
+    <!-- Owner Note -->
     {% if profile.custom_message %}
-    <div class="card-slide bg-teal-light border border-teal rounded-2xl p-5" style="animation-delay:0.15s">
-      <p class="text-xs font-semibold text-teal-dark uppercase tracking-wide mb-2">💬 Owner's Note</p>
-      <p class="text-teal-xdark text-base leading-relaxed">{{ profile.custom_message }}</p>
+    <div class="card" style="border-left:4px solid #F59E0B;">
+      <div class="px-4 py-3">
+        <p style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#D97706;margin-bottom:6px;">📋 Instructions from Family</p>
+        <p style="font-size:14px;color:#374151;line-height:1.6;">{{ profile.custom_message }}</p>
+      </div>
     </div>
     {% endif %}
 
-    <!-- ACTION BUTTONS -->
-    <div class="card-slide space-y-3" style="animation-delay:0.2s">
-      <h2 class="font-display font-semibold text-gray-700 text-sm uppercase tracking-wide flex items-center gap-2">
-        <span>📞</span> Contact the Owner
-      </h2>
+    <!-- Contact Card -->
+    <div class="card">
+      <div class="section-head">📞 Contact Guardian / Owner</div>
+      <div class="px-4 py-4 space-y-3">
 
-      <!-- Phone reveal section -->
-      <div id="phone-section" class="bg-white rounded-2xl shadow-md p-5">
-        <!-- Masked state -->
-        <div id="masked-phone" class="{% if not privacy_mode %}hidden{% endif %}">
-          <p class="text-gray-400 text-sm mb-3">Primary contact is partially hidden for privacy.</p>
-          <div class="flex items-center gap-3 mb-4">
-            <span class="font-mono text-xl font-semibold text-gray-600 tracking-widest">
-              {{ masked_phone }}
-            </span>
-          </div>
-          <!-- Simple captcha: math question -->
-          <div id="captcha-box" class="bg-gray-50 rounded-xl p-4 border border-gray-200">
-            <p class="text-sm text-gray-600 mb-2">Verify you're a helper: <strong id="captcha-question"></strong></p>
-            <div class="flex gap-2">
-              <input id="captcha-input" type="number" placeholder="Answer"
-                     class="border border-gray-200 rounded-lg px-3 py-2 text-sm w-24 outline-none focus:border-teal">
-              <button onclick="verifyCaptcha()"
-                      class="bg-teal text-white text-sm font-medium px-4 py-2 rounded-lg hover:bg-teal-dark transition-colors">
-                Reveal
+        <div id="masked-section" class="{{ 'hidden' if not privacy_mode }}">
+          <p style="font-size:12px;color:#94A3B8;margin-bottom:8px;">
+            Number on file: <span style="font-family:'JetBrains Mono',monospace;font-weight:600;color:#475569;">{{ masked_phone }}</span>
+          </p>
+          <div class="captcha-wrap">
+            <p style="font-size:12px;font-weight:600;color:#475569;margin-bottom:10px;">
+              Confirm you're a helper — solve:
+              <span id="captcha-q" style="font-family:'JetBrains Mono',monospace;background:#F0FDFA;color:#0D9488;padding:2px 8px;border-radius:4px;border:1px solid #CCFBF1;margin-left:4px;"></span>
+            </p>
+            <div class="flex items-center gap-2">
+              <input id="captcha-inp" type="number" placeholder="?">
+              <button onclick="verifyCaptcha()" style="flex:1;background:#1E293B;color:white;font-weight:600;padding:10px 16px;border-radius:8px;font-size:14px;border:none;cursor:pointer;">
+                Verify & Reveal
               </button>
             </div>
+            <p id="captcha-err" style="color:#EF4444;font-size:12px;margin-top:6px;display:none;">Wrong answer. Try again.</p>
           </div>
         </div>
 
-        <!-- Revealed state -->
-        <div id="revealed-phone" class="{% if privacy_mode %}hidden{% endif %}">
-          <a href="tel:{{ full_phone }}"
-             class="btn-call flex items-center justify-center gap-3 w-full py-4 rounded-xl font-display font-semibold text-lg transition-all active:scale-97">
-            📞 Call Now: <span class="font-mono">{{ full_phone }}</span>
+        <div id="revealed-section" class="{{ '' if not privacy_mode else 'hidden' }} space-y-2">
+          <a href="tel:{{ full_phone }}" class="btn-call">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+            Call Now — {{ full_phone }}
           </a>
           {% if profile.emergency_contact_2 %}
-          <a href="tel:{{ profile.emergency_contact_2 }}"
-             class="mt-2 flex items-center justify-center gap-2 w-full py-3 rounded-xl font-medium text-sm text-gray-500 border border-gray-200 hover:border-teal transition-colors">
-            📞 Alternate: {{ profile.emergency_contact_2 }}
+          <a href="tel:{{ profile.emergency_contact_2 }}" class="btn-alt">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+            Alternate: {{ profile.emergency_contact_2 }}
           </a>
           {% endif %}
         </div>
+
+        <a id="wa-btn" href="https://wa.me/{{ wa_number }}?text={{ wa_message | urlencode }}" target="_blank" class="btn-wa">
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          Send WhatsApp Alert to Owner
+        </a>
       </div>
-
-      <!-- WhatsApp Button -->
-      <a id="wa-btn"
-         href="https://wa.me/{{ wa_number }}?text={{ wa_message | urlencode }}"
-         target="_blank"
-         class="btn-whatsapp flex items-center justify-center gap-3 w-full py-4 rounded-xl font-display font-semibold text-lg transition-all">
-        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-        </svg>
-        WhatsApp Alert
-      </a>
     </div>
 
-    <!-- LOCATION BANNER -->
-    <div id="location-banner" class="location-banner hidden rounded-2xl p-4 text-white">
-      <p class="font-semibold text-sm mb-1">📍 Location Shared!</p>
-      <p class="text-orange-light text-xs" id="location-text">Getting your location...</p>
+    <!-- Location Bar -->
+    <div id="loc-bar" class="loc-bar">
+      <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+      <span id="loc-text">Detecting your location...</span>
     </div>
 
-    <!-- POWERED BY -->
-    <div class="text-center py-4">
-      <p class="text-gray-300 text-xs">
-        Powered by <a href="{{ url_for('index') }}" class="text-teal font-semibold">Safe-Tag</a> •
-        <a href="{{ url_for('buy') }}" class="text-teal">Protect your family</a>
+    <!-- Footer -->
+    <div style="text-align:center;padding:16px 0 24px;">
+      <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:4px;">
+        <div style="width:20px;height:20px;border-radius:50%;background:#0D9488;display:flex;align-items:center;justify-content:center;">
+          <span style="color:white;font-weight:900;font-size:10px;">ST</span>
+        </div>
+        <span style="color:#94A3B8;font-size:12px;font-weight:600;">Safe-Tag India • safe-tag.in</span>
+      </div>
+      <p style="color:#CBD5E1;font-size:11px;">Tag ID: {{ tag.serial_number }} • Verified Emergency ID</p>
+      <p style="color:#CBD5E1;font-size:11px;margin-top:3px;">
+        Protect your family →
+        <a href="/" style="color:#0D9488;font-weight:600;">Get Safe-Tag ₹149</a>
       </p>
     </div>
+
   </div>
 </div>
-{% endblock %}
-
-{% block scripts %}
 <script>
-  // ── Captcha ──────────────────────────────────────────────────────────────
-  let captchaAnswer = 0;
-  function initCaptcha() {
-    const a = Math.floor(Math.random() * 9) + 1;
-    const b = Math.floor(Math.random() * 9) + 1;
-    captchaAnswer = a + b;
-    document.getElementById('captcha-question').textContent = `${a} + ${b} = ?`;
+  let ans=0;
+  function initCaptcha(){const a=Math.floor(Math.random()*9)+1,b=Math.floor(Math.random()*9)+1;ans=a+b;document.getElementById('captcha-q').textContent=`${a} + ${b} = ?`;}
+  function verifyCaptcha(){
+    const v=parseInt(document.getElementById('captcha-inp').value,10);
+    const err=document.getElementById('captcha-err');
+    if(v===ans){revealPhone();}
+    else{err.style.display='block';document.getElementById('captcha-inp').value='';setTimeout(()=>err.style.display='none',2000);initCaptcha();}
   }
-
-  function verifyCaptcha() {
-    const input = parseInt(document.getElementById('captcha-input').value, 10);
-    if (input === captchaAnswer) {
-      revealPhone();
-    } else {
-      document.getElementById('captcha-input').classList.add('border-red-400');
-      document.getElementById('captcha-input').value = '';
-      initCaptcha(); // Regenerate question
-    }
+  async function revealPhone(){
+    const slug=document.getElementById('epage').dataset.slug;
+    const res=await fetch(`/api/reveal-phone/${slug}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:'verified'})});
+    const d=await res.json();
+    if(d.ok){document.getElementById('masked-section').classList.add('hidden');document.getElementById('revealed-section').classList.remove('hidden');}
   }
-
-  async function revealPhone() {
-    const slug = document.getElementById('emergency-page').dataset.slug;
-    try {
-      const res  = await fetch(`/api/reveal-phone/${slug}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token: 'verified' })
-      });
-      const data = await res.json();
-      if (data.ok) {
-        document.getElementById('masked-phone').classList.add('hidden');
-        document.getElementById('revealed-phone').classList.remove('hidden');
-      }
-    } catch(e) {
-      console.error('Reveal failed', e);
-    }
-  }
-
-  // ── Geolocation ──────────────────────────────────────────────────────────
-  const slug    = document.getElementById('emergency-page').dataset.slug;
-  const banner  = document.getElementById('location-banner');
-  const locText = document.getElementById('location-text');
-
-  function sendLocation(lat, lng) {
-    banner.classList.remove('hidden');
-    locText.textContent = `Coordinates: ${lat.toFixed(5)}, ${lng.toFixed(5)} — Notifying owner...`;
-
-    fetch('/api/location-alert', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ slug, lat, lng })
-    }).then(r => r.json()).then(d => {
-      if (d.ok) {
-        locText.textContent = `✅ Owner notified of your location via WhatsApp!`;
-      }
-    }).catch(() => {
-      locText.textContent = `Location captured. Please share it manually.`;
+  function sendLocation(lat,lng){
+    const bar=document.getElementById('loc-bar'),text=document.getElementById('loc-text');
+    bar.classList.add('show');
+    fetch('/api/location-alert',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({slug:document.getElementById('epage').dataset.slug,lat,lng})})
+    .then(r=>r.json()).then(d=>{
+      text.textContent=d.ok?`✅ Owner notified with your location (${lat.toFixed(4)}, ${lng.toFixed(4)})`:'Location captured. Share manually if needed.';
+      const wa=document.getElementById('wa-btn');
+      wa.href=wa.href.replace(/\?text=.*$/,`?text=${encodeURIComponent('Hello, I found someone with a Safe-Tag. My location: https://maps.google.com/?q='+lat+','+lng)}`);
     });
-
-    // Also update WA link with map coordinates
-    const waBtn = document.getElementById('wa-btn');
-    if (waBtn) {
-      const mapsUrl = `https://maps.google.com/?q=${lat},${lng}`;
-      const newMsg  = encodeURIComponent(
-        `Hello! I found someone with a Safe-Tag (ID: ${slug}). ` +
-        `I'm at this location and want to help: ${mapsUrl}`
-      );
-      waBtn.href = waBtn.href.replace(/\?text=.*$/, `?text=${newMsg}`);
-    }
   }
-
-  // Auto-trigger geolocation on page load
-  window.addEventListener('load', () => {
+  window.addEventListener('load',()=>{
     initCaptcha();
-
-    if ('geolocation' in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        pos => sendLocation(pos.coords.latitude, pos.coords.longitude),
-        err => console.log('Geo denied:', err.message),
-        { timeout: 10000, enableHighAccuracy: true }
-      );
-    }
+    if('geolocation' in navigator){navigator.geolocation.getCurrentPosition(p=>sendLocation(p.coords.latitude,p.coords.longitude),e=>console.log('Geo:',e.message),{timeout:8000,enableHighAccuracy:true});}
   });
 </script>
-{% endblock %}
+</body>
+</html>
