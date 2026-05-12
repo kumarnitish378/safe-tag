@@ -37,6 +37,10 @@ if DATABASE_URL.startswith("postgres://"):
 app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE_URL
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
+# Payment mode: True = skip payment for testing, False = real Razorpay
+# Set DUMMY_PAYMENT=false in .env to enable real payments
+DUMMY_PAYMENT = os.environ.get("DUMMY_PAYMENT", "true").lower() != "false"
+
 db = SQLAlchemy(app)
 
 limiter = Limiter(get_remote_address, app=app, default_limits=[], storage_uri="memory://")
@@ -288,7 +292,7 @@ def setup_profile(tag_id):
 
 @app.route("/buy")
 def buy():
-    return render_template("buy.html", user=current_user())
+    return render_template("buy.html", user=current_user(), dummy_payment=DUMMY_PAYMENT)
 
 
 @app.route("/payment/initiate", methods=["POST"])
