@@ -333,6 +333,7 @@ def payment_success():
 # ---------------------------------------------------------------------------
 
 @app.route("/v/<slug>")
+@limiter.limit("30 per minute")  
 def emergency_view(slug):
     tag = Tag.query.filter_by(short_url_slug=slug, is_active=True).first()
     if not tag or not tag.medical:
@@ -360,6 +361,7 @@ def emergency_view(slug):
 
 
 @app.route("/api/location-alert", methods=["POST"])
+@limiter.limit("10 per minute")
 def location_alert():
     """
     Receives geolocation from finder's browser and (in production)
