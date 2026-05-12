@@ -15,6 +15,8 @@ from flask import (
     url_for, session, jsonify, flash, abort
 )
 from flask_sqlalchemy import SQLAlchemy
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 from werkzeug.security import generate_password_hash, check_password_hash
 
 # ---------------------------------------------------------------------------
@@ -36,6 +38,8 @@ app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE_URL
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 db = SQLAlchemy(app)
+
+limiter = Limiter(get_remote_address, app=app, default_limits=[], storage_uri="memory://")
 
 # ---------------------------------------------------------------------------
 # Models

@@ -10,3 +10,12 @@ dist/
 build/
 .venv/
 venv/
+
+# Bridge and dev tools
+bridge.py
+bridge_old.py
+bridge_check.py
+bridge.log
+ngrok
+ngrok-v3-stable-linux-arm64.tgz
+test.txt
