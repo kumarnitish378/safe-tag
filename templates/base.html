@@ -82,6 +82,12 @@
              class="text-sm font-medium text-gray-600 hover:text-teal transition-colors px-3 py-1.5 rounded-lg hover:bg-teal-light">
             Dashboard
           </a>
+          {% if current_user and current_user.is_admin %}
+          <a href="{{ url_for('admin_orders') }}"
+             class="text-sm font-medium text-gray-600 hover:text-teal transition-colors px-3 py-1.5 rounded-lg hover:bg-teal-light">
+            Admin
+          </a>
+          {% endif %}
           <a href="{{ url_for('logout') }}"
              class="text-sm font-medium text-white bg-teal hover:bg-teal-dark transition-colors px-4 py-1.5 rounded-full">
             Log Out

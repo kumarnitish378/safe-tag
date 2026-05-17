@@ -44,10 +44,19 @@ pip install -r requirements.txt
 cp .env.example .env
 # Edit .env with your values (or leave DATABASE_URL blank for SQLite)
 
-# 3. Run
+# 3. Initialize database
+.venv\Scripts\python.exe -m flask --app app db init
+.venv\Scripts\python.exe -m flask --app app db migrate -m "Initial migration"
+.venv\Scripts\python.exe -m flask --app app db upgrade
+
+# 4. Run
 python app.py
 # → http://localhost:5000
 ```
+
+> Security note: `Flask-WTF` CSRF protection is enabled for all server-side forms, and server-side validation is enforced for registration, login, activation, and profile payloads.
+
+See `docs/PRODUCTION_READINESS.md` for the current production hardening checklist.
 
 ---
 
@@ -141,6 +150,7 @@ Send `public_url` to QR printer. `rfid_payload` goes to RFID chip programmer.
 | Slug guessing | Non-sequential, cryptographically random (`secrets` module) |
 | Password storage | Werkzeug PBKDF2-SHA256 |
 | Session hijack | Flask signed sessions + `SECRET_KEY` |
+| CSRF attacks | Flask-WTF CSRF protection enabled for forms |
 | SQL injection | SQLAlchemy ORM (parameterized queries) |
 
 ---

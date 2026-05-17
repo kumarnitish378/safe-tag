@@ -4,6 +4,7 @@ Flask Backend - Production Ready (India Edition)
 """
 
 import os
+import re
 import secrets
 import string
 import hashlib
@@ -17,13 +18,19 @@ from flask import (
 from flask_sqlalchemy import SQLAlchemy
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
+from flask_migrate import Migrate
+from flask_wtf import CSRFProtect
 from werkzeug.security import generate_password_hash, check_password_hash
 
 # ---------------------------------------------------------------------------
 # App & Config
 # ---------------------------------------------------------------------------
 app = Flask(__name__)
-app.secret_key = os.environ.get("SECRET_KEY", secrets.token_hex(32))
+app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY") or secrets.token_hex(32)
+app.config["WTF_CSRF_TIME_LIMIT"] = None
+app.config["SESSION_COOKIE_HTTPONLY"] = True
+app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
+app.config["SESSION_COOKIE_SECURE"] = os.environ.get("SESSION_COOKIE_SECURE", "false").lower() == "true"
 
 # Database: use DATABASE_URL env-var (Postgres on prod, SQLite for dev)
 DATABASE_URL = os.environ.get(
@@ -41,7 +48,10 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 # Set DUMMY_PAYMENT=false in .env to enable real payments
 DUMMY_PAYMENT = os.environ.get("DUMMY_PAYMENT", "true").lower() != "false"
 
+csrf = CSRFProtect(app)
+
 db = SQLAlchemy(app)
+migrate = Migrate(app, db)
 
 limiter = Limiter(get_remote_address, app=app, default_limits=[], storage_uri="memory://")
 
@@ -60,6 +70,8 @@ class User(db.Model):
     created_at   = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 
     tags         = db.relationship("Tag", back_populates="owner", lazy="dynamic")
+    orders       = db.relationship("Order", back_populates="user", lazy="dynamic")
+    is_admin     = db.Column(db.Boolean, default=False, nullable=False)
 
     def set_password(self, pw):
         self.password_hash = generate_password_hash(pw)
@@ -79,6 +91,8 @@ class Tag(db.Model):
     activated_at   = db.Column(db.DateTime, nullable=True)
 
     owner          = db.relationship("User", back_populates="tags")
+    order_id       = db.Column(db.Integer, db.ForeignKey("orders.id"), nullable=True)
+    order          = db.relationship("Order", back_populates="tags")
     medical        = db.relationship("MedicalProfile", uselist=False,
                                      back_populates="tag", cascade="all, delete-orphan")
 
@@ -114,6 +128,23 @@ class MedicalProfile(db.Model):
     tag                   = db.relationship("Tag", back_populates="medical")
 
 
+class Order(db.Model):
+    __tablename__ = "orders"
+
+    id               = db.Column(db.Integer, primary_key=True)
+    user_id          = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    pack             = db.Column(db.String(20), nullable=False, default="single")
+    amount           = db.Column(db.Integer, nullable=False)
+    status           = db.Column(db.String(30), nullable=False, default="pending")
+    razorpay_order_id = db.Column(db.String(80), unique=True, nullable=True)
+    payment_id       = db.Column(db.String(80), nullable=True)
+    created_at       = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at       = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
+
+    user             = db.relationship("User", back_populates="orders")
+    tags             = db.relationship("Tag", back_populates="order", lazy="dynamic")
+
+
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
@@ -131,6 +162,21 @@ def login_required(f):
 def current_user():
     uid = session.get("user_id")
     return User.query.get(uid) if uid else None
+
+
+@app.context_processor
+def inject_current_user():
+    return {"current_user": current_user()}
+
+
+def admin_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        user = current_user()
+        if not user or not user.is_admin:
+            abort(403)
+        return f(*args, **kwargs)
+    return decorated
 
 
 def mask_phone(number: str) -> str:
@@ -151,6 +197,84 @@ def generate_slug(length=6) -> str:
             return slug
 
 
+EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
+PHONE_RE = re.compile(r"^\+?[0-9]{7,20}$")
+SERIAL_RE = re.compile(r"^ST-\d{4}-\d{5}$")
+CATEGORIES = {"child", "elderly", "traveler", "pet"}
+BLOOD_GROUPS = {"A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"}
+
+
+def clean_phone(value: str) -> str:
+    if not value:
+        return ""
+    return re.sub(r"[^0-9+]", "", value).strip()
+
+
+def validate_registration_data(email: str, password: str, mobile: str):
+    errors = []
+    if not email or not EMAIL_RE.match(email):
+        errors.append("Enter a valid email address.")
+    if not password or len(password) < 8:
+        errors.append("Use a password with at least 8 characters.")
+    phone = clean_phone(mobile)
+    if not phone or not PHONE_RE.match(phone):
+        errors.append("Enter a valid mobile number, including country code.")
+    return phone, errors
+
+
+def validate_login_data(email: str, password: str):
+    errors = []
+    if not email:
+        errors.append("Email is required.")
+    if not password:
+        errors.append("Password is required.")
+    return errors
+
+
+def validate_activation_code(serial: str):
+    if not serial or not SERIAL_RE.match(serial):
+        return False
+    return True
+
+
+def validate_profile_payload(form):
+    errors = []
+    name = form.get("name", "").strip()
+    emergency_contact_1 = clean_phone(form.get("emergency_contact_1", ""))
+    emergency_contact_2 = clean_phone(form.get("emergency_contact_2", ""))
+    owner_whatsapp = clean_phone(form.get("owner_whatsapp", ""))
+    category = form.get("category", "child")
+    blood_group = form.get("blood_group", "")
+
+    if not name:
+        errors.append("Full name is required.")
+    if not emergency_contact_1 or not PHONE_RE.match(emergency_contact_1):
+        errors.append("A valid primary emergency contact is required.")
+    if emergency_contact_2 and not PHONE_RE.match(emergency_contact_2):
+        errors.append("Secondary contact must be a valid phone number.")
+    if owner_whatsapp and not PHONE_RE.match(owner_whatsapp):
+        errors.append("WhatsApp number must be valid if provided.")
+    if category not in CATEGORIES:
+        errors.append("Select a valid category.")
+    if blood_group and blood_group not in BLOOD_GROUPS:
+        errors.append("Select a valid blood group.")
+
+    return {
+        "name": name,
+        "dob": form.get("dob", "").strip(),
+        "category": category,
+        "blood_group": blood_group,
+        "allergies": form.get("allergies", "").strip(),
+        "medication_notes": form.get("medication_notes", "").strip(),
+        "medical_conditions": form.get("medical_conditions", "").strip(),
+        "emergency_contact_1": emergency_contact_1,
+        "emergency_contact_2": emergency_contact_2,
+        "owner_whatsapp": owner_whatsapp,
+        "privacy_mode": bool(form.get("privacy_mode")),
+        "custom_message": form.get("custom_message", "").strip(),
+    }, errors
+
+
 # ---------------------------------------------------------------------------
 # Auth Routes
 # ---------------------------------------------------------------------------
@@ -160,14 +284,20 @@ def register():
     if request.method == "POST":
         email    = request.form.get("email", "").strip().lower()
         password = request.form.get("password", "")
-        mobile   = request.form.get("mobile_no", "").strip()
+        mobile   = request.form.get("mobile_no", "")
         address  = request.form.get("address", "").strip()
+
+        mobile_clean, errors = validate_registration_data(email, password, mobile)
+        if errors:
+            for error in errors:
+                flash(error, "error")
+            return redirect(url_for("register"))
 
         if User.query.filter_by(email=email).first():
             flash("Email already registered.", "error")
             return redirect(url_for("register"))
 
-        user = User(email=email, mobile_no=mobile, address=address)
+        user = User(email=email, mobile_no=mobile_clean, address=address)
         user.set_password(password)
         db.session.add(user)
         db.session.commit()
@@ -184,8 +314,14 @@ def login():
     if request.method == "POST":
         email    = request.form.get("email", "").strip().lower()
         password = request.form.get("password", "")
-        user     = User.query.filter_by(email=email).first()
+        errors   = validate_login_data(email, password)
 
+        if errors:
+            for error in errors:
+                flash(error, "error")
+            return redirect(url_for("login"))
+
+        user = User.query.filter_by(email=email).first()
         if user and user.check_password(password):
             session["user_id"] = user.id
             return redirect(url_for("dashboard"))
@@ -222,6 +358,30 @@ def dashboard():
     return render_template("dashboard.html", user=user, tags=tags)
 
 
+@app.route("/admin/orders")
+@login_required
+@admin_required
+def admin_orders():
+    orders = Order.query.order_by(Order.created_at.desc()).all()
+    return render_template("admin_orders.html", orders=orders)
+
+
+@app.route("/admin/orders/<int:order_id>/status", methods=["POST"])
+@login_required
+@admin_required
+def admin_update_order_status(order_id):
+    order = Order.query.get_or_404(order_id)
+    new_status = request.form.get("status", "pending")
+    if new_status not in {"pending", "assigned", "shipped", "completed", "cancelled"}:
+        flash("Invalid order status.", "error")
+        return redirect(url_for("admin_orders"))
+
+    order.status = new_status
+    db.session.commit()
+    flash(f"Order {order.id} status updated.", "success")
+    return redirect(url_for("admin_orders"))
+
+
 # ---------------------------------------------------------------------------
 # Tag Activation
 # ---------------------------------------------------------------------------
@@ -233,8 +393,11 @@ def activate():
 
     if request.method == "POST":
         serial = request.form.get("serial_number", "").strip().upper()
-        tag    = Tag.query.filter_by(serial_number=serial).first()
+        if not validate_activation_code(serial):
+            flash("Enter a valid serial number in the format ST-YYYY-NNNNN.", "error")
+            return redirect(url_for("activate"))
 
+        tag = Tag.query.filter_by(serial_number=serial).first()
         if not tag:
             flash("Serial number not found. Check and try again.", "error")
             return redirect(url_for("activate"))
@@ -242,7 +405,6 @@ def activate():
             flash("This tag is already activated.", "error")
             return redirect(url_for("activate"))
 
-        # Link tag to user (pending profile completion)
         tag.user_id = user.id
         db.session.commit()
         return redirect(url_for("setup_profile", tag_id=tag.id))
@@ -257,30 +419,37 @@ def setup_profile(tag_id):
     tag  = Tag.query.filter_by(id=tag_id, user_id=user.id).first_or_404()
 
     if request.method == "POST":
-        # Build/update profile
-        profile = tag.medical or MedicalProfile(tag_id=tag.id)
+        profile_data, errors = validate_profile_payload(request.form)
+        if errors:
+            for error in errors:
+                flash(error, "error")
+            return redirect(url_for("setup_profile", tag_id=tag.id))
 
-        profile.name               = request.form.get("name", "")
-        profile.dob                = request.form.get("dob", "")
-        profile.category           = request.form.get("category", "child")
-        profile.blood_group        = request.form.get("blood_group", "")
-        profile.allergies          = request.form.get("allergies", "")
-        profile.medication_notes   = request.form.get("medication_notes", "")
-        profile.medical_conditions = request.form.get("medical_conditions", "")
-        profile.emergency_contact_1 = request.form.get("emergency_contact_1", "")
-        profile.emergency_contact_2 = request.form.get("emergency_contact_2", "")
-        profile.owner_whatsapp     = request.form.get("owner_whatsapp", "")
-        profile.privacy_mode       = bool(request.form.get("privacy_mode"))
-        profile.custom_message     = request.form.get("custom_message", "")
+        profile = tag.medical or MedicalProfile(tag_id=tag.id)
+        profile.name               = profile_data["name"]
+        profile.dob                = profile_data["dob"]
+        profile.category           = profile_data["category"]
+        profile.blood_group        = profile_data["blood_group"]
+        profile.allergies          = profile_data["allergies"]
+        profile.medication_notes   = profile_data["medication_notes"]
+        profile.medical_conditions = profile_data["medical_conditions"]
+        profile.emergency_contact_1 = profile_data["emergency_contact_1"]
+        profile.emergency_contact_2 = profile_data["emergency_contact_2"]
+        profile.owner_whatsapp     = profile_data["owner_whatsapp"]
+        profile.privacy_mode       = profile_data["privacy_mode"]
+        profile.custom_message     = profile_data["custom_message"]
 
         if not tag.medical:
             db.session.add(profile)
 
-        tag.is_active    = True
-        tag.activated_at = datetime.now(timezone.utc)
+        if not tag.is_active:
+            tag.is_active = True
+        if not tag.activated_at:
+            tag.activated_at = datetime.now(timezone.utc)
+
         db.session.commit()
 
-        flash("Profile activated! Your tag is live.", "success")
+        flash("Profile saved! Your tag is live.", "success")
         return redirect(url_for("dashboard"))
 
     return render_template("setup_profile.html", user=user, tag=tag)
@@ -318,17 +487,32 @@ def payment_success():
     user    = current_user()
     pack    = request.json.get("pack", "single")
     qty     = 1 if pack == "single" else 4
+    amount  = 14900 if pack == "single" else 49900
 
-    # Assign unactivated tags to this user as "purchased"
+    order = Order(
+        user_id=user.id,
+        pack=pack,
+        amount=amount,
+        status="assigned" if DUMMY_PAYMENT else "pending",
+        razorpay_order_id=f"order_MOCK_{secrets.token_hex(6).upper()}" if DUMMY_PAYMENT else None,
+        payment_id=f"pay_MOCK_{secrets.token_hex(6).upper()}" if DUMMY_PAYMENT else None,
+    )
+    db.session.add(order)
+    db.session.flush()
+
     available = Tag.query.filter_by(is_active=False, user_id=None).limit(qty).all()
     for t in available:
         t.user_id = user.id
+        t.order_id = order.id
+
+    order.status = "assigned" if available else "pending"
     db.session.commit()
 
     return jsonify({
         "success": True,
+        "order_id": order.id,
         "tags_assigned": len(available),
-        "message": f"Payment successful! {len(available)} tag(s) ready to activate."
+        "message": f"Payment successful! {len(available)} tag(s) ready to activate.",
     })
 
 

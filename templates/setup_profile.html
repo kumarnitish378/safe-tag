@@ -12,6 +12,7 @@
   </div>
 
   <form action="{{ url_for('setup_profile', tag_id=tag.id) }}" method="POST" class="space-y-6">
+    {{ csrf_token() }}
 
     <!-- Section: Identity -->
     <div class="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
