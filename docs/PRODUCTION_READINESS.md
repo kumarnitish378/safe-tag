@@ -37,6 +37,8 @@ This document captures the current state of the project, the Phase 1 changes jus
 - [x] Added Flask-Migrate integration
 - [x] Created `migrations/` repository and initial migration script
 - [x] Stamped the current SQLite schema to the latest migration revision
+- [x] Added CLI admin user creation via `flask --app app create-admin`
+- [x] Added development seed script support for an admin user
 
 ## Phase 3 — Go-live production roll-out (remaining)
 

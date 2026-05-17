@@ -49,7 +49,10 @@ cp .env.example .env
 .venv\Scripts\python.exe -m flask --app app db migrate -m "Initial migration"
 .venv\Scripts\python.exe -m flask --app app db upgrade
 
-# 4. Run
+# 4. Create an admin user
+.venv\Scripts\python.exe -m flask --app app create-admin
+
+# 5. Run
 python app.py
 # → http://localhost:5000
 ```

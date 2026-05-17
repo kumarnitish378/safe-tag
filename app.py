@@ -3,6 +3,7 @@ Safe-Tag: Hybrid Safety Ecosystem
 Flask Backend - Production Ready (India Edition)
 """
 
+import getpass
 import os
 import re
 import secrets
@@ -615,6 +616,34 @@ def reveal_phone(slug):
 def init_db():
     db.create_all()
     print("Database tables created.")
+
+
+@app.cli.command("create-admin")
+def create_admin():
+    """Create a new admin user from the CLI."""
+    email = input("Admin email: ").strip().lower()
+    password = getpass.getpass("Password: ")
+    confirm = getpass.getpass("Confirm password: ")
+    if password != confirm:
+        print("Passwords do not match.")
+        return
+
+    mobile = input("Mobile number (+country digits): ").strip()
+    mobile_clean = clean_phone(mobile)
+    if not PHONE_RE.match(mobile_clean):
+        print("Invalid mobile number.")
+        return
+
+    if User.query.filter_by(email=email).first():
+        print("User already exists.")
+        return
+
+    user = User(email=email, mobile_no=mobile_clean, address="")
+    user.set_password(password)
+    user.is_admin = True
+    db.session.add(user)
+    db.session.commit()
+    print(f"Admin user created: {email}")
 
 
 if __name__ == "__main__":
