@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard — Safe-Tag{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto px-4 py-10">
+  <div class="flex items-center justify-between mb-8">
+    <div>
+      <h1 class="font-display font-bold text-3xl text-gray-900">Admin Dashboard</h1>
+      <p class="text-gray-400 mt-1">Overview of orders, tag inventory, and fulfillment activity.</p>
+    </div>
+    <a href="{{ url_for('admin_orders') }}" class="bg-teal text-white font-semibold px-5 py-2.5 rounded-xl hover:bg-teal-dark transition-colors text-sm">View All Orders</a>
+  </div>
+
+  <div class="grid gap-4 lg:grid-cols-3 mb-8">
+    <div class="bg-white rounded-3xl border border-gray-100 p-6 shadow-sm">
+      <p class="text-sm text-gray-500 uppercase tracking-wide mb-2">Unassigned tags</p>
+      <p class="font-display font-bold text-4xl text-teal">{{ unassigned_tags }}</p>
+    </div>
+    {% for status, count in status_counts.items() %}
+    <div class="bg-white rounded-3xl border border-gray-100 p-6 shadow-sm">
+      <p class="text-sm text-gray-500 uppercase tracking-wide mb-2">{{ status|capitalize }}</p>
+      <p class="font-display font-bold text-4xl text-gray-900">{{ count }}</p>
+    </div>
+    {% endfor %}
+  </div>
+
+  <div class="grid gap-6 xl:grid-cols-2">
+    <section class="bg-white rounded-3xl border border-gray-100 p-6 shadow-sm">
+      <div class="flex items-center justify-between mb-5">
+        <h2 class="font-semibold text-lg text-gray-900">Recent Orders</h2>
+        <a href="{{ url_for('admin_orders') }}" class="text-teal text-sm font-medium hover:underline">View all</a>
+      </div>
+      <div class="space-y-4">
+        {% for order in recent_orders %}
+        <div class="rounded-2xl border border-gray-100 p-4">
+          <div class="flex items-center justify-between gap-3">
+            <div>
+              <p class="text-sm text-gray-500">Order #{{ order.id }}</p>
+              <p class="font-semibold text-gray-900">{{ order.user.email }}</p>
+            </div>
+            <span class="text-xs font-semibold uppercase tracking-wide text-white rounded-full px-3 py-1 {% if order.status == 'completed' %}bg-green-600{% elif order.status == 'shipped' %}bg-blue-600{% elif order.status == 'assigned' %}bg-yellow-600{% elif order.status == 'cancelled' %}bg-red-600{% else %}bg-gray-500{% endif %}">{{ order.status }}</span>
+          </div>
+          <div class="mt-3 text-sm text-gray-600 flex flex-wrap gap-3">
+            <span>{{ order.tags.count() }} tag(s)</span>
+            <span>₹{{ '%.2f'|format(order.amount / 100) }}</span>
+            <span>{{ order.created_at.strftime('%d %b %Y') }}</span>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </section>
+
+    <section class="bg-white rounded-3xl border border-gray-100 p-6 shadow-sm">
+      <div class="flex items-center justify-between mb-5">
+        <h2 class="font-semibold text-lg text-gray-900">Recent Tags</h2>
+        <a href="{{ url_for('admin_orders') }}" class="text-teal text-sm font-medium hover:underline">Manage tags</a>
+      </div>
+      <div class="space-y-3">
+        {% for tag in recent_tags %}
+        <div class="rounded-2xl border border-gray-100 p-4 flex items-center justify-between gap-3">
+          <div>
+            <p class="font-medium text-gray-900">{{ tag.serial_number }}</p>
+            <p class="text-sm text-gray-500">{{ tag.short_url_slug }}</p>
+          </div>
+          <span class="text-xs uppercase tracking-wide font-semibold {% if tag.is_active %}text-green-700{% else %}text-yellow-700{% endif %}">{{ 'Active' if tag.is_active else 'Pending' }}</span>
+        </div>
+        {% endfor %}
+      </div>
+    </section>
+  </div>
+</div>
+{% endblock %}

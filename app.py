@@ -26,7 +26,8 @@ from werkzeug.security import generate_password_hash, check_password_hash
 # ---------------------------------------------------------------------------
 # App & Config
 # ---------------------------------------------------------------------------
-app = Flask(__name__)
+app = Flask(__name__, instance_relative_config=True)
+os.makedirs(app.instance_path, exist_ok=True)
 app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY") or secrets.token_hex(32)
 app.config["WTF_CSRF_TIME_LIMIT"] = None
 app.config["SESSION_COOKIE_HTTPONLY"] = True
@@ -34,9 +35,10 @@ app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
 app.config["SESSION_COOKIE_SECURE"] = os.environ.get("SESSION_COOKIE_SECURE", "false").lower() == "true"
 
 # Database: use DATABASE_URL env-var (Postgres on prod, SQLite for dev)
+default_db = os.path.join(app.instance_path, "safe_tag_dev.db")
 DATABASE_URL = os.environ.get(
     "DATABASE_URL",
-    "sqlite:///safe_tag_dev.db"
+    f"sqlite:///{os.path.abspath(default_db)}"
 )
 # SQLAlchemy doesn't accept 'postgres://' (deprecated), fix it
 if DATABASE_URL.startswith("postgres://"):
@@ -139,6 +141,10 @@ class Order(db.Model):
     status           = db.Column(db.String(30), nullable=False, default="pending")
     razorpay_order_id = db.Column(db.String(80), unique=True, nullable=True)
     payment_id       = db.Column(db.String(80), nullable=True)
+    tracking_number  = db.Column(db.String(100), nullable=True)
+    dispatched_at    = db.Column(db.DateTime, nullable=True)
+    delivered_at     = db.Column(db.DateTime, nullable=True)
+    fulfillment_notes= db.Column(db.Text, default="", nullable=True)
     created_at       = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     updated_at       = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
@@ -373,14 +379,53 @@ def admin_orders():
 def admin_update_order_status(order_id):
     order = Order.query.get_or_404(order_id)
     new_status = request.form.get("status", "pending")
-    if new_status not in {"pending", "assigned", "shipped", "completed", "cancelled"}:
+    tracking_number = request.form.get("tracking_number", "").strip()
+    fulfillment_notes = request.form.get("fulfillment_notes", "").strip()
+
+    valid_statuses = {"pending", "assigned", "shipped", "completed", "cancelled"}
+    if new_status not in valid_statuses:
         flash("Invalid order status.", "error")
-        return redirect(url_for("admin_orders"))
+        return redirect(url_for("admin_order_detail", order_id=order.id))
 
     order.status = new_status
+    order.tracking_number = tracking_number or None
+    order.fulfillment_notes = fulfillment_notes
+    if new_status == "shipped" and not order.dispatched_at:
+        order.dispatched_at = datetime.now(timezone.utc)
+    if new_status == "completed" and not order.delivered_at:
+        order.delivered_at = datetime.now(timezone.utc)
+
     db.session.commit()
-    flash(f"Order {order.id} status updated.", "success")
-    return redirect(url_for("admin_orders"))
+    flash(f"Order {order.id} updated.", "success")
+    return redirect(url_for("admin_order_detail", order_id=order.id))
+
+
+@app.route("/admin")
+@login_required
+@admin_required
+def admin_dashboard():
+    status_counts = {
+        status: Order.query.filter_by(status=status).count()
+        for status in ["pending", "assigned", "shipped", "completed", "cancelled"]
+    }
+    unassigned_tags = Tag.query.filter_by(user_id=None).count()
+    recent_orders = Order.query.order_by(Order.created_at.desc()).limit(8).all()
+    recent_tags = Tag.query.order_by(Tag.id.desc()).limit(8).all()
+    return render_template(
+        "admin_dashboard.html",
+        status_counts=status_counts,
+        unassigned_tags=unassigned_tags,
+        recent_orders=recent_orders,
+        recent_tags=recent_tags,
+    )
+
+
+@app.route("/admin/orders/<int:order_id>")
+@login_required
+@admin_required
+def admin_order_detail(order_id):
+    order = Order.query.get_or_404(order_id)
+    return render_template("admin_order_detail.html", order=order)
 
 
 # ---------------------------------------------------------------------------

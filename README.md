@@ -42,7 +42,7 @@ pip install -r requirements.txt
 
 # 2. Set up environment
 cp .env.example .env
-# Edit .env with your values (or leave DATABASE_URL blank for SQLite)
+# Edit .env with your values (or leave DATABASE_URL blank to use SQLite at instance/safe_tag_dev.db)
 
 # 3. Initialize database
 .venv\Scripts\python.exe -m flask --app app db init

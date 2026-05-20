@@ -34,18 +34,10 @@
           <td class="px-6 py-4 whitespace-nowrap text-sm">
             <span class="inline-flex items-center rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold text-gray-700">{{ order.status }}</span>
           </td>
-          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ order.tags|length }}</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ order.tags.count() }}</td>
           <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ order.updated_at.strftime('%Y-%m-%d %H:%M') if order.updated_at else order.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
-          <td class="px-6 py-4 whitespace-nowrap text-sm">
-            <form action="{{ url_for('admin_update_order_status', order_id=order.id) }}" method="POST" class="space-y-2">
-              {{ csrf_token() }}
-              <select name="status" class="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm outline-none focus:border-teal">
-                {% for status in ['pending','assigned','shipped','completed','cancelled'] %}
-                  <option value="{{ status }}" {% if order.status == status %}selected{% endif %}>{{ status|capitalize }}</option>
-                {% endfor %}
-              </select>
-              <button type="submit" class="w-full bg-teal text-white rounded-xl py-2 text-sm font-semibold hover:bg-teal-dark">Update</button>
-            </form>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-teal font-medium">
+            <a href="{{ url_for('admin_order_detail', order_id=order.id) }}">View</a>
           </td>
         </tr>
         {% endfor %}

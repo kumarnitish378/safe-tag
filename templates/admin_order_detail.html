@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% block title %}Order #{{ order.id }} — Safe-Tag Admin{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto px-4 py-10">
+  <div class="flex items-center justify-between mb-8 gap-4">
+    <div>
+      <p class="text-sm text-gray-500">Order #{{ order.id }}</p>
+      <h1 class="font-display font-bold text-3xl text-gray-900">Order details</h1>
+      <p class="text-gray-400 mt-1">Manage fulfillment, tracking, and assigned tags.</p>
+    </div>
+    <a href="{{ url_for('admin_orders') }}" class="text-teal font-semibold hover:underline">Back to orders</a>
+  </div>
+
+  <div class="grid gap-6 lg:grid-cols-2 mb-8">
+    <div class="bg-white rounded-3xl border border-gray-100 p-6 shadow-sm">
+      <h2 class="font-semibold text-lg text-gray-900 mb-4">Order summary</h2>
+      <dl class="space-y-4 text-sm text-gray-600">
+        <div>
+          <dt class="font-medium text-gray-800">Customer</dt>
+          <dd>{{ order.user.email }}</dd>
+        </div>
+        <div>
+          <dt class="font-medium text-gray-800">Pack</dt>
+          <dd>{{ order.pack }}</dd>
+        </div>
+        <div>
+          <dt class="font-medium text-gray-800">Amount</dt>
+          <dd>₹{{ '%.2f'|format(order.amount / 100) }}</dd>
+        </div>
+        <div>
+          <dt class="font-medium text-gray-800">Created</dt>
+          <dd>{{ order.created_at.strftime('%d %b %Y %H:%M') }}</dd>
+        </div>
+        <div>
+          <dt class="font-medium text-gray-800">Status</dt>
+          <dd class="uppercase tracking-wide font-semibold text-sm">{{ order.status }}</dd>
+        </div>
+        {% if order.tracking_number %}
+        <div>
+          <dt class="font-medium text-gray-800">Tracking</dt>
+          <dd>{{ order.tracking_number }}</dd>
+        </div>
+        {% endif %}
+        {% if order.dispatched_at %}
+        <div>
+          <dt class="font-medium text-gray-800">Dispatched</dt>
+          <dd>{{ order.dispatched_at.strftime('%d %b %Y %H:%M') }}</dd>
+        </div>
+        {% endif %}
+        {% if order.delivered_at %}
+        <div>
+          <dt class="font-medium text-gray-800">Delivered</dt>
+          <dd>{{ order.delivered_at.strftime('%d %b %Y %H:%M') }}</dd>
+        </div>
+        {% endif %}
+      </dl>
+    </div>
+
+    <div class="bg-white rounded-3xl border border-gray-100 p-6 shadow-sm">
+      <h2 class="font-semibold text-lg text-gray-900 mb-4">Assigned tags</h2>
+      {% if order.tags.count() %}
+      <ul class="space-y-3 text-sm text-gray-700">
+        {% for tag in order.tags %}
+        <li class="rounded-2xl border border-gray-100 p-4 bg-gray-50 flex items-center justify-between gap-3">
+          <div>
+            <p class="font-medium text-gray-900">{{ tag.serial_number }}</p>
+            <p class="text-gray-500 text-xs">Slug: {{ tag.short_url_slug }}</p>
+          </div>
+          {% if tag.is_active %}
+          <span class="text-xs uppercase tracking-wide font-semibold text-green-700">Active</span>
+          {% else %}
+          <span class="text-xs uppercase tracking-wide font-semibold text-yellow-700">Pending</span>
+          {% endif %}
+        </li>
+        {% endfor %}
+      </ul>
+      {% else %}
+      <p class="text-sm text-gray-500">No tags assigned yet.</p>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="bg-white rounded-3xl border border-gray-100 p-6 shadow-sm">
+    <h2 class="font-semibold text-lg text-gray-900 mb-4">Fulfillment</h2>
+    <form action="{{ url_for('admin_update_order_status', order_id=order.id) }}" method="POST" class="space-y-6">
+      {{ csrf_token() }}
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Order status</label>
+        <select name="status" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-teal">
+          {% for status in ['pending','assigned','shipped','completed','cancelled'] %}
+          <option value="{{ status }}" {% if order.status == status %}selected{% endif %}>{{ status|capitalize }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Tracking number</label>
+        <input name="tracking_number" value="{{ order.tracking_number or '' }}" type="text" placeholder="Enter courier tracking ID"
+               class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-teal">
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Fulfillment notes</label>
+        <textarea name="fulfillment_notes" rows="4"
+                  class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-teal resize-none">{{ order.fulfillment_notes or '' }}</textarea>
+      </div>
+      <button type="submit" class="bg-teal text-white rounded-2xl px-6 py-3 text-sm font-semibold hover:bg-teal-dark">Save updates</button>
+    </form>
+  </div>
+</div>
+{% endblock %}
