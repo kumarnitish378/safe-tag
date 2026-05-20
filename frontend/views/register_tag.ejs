@@ -1,0 +1,39 @@
+<%- include('layout/header', { title: 'Register SafeTag', hideNav: true }) %>
+<main class="mx-auto max-w-md px-4 py-6">
+  <div class="rounded-t-2xl bg-teal p-4 text-white"><b class="font-display">SafeTag</b></div>
+  <section class="rounded-b-2xl bg-white p-5 shadow-sm">
+    <h1 class="font-display text-2xl font-bold">Register Your SafeTag</h1>
+    <p class="mt-2 font-mono text-sm text-teal"><%= tag_id %></p>
+    <div class="my-5 flex justify-between text-xs font-bold text-slate-500"><span>Personal Info</span><span>Contact Info</span><span>Medical Info</span></div>
+    <% errors.forEach(e => { %><div class="mb-3 rounded bg-red-50 p-3 text-sm text-red-700"><%= e %></div><% }) %>
+    <form method="post" class="space-y-4">
+      <h2 class="font-display font-bold text-navy">Personal Info</h2>
+      <input name="name" required minlength="2" maxlength="100" value="<%= values.name || '' %>" placeholder="Full Name *" class="w-full rounded-xl border p-3">
+      <input name="age" required min="1" max="120" type="number" value="<%= values.age || '' %>" placeholder="Age *" class="w-full rounded-xl border p-3">
+      <input name="parent_name" value="<%= values.parent_name || '' %>" placeholder="Parent / Guardian Name" class="w-full rounded-xl border p-3">
+      <select name="blood_group" class="w-full rounded-xl border p-3">
+        <% ['Unknown','A+','A-','B+','B-','O+','O-','AB+','AB-'].forEach(bg => { %><option <%= values.blood_group === bg ? 'selected' : '' %>><%= bg %></option><% }) %>
+      </select>
+      <textarea name="address" maxlength="500" rows="3" placeholder="Address" class="w-full rounded-xl border p-3"><%= values.address || '' %></textarea>
+      <div class="rounded-xl border p-3">
+        <p class="text-sm font-bold">Map Location</p>
+        <button type="button" onclick="navigator.geolocation && navigator.geolocation.getCurrentPosition(p=>{latitude.value=p.coords.latitude;longitude.value=p.coords.longitude;loc.innerText='Pinned: '+p.coords.latitude.toFixed(4)+', '+p.coords.longitude.toFixed(4)})" class="mt-2 rounded-lg bg-slate-100 px-3 py-2 text-sm font-bold">Pin your location</button>
+        <p id="loc" class="mt-2 text-xs text-slate-500"></p>
+        <input id="latitude" name="latitude" type="hidden" value="<%= values.latitude || '' %>"><input id="longitude" name="longitude" type="hidden" value="<%= values.longitude || '' %>">
+      </div>
+      <h2 class="font-display font-bold text-navy">Contact Info</h2>
+      <input name="mobile_primary" required pattern="[6-9][0-9]{9}" value="<%= values.mobile_primary || '' %>" placeholder="+91 Mobile Number *" class="w-full rounded-xl border p-3">
+      <input name="mobile_secondary" pattern="[6-9][0-9]{9}" value="<%= values.mobile_secondary || '' %>" placeholder="Emergency Contact 2" class="w-full rounded-xl border p-3">
+      <input name="email" type="email" value="<%= values.email || '' %>" placeholder="Email Address - for future OTP verification" class="w-full rounded-xl border p-3">
+      <h2 class="font-display font-bold text-navy">Medical Info</h2>
+      <textarea name="medical_conditions" maxlength="500" rows="2" placeholder="e.g. Epilepsy, Diabetes" class="w-full rounded-xl border p-3"><%= values.medical_conditions || '' %></textarea>
+      <textarea name="allergies" maxlength="500" rows="2" placeholder="e.g. Penicillin, Peanuts" class="w-full rounded-xl border p-3"><%= values.allergies || '' %></textarea>
+      <textarea name="medications" maxlength="500" rows="2" placeholder="Medications" class="w-full rounded-xl border p-3"><%= values.medications || '' %></textarea>
+      <textarea name="custom_message" maxlength="300" rows="2" placeholder="Note to rescuer" class="w-full rounded-xl border p-3"><%= values.custom_message || '' %></textarea>
+      <input name="owner_whatsapp" pattern="[6-9][0-9]{9}" value="<%= values.owner_whatsapp || '' %>" placeholder="Owner WhatsApp for scan alerts" class="w-full rounded-xl border p-3">
+      <button class="w-full rounded-xl bg-teal py-4 font-display font-bold text-white">Activate My SafeTag ✓</button>
+      <p class="text-center text-xs text-slate-500">Your data is only shown when someone scans your physical tag.</p>
+    </form>
+  </section>
+</main>
+<%- include('layout/footer') %>

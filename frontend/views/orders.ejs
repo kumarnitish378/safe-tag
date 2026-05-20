@@ -1,0 +1,2 @@
+<%- include('layout/header', { title: 'My Orders' }) %>
+<main class="mx-auto max-w-5xl px-4 py-10"><h1 class="font-display text-3xl font-bold">My Orders</h1><div class="mt-6 space-y-3"><% orders.forEach(o=>{ %><div class="rounded-xl bg-white p-4 shadow-sm">#<%= o.id %> · <%= o.product_name %> · ₹<%= (o.amount/100).toFixed(0) %> · <b><%= o.status %></b> <% if(o.tracking_id){ %>Tracking: <%= o.tracking_id %><% } %></div><% }) %></div></main><%- include('layout/footer') %>

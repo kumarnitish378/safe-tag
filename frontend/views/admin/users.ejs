@@ -1,0 +1,1 @@
+<%- include('../layout/header', { title: 'Users' }) %><main class="mx-auto max-w-5xl px-4 py-10"><h1 class="font-display text-3xl font-bold">Customers</h1><div class="mt-6 space-y-3"><% users.forEach(u=>{ %><div class="rounded bg-white p-4"><%= u.email %> · Tags: <%= u.tag_count %> · Orders: <%= u.order_count %></div><% }) %></div></main><%- include('../layout/footer') %>

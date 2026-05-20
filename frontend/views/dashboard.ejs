@@ -1,0 +1,31 @@
+<%- include('layout/header', { title: 'My SafeTags' }) %>
+<main class="mx-auto max-w-6xl px-4 py-10">
+  <div class="flex flex-wrap items-end justify-between gap-4">
+    <div><h1 class="font-display text-3xl font-bold">My SafeTags</h1><p class="mt-1 text-slate-500">Welcome, <%= user.email %></p></div>
+    <div class="flex gap-3"><a href="/store" class="rounded-xl bg-orange px-4 py-3 font-bold text-white">Buy More Tags</a></div>
+  </div>
+  <div class="mt-8 grid gap-4 md:grid-cols-3">
+    <div class="rounded-2xl bg-white p-5 shadow-sm"><p class="text-sm text-slate-500">Total Tags</p><p class="font-display text-4xl font-bold"><%= tags.length %></p></div>
+    <div class="rounded-2xl bg-white p-5 shadow-sm"><p class="text-sm text-slate-500">Active</p><p class="font-display text-4xl font-bold text-teal"><%= tags.filter(t=>t.is_active).length %></p></div>
+    <div class="rounded-2xl bg-white p-5 shadow-sm"><p class="text-sm text-slate-500">Pending Activation</p><p class="font-display text-4xl font-bold text-orange"><%= tags.filter(t=>!t.is_active).length %></p></div>
+  </div>
+  <% if (!tags.length) { %>
+    <section class="mt-8 rounded-3xl bg-white p-10 text-center shadow-sm"><p class="text-5xl">🏷️</p><h2 class="mt-4 font-display text-2xl font-bold">No tags yet</h2><div class="mt-6 flex justify-center gap-3"><a href="/store" class="rounded-xl bg-teal px-4 py-3 font-bold text-white">Buy a Tag</a><a href="mailto:support@safe-tag.in" class="rounded-xl border px-4 py-3 font-bold">Already have one? Contact Support</a></div></section>
+  <% } %>
+  <div class="mt-8 grid gap-5 md:grid-cols-2">
+    <% tags.forEach(tag => { %>
+      <article class="rounded-2xl bg-white p-5 shadow-sm">
+        <div class="flex items-start justify-between"><p class="font-mono font-bold text-navy"><%= tag.tag_id %></p><span class="rounded-full px-3 py-1 text-xs font-bold <%= tag.is_active ? 'bg-teal/10 text-teal' : 'bg-orange/10 text-orange' %>"><%= tag.is_active ? 'Active' : 'Pending' %></span></div>
+        <p class="mt-4 text-3xl">👤</p>
+        <h3 class="mt-2 font-display text-xl font-bold"><%= tag.profile ? tag.profile.name : 'No profile yet' %></h3>
+        <p class="mt-1 text-sm text-slate-500">Emergency contact: <%= tag.profile ? '+91'+tag.profile.mobile_primary : 'Not set' %></p>
+        <div class="mt-3 flex items-center gap-2 rounded bg-slate-50 p-2 text-xs"><span class="truncate">/<%= tag.tag_id %>/<%= tag.security_key %></span></div>
+        <div class="mt-5 flex flex-wrap gap-2">
+          <% if (tag.is_active) { %><a href="/profile/edit/<%= tag.tag_id %>" class="rounded-lg bg-teal px-3 py-2 text-sm font-bold text-white">Edit Profile</a><a href="/emergency/<%= tag.tag_id %>" class="rounded-lg border px-3 py-2 text-sm font-bold">Preview</a><% } %>
+          <a href="/qr/<%= tag.tag_id %>" class="rounded-lg border px-3 py-2 text-sm font-bold">QR Download</a>
+        </div>
+      </article>
+    <% }) %>
+  </div>
+</main>
+<%- include('layout/footer') %>

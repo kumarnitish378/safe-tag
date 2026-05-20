@@ -1,0 +1,59 @@
+<%- include('layout/header', { title: 'SafeTag - Scan. Know. Save a Life.' }) %>
+<section class="bg-gradient-to-br from-navy to-slate-900 text-white">
+  <div class="mx-auto max-w-6xl px-4 py-20">
+    <h1 class="max-w-4xl font-display text-5xl font-extrabold leading-tight md:text-6xl">Your loved ones can't always speak. SafeTag speaks for them.</h1>
+    <p class="mt-6 max-w-2xl text-xl text-slate-200">One scan opens emergency contacts, blood group, medical notes, and location help in under 3 seconds.</p>
+    <div class="mt-8 flex flex-wrap gap-4">
+      <a href="/store" class="rounded-full bg-orange px-6 py-3 font-bold text-white">Buy Now</a>
+      <a href="/emergency/TESTACT1" class="rounded-full border border-white px-6 py-3 font-bold">See Demo</a>
+    </div>
+    <div class="mt-12 grid gap-4 sm:grid-cols-3">
+      <div><p class="font-display text-4xl font-bold">10K+</p><p class="text-slate-300">Tags Activated</p></div>
+      <div><p class="font-display text-4xl font-bold">2K+</p><p class="text-slate-300">Happy Reunions</p></div>
+      <div><p class="font-display text-4xl font-bold">&lt;3s</p><p class="text-slate-300">Avg Profile Load</p></div>
+    </div>
+  </div>
+</section>
+<section id="how" class="mx-auto max-w-6xl px-4 py-16">
+  <h2 class="font-display text-3xl font-bold">How it Works</h2>
+  <div class="mt-8 grid gap-4 md:grid-cols-4">
+    <% [['1','Buy & Attach','Order a QR + RFID/NFC tag.'],['2','Scan','Any phone camera opens the URL.'],['3','Profile Opens','Emergency details appear instantly.'],['4','Call or WhatsApp','Saver contacts family with location.']].forEach(step => { %>
+      <div class="rounded-2xl bg-white p-6 shadow-sm"><p class="text-3xl"><%= step[0] %></p><h3 class="mt-4 font-display font-bold"><%= step[1] %></h3><p class="mt-2 text-sm text-slate-500"><%= step[2] %></p></div>
+    <% }) %>
+  </div>
+</section>
+<section class="bg-white py-16">
+  <div class="mx-auto max-w-6xl px-4">
+    <h2 class="font-display text-3xl font-bold">Who is it for?</h2>
+    <div class="mt-8 grid gap-4 md:grid-cols-3">
+      <% [['Children','School trips and crowded stations'],['Elderly','Dementia and medical needs'],['Travelers','Bags, passports, emergency contacts'],['Pets','Fast owner callback'],['Athletes','Cycling, running, adventure'],['Schools','Bulk identity safety programs']].forEach(item => { %>
+        <div class="rounded-2xl border p-5"><h3 class="font-display font-bold text-teal"><%= item[0] %></h3><p class="mt-2 text-sm text-slate-500"><%= item[1] %></p></div>
+      <% }) %>
+    </div>
+  </div>
+</section>
+<section class="mx-auto max-w-6xl px-4 py-16">
+  <h2 class="font-display text-3xl font-bold">Shop SafeTags</h2>
+  <div class="mt-8 grid gap-6 md:grid-cols-3">
+    <% products.slice(0,3).forEach(product => { %>
+      <a href="/store/<%= product.id %>" class="rounded-2xl bg-white p-5 shadow-sm">
+        <div class="mb-4 h-36 rounded-xl bg-teal/10"></div>
+        <h3 class="font-display font-bold"><%= product.name %></h3>
+        <p class="mt-2 font-bold text-teal">₹<%= (product.price/100).toFixed(0) %></p>
+      </a>
+    <% }) %>
+  </div>
+</section>
+<section class="bg-navy py-16 text-white">
+  <div class="mx-auto max-w-4xl px-4">
+    <p class="text-xl leading-9">At the Kumbh Mela, railway stations, schools, hospitals, and busy Indian streets, minutes matter. SafeTag gives a stranger the one thing they need to help: verified emergency information and a direct call button.</p>
+    <p class="mt-6 font-display text-2xl font-bold">SafeTag. Because emergencies don't wait.</p>
+  </div>
+</section>
+<section id="faq" class="mx-auto max-w-4xl px-4 py-16">
+  <h2 class="font-display text-3xl font-bold">FAQ</h2>
+  <% ['Need an app to scan? No, any phone camera works.','Can I update info after buying? Yes, from your dashboard.','What if QR gets scratched? RFID/NFC still opens the same URL.','Bulk orders? Manufacturers and schools can partner with us.','Is my data private? Data is only shown when the physical tag URL is scanned.'].forEach(q => { %>
+    <div class="mt-4 rounded-xl bg-white p-5 shadow-sm"><%= q %></div>
+  <% }) %>
+</section>
+<%- include('layout/footer') %>

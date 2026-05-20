@@ -1,0 +1,43 @@
+<%- include('layout/header', { title: 'Emergency Profile - SafeTag', hideNav: true, hideFooter: true }) %>
+<main id="epage" data-tag-id="<%= tag.tag_id %>" data-api="<%= flaskApiUrl %>" class="mx-auto min-h-screen max-w-md bg-[#EAEFF4]">
+  <div class="flex items-center justify-between bg-teal px-4 py-3 text-white">
+    <div class="flex items-center gap-2"><span class="rounded-full bg-white px-2 py-1 font-display font-bold text-teal">ST</span><b>SafeTag India</b></div>
+    <div class="flex items-center gap-2 text-xs font-bold"><span class="h-2 w-2 rounded-full bg-green-300"></span> VERIFIED PROFILE</div>
+  </div>
+  <div class="bg-red-700 px-4 py-3 text-white">
+    <p class="font-display text-sm font-bold">⚠ EMERGENCY IDENTIFICATION CARD</p>
+    <p class="mt-1 font-mono text-xs text-red-100"><%= tag.tag_id %></p>
+  </div>
+  <section class="m-3 overflow-hidden rounded-xl bg-white shadow-sm">
+    <div class="bg-navy p-4 text-white">
+      <div class="flex items-center gap-4">
+        <div class="flex h-20 w-20 items-center justify-center overflow-hidden rounded-full border-4 border-orange bg-white/10 text-4xl">
+          <% if (profile.photo_url) { %><img src="<%= profile.photo_url %>" class="h-full w-full object-cover"><% } else { %>👤<% } %>
+        </div>
+        <div>
+          <h1 class="font-display text-2xl font-extrabold"><%= profile.name %></h1>
+          <p class="text-slate-300">Age: <%= profile.age %></p>
+          <span class="mt-2 inline-block rounded-full bg-orange/20 px-3 py-1 text-xs font-bold text-orange">VERIFIED</span>
+        </div>
+      </div>
+    </div>
+    <div class="divide-y">
+      <div class="flex items-center justify-between p-4"><span class="text-xs font-bold uppercase text-slate-400">Blood</span><span class="rounded-md bg-red-50 px-4 py-2 font-mono text-xl font-bold text-red-700"><%= profile.blood_group || 'Unknown' %></span></div>
+      <% if (profile.allergies) { %><div class="p-4"><p class="text-xs font-bold uppercase text-slate-400">Allergies</p><div class="mt-2 flex flex-wrap gap-2"><% profile.allergies.split(',').forEach(a => { %><span class="rounded-full bg-orange/10 px-3 py-1 text-sm font-bold text-orange"><%= a.trim() %></span><% }) %></div></div><% } %>
+      <% if (profile.medications) { %><div class="p-4"><b>Medications:</b> <%= profile.medications %></div><% } %>
+      <% if (profile.medical_conditions) { %><div class="p-4"><b>Medical Conditions:</b> <%= profile.medical_conditions %></div><% } %>
+      <% if (profile.parent_name) { %><div class="p-4"><b>Parent / Guardian:</b> <%= profile.parent_name %></div><% } %>
+      <% if (profile.address) { %><div class="p-4"><b>Address:</b> <%= profile.address %> <% if (profile.latitude && profile.longitude) { %><a class="text-teal underline" href="https://maps.google.com/?q=<%= profile.latitude %>,<%= profile.longitude %>">Map</a><% } %></div><% } %>
+    </div>
+  </section>
+  <% if (profile.custom_message) { %><section class="m-3 rounded-xl border-l-4 border-orange bg-white p-4"><p class="text-xs font-bold uppercase text-orange">Message from Family</p><p class="mt-2"><%= profile.custom_message %></p></section><% } %>
+  <section class="m-3 space-y-3 rounded-xl bg-white p-4 shadow-sm">
+    <a class="block rounded-xl bg-green-500 py-4 text-center text-lg font-extrabold text-white" href="tel:+91<%= profile.mobile_primary %>">Call Now — +91<%= profile.mobile_primary %></a>
+    <% if (profile.mobile_secondary) { %><a class="block rounded-xl border py-3 text-center font-bold" href="tel:+91<%= profile.mobile_secondary %>">Second Contact — +91<%= profile.mobile_secondary %></a><% } %>
+    <a id="wa-btn" class="block rounded-xl bg-green-800 py-4 text-center font-extrabold text-white" target="_blank" href="https://wa.me/91<%= profile.owner_whatsapp || profile.mobile_primary %>?text=Hello%2C%20I%20found%20someone%20with%20a%20SafeTag.">Send WhatsApp Location</a>
+  </section>
+  <div id="loc-bar" class="m-3 hidden rounded-xl bg-green-50 p-3 text-sm font-bold text-green-700">Owner notified with your location</div>
+  <footer class="py-6 text-center text-xs text-slate-500">Powered by SafeTag · safe-tag.in<br><a class="font-bold text-teal" href="/store">Protect your family → Get SafeTag ₹149</a></footer>
+</main>
+<script src="/js/emergency.js"></script>
+<%- include('layout/footer', { hideFooter: true }) %>

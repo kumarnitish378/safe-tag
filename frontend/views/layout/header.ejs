@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%= title || 'SafeTag' %></title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: { teal: '#0D9488', navy: '#0A2342', orange: '#F97316' },
+          fontFamily: {
+            display: ['Sora', 'sans-serif'],
+            body: ['DM Sans', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace']
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>body{font-family:'DM Sans',sans-serif}.font-display{font-family:'Sora',sans-serif}.font-mono{font-family:'JetBrains Mono',monospace}</style>
+</head>
+<body class="bg-slate-50 text-slate-800">
+<% if (typeof hideNav === 'undefined' || !hideNav) { %>
+  <nav class="sticky top-0 z-40 border-b border-slate-200 bg-white/95 backdrop-blur">
+    <div class="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
+      <a href="/" class="flex items-center gap-2">
+        <span class="flex h-9 w-9 items-center justify-center rounded-full bg-teal font-display font-bold text-white">ST</span>
+        <span class="font-display text-lg font-bold text-teal">SafeTag</span>
+      </a>
+      <div class="hidden items-center gap-5 text-sm font-semibold md:flex">
+        <a href="/store" class="hover:text-teal">Store</a>
+        <a href="/#how" class="hover:text-teal">How it Works</a>
+        <a href="/#faq" class="hover:text-teal">FAQ</a>
+        <% if (user) { %><a href="/dashboard" class="hover:text-teal">Dashboard</a><% } %>
+        <% if (manufacturer) { %><a href="/manufacturer/dashboard" class="hover:text-teal">Manufacturer</a><% } %>
+        <% if (admin) { %><a href="/admin" class="hover:text-teal">Admin</a><% } %>
+      </div>
+      <div class="flex items-center gap-3">
+        <% if (user) { %>
+          <form action="/logout" method="post"><button class="rounded-full border px-4 py-2 text-sm font-semibold">Logout</button></form>
+        <% } else { %>
+          <a href="/login" class="text-sm font-semibold">Login</a>
+          <a href="/store" class="rounded-full bg-orange px-4 py-2 text-sm font-bold text-white">Get Your Tag</a>
+        <% } %>
+      </div>
+    </div>
+  </nav>
+<% } %>
+<div class="mx-auto max-w-4xl px-4 pt-4">
+  <% for (const type of ['success','error','info']) { %>
+    <% (flash[type] || []).forEach(function(message){ %>
+      <div class="mb-2 rounded-lg border px-4 py-3 text-sm font-semibold <%= type === 'error' ? 'border-red-200 bg-red-50 text-red-800' : 'border-teal/20 bg-teal/10 text-teal' %>"><%= message %></div>
+    <% }) %>
+  <% } %>
+</div>

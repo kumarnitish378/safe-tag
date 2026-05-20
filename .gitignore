@@ -8,6 +8,8 @@ tags_batch.csv
 *.egg-info/
 dist/
 build/
+node_modules/
+frontend/node_modules/
 .venv/
 venv/
 
@@ -19,3 +21,4 @@ bridge.log
 ngrok
 ngrok-v3-stable-linux-arm64.tgz
 test.txt
+.dev-logs/

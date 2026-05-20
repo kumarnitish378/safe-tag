@@ -1,57 +1,49 @@
-# Safe-Tag Production Readiness
+# SafeTag Production Readiness
 
-This document captures the current state of the project, the Phase 1 changes just applied, and the remaining Phase 2/3 work needed for production.
+Current architecture follows SDD v3.0:
 
-## Current status
+```text
+Browser -> Node.js/Express/EJS -> Flask REST API -> Database
+```
 
-- Flask application skeleton exists with authentication, tag activation, profile setup, public emergency view, mock payments, and alert stubs.
-- The app now includes server-side validation for:
-  - registration
-  - login
-  - tag activation
-  - profile setup/edit
-- CSRF protection is enabled for all server-side HTML forms using `Flask-WTF`.
-- Session cookies are hardened with `HttpOnly`, `SameSite=Lax`, and optional `SESSION_COOKIE_SECURE` via environment variable.
-- All forms in `register.html`, `login.html`, `activate.html`, and `setup_profile.html` now include `{{ csrf_token() }}`.
+## Implemented
 
-## Phase 1 — Implemented
+- [x] Flask backend under `backend/`
+- [x] Flask routes return JSON only
+- [x] SQLAlchemy models from SDD Section 3
+- [x] API route surface from SDD Section 8B
+- [x] Factory tag generator
+- [x] Seed data from SDD Section 13
+- [x] Express frontend under `frontend/`
+- [x] EJS templates for all SDD pages
+- [x] Emergency page geolocation script
+- [x] Rate limits on scan and location alert APIs
+- [x] Dummy payment mode and Razorpay signature verification path
 
-- [x] Form-level CSRF protection for user-facing POST routes
-- [x] Server-side validation for user input and phone normalization
-- [x] Profile editing flow supported via `/setup-profile/<tag_id>` for active tags
-- [x] Improved activation validation for serial numbers
-- [x] Added `Flask-WTF` to `requirements.txt`
-- [x] Added documentation and production checklist guidance
+## Remaining Hardening
 
-## Phase 2 — Operational readiness (remaining)
+- [ ] Replace in-memory token store with persistent server-side session/token storage
+- [ ] Add production Redis storage for Flask-Limiter
+- [ ] Add full form-level CSRF token exchange between Node and Flask if Flask API CSRF enforcement is required in production
+- [ ] Configure real Razorpay credentials and set `DUMMY_PAYMENT=false`
+- [ ] Configure Twilio WhatsApp credentials
+- [ ] Configure Cloudinary upload handling for images
+- [ ] Add automated tests around all API routes and critical EJS flows
 
-- [x] Add an admin dashboard to manage orders, inventory, and fulfillment
-- [x] Build an order model and purchase history tracking
-- [ ] Add shipment / dispatch state for purchased tags
-- [ ] Add QR generation and tag printing workflow in the admin area
-- [ ] Add event/reporting logs for alerts, failed payments, and abuse
-- [ ] Integrate real WhatsApp dispatch with Twilio or Meta Cloud API
+## Deployment
 
-## Migration setup
+Backend:
 
-- [x] Added Flask-Migrate integration
-- [x] Created `migrations/` repository and initial migration script
-- [x] Stamped the current SQLite schema to the latest migration revision
-- [x] Local dev SQLite database is stored at `instance/safe_tag_dev.db`
-- [x] Added CLI admin user creation via `flask --app app create-admin`
-- [x] Added development seed script support for an admin user
+```text
+Root: /backend
+Build: pip install -r requirements.txt && flask db upgrade
+Start: gunicorn app:app --workers 2 --bind 0.0.0.0:$PORT
+```
 
-## Phase 3 — Go-live production roll-out (remaining)
+Frontend:
 
-- [ ] Replace mock payment flow with Razorpay order creation and signature verification
-- [ ] Configure and secure Render deployment with production database
-- [ ] Disable Flask debug mode in production
-- [ ] Add monitoring, error reporting, and background job handling if needed
-- [ ] Add email verification or password reset flows for customer accounts
-
-## Deployment notes
-
-- `Procfile` is ready for Render: `gunicorn app:app --workers 2 --timeout 60 --bind 0.0.0.0:$PORT`
-- Use `.env.example` as a template for environment variables.
-- In production, set `SESSION_COOKIE_SECURE=true` when using HTTPS.
-- A PostgreSQL `DATABASE_URL` should be configured for live deployment.
+```text
+Root: /frontend
+Build: npm install
+Start: node server.js
+```
