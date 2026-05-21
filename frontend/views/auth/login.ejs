@@ -1,0 +1,28 @@
+<%- include('../layout/_head') %>
+
+<section class="section">
+  <div class="section-inner max-w-md">
+    <div class="card p-6">
+      <h1 class="text-2xl font-bold mb-1">Welcome back</h1>
+      <p class="text-sm text-slate-500 mb-5">Sign in to manage your SafeTags.</p>
+
+      <% if (errors._form) { %><div class="flash flash-error">⚠️ <%= errors._form %></div><% } %>
+
+      <form method="POST" action="/login" class="space-y-4">
+        <input type="hidden" name="next" value="<%= next || '/dashboard' %>" />
+        <div>
+          <label class="label">Email</label>
+          <input class="input" type="email" name="email" required value="<%= (values.email||'') %>" />
+        </div>
+        <div>
+          <label class="label">Password</label>
+          <input class="input" type="password" name="password" required />
+        </div>
+        <button class="btn-brand w-full justify-center">Sign in</button>
+      </form>
+      <p class="text-sm text-slate-500 mt-5 text-center">New to SafeTag? <a class="text-brand font-semibold" href="/register">Create an account</a>.</p>
+    </div>
+  </div>
+</section>
+
+<%- include('../layout/_foot') %>

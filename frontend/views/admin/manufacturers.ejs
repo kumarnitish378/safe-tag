@@ -1,0 +1,41 @@
+<%- include('../layout/_head') %>
+
+<section class="section">
+  <div class="section-inner">
+    <a href="/admin" class="text-sm text-brand font-semibold">← Admin dashboard</a>
+    <h1 class="text-3xl font-bold mt-2 mb-6">Manufacturers</h1>
+
+    <div class="card overflow-hidden">
+      <table class="table">
+        <thead><tr><th>#</th><th>Business</th><th>Email</th><th>Mobile</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody>
+          <% if (!manufacturers.length) { %>
+            <tr><td colspan="6" class="text-center py-6 text-slate-500">No manufacturers yet.</td></tr>
+          <% } else { manufacturers.forEach(function(m){ %>
+            <tr>
+              <td class="mono">#<%= m.id %></td>
+              <td><strong><%= m.business_name %></strong></td>
+              <td><%= m.email %></td>
+              <td><%= m.mobile %></td>
+              <td>
+                <% if (m.is_blocked) { %><span class="pill pill-danger">Blocked</span>
+                <% } else if (m.is_approved) { %><span class="pill pill-success">Approved</span>
+                <% } else { %><span class="pill pill-warning">Pending</span><% } %>
+              </td>
+              <td class="flex gap-2">
+                <% if (!m.is_approved) { %>
+                  <form method="POST" action="/admin/manufacturers/<%= m.id %>/approve"><button class="btn-brand text-xs py-1 px-2">Approve</button></form>
+                <% } %>
+                <% if (!m.is_blocked) { %>
+                  <form method="POST" action="/admin/manufacturers/<%= m.id %>/block"><button class="btn-outline text-xs py-1 px-2">Block</button></form>
+                <% } %>
+              </td>
+            </tr>
+          <% }); } %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<%- include('../layout/_foot') %>

@@ -1,0 +1,149 @@
+<%- include('layout/_head', { hideNav: true }) %>
+
+<div class="max-w-md mx-auto px-4 py-6">
+  <!-- Brand header -->
+  <div class="bg-brand text-white rounded-cardLg p-4 flex items-center gap-3">
+    <span class="w-10 h-10 rounded-full bg-white text-brand font-bold flex items-center justify-center">ST</span>
+    <div>
+      <div class="font-semibold leading-none">Register Your SafeTag</div>
+      <div class="text-xs opacity-90">Tag ID <span class="mono"><%= tag_id %></span></div>
+    </div>
+  </div>
+
+  <!-- Stepper -->
+  <div class="flex items-center mt-6 mb-4 px-2">
+    <div class="stepper-step"><div class="stepper-bubble active">1</div><div class="stepper-label">Personal</div></div>
+    <div class="stepper-line"></div>
+    <div class="stepper-step"><div class="stepper-bubble active">2</div><div class="stepper-label">Contact</div></div>
+    <div class="stepper-line"></div>
+    <div class="stepper-step"><div class="stepper-bubble active">3</div><div class="stepper-label">Medical</div></div>
+  </div>
+
+  <% if (errors._form) { %><div class="flash flash-error">⚠️ <%= errors._form %></div><% } %>
+
+  <form method="POST" action="/register/<%= tag_id %>" class="space-y-5">
+
+    <!-- Personal -->
+    <div class="card p-5 space-y-4">
+      <h2 class="font-semibold">Personal Info</h2>
+      <div>
+        <label class="label">Full Name *</label>
+        <input class="input" name="name" required maxlength="100" value="<%= (values.name||'') %>" />
+        <% if (errors.name) { %><div class="field-error"><%= errors.name %></div><% } %>
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="label">Age *</label>
+          <input class="input" type="number" min="1" max="120" name="age" required value="<%= (values.age||'') %>" />
+          <% if (errors.age) { %><div class="field-error"><%= errors.age %></div><% } %>
+        </div>
+        <div>
+          <label class="label">Blood Group</label>
+          <select class="input" name="blood_group">
+            <option value="">—</option>
+            <% ['A+','A-','B+','B-','O+','O-','AB+','AB-','Unknown'].forEach(function(b){ %>
+              <option <%= values.blood_group===b?'selected':'' %>><%= b %></option>
+            <% }); %>
+          </select>
+        </div>
+      </div>
+      <div>
+        <label class="label">Parent / Guardian Name</label>
+        <input class="input" name="parent_name" maxlength="100" value="<%= (values.parent_name||'') %>" />
+      </div>
+      <div>
+        <label class="label">Category</label>
+        <select class="input" name="category">
+          <option value="">—</option>
+          <% ['ADULT','CHILD','ELDERLY','TRAVELER','PET'].forEach(function(c){ %>
+            <option <%= values.category===c?'selected':'' %>><%= c %></option>
+          <% }); %>
+        </select>
+      </div>
+    </div>
+
+    <!-- Contact -->
+    <div class="card p-5 space-y-4">
+      <h2 class="font-semibold">Contact</h2>
+      <div>
+        <label class="label">Address</label>
+        <textarea class="input" name="address" rows="3" maxlength="500"><%= (values.address||'') %></textarea>
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="label">Latitude</label>
+          <input class="input mono text-sm" name="latitude" value="<%= (values.latitude||'') %>" placeholder="optional" />
+        </div>
+        <div>
+          <label class="label">Longitude</label>
+          <input class="input mono text-sm" name="longitude" value="<%= (values.longitude||'') %>" placeholder="optional" />
+        </div>
+      </div>
+      <button type="button" id="pinBtn" class="btn-outline w-full justify-center">📍 Pin my current location</button>
+      <div>
+        <label class="label">Primary Mobile *</label>
+        <div class="flex">
+          <span class="px-3 py-2 bg-slate-100 rounded-l-card border border-slate-200 text-sm">+91</span>
+          <input class="input rounded-l-none" name="mobile_primary" required pattern="[6-9][0-9]{9}" value="<%= (values.mobile_primary||'') %>" />
+        </div>
+        <% if (errors.mobile_primary) { %><div class="field-error"><%= errors.mobile_primary %></div><% } %>
+      </div>
+      <div>
+        <label class="label">Emergency Contact 2</label>
+        <div class="flex">
+          <span class="px-3 py-2 bg-slate-100 rounded-l-card border border-slate-200 text-sm">+91</span>
+          <input class="input rounded-l-none" name="mobile_secondary" value="<%= (values.mobile_secondary||'') %>" />
+        </div>
+      </div>
+      <div>
+        <label class="label">Email</label>
+        <input class="input" name="email" type="email" value="<%= (values.email||'') %>" />
+        <p class="text-xs text-slate-500 mt-1">For future OTP verification.</p>
+      </div>
+    </div>
+
+    <!-- Medical -->
+    <div class="card p-5 space-y-4">
+      <h2 class="font-semibold">Medical Info</h2>
+      <div>
+        <label class="label">Medical Conditions</label>
+        <textarea class="input" name="medical_conditions" rows="2" placeholder="e.g. Epilepsy, Diabetes" maxlength="500"><%= (values.medical_conditions||'') %></textarea>
+      </div>
+      <div>
+        <label class="label">Allergies</label>
+        <textarea class="input" name="allergies" rows="2" placeholder="e.g. Penicillin, Peanuts" maxlength="500"><%= (values.allergies||'') %></textarea>
+      </div>
+      <div>
+        <label class="label">Medications</label>
+        <textarea class="input" name="medications" rows="2" maxlength="500"><%= (values.medications||'') %></textarea>
+      </div>
+      <div>
+        <label class="label">Note to Rescuer</label>
+        <textarea class="input" name="custom_message" rows="2" maxlength="300" placeholder="e.g. I am deaf, please call this number"><%= (values.custom_message||'') %></textarea>
+      </div>
+      <div>
+        <label class="label">Owner WhatsApp (for alerts)</label>
+        <div class="flex">
+          <span class="px-3 py-2 bg-slate-100 rounded-l-card border border-slate-200 text-sm">+91</span>
+          <input class="input rounded-l-none" name="owner_whatsapp" value="<%= (values.owner_whatsapp||'') %>" />
+        </div>
+        <p class="text-xs text-slate-500 mt-1">Receive a WhatsApp alert when your tag is scanned.</p>
+      </div>
+    </div>
+
+    <button type="submit" class="btn-brand w-full justify-center text-base py-3">Activate My SafeTag ✓</button>
+    <p class="text-xs text-center text-slate-500">Your data is only shown when someone scans your physical tag.</p>
+  </form>
+</div>
+
+<script>
+  document.getElementById('pinBtn').addEventListener('click', function(){
+    if (!navigator.geolocation) { alert('Geolocation not available'); return; }
+    navigator.geolocation.getCurrentPosition(function(p){
+      document.querySelector('input[name=latitude]').value = p.coords.latitude.toFixed(6);
+      document.querySelector('input[name=longitude]').value = p.coords.longitude.toFixed(6);
+    }, function(){ alert('Could not get your location'); });
+  });
+</script>
+
+<%- include('layout/_foot') %>

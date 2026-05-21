@@ -1,0 +1,43 @@
+<%- include('layout/_head') %>
+
+<section class="section">
+  <div class="section-inner max-w-md">
+    <div class="card p-6 text-center">
+      <h1 class="text-2xl font-bold mb-2">Complete payment</h1>
+      <p class="mb-6">Amount: <strong>₹<%= (amount/100).toFixed(2) %></strong></p>
+      <button id="payBtn" class="btn-brand w-full justify-center">Pay with Razorpay</button>
+      <p class="text-xs text-slate-500 mt-3">Order #<%= order_id %></p>
+    </div>
+  </div>
+</section>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+  document.getElementById('payBtn').addEventListener('click', function() {
+    const opts = {
+      key: <%- JSON.stringify(key_id) %>,
+      amount: <%- JSON.stringify(amount) %>,
+      currency: <%- JSON.stringify(currency) %>,
+      name: 'SafeTag',
+      description: 'SafeTag purchase',
+      order_id: <%- JSON.stringify(order_id) %>,
+      handler: function(resp) {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '/checkout/<%= product_id %>/verify';
+        ['razorpay_payment_id','razorpay_order_id','razorpay_signature'].forEach(function(k){
+          const i = document.createElement('input'); i.type='hidden'; i.name=k; i.value=resp[k]; form.appendChild(i);
+        });
+        ['quantity','shipping_address'].forEach(function(k){
+          const i = document.createElement('input'); i.type='hidden'; i.name=k; i.value=<%- JSON.stringify(quantity) %>+''; form.appendChild(i);
+        });
+        document.body.appendChild(form);
+        form.submit();
+      },
+      theme: { color: '#0D9488' }
+    };
+    new Razorpay(opts).open();
+  });
+</script>
+
+<%- include('layout/_foot') %>

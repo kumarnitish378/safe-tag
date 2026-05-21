@@ -1,0 +1,41 @@
+<%- include('layout/_head') %>
+
+<section class="section">
+  <div class="section-inner grid md:grid-cols-2 gap-10">
+    <div>
+      <div class="w-full bg-slate-100 rounded-cardLg flex items-center justify-center text-7xl" style="min-height: 360px">
+        <% if (product.photo_url) { %><img src="<%= product.photo_url %>" class="w-full max-h-[420px] object-cover rounded-cardLg" alt="<%= product.name %>" /><% } else { %>🏷️<% } %>
+      </div>
+    </div>
+    <div>
+      <div class="text-xs capitalize text-slate-500"><%= product.category %> · by <%= product.manufacturer_name %></div>
+      <h1 class="text-3xl font-bold mt-2 mb-3"><%= product.name %></h1>
+      <div class="flex items-center gap-3 mb-5">
+        <span class="font-sora text-3xl text-navy font-bold">₹<%= product.price_inr %></span>
+        <% if (product.is_featured) { %><span class="pill pill-warning">Best value</span><% } %>
+      </div>
+      <p class="text-base leading-relaxed mb-6 whitespace-pre-line"><%= product.description %></p>
+
+      <% if (product.quantity_available > 0) { %>
+        <form method="POST" action="/checkout/<%= product.id %>" class="card p-5 space-y-3">
+          <div>
+            <label class="label">Quantity</label>
+            <input class="input" type="number" name="quantity" min="1" max="<%= product.quantity_available %>" value="1" />
+          </div>
+          <div>
+            <label class="label">Shipping address (optional now — confirm later)</label>
+            <textarea class="input" name="shipping_address" rows="3" placeholder="Full address with PIN code"></textarea>
+          </div>
+          <button class="btn-warn w-full justify-center text-base">Buy Now — ₹<%= product.price_inr %></button>
+          <% if (!user) { %><p class="text-xs text-center text-slate-500">You'll be asked to sign in to complete the purchase.</p><% } %>
+        </form>
+      <% } else { %>
+        <div class="card p-5 text-center">
+          <span class="pill pill-danger">Out of stock</span>
+        </div>
+      <% } %>
+    </div>
+  </div>
+</section>
+
+<%- include('layout/_foot') %>

@@ -1,0 +1,38 @@
+<%- include('../layout/_head') %>
+
+<section class="section">
+  <div class="section-inner">
+    <a href="/admin" class="text-sm text-brand font-semibold">← Admin dashboard</a>
+    <h1 class="text-3xl font-bold mt-2 mb-6">Customers</h1>
+
+    <div class="card overflow-hidden">
+      <table class="table">
+        <thead><tr><th>#</th><th>Email</th><th>Name</th><th>Mobile</th><th>Tags</th><th>Orders</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody>
+          <% if (!users.length) { %>
+            <tr><td colspan="8" class="text-center py-6 text-slate-500">No customers yet.</td></tr>
+          <% } else { users.forEach(function(u){ %>
+            <tr>
+              <td class="mono">#<%= u.id %></td>
+              <td><%= u.email %><% if (u.is_admin) { %> <span class="pill pill-brand">admin</span><% } %></td>
+              <td><%= u.name || '—' %></td>
+              <td><%= u.mobile %></td>
+              <td><%= u.tag_count %></td>
+              <td><%= u.order_count %></td>
+              <td><% if (u.is_active) { %><span class="pill pill-success">Active</span><% } else { %><span class="pill pill-danger">Disabled</span><% } %></td>
+              <td>
+                <% if (u.is_active) { %>
+                  <form method="POST" action="/admin/users/<%= u.id %>/deactivate"><button class="btn-outline text-xs py-1 px-2">Deactivate</button></form>
+                <% } else { %>
+                  <form method="POST" action="/admin/users/<%= u.id %>/activate"><button class="btn-brand text-xs py-1 px-2">Activate</button></form>
+                <% } %>
+              </td>
+            </tr>
+          <% }); } %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<%- include('../layout/_foot') %>

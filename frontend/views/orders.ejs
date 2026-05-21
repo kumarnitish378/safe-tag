@@ -1,0 +1,35 @@
+<%- include('layout/_head') %>
+
+<section class="section">
+  <div class="section-inner">
+    <h1 class="text-3xl font-bold mb-6">My Orders</h1>
+
+    <% if (!orders.length) { %>
+      <div class="card p-10 text-center">
+        <div class="text-5xl mb-2">📦</div>
+        <p>No orders yet. <a class="text-brand font-semibold" href="/store">Browse the store</a>.</p>
+      </div>
+    <% } else { %>
+      <div class="card overflow-hidden">
+        <table class="table">
+          <thead><tr><th>#</th><th>Product</th><th>Qty</th><th>Amount</th><th>Status</th><th>Tracking</th><th>Date</th></tr></thead>
+          <tbody>
+            <% orders.forEach(function(o){ %>
+              <tr>
+                <td class="mono">#<%= o.id %></td>
+                <td><%= o.product ? o.product.name : '—' %></td>
+                <td><%= o.quantity %></td>
+                <td>₹<%= o.amount_inr %></td>
+                <td><span class="pill <%= o.status==='delivered'?'pill-success':(o.status==='dispatched'?'pill-brand':(o.status==='cancelled'?'pill-danger':'pill-warning')) %>"><%= o.status %></span></td>
+                <td><%= o.tracking_id || '—' %></td>
+                <td class="text-xs text-slate-500"><%= o.created_at ? o.created_at.split('T')[0] : '' %></td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
+    <% } %>
+  </div>
+</section>
+
+<%- include('layout/_foot') %>

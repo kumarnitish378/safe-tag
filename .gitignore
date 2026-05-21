@@ -1,0 +1,44 @@
+# Environments
+.env
+.env.local
+.env.production
+**/.env
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# DBs
+*.sqlite
+*.sqlite3
+*.db
+dev.db
+instance/
+
+# Build artifacts
+dist/
+build/
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE
+.idea/
+.vscode/
+*.swp
+test_write.txt
+frontend/node_modules

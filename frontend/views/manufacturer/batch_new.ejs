@@ -1,0 +1,26 @@
+<%- include('../layout/_head') %>
+
+<section class="section">
+  <div class="section-inner max-w-md">
+    <a href="/manufacturer/dashboard" class="text-sm text-brand font-semibold">← Dashboard</a>
+    <h1 class="text-3xl font-bold mt-2 mb-4">Create new tag batch</h1>
+
+    <% if (errors._form) { %><div class="flash flash-error">⚠️ <%= errors._form %></div><% } %>
+
+    <form method="POST" action="/manufacturer/batch/new" class="card p-6 space-y-4">
+      <div>
+        <label class="label">Quantity</label>
+        <input class="input" type="number" name="quantity" min="1" max="10000" required value="<%= values.quantity || 100 %>" />
+        <p class="text-xs text-slate-500 mt-1">Up to 10,000 tags per batch.</p>
+      </div>
+      <div>
+        <label class="label">Batch name</label>
+        <input class="input" name="batch_name" required maxlength="120" value="<%= values.batch_name || '' %>" placeholder="e.g. Batch-Jan-2025-Keychains" />
+      </div>
+      <button class="btn-brand w-full justify-center">Generate & Download CSV</button>
+      <p class="text-xs text-slate-500">The CSV contains tag_id, security_key, full_url, qr_data, rfid_payload — ready for RFID programming and QR printing.</p>
+    </form>
+  </div>
+</section>
+
+<%- include('../layout/_foot') %>

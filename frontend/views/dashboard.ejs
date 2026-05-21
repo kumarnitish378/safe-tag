@@ -1,0 +1,75 @@
+<%- include('layout/_head') %>
+
+<section class="section">
+  <div class="section-inner">
+    <div class="flex items-center justify-between flex-wrap gap-3 mb-6">
+      <div>
+        <h1 class="text-3xl font-bold">My SafeTags</h1>
+        <p class="text-sm text-slate-500">Welcome, <%= user.name || user.email %>.</p>
+      </div>
+      <div class="flex gap-2">
+        <button onclick="document.getElementById('claimModal').classList.remove('hidden')" class="btn-outline text-sm">+ Activate a Tag</button>
+        <a class="btn-warn text-sm" href="/store">Buy More Tags</a>
+      </div>
+    </div>
+
+    <div class="grid sm:grid-cols-3 gap-3 mb-6">
+      <div class="card p-5"><div class="text-xs uppercase font-bold text-slate-500">Total tags</div><div class="text-3xl font-sora font-bold text-navy"><%= stats.total %></div></div>
+      <div class="card p-5"><div class="text-xs uppercase font-bold text-slate-500">Active</div><div class="text-3xl font-sora font-bold text-success"><%= stats.active %></div></div>
+      <div class="card p-5"><div class="text-xs uppercase font-bold text-slate-500">Pending Activation</div><div class="text-3xl font-sora font-bold text-warning"><%= stats.pending %></div></div>
+    </div>
+
+    <% if (!tags.length) { %>
+      <div class="card p-10 text-center">
+        <div class="text-5xl mb-2">🏷️</div>
+        <h3 class="text-xl font-semibold mb-1">No tags yet</h3>
+        <p class="mb-5">Order a SafeTag and scan it once you receive it — you'll be brought right back here.</p>
+        <div class="flex gap-3 justify-center">
+          <a href="/store" class="btn-brand">Buy a Tag</a>
+          <button onclick="document.getElementById('claimModal').classList.remove('hidden')" class="btn-outline">Already have one?</button>
+        </div>
+      </div>
+    <% } else { %>
+      <div class="grid md:grid-cols-2 gap-4">
+        <% tags.forEach(function(t){ %>
+          <div class="card p-5">
+            <div class="flex items-center justify-between mb-2">
+              <span class="pill pill-mono"><%= t.tag_id %></span>
+              <% if (t.is_active) { %><span class="pill pill-success">Active</span><% } else { %><span class="pill pill-warning">Pending</span><% } %>
+            </div>
+            <% if (t.profile) { %>
+              <h3 class="text-lg font-semibold"><%= t.profile.name %></h3>
+              <p class="text-sm text-slate-500"><%= t.profile.mobile_primary ? '+91 ' + t.profile.mobile_primary : '' %></p>
+            <% } else { %>
+              <h3 class="text-lg font-semibold text-slate-400">No profile yet</h3>
+              <p class="text-sm text-slate-500">Scan your tag to activate.</p>
+            <% } %>
+            <div class="text-xs text-slate-500 mt-2 break-all"><a class="text-brand" href="<%= baseUrl %>/<%= t.tag_id %>" id="url-<%= t.tag_id %>"><%= baseUrl %>/<%= t.tag_id %>/…</a></div>
+            <div class="mt-4 flex flex-wrap gap-2">
+              <% if (t.is_active) { %>
+                <a class="btn-brand text-sm" href="/profile/edit/<%= t.tag_id %>">Edit Profile</a>
+                <a class="btn-outline text-sm" href="/emergency/<%= t.tag_id %>" target="_blank">Preview</a>
+              <% } %>
+              <a class="btn-outline text-sm" href="/qr/<%= t.tag_id %>" target="_blank">QR PNG</a>
+            </div>
+          </div>
+        <% }); %>
+      </div>
+    <% } %>
+  </div>
+</section>
+
+<!-- Claim tag modal -->
+<div id="claimModal" class="hidden fixed inset-0 bg-black/40 z-50 flex items-center justify-center px-4">
+  <div class="card max-w-md w-full p-6">
+    <div class="flex items-center justify-between mb-3"><h3 class="text-lg font-bold">Activate / Claim a tag</h3><button onclick="document.getElementById('claimModal').classList.add('hidden')" class="text-slate-500">✕</button></div>
+    <p class="text-sm text-slate-600 mb-4">Enter the tag ID and security key printed on your SafeTag to link it to this account. Or, if not yet registered, scan the physical tag to begin.</p>
+    <form method="POST" action="/dashboard/claim" class="space-y-3">
+      <div><label class="label">Tag ID</label><input class="input mono" name="tag_id" required maxlength="10" /></div>
+      <div><label class="label">Security key</label><input class="input mono" name="security_key" required maxlength="32" /></div>
+      <div class="flex justify-end gap-2"><button type="button" onclick="document.getElementById('claimModal').classList.add('hidden')" class="btn-outline">Cancel</button><button class="btn-brand">Claim</button></div>
+    </form>
+  </div>
+</div>
+
+<%- include('layout/_foot') %>

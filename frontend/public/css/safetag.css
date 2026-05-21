@@ -1,0 +1,17 @@
+/* SafeTag custom CSS — supplemental to Tailwind */
+.section { padding: 4rem 1rem; }
+.section-inner { max-width: 64rem; margin: 0 auto; }
+.stepper-step { display:flex; flex-direction:column; align-items:center; gap:.35rem; }
+.stepper-bubble { width:28px; height:28px; border-radius:99px; background:#e2e8f0; color:#475569; display:flex; align-items:center; justify-content:center; font-weight:600; font-size:.85rem; }
+.stepper-bubble.active { background:#0D9488; color:#fff; }
+.stepper-label { font-size:.7rem; color:#475569; }
+.stepper-line { flex:1; height:2px; background:#e2e8f0; margin-top:14px; }
+
+.scan-emergency-bg { background: #EAEFF4; }
+
+.shake-on-load { animation: gentle-shake 0.6s ease; }
+@keyframes gentle-shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-2px); }
+  75% { transform: translateX(2px); }
+}

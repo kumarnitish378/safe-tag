@@ -1,0 +1,33 @@
+<%- include('../layout/_head') %>
+
+<section class="section">
+  <div class="section-inner max-w-md">
+    <a href="/manufacturer/listings" class="text-sm text-brand font-semibold">← Listings</a>
+    <h1 class="text-3xl font-bold mt-2 mb-4">List a new product</h1>
+
+    <% if (errors._form) { %><div class="flash flash-error">⚠️ <%= errors._form %></div><% } %>
+
+    <form method="POST" action="/manufacturer/listings/new" class="card p-6 space-y-4">
+      <div><label class="label">Name</label><input class="input" name="name" required maxlength="200" value="<%= values.name||'' %>" />
+        <% if (errors.name) { %><div class="field-error"><%= errors.name %></div><% } %></div>
+      <div>
+        <label class="label">Category</label>
+        <select class="input" name="category" required>
+          <option value="">—</option>
+          <% ['keychain','card','sticker','wristband'].forEach(function(c){ %><option <%= values.category===c?'selected':'' %>><%= c %></option><% }); %>
+        </select>
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        <div><label class="label">Price (₹)</label><input class="input" type="number" step="0.01" min="0.5" name="price_inr" required value="<%= values.price_inr || '149' %>" />
+          <% if (errors.price) { %><div class="field-error"><%= errors.price %></div><% } %></div>
+        <div><label class="label">Stock</label><input class="input" type="number" min="0" name="quantity_available" required value="<%= values.quantity_available || '100' %>" /></div>
+      </div>
+      <div><label class="label">Photo URL (Cloudinary or any HTTPS URL)</label><input class="input" name="photo_url" value="<%= values.photo_url||'' %>" placeholder="https://..." /></div>
+      <div><label class="label">Description</label><textarea class="input" name="description" rows="5" required maxlength="5000"><%= values.description||'' %></textarea>
+        <% if (errors.description) { %><div class="field-error"><%= errors.description %></div><% } %></div>
+      <button class="btn-brand w-full justify-center">Submit for admin approval</button>
+    </form>
+  </div>
+</section>
+
+<%- include('../layout/_foot') %>

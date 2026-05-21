@@ -1,0 +1,162 @@
+<%- include('layout/_head', { hideNav: true, hideFooter: true }) %>
+
+<div class="scan-emergency-bg min-h-screen">
+  <div class="max-w-md mx-auto pb-10">
+    <!-- Brand bar -->
+    <div class="bg-brand text-white px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <span class="w-7 h-7 rounded-full bg-white text-brand text-sm font-bold flex items-center justify-center">ST</span>
+        <span class="font-semibold">SafeTag</span>
+      </div>
+      <div class="flex items-center gap-2 text-xs"><span class="w-2 h-2 bg-success rounded-full inline-block"></span> VERIFIED PROFILE</div>
+    </div>
+
+    <!-- Emergency bar -->
+    <div class="bg-danger text-white px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <span class="text-xl">⚠️</span>
+        <strong class="tracking-wide uppercase text-sm">Emergency Identification Card</strong>
+      </div>
+      <span class="mono text-xs opacity-90"><%= tag_id %></span>
+    </div>
+
+    <% if (activated) { %>
+      <div class="px-4 pt-4"><div class="flash flash-success">✅ Your SafeTag is now active. Bookmark this page or share with family.</div></div>
+    <% } %>
+
+    <!-- Identity card -->
+    <div class="card mx-4 mt-4 overflow-hidden">
+      <div class="bg-navy text-white p-5 flex gap-4 items-center">
+        <% if (profile.photo_url) { %>
+          <img src="<%= profile.photo_url %>" alt="" class="w-16 h-16 rounded-full object-cover border-2 border-white/40" />
+        <% } else { %>
+          <div class="w-16 h-16 rounded-full bg-white/10 flex items-center justify-center text-3xl">
+            <% if (profile.category === 'CHILD') { %>👧<% } else if (profile.category === 'ELDERLY') { %>👴<% } else if (profile.category === 'PET') { %>🐕<% } else if (profile.category === 'TRAVELER') { %>🧳<% } else { %>👤<% } %>
+          </div>
+        <% } %>
+        <div class="flex-1 min-w-0">
+          <div class="text-2xl font-bold text-white truncate"><%= profile.name %></div>
+          <div class="text-sm opacity-90 flex items-center gap-2 mt-1">
+            <span>Age <%= profile.age %></span>
+            <% if (profile.blood_group) { %><span class="pill pill-danger mono"><%= profile.blood_group %></span><% } %>
+            <% if (profile.category) { %><span class="pill bg-white/10 text-white"><%= profile.category %></span><% } %>
+          </div>
+        </div>
+      </div>
+
+      <div class="p-5 space-y-3 text-sm">
+        <% if (profile.parent_name) { %>
+          <div><div class="text-xs uppercase font-bold text-slate-500 mb-1">Parent / Guardian</div><div class="text-navy font-semibold"><%= profile.parent_name %></div></div>
+        <% } %>
+        <% if (profile.allergies) { %>
+          <div>
+            <div class="text-xs uppercase font-bold text-slate-500 mb-1">Allergies</div>
+            <div class="flex flex-wrap gap-1">
+              <% profile.allergies.split(',').map(function(a){return a.trim();}).filter(Boolean).forEach(function(a){ %><span class="pill pill-warning"><%= a %></span><% }); %>
+            </div>
+          </div>
+        <% } %>
+        <% if (profile.medical_conditions) { %>
+          <div><div class="text-xs uppercase font-bold text-slate-500 mb-1">Medical Conditions</div><div><%= profile.medical_conditions %></div></div>
+        <% } %>
+        <% if (profile.medications) { %>
+          <div><div class="text-xs uppercase font-bold text-slate-500 mb-1">Medications</div><div><%= profile.medications %></div></div>
+        <% } %>
+        <% if (profile.address) { %>
+          <div>
+            <div class="text-xs uppercase font-bold text-slate-500 mb-1">Address</div>
+            <div>
+              <%= profile.address %>
+              <% if (profile.latitude && profile.longitude) { %>
+                <a class="text-brand font-semibold ml-1" target="_blank" rel="noopener" href="https://maps.google.com/?q=<%= profile.latitude %>,<%= profile.longitude %>">📍 Map</a>
+              <% } %>
+            </div>
+          </div>
+        <% } %>
+        <% if (profile.custom_message) { %>
+          <div class="border border-amber-300 bg-amber-50 rounded-card p-3">
+            <div class="text-xs uppercase font-bold text-amber-700 mb-1">Message from Family</div>
+            <div class="text-amber-900"><%= profile.custom_message %></div>
+          </div>
+        <% } %>
+      </div>
+    </div>
+
+    <!-- CALL BUTTONS -->
+    <div class="px-4 mt-4 space-y-3">
+      <a href="tel:+91<%= profile.mobile_primary %>" class="block bg-success hover:bg-green-600 text-white text-center font-bold text-lg py-4 rounded-card">
+        📞 Call Now — +91 <%= profile.mobile_primary %>
+      </a>
+      <% if (profile.mobile_secondary) { %>
+        <a href="tel:+91<%= profile.mobile_secondary %>" class="block border-2 border-success text-success font-semibold text-center py-3 rounded-card">
+          📞 Call alternate — +91 <%= profile.mobile_secondary %>
+        </a>
+      <% } %>
+      <button id="whatsappBtn" class="block bg-green-700 hover:bg-green-800 text-white font-semibold text-center w-full py-3 rounded-card">
+        💬 Send My Location via WhatsApp
+      </button>
+      <div id="locStatus" class="text-center text-sm hidden"></div>
+    </div>
+
+    <!-- Footer -->
+    <div class="text-center text-xs text-slate-500 mt-6 px-4">
+      Powered by <a href="/" class="text-brand font-semibold">SafeTag · safe-tag.in</a><br/>
+      <a href="/" class="text-brand">Protect your family → Get SafeTag ₹149</a>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var tagId = <%- JSON.stringify(tag_id) %>;
+  var flaskUrl = <%- JSON.stringify(flaskApiUrl) %>;
+  var primary = <%- JSON.stringify(profile.mobile_primary || '') %>;
+  var btn = document.getElementById('whatsappBtn');
+  var status = document.getElementById('locStatus');
+  var coords = null;
+
+  function setStatus(msg, ok) {
+    status.className = ok ? 'text-center text-sm text-green-700' : 'text-center text-sm text-slate-600';
+    status.textContent = msg;
+    status.classList.remove('hidden');
+  }
+
+  function buildWhatsappLink(lat, lng) {
+    var maps = (lat && lng) ? ('https://maps.google.com/?q=' + lat + ',' + lng) : '';
+    var msg = 'Hello, I found someone with a SafeTag (' + tagId + ').' + (maps ? (' Location: ' + maps) : '');
+    return 'https://wa.me/91' + primary + '?text=' + encodeURIComponent(msg);
+  }
+
+  // Try to get geolocation silently on load — send alert to owner
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(function(p){
+      coords = { lat: p.coords.latitude, lng: p.coords.longitude };
+      try {
+        fetch(flaskUrl + '/api/location-alert', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ tag_id: tagId, lat: coords.lat, lng: coords.lng })
+        }).then(function(r){ return r.json(); }).then(function(d){
+          if (d && d.delivered) setStatus('✅ Owner notified with your location', true);
+        }).catch(function(){});
+      } catch (e) {}
+    }, function(){ /* denied — ok */ }, { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 });
+  }
+
+  btn.addEventListener('click', function(){
+    if (coords) {
+      window.location.href = buildWhatsappLink(coords.lat, coords.lng);
+    } else if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(function(p){
+        window.location.href = buildWhatsappLink(p.coords.latitude, p.coords.longitude);
+      }, function(){
+        window.location.href = buildWhatsappLink(null, null);
+      });
+    } else {
+      window.location.href = buildWhatsappLink(null, null);
+    }
+  });
+})();
+</script>
+
+<%- include('layout/_foot', { hideFooter: true }) %>

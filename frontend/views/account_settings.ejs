@@ -1,0 +1,26 @@
+<%- include('layout/_head') %>
+
+<section class="section">
+  <div class="section-inner max-w-md">
+    <h1 class="text-3xl font-bold mb-6">Account settings</h1>
+
+    <% if (errors._form) { %><div class="flash flash-error">⚠️ <%= errors._form %></div><% } %>
+
+    <form method="POST" action="/account/settings" class="card p-6 space-y-4">
+      <div><label class="label">Email</label><input class="input" disabled value="<%= values.email %>" /></div>
+      <div><label class="label">Display name</label><input class="input" name="name" value="<%= values.name||'' %>" /></div>
+      <div><label class="label">Mobile</label><input class="input" name="mobile" value="<%= values.mobile||'' %>" />
+        <% if (errors.mobile) { %><div class="field-error"><%= errors.mobile %></div><% } %>
+      </div>
+      <hr class="border-slate-200" />
+      <h3 class="font-semibold">Change password</h3>
+      <div><label class="label">Current password</label><input class="input" type="password" name="current_password" /></div>
+      <% if (errors.current_password) { %><div class="field-error"><%= errors.current_password %></div><% } %>
+      <div><label class="label">New password</label><input class="input" type="password" name="new_password" /></div>
+      <% if (errors.new_password) { %><div class="field-error"><%= errors.new_password %></div><% } %>
+      <button class="btn-brand w-full justify-center">Save</button>
+    </form>
+  </div>
+</section>
+
+<%- include('layout/_foot') %>

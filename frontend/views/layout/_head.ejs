@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title><%= typeof title !== 'undefined' && title ? title : 'SafeTag — Scan. Know. Save a Life.' %></title>
+  <meta name="theme-color" content="#0D9488" />
+  <meta name="description" content="SafeTag — QR + RFID emergency identity tag. One scan opens your loved one's emergency profile. No app required." />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/safetag.css" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand:   { DEFAULT: '#0D9488', 700: '#0F766E' },
+            navy:    { DEFAULT: '#0A2342', 700: '#0B1E3D' },
+            danger:  { DEFAULT: '#EF4444' },
+            success: { DEFAULT: '#22C55E' },
+            warning: { DEFAULT: '#F97316' },
+            body:    { DEFAULT: '#475569' },
+          },
+          fontFamily: {
+            sora: ['Sora', 'sans-serif'],
+            dm:   ['"DM Sans"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          borderRadius: { card: '12px', cardLg: '16px', pill: '20px' },
+          boxShadow:    { soft: '0 1px 4px rgba(0,0,0,0.08)' },
+        }
+      }
+    }
+  </script>
+  <style>
+    html, body { font-family: 'DM Sans', system-ui, sans-serif; color: #475569; }
+    h1, h2, h3, h4, h5 { font-family: 'Sora', sans-serif; color: #0A2342; }
+    .mono { font-family: 'JetBrains Mono', monospace; }
+    .btn-brand { background:#0D9488; color:#fff; padding:.75rem 1.25rem; border-radius:8px; font-weight:600; display:inline-flex; align-items:center; gap:.5rem; transition:.15s; }
+    .btn-brand:hover { background:#0F766E; }
+    .btn-warn { background:#F97316; color:#fff; padding:.75rem 1.25rem; border-radius:8px; font-weight:700; display:inline-flex; align-items:center; gap:.5rem; }
+    .btn-warn:hover { background:#EA580C; }
+    .btn-outline { background:transparent; color:#0A2342; padding:.7rem 1.2rem; border-radius:8px; border:1px solid #cbd5e1; font-weight:600; }
+    .btn-outline:hover { border-color:#0D9488; color:#0D9488; }
+    .btn-danger { background:#EF4444; color:#fff; padding:.75rem 1.25rem; border-radius:8px; font-weight:600; }
+    .btn-danger:hover { background:#dc2626; }
+    .card { background:#fff; border-radius:12px; box-shadow:0 1px 4px rgba(0,0,0,0.08); }
+    .input { width:100%; padding:.7rem .9rem; border:1px solid #e2e8f0; border-radius:8px; background:#fff; color:#0A2342; font-family:inherit; }
+    .input:focus { outline:none; border-color:#0D9488; box-shadow:0 0 0 3px rgba(13,148,136,.15); }
+    .label { display:block; font-weight:600; color:#0A2342; margin-bottom:.4rem; font-size:.9rem; }
+    .field-error { color:#EF4444; font-size:.85rem; margin-top:.25rem; }
+    .pill { padding:.25rem .7rem; border-radius:20px; font-size:.78rem; font-weight:600; display:inline-flex; align-items:center; gap:.3rem; }
+    .pill-success { background:#dcfce7; color:#166534; }
+    .pill-warning { background:#fef3c7; color:#92400e; }
+    .pill-danger  { background:#fee2e2; color:#991b1b; }
+    .pill-brand   { background:#ccfbf1; color:#115e59; }
+    .pill-mono    { background:#f1f5f9; color:#0A2342; font-family:'JetBrains Mono',monospace; }
+    .navlink { padding:.5rem .8rem; color:#0A2342; font-weight:500; border-radius:8px; }
+    .navlink:hover { background:#f1f5f9; color:#0D9488; }
+    .flash { padding:.8rem 1rem; border-radius:8px; margin-bottom:1rem; display:flex; gap:.6rem; }
+    .flash-success { background:#dcfce7; color:#166534; }
+    .flash-error   { background:#fee2e2; color:#991b1b; }
+    .flash-info    { background:#dbeafe; color:#1e40af; }
+    .table { width:100%; border-collapse: collapse; }
+    .table th, .table td { padding:.6rem .8rem; text-align:left; border-bottom:1px solid #e2e8f0; font-size:.9rem; }
+    .table th { color:#0A2342; font-weight:700; background:#f8fafc; font-size:.8rem; text-transform:uppercase; letter-spacing:.05em; }
+  </style>
+</head>
+<body class="bg-slate-50 min-h-screen flex flex-col">
+<% if (typeof hideNav === 'undefined' || !hideNav) { %>
+  <%- include('_navbar') %>
+<% } %>
+<main class="flex-1">
+  <% if (flash.success && flash.success.length) { %>
+    <div class="max-w-5xl mx-auto px-4 pt-4">
+      <% flash.success.forEach(function(m){ %><div class="flash flash-success">✅ <%= m %></div><% }); %>
+    </div>
+  <% } %>
+  <% if (flash.error && flash.error.length) { %>
+    <div class="max-w-5xl mx-auto px-4 pt-4">
+      <% flash.error.forEach(function(m){ %><div class="flash flash-error">⚠️ <%= m %></div><% }); %>
+    </div>
+  <% } %>
+  <% if (flash.info && flash.info.length) { %>
+    <div class="max-w-5xl mx-auto px-4 pt-4">
+      <% flash.info.forEach(function(m){ %><div class="flash flash-info">ℹ️ <%= m %></div><% }); %>
+    </div>
+  <% } %>

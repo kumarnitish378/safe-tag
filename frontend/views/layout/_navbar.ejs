@@ -1,0 +1,26 @@
+<nav class="sticky top-0 z-30 bg-white border-b border-slate-200 shadow-soft">
+  <div class="max-w-5xl mx-auto px-4 py-3 flex items-center gap-3">
+    <a href="/" class="flex items-center gap-2">
+      <span class="w-9 h-9 rounded-full bg-brand text-white font-sora font-bold flex items-center justify-center">ST</span>
+      <span class="font-sora font-bold text-navy text-lg">SafeTag</span>
+    </a>
+    <div class="hidden md:flex items-center gap-1 ml-4">
+      <a class="navlink" href="/store">Store</a>
+      <a class="navlink" href="/#how">How it Works</a>
+      <a class="navlink" href="/#faq">FAQ</a>
+    </div>
+    <div class="ml-auto flex items-center gap-2">
+      <% if (user) { %>
+        <a class="navlink hidden sm:block" href="/dashboard">Dashboard</a>
+        <% if (user.is_admin) { %><a class="navlink hidden sm:block" href="/admin">Admin</a><% } %>
+        <form method="POST" action="/logout" class="inline"><button class="btn-outline text-sm">Sign out</button></form>
+      <% } else if (manufacturer) { %>
+        <a class="navlink hidden sm:block" href="/manufacturer/dashboard">My Workshop</a>
+        <form method="POST" action="/manufacturer/logout" class="inline"><button class="btn-outline text-sm">Sign out</button></form>
+      <% } else { %>
+        <a class="navlink hidden sm:block" href="/login">Login</a>
+        <a class="btn-warn text-sm" href="/store">Get Your Tag</a>
+      <% } %>
+    </div>
+  </div>
+</nav>

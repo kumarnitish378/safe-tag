@@ -1,0 +1,167 @@
+<%- include('layout/_head') %>
+
+<!-- Hero -->
+<section class="bg-gradient-to-br from-navy via-[#0B1E3D] to-[#091224] text-white">
+  <div class="max-w-5xl mx-auto px-4 py-20 md:py-28">
+    <div class="grid md:grid-cols-2 gap-10 items-center">
+      <div>
+        <span class="pill pill-brand bg-white/10 text-teal-200 border border-white/10 mb-5">QR + RFID/NFC · No app required</span>
+        <h1 class="text-4xl md:text-5xl font-extrabold text-white leading-tight">
+          Your loved ones can't always speak.<br/>
+          <span class="text-teal-300">SafeTag speaks for them.</span>
+        </h1>
+        <p class="mt-5 text-slate-200 text-lg leading-relaxed max-w-md">
+          One scan on any phone camera opens a page with the person's name, blood group, emergency contacts, and a direct Call Now button — in under 3 seconds.
+        </p>
+        <div class="mt-7 flex flex-wrap gap-3">
+          <a href="/store" class="btn-warn">Buy Now →</a>
+          <a href="#how" class="btn-outline border-white/30 text-white hover:!text-white hover:!border-white">See Demo</a>
+        </div>
+        <div class="mt-10 grid grid-cols-3 gap-3 max-w-md">
+          <div><div class="font-sora font-bold text-white text-2xl">12,400+</div><div class="text-xs text-slate-300">Tags Activated</div></div>
+          <div><div class="font-sora font-bold text-white text-2xl">182</div><div class="text-xs text-slate-300">Happy Reunions</div></div>
+          <div><div class="font-sora font-bold text-white text-2xl">&lt; 3s</div><div class="text-xs text-slate-300">Avg Reunion Time</div></div>
+        </div>
+      </div>
+      <div class="hidden md:block">
+        <div class="bg-white rounded-cardLg shadow-soft p-6 max-w-sm mx-auto">
+          <div class="bg-brand text-white rounded-card px-4 py-3 flex items-center gap-2 mb-4">
+            <span class="w-7 h-7 rounded-full bg-white text-brand font-bold flex items-center justify-center">ST</span>
+            <span class="font-semibold">SafeTag · VERIFIED</span>
+          </div>
+          <div class="bg-navy text-white p-4 rounded-card">
+            <div class="text-xs opacity-80">Emergency profile</div>
+            <div class="text-2xl font-bold">Aarav Sharma</div>
+            <div class="text-sm">Age 8 · <span class="pill pill-danger ml-1">O+</span></div>
+          </div>
+          <div class="mt-3 text-sm">
+            <div class="text-xs uppercase font-bold text-slate-500 mt-2">Allergies</div>
+            <div class="flex gap-1 mt-1"><span class="pill pill-warning">Peanuts</span><span class="pill pill-warning">Penicillin</span></div>
+          </div>
+          <a href="tel:+919876543210" class="mt-4 block text-center w-full bg-success text-white font-bold py-3 rounded-card">📞 Call Now — +91 98765 43210</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- How it Works -->
+<section id="how" class="section">
+  <div class="section-inner">
+    <h2 class="text-3xl font-bold text-center mb-2">How SafeTag Works</h2>
+    <p class="text-center mb-10 max-w-xl mx-auto">From order to rescue — 4 steps. No app on either side. Works on any Android or iPhone camera.</p>
+    <div class="grid md:grid-cols-4 gap-5">
+      <% [
+        { e:'🛒', t:'Buy & Attach', d:'Order a SafeTag keychain, card, sticker or wristband. Attach it to a bag, lanyard or collar.' },
+        { e:'📷', t:'Scan',         d:'A stranger scans the QR with their phone camera or taps the NFC chip.' },
+        { e:'🧾', t:'Profile Opens',d:'In under 3 seconds, they see the name, blood group, allergies and emergency contacts.' },
+        { e:'📞', t:'Call or Alert',d:'They tap Call Now or send your WhatsApp location. You\'re notified instantly.' },
+      ].forEach(function(s, i){ %>
+        <div class="card p-5">
+          <div class="text-3xl mb-3"><%= s.e %></div>
+          <div class="text-xs font-bold text-brand mb-1">STEP <%= i+1 %></div>
+          <h3 class="font-semibold mb-2"><%= s.t %></h3>
+          <p class="text-sm leading-relaxed"><%= s.d %></p>
+        </div>
+      <% }) %>
+    </div>
+  </div>
+</section>
+
+<!-- Who is it for -->
+<section class="section bg-white border-y border-slate-100">
+  <div class="section-inner">
+    <h2 class="text-3xl font-bold text-center mb-10">Who is SafeTag for?</h2>
+    <div class="grid md:grid-cols-3 sm:grid-cols-2 gap-4">
+      <% [
+        { e:'👧', t:'Children',  d:'Lost at a railway station, fair or temple? One scan finds the parents.' },
+        { e:'👴', t:'Elderly',   d:'Dementia patients or seniors with no phone — strangers can call family.' },
+        { e:'🧳', t:'Travelers', d:'On Kumbh Mela, long pilgrimages or solo trips — instant ID for any helper.' },
+        { e:'🐕', t:'Pets',      d:'Lost dogs and cats — the finder calls you directly. No registration database.' },
+        { e:'🚴', t:'Athletes',  d:'Cyclists, runners, trekkers — accident response with full medical info.' },
+        { e:'🏫', t:'Schools',   d:'Bulk SafeTags for ID badges — students, teachers, school trips.' },
+      ].forEach(function(c){ %>
+        <div class="card p-5 flex gap-3">
+          <div class="text-2xl"><%= c.e %></div>
+          <div>
+            <h4 class="font-semibold mb-1"><%= c.t %></h4>
+            <p class="text-sm"><%= c.d %></p>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+  </div>
+</section>
+
+<!-- Store Preview -->
+<section class="section">
+  <div class="section-inner">
+    <div class="flex items-end justify-between mb-6">
+      <h2 class="text-3xl font-bold">Shop SafeTags</h2>
+      <a href="/store" class="text-brand font-semibold">See all →</a>
+    </div>
+    <% if (featured && featured.length) { %>
+      <div class="grid md:grid-cols-3 gap-4">
+        <% featured.forEach(function(p){ %>
+          <a href="/store/<%= p.id %>" class="card p-5 hover:-translate-y-0.5 transition">
+            <div class="w-full h-40 bg-slate-100 rounded-card mb-4 flex items-center justify-center text-5xl">
+              <% if (p.photo_url) { %><img src="<%= p.photo_url %>" class="w-full h-40 object-cover rounded-card" alt="<%= p.name %>" /><% } else { %>🏷️<% } %>
+            </div>
+            <h3 class="font-semibold mb-1"><%= p.name %></h3>
+            <div class="text-sm capitalize text-slate-500"><%= p.category %></div>
+            <div class="mt-2 flex items-center justify-between">
+              <span class="font-sora text-xl text-navy font-bold">₹<%= p.price_inr %></span>
+              <span class="btn-brand text-sm">Buy</span>
+            </div>
+          </a>
+        <% }) %>
+      </div>
+    <% } else { %>
+      <div class="card p-10 text-center">
+        <div class="text-4xl mb-2">🏷️</div>
+        <p>New products coming soon. <a class="text-brand font-semibold" href="/store">Browse store</a>.</p>
+      </div>
+    <% } %>
+  </div>
+</section>
+
+<!-- Emotional story -->
+<section class="bg-navy text-white">
+  <div class="section-inner section">
+    <div class="grid md:grid-cols-2 gap-10 items-center">
+      <div>
+        <h2 class="text-3xl font-bold text-white mb-4">The day SafeTag was born.</h2>
+        <p class="text-slate-300 leading-relaxed">
+          A 6-year-old went missing at Kumbh Mela. She had no phone, didn't know her parents' number, and was too scared to speak. It took fourteen hours to reunite her family. Fourteen hours. SafeTag exists so that no parent ever waits that long again.
+        </p>
+        <p class="mt-5 text-teal-300 font-semibold text-lg">SafeTag. Because emergencies don't wait.</p>
+      </div>
+      <div class="text-center md:text-right">
+        <a href="/store" class="btn-warn">Get Your SafeTag — ₹149</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq" class="section">
+  <div class="section-inner max-w-3xl">
+    <h2 class="text-3xl font-bold text-center mb-8">Frequently Asked Questions</h2>
+    <div class="space-y-3">
+      <% [
+        { q:'Do I need an app to scan a SafeTag?', a:'No. Any modern phone camera opens the SafeTag URL like any QR code. NFC-equipped phones can also tap the chip.' },
+        { q:'Can I update the information after buying?', a:'Yes. Sign in to your dashboard and update the profile at any time. Changes are live instantly.' },
+        { q:'What if the QR code gets scratched?', a:'Every SafeTag also carries an RFID/NFC chip. Either method opens the same URL.' },
+        { q:'Do you do bulk orders for schools or hospitals?', a:'Yes. Manufacturers can create batches of up to 10,000 tags at once. Contact us via your dashboard.' },
+        { q:'Is my personal information private?', a:'Your data is only visible when someone scans your physical tag — it cannot be enumerated. We never share data with anyone.' },
+      ].forEach(function(f){ %>
+        <details class="card p-5 cursor-pointer">
+          <summary class="font-semibold text-navy"><%= f.q %></summary>
+          <p class="mt-2 text-sm leading-relaxed"><%= f.a %></p>
+        </details>
+      <% }) %>
+    </div>
+  </div>
+</section>
+
+<%- include('layout/_foot') %>

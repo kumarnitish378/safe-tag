@@ -1,0 +1,47 @@
+<%- include('layout/_head') %>
+
+<section class="section">
+  <div class="section-inner">
+    <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
+      <h1 class="text-3xl font-bold">SafeTag Store</h1>
+      <form method="GET" action="/store" class="flex items-center gap-2">
+        <select name="category" class="input py-2" onchange="this.form.submit()">
+          <option value="">All categories</option>
+          <% ['keychain','card','sticker','wristband'].forEach(function(c){ %>
+            <option value="<%= c %>" <%= category===c?'selected':'' %>><%= c.charAt(0).toUpperCase()+c.slice(1) %></option>
+          <% }) %>
+        </select>
+      </form>
+    </div>
+
+    <% if (!products.length) { %>
+      <div class="card p-10 text-center">
+        <div class="text-4xl mb-2">🏷️</div>
+        <h3 class="text-xl font-semibold mb-1">No products yet</h3>
+        <p>Check back soon — manufacturers are listing new SafeTags every week.</p>
+      </div>
+    <% } else { %>
+      <div class="grid md:grid-cols-3 sm:grid-cols-2 gap-4">
+        <% products.forEach(function(p){ %>
+          <a href="/store/<%= p.id %>" class="card p-5 hover:-translate-y-0.5 transition">
+            <div class="w-full h-44 bg-slate-100 rounded-card mb-4 flex items-center justify-center text-5xl">
+              <% if (p.photo_url) { %><img src="<%= p.photo_url %>" class="w-full h-44 object-cover rounded-card" alt="<%= p.name %>" /><% } else { %>🏷️<% } %>
+            </div>
+            <div class="flex items-center justify-between mb-1">
+              <h3 class="font-semibold"><%= p.name %></h3>
+              <% if (p.is_featured) { %><span class="pill pill-warning">Featured</span><% } %>
+            </div>
+            <div class="text-xs capitalize text-slate-500"><%= p.category %> · by <%= p.manufacturer_name %></div>
+            <p class="text-sm mt-2 text-slate-600 line-clamp-2"><%= (p.description||'').slice(0,90) %></p>
+            <div class="mt-3 flex items-center justify-between">
+              <span class="font-sora text-xl text-navy font-bold">₹<%= p.price_inr %></span>
+              <span class="btn-brand text-sm">View</span>
+            </div>
+          </a>
+        <% }) %>
+      </div>
+    <% } %>
+  </div>
+</section>
+
+<%- include('layout/_foot') %>

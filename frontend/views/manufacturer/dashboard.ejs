@@ -1,0 +1,82 @@
+<%- include('../layout/_head') %>
+
+<section class="section">
+  <div class="section-inner">
+    <div class="flex items-center justify-between flex-wrap gap-2 mb-6">
+      <div>
+        <h1 class="text-3xl font-bold"><%= manufacturer.business_name %></h1>
+        <p class="text-sm text-slate-500"><%= manufacturer.email %> · <%= manufacturer.mobile %></p>
+      </div>
+      <div class="flex gap-2">
+        <a class="btn-outline text-sm" href="/manufacturer/listings">My Listings</a>
+        <a class="btn-brand text-sm" href="/manufacturer/batch/new">+ New Batch</a>
+      </div>
+    </div>
+
+    <% if (!manufacturer.is_approved) { %>
+      <div class="flash flash-info">ℹ️ Your account is awaiting approval. You can prepare batches and listings, but they won't go live until SafeTag admin approves you.</div>
+    <% } %>
+
+    <% var totalTags = (batches||[]).reduce(function(a,b){ return a+b.quantity; },0);
+       var totalActive = (batches||[]).reduce(function(a,b){ return a+b.activated_count; },0);
+       var rate = totalTags ? Math.round(totalActive*1000/totalTags)/10 : 0;
+    %>
+
+    <div class="grid sm:grid-cols-3 gap-3 mb-6">
+      <div class="card p-5"><div class="text-xs uppercase font-bold text-slate-500">Total tags produced</div><div class="text-3xl font-sora font-bold text-navy"><%= totalTags %></div></div>
+      <div class="card p-5"><div class="text-xs uppercase font-bold text-slate-500">Activated</div><div class="text-3xl font-sora font-bold text-success"><%= totalActive %></div><div class="text-xs"><%= rate %>%</div></div>
+      <div class="card p-5"><div class="text-xs uppercase font-bold text-slate-500">Listings</div><div class="text-3xl font-sora font-bold text-navy"><%= listings.length %></div></div>
+    </div>
+
+    <h2 class="text-xl font-bold mb-3">Batches</h2>
+    <% if (!batches.length) { %>
+      <div class="card p-6 text-center">No batches yet. <a class="text-brand font-semibold" href="/manufacturer/batch/new">Create your first batch</a>.</div>
+    <% } else { %>
+      <div class="card overflow-hidden mb-8">
+        <table class="table">
+          <thead><tr><th>#</th><th>Batch name</th><th>Quantity</th><th>Activated</th><th>Rate</th><th></th></tr></thead>
+          <tbody>
+            <% batches.forEach(function(b){ %>
+              <tr>
+                <td class="mono">#<%= b.id %></td>
+                <td><%= b.batch_name %></td>
+                <td><%= b.quantity %></td>
+                <td><%= b.activated_count %></td>
+                <td><%= b.activation_rate %>%</td>
+                <td><a class="text-brand font-semibold" href="/manufacturer/batch/<%= b.id %>">Open →</a></td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
+    <% } %>
+
+    <h2 class="text-xl font-bold mb-3">My listings</h2>
+    <% if (!listings.length) { %>
+      <div class="card p-6 text-center">No listings yet. <a class="text-brand font-semibold" href="/manufacturer/listings/new">List a product</a>.</div>
+    <% } else { %>
+      <div class="card overflow-hidden">
+        <table class="table">
+          <thead><tr><th>Name</th><th>Category</th><th>Price</th><th>Stock</th><th>Status</th></tr></thead>
+          <tbody>
+            <% listings.forEach(function(l){ %>
+              <tr>
+                <td><%= l.name %></td>
+                <td class="capitalize"><%= l.category %></td>
+                <td>₹<%= l.price_inr %></td>
+                <td><%= l.quantity_available %></td>
+                <td>
+                  <% if (l.is_rejected) { %><span class="pill pill-danger">Rejected</span>
+                  <% } else if (l.is_approved) { %><span class="pill pill-success">Live</span>
+                  <% } else { %><span class="pill pill-warning">Pending</span><% } %>
+                </td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
+    <% } %>
+  </div>
+</section>
+
+<%- include('../layout/_foot') %>

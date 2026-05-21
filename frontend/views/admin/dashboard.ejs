@@ -1,0 +1,45 @@
+<%- include('../layout/_head') %>
+
+<section class="section">
+  <div class="section-inner">
+    <div class="flex items-center justify-between mb-6 flex-wrap gap-2">
+      <h1 class="text-3xl font-bold">Admin · Platform overview</h1>
+      <div class="flex gap-2">
+        <a class="btn-outline text-sm" href="/admin/manufacturers">Manufacturers</a>
+        <a class="btn-outline text-sm" href="/admin/store">Store</a>
+        <a class="btn-outline text-sm" href="/admin/orders">Orders</a>
+        <a class="btn-outline text-sm" href="/admin/users">Users</a>
+      </div>
+    </div>
+
+    <div class="grid sm:grid-cols-2 md:grid-cols-4 gap-3 mb-8">
+      <div class="card p-5"><div class="text-xs uppercase font-bold text-slate-500">Total tags</div><div class="text-3xl font-sora font-bold text-navy"><%= stats.total_tags||0 %></div><div class="text-xs">Activated: <%= stats.activated_tags||0 %></div></div>
+      <div class="card p-5"><div class="text-xs uppercase font-bold text-slate-500">Activation rate</div><div class="text-3xl font-sora font-bold text-success"><%= stats.activation_rate||0 %>%</div></div>
+      <div class="card p-5"><div class="text-xs uppercase font-bold text-slate-500">Customers</div><div class="text-3xl font-sora font-bold text-navy"><%= stats.total_users||0 %></div><div class="text-xs">New this week: <%= stats.new_users_week||0 %></div></div>
+      <div class="card p-5"><div class="text-xs uppercase font-bold text-slate-500">Manufacturers</div><div class="text-3xl font-sora font-bold text-navy"><%= stats.total_manufacturers||0 %></div><div class="text-xs">Pending: <%= stats.pending_manufacturers||0 %></div></div>
+      <div class="card p-5"><div class="text-xs uppercase font-bold text-slate-500">Orders</div><div class="text-3xl font-sora font-bold text-navy"><%= stats.total_orders||0 %></div><div class="text-xs">Pending dispatch: <%= stats.pending_orders||0 %></div></div>
+      <div class="card p-5 sm:col-span-2"><div class="text-xs uppercase font-bold text-slate-500">Revenue this week</div><div class="text-3xl font-sora font-bold text-warning">₹<%= stats.revenue_week_inr||0 %></div></div>
+    </div>
+
+    <div class="card overflow-hidden">
+      <div class="px-5 py-3 border-b font-semibold">Recent activity</div>
+      <ul class="divide-y">
+        <% if (!recent.length) { %>
+          <li class="p-5 text-center text-slate-500">No activity yet.</li>
+        <% } else { %>
+          <% recent.forEach(function(r){ %>
+            <li class="p-4 flex items-center gap-3">
+              <span class="text-xl">
+                <% if (r.type==='user') { %>👤<% } else if (r.type==='order') { %>📦<% } else if (r.type==='manufacturer') { %>🏭<% } else { %>•<% } %>
+              </span>
+              <span class="flex-1"><%= r.label %></span>
+              <span class="text-xs text-slate-500"><%= r.ts.split('T')[0] %></span>
+            </li>
+          <% }); %>
+        <% } %>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<%- include('../layout/_foot') %>

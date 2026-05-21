@@ -1,0 +1,41 @@
+<%- include('../layout/_head') %>
+
+<section class="section">
+  <div class="section-inner">
+    <a href="/admin" class="text-sm text-brand font-semibold">← Admin dashboard</a>
+    <h1 class="text-3xl font-bold mt-2 mb-6">Store listings</h1>
+
+    <div class="card overflow-hidden">
+      <table class="table">
+        <thead><tr><th>#</th><th>Name</th><th>Category</th><th>Price</th><th>Stock</th><th>Manufacturer</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody>
+          <% if (!listings.length) { %>
+            <tr><td colspan="8" class="text-center py-6 text-slate-500">No listings yet.</td></tr>
+          <% } else { listings.forEach(function(l){ %>
+            <tr>
+              <td class="mono">#<%= l.id %></td>
+              <td><%= l.name %></td>
+              <td class="capitalize"><%= l.category %></td>
+              <td>₹<%= l.price_inr %></td>
+              <td><%= l.quantity_available %></td>
+              <td><%= l.manufacturer_name %></td>
+              <td>
+                <% if (l.is_rejected) { %><span class="pill pill-danger">Rejected</span>
+                <% } else if (l.is_approved) { %><span class="pill pill-success">Live</span>
+                <% } else { %><span class="pill pill-warning">Pending</span><% } %>
+                <% if (l.is_featured) { %><span class="pill pill-warning ml-1">★ Featured</span><% } %>
+              </td>
+              <td class="flex flex-wrap gap-1">
+                <% if (!l.is_approved) { %><form method="POST" action="/admin/store/<%= l.id %>/approve"><button class="btn-brand text-xs py-1 px-2">Approve</button></form><% } %>
+                <% if (!l.is_rejected) { %><form method="POST" action="/admin/store/<%= l.id %>/reject"><button class="btn-outline text-xs py-1 px-2">Reject</button></form><% } %>
+                <form method="POST" action="/admin/store/<%= l.id %>/feature"><button class="btn-outline text-xs py-1 px-2"><%= l.is_featured?'Unfeature':'Feature' %></button></form>
+              </td>
+            </tr>
+          <% }); } %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<%- include('../layout/_foot') %>
