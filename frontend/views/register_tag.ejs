@@ -22,6 +22,7 @@
   <% if (errors._form) { %><div class="flash flash-error">⚠️ <%= errors._form %></div><% } %>
 
   <form method="POST" action="/register/<%= tag_id %>" class="space-y-5">
+      <%- include('layout/_csrf') %>
 
     <!-- Personal -->
     <div class="card p-5 space-y-4">

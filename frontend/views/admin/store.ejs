@@ -26,9 +26,12 @@
                 <% if (l.is_featured) { %><span class="pill pill-warning ml-1">★ Featured</span><% } %>
               </td>
               <td class="flex flex-wrap gap-1">
-                <% if (!l.is_approved) { %><form method="POST" action="/admin/store/<%= l.id %>/approve"><button class="btn-brand text-xs py-1 px-2">Approve</button></form><% } %>
-                <% if (!l.is_rejected) { %><form method="POST" action="/admin/store/<%= l.id %>/reject"><button class="btn-outline text-xs py-1 px-2">Reject</button></form><% } %>
-                <form method="POST" action="/admin/store/<%= l.id %>/feature"><button class="btn-outline text-xs py-1 px-2"><%= l.is_featured?'Unfeature':'Feature' %></button></form>
+                <% if (!l.is_approved) { %><form method="POST" action="/admin/store/<%= l.id %>/approve">
+      <%- include('../layout/_csrf') %><button class="btn-brand text-xs py-1 px-2">Approve</button></form><% } %>
+                <% if (!l.is_rejected) { %><form method="POST" action="/admin/store/<%= l.id %>/reject">
+      <%- include('../layout/_csrf') %><button class="btn-outline text-xs py-1 px-2">Reject</button></form><% } %>
+                <form method="POST" action="/admin/store/<%= l.id %>/feature">
+      <%- include('../layout/_csrf') %><button class="btn-outline text-xs py-1 px-2"><%= l.is_featured?'Unfeature':'Feature' %></button></form>
               </td>
             </tr>
           <% }); } %>

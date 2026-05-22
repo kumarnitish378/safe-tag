@@ -9,6 +9,7 @@
       <% if (errors._form) { %><div class="flash flash-error">⚠️ <%= errors._form %></div><% } %>
 
       <form method="POST" action="/login" class="space-y-4">
+      <%- include('../layout/_csrf') %>
         <input type="hidden" name="next" value="<%= next || '/dashboard' %>" />
         <div>
           <label class="label">Email</label>

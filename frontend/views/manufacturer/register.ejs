@@ -9,6 +9,7 @@
       <% if (errors._form) { %><div class="flash flash-error">⚠️ <%= errors._form %></div><% } %>
 
       <form method="POST" action="/manufacturer/register" class="space-y-4">
+      <%- include('../layout/_csrf') %>
         <div><label class="label">Business Name</label><input class="input" name="business_name" required value="<%= values.business_name||'' %>" />
           <% if (errors.business_name) { %><div class="field-error"><%= errors.business_name %></div><% } %></div>
         <div><label class="label">Email</label><input class="input" type="email" name="email" required value="<%= values.email||'' %>" />

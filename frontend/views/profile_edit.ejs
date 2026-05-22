@@ -11,6 +11,7 @@
     <% if (errors._form) { %><div class="flash flash-error">⚠️ <%= errors._form %></div><% } %>
 
     <form method="POST" action="/profile/edit/<%= tag_id %>" class="space-y-5">
+      <%- include('layout/_csrf') %>
       <div class="card p-5 space-y-4">
         <div><label class="label">Full Name</label><input class="input" name="name" required value="<%= profile.name||'' %>" /></div>
         <div class="grid grid-cols-2 gap-3">

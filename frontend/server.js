@@ -8,6 +8,7 @@
 require('dotenv').config();
 
 const path = require('path');
+const crypto = require('crypto');
 const express = require('express');
 const session = require('express-session');
 const flash = require('connect-flash');
@@ -46,7 +47,7 @@ app.use('/static', express.static(path.join(__dirname, 'public')));
 app.use(session({
   secret: SESSION_SECRET,
   resave: false,
-  saveUninitialized: false,
+  saveUninitialized: true,   // need true so CSRF token persists across the first GET → POST
   cookie: {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
@@ -55,8 +56,44 @@ app.use(session({
 }));
 app.use(flash());
 
+// -----------------------------------------------------------------------------
+// CSRF protection (per-session token, hand-rolled — no extra dependency).
+// Implements SDD §10: protect every POST form. JSON/admin proxy POSTs
+// (admin/manufacturer action buttons) inherit the same token from the page that
+// rendered them.
+// -----------------------------------------------------------------------------
+function ensureCsrfToken(req) {
+  if (!req.session.csrfToken) {
+    req.session.csrfToken = crypto.randomBytes(24).toString('hex');
+  }
+  return req.session.csrfToken;
+}
+
+// Skip CSRF for routes the SDD explicitly says are public/no-form:
+//  - Tag scan router (GET only — no body)
+//  - Browser-direct API passthrough (none — browser hits Flask directly)
+const CSRF_SKIP_PATHS = [
+  /^\/qr\//,                  // GET only
+];
+
+app.use((req, res, next) => {
+  ensureCsrfToken(req);
+  if (req.method !== 'POST') return next();
+  if (CSRF_SKIP_PATHS.some(re => re.test(req.path))) return next();
+
+  const submitted = (req.body && (req.body._csrf || req.body.csrf_token)) || req.headers['x-csrf-token'];
+  if (!submitted || submitted !== req.session.csrfToken) {
+    // Rotate the token and reject with a friendly message
+    req.session.csrfToken = crypto.randomBytes(24).toString('hex');
+    req.flash('error', 'Your session expired. Please reload the page and try again.');
+    return res.redirect(req.get('Referer') || '/');
+  }
+  next();
+});
+
 // Expose common locals to every template
 app.use((req, res, next) => {
+  res.locals.csrfToken = req.session.csrfToken;
   res.locals.user = req.session.user || null;
   res.locals.userToken = req.session.userToken || null;
   res.locals.manufacturer = req.session.manufacturer || null;

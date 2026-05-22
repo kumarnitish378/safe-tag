@@ -7,6 +7,7 @@
       <h1 class="text-3xl font-bold">Orders</h1>
       <div class="flex gap-2 items-center">
         <form method="GET" action="/admin/orders">
+      <%- include('../layout/_csrf') %>
           <select name="status" class="input py-2" onchange="this.form.submit()">
             <option value="">All</option>
             <% ['pending','dispatched','delivered','cancelled'].forEach(function(s){ %>
@@ -37,11 +38,13 @@
               <td>
                 <% if (o.status === 'pending') { %>
                   <form method="POST" action="/admin/orders/<%= o.id %>/dispatch" class="flex gap-1">
+      <%- include('../layout/_csrf') %>
                     <input class="input py-1 px-2 text-xs w-24 mono" name="tracking_id" placeholder="Tracking" />
                     <button class="btn-brand text-xs py-1 px-2">Dispatch</button>
                   </form>
                 <% } else if (o.status === 'dispatched') { %>
                   <form method="POST" action="/admin/orders/<%= o.id %>/status">
+      <%- include('../layout/_csrf') %>
                     <input type="hidden" name="status" value="delivered" />
                     <button class="btn-outline text-xs py-1 px-2">Mark delivered</button>
                   </form>

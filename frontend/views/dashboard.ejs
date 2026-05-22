@@ -65,6 +65,7 @@
     <div class="flex items-center justify-between mb-3"><h3 class="text-lg font-bold">Activate / Claim a tag</h3><button onclick="document.getElementById('claimModal').classList.add('hidden')" class="text-slate-500">✕</button></div>
     <p class="text-sm text-slate-600 mb-4">Enter the tag ID and security key printed on your SafeTag to link it to this account. Or, if not yet registered, scan the physical tag to begin.</p>
     <form method="POST" action="/dashboard/claim" class="space-y-3">
+      <%- include('layout/_csrf') %>
       <div><label class="label">Tag ID</label><input class="input mono" name="tag_id" required maxlength="10" /></div>
       <div><label class="label">Security key</label><input class="input mono" name="security_key" required maxlength="32" /></div>
       <div class="flex justify-end gap-2"><button type="button" onclick="document.getElementById('claimModal').classList.add('hidden')" class="btn-outline">Cancel</button><button class="btn-brand">Claim</button></div>

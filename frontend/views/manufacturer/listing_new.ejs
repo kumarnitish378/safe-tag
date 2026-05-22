@@ -8,6 +8,7 @@
     <% if (errors._form) { %><div class="flash flash-error">⚠️ <%= errors._form %></div><% } %>
 
     <form method="POST" action="/manufacturer/listings/new" class="card p-6 space-y-4">
+      <%- include('../layout/_csrf') %>
       <div><label class="label">Name</label><input class="input" name="name" required maxlength="200" value="<%= values.name||'' %>" />
         <% if (errors.name) { %><div class="field-error"><%= errors.name %></div><% } %></div>
       <div>

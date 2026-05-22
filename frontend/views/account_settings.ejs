@@ -7,6 +7,7 @@
     <% if (errors._form) { %><div class="flash flash-error">⚠️ <%= errors._form %></div><% } %>
 
     <form method="POST" action="/account/settings" class="card p-6 space-y-4">
+      <%- include('layout/_csrf') %>
       <div><label class="label">Email</label><input class="input" disabled value="<%= values.email %>" /></div>
       <div><label class="label">Display name</label><input class="input" name="name" value="<%= values.name||'' %>" /></div>
       <div><label class="label">Mobile</label><input class="input" name="mobile" value="<%= values.mobile||'' %>" />

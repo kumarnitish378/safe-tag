@@ -8,15 +8,20 @@
       <a class="navlink" href="/store">Store</a>
       <a class="navlink" href="/#how">How it Works</a>
       <a class="navlink" href="/#faq">FAQ</a>
+      <% if (!manufacturer) { %><a class="navlink" href="/manufacturer/login">Manufacturer</a><% } %>
     </div>
     <div class="ml-auto flex items-center gap-2">
       <% if (user) { %>
         <a class="navlink hidden sm:block" href="/dashboard">Dashboard</a>
         <% if (user.is_admin) { %><a class="navlink hidden sm:block" href="/admin">Admin</a><% } %>
-        <form method="POST" action="/logout" class="inline"><button class="btn-outline text-sm">Sign out</button></form>
+        <form method="POST" action="/logout" class="inline">
+          <%- include('_csrf') %><button class="btn-outline text-sm">Sign out</button>
+        </form>
       <% } else if (manufacturer) { %>
         <a class="navlink hidden sm:block" href="/manufacturer/dashboard">My Workshop</a>
-        <form method="POST" action="/manufacturer/logout" class="inline"><button class="btn-outline text-sm">Sign out</button></form>
+        <form method="POST" action="/manufacturer/logout" class="inline">
+          <%- include('_csrf') %><button class="btn-outline text-sm">Sign out</button>
+        </form>
       <% } else { %>
         <a class="navlink hidden sm:block" href="/login">Login</a>
         <a class="btn-warn text-sm" href="/store">Get Your Tag</a>

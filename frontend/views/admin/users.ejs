@@ -22,9 +22,11 @@
               <td><% if (u.is_active) { %><span class="pill pill-success">Active</span><% } else { %><span class="pill pill-danger">Disabled</span><% } %></td>
               <td>
                 <% if (u.is_active) { %>
-                  <form method="POST" action="/admin/users/<%= u.id %>/deactivate"><button class="btn-outline text-xs py-1 px-2">Deactivate</button></form>
+                  <form method="POST" action="/admin/users/<%= u.id %>/deactivate">
+      <%- include('../layout/_csrf') %><button class="btn-outline text-xs py-1 px-2">Deactivate</button></form>
                 <% } else { %>
-                  <form method="POST" action="/admin/users/<%= u.id %>/activate"><button class="btn-brand text-xs py-1 px-2">Activate</button></form>
+                  <form method="POST" action="/admin/users/<%= u.id %>/activate">
+      <%- include('../layout/_csrf') %><button class="btn-brand text-xs py-1 px-2">Activate</button></form>
                 <% } %>
               </td>
             </tr>
