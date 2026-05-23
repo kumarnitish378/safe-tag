@@ -1,150 +1,229 @@
 <%- include('layout/_head', { hideNav: true, hideFooter: true }) %>
 
 <% var _theme = (profile && profile.theme) ? profile.theme : 'classic'; %>
-<div class="epage ep-page-bg min-h-screen" data-theme="<%= _theme %>">
-  <div class="max-w-3xl mx-auto pb-10 lg:grid lg:grid-cols-5 lg:gap-0 lg:items-start">
 
-  <!-- LEFT PANEL: emergency card (full width on mobile, 3/5 on desktop) -->
-  <div class="lg:col-span-3">
-    <!-- Brand bar -->
-    <div class="ep-top-bar px-4 py-3 flex items-center justify-between">
-      <a href="/" class="flex items-center gap-2">
-        <img src="/static/images/websiteLogo.png" alt="SafeTag" class="h-6 object-contain" style="max-width:24px;filter:brightness(10);" onerror="this.style.display='none'" />
-        <span class="font-semibold">SafeTag</span>
+<style>
+  /* Page shell */
+  .ep-shell { min-height:100vh; display:flex; flex-direction:column; align-items:center; }
+  /* Card container — phone-width on desktop, full-width on mobile */
+  .ep-card { width:100%; max-width:420px; display:flex; flex-direction:column; min-height:100vh; background:#fff; }
+  html.dark .ep-card { background:#1e293b; }
+  /* Top status bar */
+  .ep-top { display:flex; align-items:center; justify-content:space-between; padding:.6rem 1rem; }
+  /* Alert bar */
+  .ep-alert { display:flex; align-items:center; justify-content:space-between; padding:.7rem 1rem; }
+  /* Identity header */
+  .ep-identity { padding:1.25rem 1rem 1rem; display:flex; align-items:center; gap:.9rem; }
+  .ep-avatar { width:72px; height:72px; border-radius:50%; flex-shrink:0; border:2.5px solid rgba(255,255,255,.35); display:flex; align-items:center; justify-content:center; font-size:2.2rem; overflow:hidden; }
+  .ep-name { font-size:1.5rem; font-weight:800; line-height:1.15; }
+  .ep-badges { display:flex; align-items:center; flex-wrap:wrap; gap:.35rem; margin-top:.4rem; }
+  .ep-badge-blood { background:#dc2626; color:#fff; font-weight:800; font-size:.95rem; padding:.25rem .65rem; border-radius:99px; font-family:monospace; letter-spacing:.02em; }
+  .ep-badge-cat { background:rgba(255,255,255,.18); color:rgba(255,255,255,.9); font-size:.7rem; font-weight:600; padding:.2rem .55rem; border-radius:99px; text-transform:capitalize; }
+  .ep-age { font-size:.85rem; opacity:.8; }
+  /* Action area */
+  .ep-actions { padding:.9rem 1rem; display:flex; flex-direction:column; gap:.6rem; }
+  .ep-btn-call { display:flex; align-items:center; justify-content:center; gap:.65rem; border-radius:14px; padding:1.1rem; font-weight:800; text-decoration:none; }
+  .ep-btn-call-secondary { border:2px solid #16a34a; color:#15803d; border-radius:12px; padding:.75rem; font-weight:700; font-size:.9rem; display:flex; align-items:center; justify-content:center; gap:.5rem; text-decoration:none; background:#f0fdf4; }
+  .ep-btn-wa { background:#25D366; color:#fff; border-radius:12px; padding:.75rem; font-weight:700; font-size:.9rem; display:flex; align-items:center; justify-content:center; gap:.5rem; border:none; cursor:pointer; width:100%; }
+  .ep-btn-wa:hover { background:#1da851; }
+  /* Medical card */
+  .ep-medical { margin:.2rem 1rem 0; border-radius:12px; overflow:hidden; border:1px solid #fbbf24; }
+  .ep-medical-head { background:#fef3c7; padding:.55rem .85rem; font-size:.72rem; font-weight:700; color:#92400e; text-transform:uppercase; letter-spacing:.04em; }
+  html.dark .ep-medical { border-color:#78350f; }
+  html.dark .ep-medical-head { background:#451a03; color:#fcd34d; }
+  .ep-medical-body { padding:.75rem .85rem; display:flex; flex-direction:column; gap:.6rem; }
+  .ep-field-label { font-size:.68rem; font-weight:700; color:#94a3b8; text-transform:uppercase; letter-spacing:.05em; margin-bottom:.2rem; }
+  .ep-allergy-tag { background:#fee2e2; color:#991b1b; font-size:.75rem; font-weight:600; padding:.2rem .55rem; border-radius:99px; }
+  html.dark .ep-allergy-tag { background:#7f1d1d; color:#fca5a5; }
+  .ep-field-val { font-size:.85rem; color:#374151; line-height:1.5; }
+  html.dark .ep-field-val { color:#cbd5e1; }
+  /* Expandable extra info */
+  .ep-more { margin:.6rem 1rem 0; border-radius:12px; border:1px solid #e2e8f0; overflow:hidden; }
+  html.dark .ep-more { border-color:#334155; }
+  .ep-more summary { padding:.65rem .85rem; font-size:.82rem; font-weight:600; color:#475569; cursor:pointer; display:flex; align-items:center; justify-content:space-between; list-style:none; background:#f8fafc; }
+  html.dark .ep-more summary { background:#253349; color:#94a3b8; }
+  .ep-more summary::-webkit-details-marker { display:none; }
+  .ep-more-body { padding:.75rem .85rem; display:flex; flex-direction:column; gap:.6rem; }
+  /* Steps guide */
+  .ep-steps { margin:.8rem 1rem 0; }
+  .ep-steps-label { font-size:.7rem; font-weight:700; color:#94a3b8; text-transform:uppercase; letter-spacing:.06em; margin-bottom:.5rem; }
+  .ep-steps-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:.5rem; }
+  .ep-step { background:#f8fafc; border-radius:10px; padding:.65rem .4rem; text-align:center; }
+  html.dark .ep-step { background:#253349; }
+  .ep-step-icon { font-size:1.3rem; margin-bottom:.2rem; }
+  .ep-step-title { font-size:.72rem; font-weight:700; color:#374151; }
+  html.dark .ep-step-title { color:#cbd5e1; }
+  .ep-step-sub { font-size:.62rem; color:#94a3b8; margin-top:.1rem; }
+  /* Footer CTA */
+  .ep-footer { margin:1rem 1rem 1.5rem; padding:1rem; background:#f0fdfa; border-radius:12px; text-align:center; border:1px solid #ccfbf1; }
+  html.dark .ep-footer { background:#134e4a; border-color:#0f766e; }
+  .ep-footer p { font-size:.75rem; color:#475569; margin-bottom:.6rem; }
+  html.dark .ep-footer p { color:#5eead4; }
+</style>
+
+<div class="ep-shell" style="background:var(--ep-page-bg, #EAEFF4);">
+  <div class="ep-card" data-theme="<%= _theme %>" style="<% if(_theme==='guardian'){%>--ep-page-bg:#1e293b<% }else if(_theme==='care'){%>--ep-page-bg:#fff7ed<% }else if(_theme==='medical'){%>--ep-page-bg:#eff6ff<% }else if(_theme==='adventure'){%>--ep-page-bg:#f0fdf4<% }else if(_theme==='rose'){%>--ep-page-bg:#fff1f2<% }else{%>--ep-page-bg:#EAEFF4<% } %>;">
+
+    <!-- 1. Brand top bar (theme color) -->
+    <div class="ep-top ep-top-bar">
+      <a href="/" style="display:flex;align-items:center;gap:.45rem;text-decoration:none;">
+        <img src="/static/images/websiteLogo.png" alt="SafeTag" style="height:22px;max-width:22px;object-fit:contain;filter:brightness(10);" onerror="this.style.display='none'" />
+        <span style="font-weight:700;font-size:.9rem;letter-spacing:.02em;">SafeTag</span>
       </a>
-      <div class="flex items-center gap-2 text-xs opacity-90"><span class="w-2 h-2 bg-green-400 rounded-full inline-block"></span> VERIFIED PROFILE</div>
+      <div style="display:flex;align-items:center;gap:.4rem;font-size:.72rem;font-weight:600;opacity:.9;">
+        <span style="width:7px;height:7px;background:#4ade80;border-radius:50%;display:inline-block;"></span>
+        VERIFIED PROFILE
+      </div>
     </div>
 
-    <!-- Emergency alert bar -->
-    <div class="ep-alert-bar px-4 py-3 flex items-center justify-between">
-      <div class="flex items-center gap-2">
-        <span class="text-xl">⚠️</span>
-        <strong class="tracking-wide uppercase text-sm">Emergency Identification Card</strong>
+    <!-- 2. Emergency alert banner (red) -->
+    <div class="ep-alert ep-alert-bar">
+      <div style="display:flex;align-items:center;gap:.5rem;font-weight:800;font-size:.82rem;letter-spacing:.04em;text-transform:uppercase;">
+        <span style="font-size:1rem;">⚠️</span>
+        Emergency Identification
       </div>
-      <span class="mono text-xs opacity-90"><%= tag_id %></span>
+      <span style="font-family:monospace;font-size:.72rem;opacity:.85;font-weight:600;"><%= tag_id %></span>
     </div>
 
     <% if (activated) { %>
-      <div class="px-4 pt-4"><div class="flash flash-success">✅ Your SafeTag is now active. Bookmark this page or share with family.</div></div>
+      <div style="margin:.75rem 1rem 0;">
+        <div class="flash flash-success">✅ Your SafeTag is now active. Bookmark this page or share with family.</div>
+      </div>
     <% } %>
 
-    <!-- Identity card -->
-    <div class="card mx-4 mt-4 overflow-hidden">
-      <div class="ep-id-header p-5 flex gap-4 items-center">
+    <!-- 3. Identity header (theme id-header color) -->
+    <div class="ep-identity ep-id-header">
+      <div class="ep-avatar" style="background:rgba(255,255,255,.15);">
         <% if (profile.photo_url) { %>
-          <img src="<%= profile.photo_url %>" alt="" class="w-16 h-16 rounded-full object-cover border-2 border-white/40" />
+          <img src="<%= profile.photo_url %>" alt="" style="width:100%;height:100%;object-fit:cover;" />
         <% } else { %>
-          <div class="w-16 h-16 rounded-full bg-white/10 flex items-center justify-center text-3xl">
-            <% if (profile.category === 'CHILD') { %>👧<% } else if (profile.category === 'ELDERLY') { %>👴<% } else if (profile.category === 'PET') { %>🐕<% } else if (profile.category === 'TRAVELER') { %>🧳<% } else { %>👤<% } %>
-          </div>
+          <span><% if(profile.category==='CHILD'){%>👧<%}else if(profile.category==='ELDERLY'){%>👴<%}else if(profile.category==='PET'){%>🐕<%}else if(profile.category==='TRAVELER'){%>🧳<%}else if(profile.category==='ATHLETE'){%>🚴<%}else{%>👤<%}%></span>
         <% } %>
-        <div class="flex-1 min-w-0">
-          <div class="text-2xl font-bold truncate"><%= profile.name %></div>
-          <div class="text-sm opacity-90 flex items-center gap-2 mt-1">
-            <span>Age <%= profile.age %></span>
-            <% if (profile.blood_group) { %><span class="pill pill-danger mono"><%= profile.blood_group %></span><% } %>
-            <% if (profile.category) { %><span class="pill bg-white/10 text-white"><%= profile.category %></span><% } %>
-          </div>
-        </div>
       </div>
-
-      <div class="p-5 space-y-3 text-sm">
+      <div style="flex:1;min-width:0;">
+        <div class="ep-name"><%= profile.name %></div>
+        <div class="ep-badges">
+          <% if (profile.age) { %><span class="ep-age">Age <%= profile.age %></span><% } %>
+          <% if (profile.blood_group) { %><span class="ep-badge-blood"><%= profile.blood_group %></span><% } %>
+          <% if (profile.category) { %><span class="ep-badge-cat"><%= profile.category.toLowerCase() %></span><% } %>
+        </div>
         <% if (profile.parent_name) { %>
-          <div><div class="text-xs uppercase font-bold text-slate-500 mb-1">Parent / Guardian</div><div class="text-navy font-semibold"><%= profile.parent_name %></div></div>
-        <% } %>
-        <% if (profile.allergies) { %>
-          <div>
-            <div class="text-xs uppercase font-bold text-slate-500 mb-1">Allergies</div>
-            <div class="flex flex-wrap gap-1">
-              <% profile.allergies.split(',').map(function(a){return a.trim();}).filter(Boolean).forEach(function(a){ %><span class="pill pill-warning"><%= a %></span><% }); %>
-            </div>
-          </div>
-        <% } %>
-        <% if (profile.medical_conditions) { %>
-          <div><div class="text-xs uppercase font-bold text-slate-500 mb-1">Medical Conditions</div><div><%= profile.medical_conditions %></div></div>
-        <% } %>
-        <% if (profile.medications) { %>
-          <div><div class="text-xs uppercase font-bold text-slate-500 mb-1">Medications</div><div><%= profile.medications %></div></div>
-        <% } %>
-        <% if (profile.address) { %>
-          <div>
-            <div class="text-xs uppercase font-bold text-slate-500 mb-1">Address</div>
-            <div>
-              <%= profile.address %>
-              <% if (profile.latitude && profile.longitude) { %>
-                <a class="ep-accent-text font-semibold ml-1" target="_blank" rel="noopener" href="https://maps.google.com/?q=<%= profile.latitude %>,<%= profile.longitude %>">📍 Map</a>
-              <% } %>
-            </div>
-          </div>
-        <% } %>
-        <% if (profile.custom_message) { %>
-          <div class="border border-amber-300 bg-amber-50 rounded-card p-3">
-            <div class="text-xs uppercase font-bold text-amber-700 mb-1">Message from Family</div>
-            <div class="text-amber-900"><%= profile.custom_message %></div>
-          </div>
+          <div style="font-size:.8rem;opacity:.8;margin-top:.3rem;">👨‍👩‍👧 <%= profile.parent_name %></div>
         <% } %>
       </div>
     </div>
 
-    <!-- CALL BUTTONS -->
-    <div class="px-4 mt-4 space-y-3">
-      <a href="tel:+91<%= profile.mobile_primary %>" class="ep-call-btn block text-center font-bold text-lg py-4 rounded-card">
-        📞 Call Now — +91 <%= profile.mobile_primary %>
+    <!-- 4. Call actions (always above fold) -->
+    <div class="ep-actions">
+      <a href="tel:+91<%= profile.mobile_primary %>" class="ep-btn-call ep-call-btn" style="font-size:1rem;">
+        <span style="font-size:1.5rem;">📞</span>
+        <div style="text-align:left;">
+          <div style="font-size:.75rem;font-weight:600;opacity:.85;letter-spacing:.04em;text-transform:uppercase;">Call Emergency Contact</div>
+          <div style="font-size:1.1rem;font-family:monospace;letter-spacing:.02em;">+91 <%= profile.mobile_primary %></div>
+        </div>
       </a>
       <% if (profile.mobile_secondary) { %>
-        <a href="tel:+91<%= profile.mobile_secondary %>" class="block border-2 border-green-500 text-green-700 font-semibold text-center py-3 rounded-card">
-          📞 Call alternate — +91 <%= profile.mobile_secondary %>
+        <a href="tel:+91<%= profile.mobile_secondary %>" class="ep-btn-call-secondary">
+          📞 <span>Alternate — +91 <%= profile.mobile_secondary %></span>
         </a>
       <% } %>
-      <button id="whatsappBtn" class="block bg-green-700 hover:bg-green-800 text-white font-semibold text-center w-full py-3 rounded-card">
-        💬 Send My Location via WhatsApp
+      <button id="whatsappBtn" class="ep-btn-wa">
+        💬 <span>Send My Location via WhatsApp</span>
       </button>
-      <div id="locStatus" class="text-center text-sm hidden"></div>
+      <div id="locStatus" style="text-align:center;font-size:.82rem;display:none;color:#475569;"></div>
     </div>
 
-    <!-- Footer -->
-    <div class="text-center text-xs text-slate-500 mt-6 px-4">
-      Powered by <a href="/" class="ep-accent-text font-semibold">SafeTag · safe-tag.in</a><br/>
-      <a href="/store" class="ep-accent-text">Protect your family → Get SafeTag ₹149</a>
-    </div>
-  </div><!-- end left panel -->
-
-  <!-- RIGHT PANEL: desktop only sidebar -->
-  <div class="hidden lg:flex lg:col-span-2 flex-col gap-4 p-6 bg-white/80 backdrop-blur min-h-screen border-l border-slate-200">
-    <div class="text-xs uppercase font-bold text-slate-500 tracking-wide mb-1">What to do now</div>
-    <div class="space-y-3">
-      <div class="flex gap-3 p-3 bg-green-50 border border-green-200 rounded-card">
-        <span class="text-2xl">📞</span>
-        <div><div class="font-semibold text-sm text-navy">Call the emergency contact</div><div class="text-xs text-slate-500">Tap the green button on the left</div></div>
+    <!-- 5. Critical medical info (amber card, always visible) -->
+    <% if (profile.allergies || profile.medical_conditions || profile.medications) { %>
+      <div class="ep-medical">
+        <div class="ep-medical-head">⚕️ Critical Medical Info — Show to paramedics</div>
+        <div class="ep-medical-body">
+          <% if (profile.allergies) { %>
+            <div>
+              <div class="ep-field-label">Allergies</div>
+              <div style="display:flex;flex-wrap:wrap;gap:.3rem;">
+                <% profile.allergies.split(',').map(function(a){return a.trim();}).filter(Boolean).forEach(function(a){ %>
+                  <span class="ep-allergy-tag"><%= a %></span>
+                <% }); %>
+              </div>
+            </div>
+          <% } %>
+          <% if (profile.medical_conditions) { %>
+            <div>
+              <div class="ep-field-label">Conditions</div>
+              <div class="ep-field-val"><%= profile.medical_conditions %></div>
+            </div>
+          <% } %>
+          <% if (profile.medications) { %>
+            <div>
+              <div class="ep-field-label">Medications</div>
+              <div class="ep-field-val"><%= profile.medications %></div>
+            </div>
+          <% } %>
+        </div>
       </div>
-      <div class="flex gap-3 p-3 bg-blue-50 border border-blue-200 rounded-card">
-        <span class="text-2xl">📍</span>
-        <div><div class="font-semibold text-sm text-navy">Share your location</div><div class="text-xs text-slate-500">Tap "Send My Location via WhatsApp"</div></div>
+    <% } %>
+
+    <!-- 6. More info (collapsible) -->
+    <% if (profile.address || profile.custom_message) { %>
+      <details class="ep-more">
+        <summary>
+          <span>📋 More Information</span>
+          <span style="font-size:.85rem;color:#94a3b8;">▾</span>
+        </summary>
+        <div class="ep-more-body">
+          <% if (profile.address) { %>
+            <div>
+              <div class="ep-field-label">Address</div>
+              <div class="ep-field-val">
+                <%= profile.address %>
+                <% if (profile.latitude && profile.longitude) { %>
+                  <a class="ep-accent-text" style="font-weight:600;margin-left:.3rem;" target="_blank" rel="noopener" href="https://maps.google.com/?q=<%= profile.latitude %>,<%= profile.longitude %>">📍 Map →</a>
+                <% } %>
+              </div>
+            </div>
+          <% } %>
+          <% if (profile.custom_message) { %>
+            <div>
+              <div class="ep-field-label">Message from Family</div>
+              <div class="ep-field-val" style="font-style:italic;"><%= profile.custom_message %></div>
+            </div>
+          <% } %>
+        </div>
+      </details>
+    <% } %>
+
+    <!-- 7. Rescuer action guide -->
+    <div class="ep-steps">
+      <div class="ep-steps-label">What to do now</div>
+      <div class="ep-steps-grid">
+        <div class="ep-step">
+          <div class="ep-step-icon">📞</div>
+          <div class="ep-step-title">Call</div>
+          <div class="ep-step-sub">emergency contact</div>
+        </div>
+        <div class="ep-step">
+          <div class="ep-step-icon">📍</div>
+          <div class="ep-step-title">Share</div>
+          <div class="ep-step-sub">location via WA</div>
+        </div>
+        <div class="ep-step">
+          <div class="ep-step-icon">⚕️</div>
+          <div class="ep-step-title">Note</div>
+          <div class="ep-step-sub">blood type + allergy</div>
+        </div>
       </div>
-      <div class="flex gap-3 p-3 bg-amber-50 border border-amber-200 rounded-card">
-        <span class="text-2xl">🏥</span>
-        <div><div class="font-semibold text-sm text-navy">Note blood group &amp; allergies</div><div class="text-xs text-slate-500">Share with paramedics immediately</div></div>
-      </div>
     </div>
 
-    <div class="mt-6 border-t border-slate-200 pt-5">
-      <div class="text-xs uppercase font-bold text-slate-500 mb-3">Protect your own family</div>
-      <p class="text-sm text-slate-600 leading-relaxed mb-4">You just saw how SafeTag works. One scan — instant emergency profile. Get one for your child, parent, or pet.</p>
-      <a href="/store" class="btn-warn w-full justify-center text-sm py-2.5">Get SafeTag from ₹149 →</a>
-      <a href="/demo" class="btn-outline w-full justify-center text-sm py-2.5 mt-2">See full demo</a>
+    <!-- 8. SafeTag promo footer -->
+    <div class="ep-footer" style="margin-top:auto;">
+      <p>You just saw SafeTag work in a real emergency. Protect your family too.</p>
+      <a href="/store" class="btn-warn" style="font-size:.82rem;padding:.55rem 1.1rem;display:inline-flex;">Get SafeTag from ₹149 →</a>
+      <div style="font-size:.7rem;color:#94a3b8;margin-top:.5rem;">safe-tag.in · Scan. Know. Save a Life.</div>
     </div>
 
-    <div class="mt-auto pt-4 text-center">
-      <a href="/" class="flex items-center justify-center gap-2">
-        <img src="/static/images/faviconIcon.png" alt="SafeTag" class="w-6 h-6 object-contain rounded" onerror="this.style.display='none'" />
-        <span class="font-sora font-bold text-navy text-sm">SafeTag</span>
-      </a>
-      <p class="text-xs text-slate-400 mt-1">safe-tag.in</p>
-    </div>
-  </div>
-
-  </div><!-- end max-w-3xl grid -->
-</div>
+  </div><!-- end ep-card -->
+</div><!-- end ep-shell -->
 
 <script>
 (function(){
@@ -156,12 +235,12 @@
   var coords = null;
 
   function setStatus(msg, ok) {
-    status.className = ok ? 'text-center text-sm text-green-700' : 'text-center text-sm text-slate-600';
+    status.style.color = ok ? '#15803d' : '#475569';
     status.textContent = msg;
-    status.classList.remove('hidden');
+    status.style.display = 'block';
   }
 
-  function buildWhatsappLink(lat, lng) {
+  function buildWaLink(lat, lng) {
     var maps = (lat && lng) ? ('https://maps.google.com/?q=' + lat + ',' + lng) : '';
     var msg = 'Hello, I found someone with a SafeTag (' + tagId + ').' + (maps ? (' Location: ' + maps) : '');
     return 'https://wa.me/91' + primary + '?text=' + encodeURIComponent(msg);
@@ -172,27 +251,25 @@
       coords = { lat: p.coords.latitude, lng: p.coords.longitude };
       try {
         fetch(flaskUrl + '/api/location-alert', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ tag_id: tagId, lat: coords.lat, lng: coords.lng })
+          method:'POST', headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({ tag_id:tagId, lat:coords.lat, lng:coords.lng })
         }).then(function(r){ return r.json(); }).then(function(d){
           if (d && d.delivered) setStatus('✅ Owner notified with your location', true);
         }).catch(function(){});
-      } catch (e) {}
-    }, function(){ /* denied — ok */ }, { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 });
+      } catch(e){}
+    }, function(){}, { enableHighAccuracy:true, timeout:8000, maximumAge:0 });
   }
 
   btn.addEventListener('click', function(){
     if (coords) {
-      window.location.href = buildWhatsappLink(coords.lat, coords.lng);
+      window.location.href = buildWaLink(coords.lat, coords.lng);
     } else if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(function(p){
-        window.location.href = buildWhatsappLink(p.coords.latitude, p.coords.longitude);
-      }, function(){
-        window.location.href = buildWhatsappLink(null, null);
-      });
+      navigator.geolocation.getCurrentPosition(
+        function(p){ window.location.href = buildWaLink(p.coords.latitude, p.coords.longitude); },
+        function(){ window.location.href = buildWaLink(null, null); }
+      );
     } else {
-      window.location.href = buildWhatsappLink(null, null);
+      window.location.href = buildWaLink(null, null);
     }
   });
 })();

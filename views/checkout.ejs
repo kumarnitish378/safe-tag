@@ -1,5 +1,16 @@
 <%- include('layout/_head', { noIndex: true }) %>
 
+<style>
+  /* Non-layered CSS so it beats Tailwind @layer utilities */
+  .pm-opt { border:1.5px solid #e2e8f0; border-radius:12px; cursor:pointer; transition:border-color .15s,background .15s; }
+  .pm-opt:hover { background:#f8fafc; }
+  .pm-opt[data-sel="1"] { border-color:#0D9488 !important; background:#f0fdfa !important; }
+  .pm-ring { width:20px; height:20px; border-radius:50%; border:2px solid #cbd5e1; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:border-color .15s; }
+  .pm-opt[data-sel="1"] .pm-ring { border-color:#0D9488 !important; }
+  .pm-dot  { width:10px; height:10px; border-radius:50%; background:transparent; transition:background .15s; }
+  .pm-opt[data-sel="1"] .pm-dot  { background:#0D9488 !important; }
+</style>
+
 <div class="max-w-5xl mx-auto px-4 py-6">
   <!-- Breadcrumb -->
   <nav class="text-sm text-slate-500 flex items-center gap-1 mb-5">
@@ -84,36 +95,30 @@
             Payment Method
           </h2>
 
-          <div class="space-y-2" id="paymentOptions">
-            <!-- UPI (selected by default) -->
-            <div class="payment-opt flex items-center gap-4 p-4 border border-slate-200 rounded-card cursor-pointer hover:bg-slate-50 transition" data-value="upi" onclick="selectPM(this)">
-              <div class="pm-radio w-5 h-5 rounded-full border-2 border-brand flex items-center justify-center flex-shrink-0">
-                <div class="w-2.5 h-2.5 rounded-full bg-brand"></div>
-              </div>
+          <div class="space-y-2.5" id="paymentOptions">
+            <!-- UPI — selected by default (data-sel="1") -->
+            <div class="pm-opt flex items-center gap-4 p-4" data-value="upi" data-sel="1" onclick="selectPM(this)">
+              <div class="pm-ring"><div class="pm-dot"></div></div>
               <div class="flex-1">
-                <div class="font-semibold text-navy text-sm">UPI Payment</div>
+                <div class="font-semibold text-sm" style="color:#0A2342">UPI Payment</div>
                 <div class="text-xs text-slate-500 mt-0.5">Google Pay · PhonePe · Paytm · BHIM · Any UPI app</div>
               </div>
               <span class="text-2xl">📱</span>
             </div>
             <!-- Card -->
-            <div class="payment-opt flex items-center gap-4 p-4 border border-slate-200 rounded-card cursor-pointer hover:bg-slate-50 transition" data-value="card" onclick="selectPM(this)">
-              <div class="pm-radio w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center flex-shrink-0">
-                <div class="w-2.5 h-2.5 rounded-full bg-transparent"></div>
-              </div>
+            <div class="pm-opt flex items-center gap-4 p-4" data-value="card" data-sel="0" onclick="selectPM(this)">
+              <div class="pm-ring"><div class="pm-dot"></div></div>
               <div class="flex-1">
-                <div class="font-semibold text-navy text-sm">Credit / Debit Card</div>
+                <div class="font-semibold text-sm" style="color:#0A2342">Credit / Debit Card</div>
                 <div class="text-xs text-slate-500 mt-0.5">Visa · Mastercard · RuPay — all cards accepted</div>
               </div>
               <span class="text-2xl">💳</span>
             </div>
             <!-- COD -->
-            <div class="payment-opt flex items-center gap-4 p-4 border border-slate-200 rounded-card cursor-pointer hover:bg-slate-50 transition" data-value="cod" onclick="selectPM(this)">
-              <div class="pm-radio w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center flex-shrink-0">
-                <div class="w-2.5 h-2.5 rounded-full bg-transparent"></div>
-              </div>
+            <div class="pm-opt flex items-center gap-4 p-4" data-value="cod" data-sel="0" onclick="selectPM(this)">
+              <div class="pm-ring"><div class="pm-dot"></div></div>
               <div class="flex-1">
-                <div class="font-semibold text-navy text-sm">Cash on Delivery</div>
+                <div class="font-semibold text-sm" style="color:#0A2342">Cash on Delivery</div>
                 <div class="text-xs text-slate-500 mt-0.5">Pay when your order arrives · +₹30 handling charge applies</div>
               </div>
               <span class="text-2xl">💵</span>
@@ -161,9 +166,9 @@
           </div>
           <div class="flex justify-between">
             <span class="text-slate-500">Shipping</span>
-            <span class="text-success font-semibold">FREE</span>
+            <span class="font-semibold" style="color:#22C55E">FREE</span>
           </div>
-          <div id="codRowSidebar" class="hidden flex justify-between text-amber-700">
+          <div id="codRowSidebar" class="hidden flex justify-between" style="color:#b45309">
             <span>COD charge</span>
             <span>+₹30</span>
           </div>
@@ -189,18 +194,8 @@ var _baseTotal = <%= totalInr %>;
 var _isCod = false;
 
 function selectPM(el) {
-  document.querySelectorAll('.payment-opt').forEach(function(o) {
-    var sel = o === el;
-    var dot = o.querySelector('.pm-radio div');
-    var ring = o.querySelector('.pm-radio');
-    if (dot) {
-      dot.classList.toggle('bg-brand', sel);
-      dot.classList.toggle('bg-transparent', !sel);
-    }
-    if (ring) {
-      ring.classList.toggle('border-brand', sel);
-      ring.classList.toggle('border-slate-300', !sel);
-    }
+  document.querySelectorAll('.pm-opt').forEach(function(o) {
+    o.setAttribute('data-sel', o === el ? '1' : '0');
   });
   document.getElementById('pmHidden').value = el.getAttribute('data-value');
   _isCod = (el.getAttribute('data-value') === 'cod');
