@@ -6,8 +6,10 @@
   <!-- Anti-flash: apply saved theme and lang before any paint -->
   <script>
     (function(){
-      if(localStorage.safetagTheme==='dark') document.documentElement.classList.add('dark');
-      if(localStorage.safetagLang==='hi') document.documentElement.setAttribute('lang','hi');
+      try {
+        if(localStorage.safetagTheme==='dark') document.documentElement.classList.add('dark');
+        if(localStorage.safetagLang==='hi') document.documentElement.setAttribute('lang','hi');
+      } catch(e) { /* localStorage blocked (private browsing / strict mode) — skip */ }
     })();
   </script>
 
@@ -45,15 +47,9 @@
   <link rel="icon" href="/static/favicon.png" type="image/png" />
   <link rel="apple-touch-icon" href="/static/favicon.png" />
 
-  <!-- Fonts -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/static/css/safetag.css" />
-
+  <!-- Tailwind config MUST come before the CDN script so darkMode:'class' is honoured on first parse -->
   <script>
-    tailwind.config = {
+    tailwind = { config: {
       darkMode: 'class',
       theme: {
         extend: {
@@ -74,8 +70,14 @@
           boxShadow:    { soft: '0 1px 4px rgba(0,0,0,0.08)' },
         }
       }
-    }
+    }};
   </script>
+  <!-- CDN loads AFTER config is defined — darkMode:'class' and custom colours are applied on first parse -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/safetag.css" />
   <style>
     html, body { font-family: 'DM Sans', system-ui, sans-serif; color: #475569; }
     h1, h2, h3, h4, h5 { font-family: 'Sora', sans-serif; color: #0A2342; }
@@ -140,9 +142,11 @@
     html.dark .flash-info { background:#1e3a5f; color:#bfdbfe; }
     html.dark select.input option { background:#1e293b; }
     html.dark .bg-slate-50 { background:#0f172a !important; }
-    html.dark .bg-white { background:#1e293b !important; }
-    html.dark .bg-slate-100 { background:#1e293b !important; }
-    html.dark .border-slate-100,.border-slate-200 { border-color:#334155 !important; }
+    html.dark .bg-slate-100 { background:#253349 !important; }
+    /* bg-white: scope to page-level sections, not image containers or hero mockups */
+    html.dark section.bg-white, html.dark footer, html.dark .page-bg-white { background:#1e293b !important; }
+    /* Bug fix: both selectors must be scoped to html.dark — comma-split was breaking light mode borders */
+    html.dark .border-slate-100, html.dark .border-slate-200 { border-color:#334155 !important; }
     html.dark .text-slate-500 { color:#94a3b8; }
     html.dark .text-slate-600 { color:#94a3b8; }
     html.dark .text-slate-700 { color:#cbd5e1; }
@@ -172,7 +176,7 @@
   // ---- Dark mode ----
   function toggleTheme(){
     var dark = document.documentElement.classList.toggle('dark');
-    localStorage.safetagTheme = dark ? 'dark' : 'light';
+    try { localStorage.safetagTheme = dark ? 'dark' : 'light'; } catch(e) {}
     var ic = document.getElementById('themeIcon');
     if(ic) ic.textContent = dark ? '☀️' : '🌙';
   }
@@ -241,7 +245,7 @@
     }
   }
   function setLang(lang){
-    localStorage.safetagLang=lang;
+    try { localStorage.safetagLang=lang; } catch(e) {}
     _updateLangBtns(lang);
     _applyLang(lang);
     document.documentElement.setAttribute('lang', lang==='hi'?'hi':'en');
@@ -249,7 +253,7 @@
   document.addEventListener('DOMContentLoaded',function(){
     var dark=document.documentElement.classList.contains('dark');
     var ic=document.getElementById('themeIcon'); if(ic) ic.textContent=dark?'☀️':'🌙';
-    var lang=localStorage.safetagLang||'en';
+    var lang='en'; try { lang=localStorage.safetagLang||'en'; } catch(e) {}
     _updateLangBtns(lang);
     _applyLang(lang);
   });
