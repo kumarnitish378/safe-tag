@@ -3,14 +3,48 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title><%= typeof title !== 'undefined' && title ? title : 'SafeTag — Scan. Know. Save a Life.' %></title>
+
+  <%
+    var _title = (typeof title !== 'undefined' && title) ? title : 'SafeTag — Scan. Know. Save a Life.';
+    var _desc  = (typeof seoDesc !== 'undefined' && seoDesc) ? seoDesc
+               : 'SafeTag — India\'s QR + NFC emergency identity tag. One scan opens blood group, emergency contacts, and medical info in under 3 seconds. No app required.';
+    var _image = (typeof seoImage !== 'undefined' && seoImage) ? seoImage : '/static/images/websiteLogo.png';
+  %>
+
+  <title><%= _title %></title>
+  <meta name="description" content="<%= _desc %>" />
+  <meta name="keywords" content="SafeTag, emergency ID tag, QR tag, NFC tag, RFID tag India, child safety tag, elderly ID tag, medical alert tag" />
+  <meta name="robots" content="<%= (typeof noIndex !== 'undefined' && noIndex) ? 'noindex, nofollow' : 'index, follow' %>" />
+  <link rel="canonical" href="<%= baseUrl + path %>" />
+
+  <!-- Open Graph -->
+  <meta property="og:type"        content="website" />
+  <meta property="og:title"       content="<%= _title %>" />
+  <meta property="og:description" content="<%= _desc %>" />
+  <meta property="og:image"       content="<%= baseUrl + _image %>" />
+  <meta property="og:url"         content="<%= baseUrl + path %>" />
+  <meta property="og:site_name"   content="SafeTag" />
+  <meta property="og:locale"      content="en_IN" />
+
+  <!-- Twitter -->
+  <meta name="twitter:card"        content="summary_large_image" />
+  <meta name="twitter:title"       content="<%= _title %>" />
+  <meta name="twitter:description" content="<%= _desc %>" />
+  <meta name="twitter:image"       content="<%= baseUrl + _image %>" />
+
+  <!-- Brand / PWA -->
   <meta name="theme-color" content="#0D9488" />
-  <meta name="description" content="SafeTag — QR + RFID emergency identity tag. One scan opens your loved one's emergency profile. No app required." />
+  <meta name="application-name" content="SafeTag" />
+  <link rel="icon" href="/static/favicon.png" type="image/png" />
+  <link rel="apple-touch-icon" href="/static/favicon.png" />
+
+  <!-- Fonts -->
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/static/css/safetag.css" />
+
   <script>
     tailwind.config = {
       theme: {
@@ -38,15 +72,15 @@
     html, body { font-family: 'DM Sans', system-ui, sans-serif; color: #475569; }
     h1, h2, h3, h4, h5 { font-family: 'Sora', sans-serif; color: #0A2342; }
     .mono { font-family: 'JetBrains Mono', monospace; }
-    .btn-brand { background:#0D9488; color:#fff; padding:.75rem 1.25rem; border-radius:8px; font-weight:600; display:inline-flex; align-items:center; gap:.5rem; transition:.15s; }
-    .btn-brand:hover { background:#0F766E; }
-    .btn-warn { background:#F97316; color:#fff; padding:.75rem 1.25rem; border-radius:8px; font-weight:700; display:inline-flex; align-items:center; gap:.5rem; }
-    .btn-warn:hover { background:#EA580C; }
-    .btn-outline { background:transparent; color:#0A2342; padding:.7rem 1.2rem; border-radius:8px; border:1px solid #cbd5e1; font-weight:600; }
-    .btn-outline:hover { border-color:#0D9488; color:#0D9488; }
-    .btn-danger { background:#EF4444; color:#fff; padding:.75rem 1.25rem; border-radius:8px; font-weight:600; }
+    .btn-brand  { background:#0D9488; color:#fff; padding:.75rem 1.25rem; border-radius:8px; font-weight:600; display:inline-flex; align-items:center; gap:.5rem; transition:.15s; }
+    .btn-brand:hover  { background:#0F766E; }
+    .btn-warn   { background:#F97316; color:#fff; padding:.75rem 1.25rem; border-radius:8px; font-weight:700; display:inline-flex; align-items:center; gap:.5rem; transition:.15s; }
+    .btn-warn:hover   { background:#EA580C; }
+    .btn-outline{ background:transparent; color:#0A2342; padding:.7rem 1.2rem; border-radius:8px; border:1px solid #cbd5e1; font-weight:600; transition:.15s; }
+    .btn-outline:hover{ border-color:#0D9488; color:#0D9488; }
+    .btn-danger { background:#EF4444; color:#fff; padding:.75rem 1.25rem; border-radius:8px; font-weight:600; transition:.15s; }
     .btn-danger:hover { background:#dc2626; }
-    .card { background:#fff; border-radius:12px; box-shadow:0 1px 4px rgba(0,0,0,0.08); }
+    .card  { background:#fff; border-radius:12px; box-shadow:0 1px 4px rgba(0,0,0,0.08); }
     .input { width:100%; padding:.7rem .9rem; border:1px solid #e2e8f0; border-radius:8px; background:#fff; color:#0A2342; font-family:inherit; }
     .input:focus { outline:none; border-color:#0D9488; box-shadow:0 0 0 3px rgba(13,148,136,.15); }
     .label { display:block; font-weight:600; color:#0A2342; margin-bottom:.4rem; font-size:.9rem; }
@@ -57,34 +91,81 @@
     .pill-danger  { background:#fee2e2; color:#991b1b; }
     .pill-brand   { background:#ccfbf1; color:#115e59; }
     .pill-mono    { background:#f1f5f9; color:#0A2342; font-family:'JetBrains Mono',monospace; }
-    .navlink { padding:.5rem .8rem; color:#0A2342; font-weight:500; border-radius:8px; }
+    .navlink { padding:.5rem .8rem; color:#0A2342; font-weight:500; border-radius:8px; transition:.1s; }
     .navlink:hover { background:#f1f5f9; color:#0D9488; }
-    .flash { padding:.8rem 1rem; border-radius:8px; margin-bottom:1rem; display:flex; gap:.6rem; }
+    .flash { padding:.8rem 1rem; border-radius:8px; margin-bottom:1rem; display:flex; gap:.6rem; align-items:flex-start; }
     .flash-success { background:#dcfce7; color:#166534; }
     .flash-error   { background:#fee2e2; color:#991b1b; }
     .flash-info    { background:#dbeafe; color:#1e40af; }
-    .table { width:100%; border-collapse: collapse; }
+    .table { width:100%; border-collapse:collapse; }
     .table th, .table td { padding:.6rem .8rem; text-align:left; border-bottom:1px solid #e2e8f0; font-size:.9rem; }
     .table th { color:#0A2342; font-weight:700; background:#f8fafc; font-size:.8rem; text-transform:uppercase; letter-spacing:.05em; }
+    /* Toast */
+    .toast { display:flex; align-items:flex-start; gap:.6rem; padding:.85rem 1rem; border-radius:10px; box-shadow:0 4px 20px rgba(0,0,0,.18); font-size:.9rem; font-weight:500; transition:opacity .4s, transform .4s; pointer-events:auto; }
+    .toast-success { background:#dcfce7; color:#166534; border-left:4px solid #22c55e; }
+    .toast-error   { background:#fee2e2; color:#991b1b; border-left:4px solid #ef4444; }
+    .toast-info    { background:#dbeafe; color:#1e40af; border-left:4px solid #3b82f6; }
+    .toast button  { background:none; border:none; cursor:pointer; font-size:1.2rem; line-height:1; padding:0 0 0 4px; opacity:.5; }
+    .toast button:hover { opacity:1; }
+    /* Stepper (register_tag) */
+    .stepper-step  { display:flex; flex-direction:column; align-items:center; gap:4px; }
+    .stepper-bubble{ width:28px; height:28px; border-radius:50%; background:#e2e8f0; color:#64748b; font-weight:700; font-size:.85rem; display:flex; align-items:center; justify-content:center; }
+    .stepper-bubble.active { background:#0D9488; color:#fff; }
+    .stepper-label { font-size:.7rem; color:#64748b; font-weight:500; }
+    .stepper-line  { flex:1; height:2px; background:#e2e8f0; margin-bottom:18px; }
   </style>
+  <%- typeof head !== 'undefined' ? head : '' %>
+
+  <!-- JSON-LD Organization -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "SafeTag",
+    "url": "<%= baseUrl %>",
+    "logo": "<%= baseUrl %>/static/images/websiteLogo.png",
+    "description": "India's QR + NFC emergency identity tag for children, elderly, and pets.",
+    "sameAs": [
+      "https://instagram.com/safetag.in",
+      "https://facebook.com/safetag.in"
+    ],
+    "contactPoint": { "@type": "ContactPoint", "email": "support@safe-tag.in", "contactType": "customer support" }
+  }
+  </script>
 </head>
 <body class="bg-slate-50 min-h-screen flex flex-col">
+
 <% if (typeof hideNav === 'undefined' || !hideNav) { %>
   <%- include('_navbar') %>
 <% } %>
+
+<!-- Toast container — fixed top-right, auto-dismiss -->
+<% if ((flash.success && flash.success.length) || (flash.error && flash.error.length) || (flash.info && flash.info.length)) { %>
+<div id="toast-container" class="fixed top-4 right-4 z-50 flex flex-col gap-2" style="max-width:360px; pointer-events:none;">
+  <% flash.success.forEach(function(m){ %>
+    <div class="toast toast-success">
+      <span>✅</span><span class="flex-1"><%= m %></span>
+      <button onclick="this.parentElement.remove()" title="Dismiss">&times;</button>
+    </div>
+  <% }); %>
+  <% flash.error.forEach(function(m){ %>
+    <div class="toast toast-error">
+      <span>⚠️</span><span class="flex-1"><%= m %></span>
+      <button onclick="this.parentElement.remove()" title="Dismiss">&times;</button>
+    </div>
+  <% }); %>
+  <% flash.info.forEach(function(m){ %>
+    <div class="toast toast-info">
+      <span>ℹ️</span><span class="flex-1"><%= m %></span>
+      <button onclick="this.parentElement.remove()" title="Dismiss">&times;</button>
+    </div>
+  <% }); %>
+</div>
+<script>
+  document.querySelectorAll('#toast-container .toast').forEach(function(el) {
+    setTimeout(function() { el.style.opacity='0'; setTimeout(function(){ el.remove(); }, 400); }, 4500);
+  });
+</script>
+<% } %>
+
 <main class="flex-1">
-  <% if (flash.success && flash.success.length) { %>
-    <div class="max-w-5xl mx-auto px-4 pt-4">
-      <% flash.success.forEach(function(m){ %><div class="flash flash-success">✅ <%= m %></div><% }); %>
-    </div>
-  <% } %>
-  <% if (flash.error && flash.error.length) { %>
-    <div class="max-w-5xl mx-auto px-4 pt-4">
-      <% flash.error.forEach(function(m){ %><div class="flash flash-error">⚠️ <%= m %></div><% }); %>
-    </div>
-  <% } %>
-  <% if (flash.info && flash.info.length) { %>
-    <div class="max-w-5xl mx-auto px-4 pt-4">
-      <% flash.info.forEach(function(m){ %><div class="flash flash-info">ℹ️ <%= m %></div><% }); %>
-    </div>
-  <% } %>

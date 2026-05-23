@@ -181,7 +181,12 @@ app.get('/', async (req, res) => {
     });
     featured = listings.map(formatProduct);
   } catch (e) { /* homepage still renders */ }
-  res.render('index', { title: 'SafeTag — Scan. Know. Save a Life.', featured });
+  res.render('index', {
+    title: 'SafeTag — Scan. Know. Save a Life.',
+    featured,
+    seoDesc: 'SafeTag is India\'s QR + NFC emergency ID tag. One scan reveals blood group, emergency contacts, and medical info in under 3 seconds — no app needed. Trusted by families across India. From ₹149.',
+    seoImage: '/static/images/websiteLogo.png',
+  });
 });
 
 // =============================================================================
@@ -189,7 +194,8 @@ app.get('/', async (req, res) => {
 // =============================================================================
 app.get('/demo', (req, res) => {
   res.render('emergency', {
-    title: 'SafeTag Demo — Emergency Profile',
+    title: 'SafeTag Demo — See How Emergency Profile Works',
+    seoDesc: 'See a live SafeTag emergency profile demo. One QR scan opens blood group, allergies, emergency contacts, and medical info instantly — no app required. Protect your family today.',
     tag_id: 'DEMO',
     profile: {
       name: 'Aarav Sharma',
@@ -231,7 +237,12 @@ app.get('/store', async (req, res) => {
     });
     products = listings.map(formatProduct);
   } catch (e) { /* ignore */ }
-  res.render('store', { title: 'SafeTag Store', products, category });
+  res.render('store', {
+    title: 'SafeTag Store — Buy Emergency ID Tags from ₹149',
+    seoDesc: 'Shop SafeTag emergency identity tags — keychains, smart cards, wristbands, and sticker packs. QR + NFC/RFID enabled. Instant emergency profile on scan. Starting ₹149. Free shipping on orders above ₹499.',
+    products,
+    category,
+  });
 });
 
 app.get('/store/:productId', async (req, res) => {
@@ -243,7 +254,14 @@ app.get('/store/:productId', async (req, res) => {
       include: { manufacturer: true },
     });
     if (!listing) return res.status(404).render('404');
-    res.render('store_product', { title: listing.name, product: formatProduct(listing) });
+    const p = formatProduct(listing);
+    const priceInr = Math.round(listing.price / 100);
+    res.render('store_product', {
+      title: `${listing.name} — SafeTag Emergency ID Tag`,
+      seoDesc: `Buy ${listing.name} on SafeTag. QR + NFC emergency identity tag — one scan shows blood group, emergency contacts, and medical info instantly. No app needed. ₹${priceInr} only.`,
+      seoImage: listing.imageUrl || '/static/images/websiteLogo.png',
+      product: p,
+    });
   } catch (e) {
     res.status(500).render('404');
   }
@@ -283,7 +301,9 @@ app.get('/register/:tag_id', async (req, res) => {
     if (!tag) return res.status(404).render('404');
     if (tag.isActive) return res.redirect(`/emergency/${tagId}`);
     res.render('register_tag', {
-      title: 'Register your SafeTag',
+      title: 'Register Your SafeTag — Activate Emergency Profile',
+      seoDesc: 'Activate your SafeTag emergency profile. Add blood group, emergency contacts, medical conditions, and allergies. Your profile is shown only when your tag is scanned in an emergency.',
+      noIndex: true,
       tag_id: tagId,
       errors: {},
       values: {},
@@ -393,12 +413,15 @@ app.get('/emergency/:tag_id', async (req, res) => {
       include: { profile: true },
     });
     if (!tag || !tag.isActive || !tag.profile) return res.status(404).render('404');
+    const prof = formatProfile(tag.profile);
     res.render('emergency', {
-      title: `Emergency Profile · ${tagId}`,
+      title: `Emergency Profile · ${tagId}${prof.name ? ' · ' + prof.name : ''}`,
+      seoDesc: 'Private emergency identity profile — SafeTag.',
+      noIndex: true,
       tag_id: tagId,
-      profile: formatProfile(tag.profile),
+      profile: prof,
       activated: req.query.activated === '1',
-      flaskApiUrl: BASE_URL, // points to Node.js — browser calls /api/location-alert here
+      flaskApiUrl: BASE_URL,
     });
   } catch (e) {
     res.status(500).render('404');
