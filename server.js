@@ -185,7 +185,7 @@ app.get('/', async (req, res) => {
     title: 'SafeTag — Scan. Know. Save a Life.',
     featured,
     seoDesc: 'SafeTag is India\'s QR + NFC emergency ID tag. One scan reveals blood group, emergency contacts, and medical info in under 3 seconds — no app needed. Trusted by families across India. From ₹149.',
-    seoImage: '/static/images/websiteLogo.png',
+    seoImage: '/static/images/og-homepage.png',
   });
 });
 

@@ -1,12 +1,16 @@
 <%- include('layout/_head') %>
 
 <!-- ============================================================
-  SECTION 1 — HERO: Story-first (loss aversion + narrative hook)
-  Research: Lead with the fear + story before the product pitch.
-  Stories are 22x more memorable than facts. (AIHA / Safe365)
+  SECTION 1 — HERO: Story-first with crowd background image
   ============================================================ -->
-<section class="bg-gradient-to-br from-navy via-[#0B1E3D] to-[#091224] text-white overflow-hidden">
-  <div class="max-w-5xl mx-auto px-4 pt-6 pb-14 md:pb-20">
+<section class="relative bg-gradient-to-br from-navy via-[#0B1E3D] to-[#091224] text-white overflow-hidden">
+  <!-- Background crowd image with dark overlay -->
+  <div class="absolute inset-0">
+    <img src="/static/images/hero-crowd-scan.png" alt="" class="w-full h-full object-cover object-center opacity-20" />
+    <div class="absolute inset-0 bg-gradient-to-r from-navy/90 via-navy/70 to-transparent"></div>
+  </div>
+
+  <div class="relative max-w-5xl mx-auto px-4 pt-6 pb-14 md:pb-20">
     <div class="grid md:grid-cols-2 gap-10 items-center">
 
       <!-- Left: Narrative hook -->
@@ -31,8 +35,8 @@
         </p>
 
         <div class="flex flex-wrap gap-3">
-          <a href="/store" class="btn-warn">🛒 Protect My Family — from ₹149</a>
-          <a href="/demo" class="btn-outline border-white/30 text-white hover:!text-white hover:!border-white">See Live Demo</a>
+          <a href="/store" class="btn-warn" data-i18n="hero.cta1">🛒 Protect My Family — from ₹149</a>
+          <a href="/demo" class="btn-outline border-white/30 text-white hover:!text-white hover:!border-white" data-i18n="hero.cta2">See Live Demo</a>
         </div>
 
         <!-- Stats bar -->
@@ -101,20 +105,35 @@
   ============================================================ -->
 <section class="bg-white border-y border-slate-100">
   <div class="max-w-5xl mx-auto px-4 py-4 flex flex-wrap items-center justify-center gap-6 text-sm font-semibold text-slate-600">
-    <span>🇮🇳 Made in India</span>
+    <span class="flex items-center gap-2">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#FF9933"/><path d="M12 4a8 8 0 1 0 0 16A8 8 0 0 0 12 4z" fill="#FF9933"/><circle cx="12" cy="12" r="4" fill="#138808" opacity=".6"/><circle cx="12" cy="12" r="2" fill="#000080"/></svg>
+      Made in India
+    </span>
     <span class="text-slate-300">|</span>
-    <span>📱 No app required</span>
+    <span class="flex items-center gap-2">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="5" y="2" width="14" height="20" rx="3" stroke="#0D9488" stroke-width="2"/><line x1="9" y1="2" x2="9" y2="22" stroke="#EF4444" stroke-width="2.5"/><line x1="13" y1="2" x2="13" y2="22" stroke="#EF4444" stroke-width="2.5"/><line x1="9" y1="12" x2="13" y2="12" stroke="#EF4444" stroke-width="2.5"/></svg>
+      No app required
+    </span>
     <span class="text-slate-300">|</span>
-    <span>🔒 Data never shared</span>
+    <span class="flex items-center gap-2">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 2L4 6v6c0 5.25 3.5 10.15 8 11.35C16.5 22.15 20 17.25 20 12V6l-8-4z" fill="#ccfbf1" stroke="#0D9488" stroke-width="2"/><path d="M9 12l2 2 4-4" stroke="#0D9488" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Data never shared
+    </span>
     <span class="text-slate-300">|</span>
-    <span>⚡ Opens in under 3 seconds</span>
+    <span class="flex items-center gap-2">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#ccfbf1" stroke="#0D9488" stroke-width="2"/><path d="M12 7v5l3 3" stroke="#0D9488" stroke-width="2" stroke-linecap="round"/></svg>
+      Opens in under 3 seconds
+    </span>
     <span class="text-slate-300">|</span>
-    <span>🌐 Works on any phone camera</span>
+    <span class="flex items-center gap-2">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#ccfbf1" stroke="#0D9488" stroke-width="2"/><path d="M8 12h8M12 8l4 4-4 4" stroke="#0D9488" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Works on any phone camera
+    </span>
   </div>
 </section>
 
 <!-- ============================================================
-  SECTION 3 — STORE PREVIEW (moved up — friction reduction: show product early)
+  SECTION 3 — STORE PREVIEW (moved up — friction reduction)
   ============================================================ -->
 <section class="section bg-white" id="shop">
   <div class="section-inner">
@@ -158,28 +177,83 @@
 </section>
 
 <!-- ============================================================
-  SECTION 4 — HOW IT WORKS: Confidence through clarity
+  SECTION 4 — HOW IT WORKS: SVG step icons + clarity
   ============================================================ -->
 <section id="how" class="section">
   <div class="section-inner">
     <h2 class="text-3xl font-bold text-center mb-2" data-i18n="section.how">How SafeTag Works</h2>
     <p class="text-center text-slate-500 mb-10 max-w-xl mx-auto" data-i18n="section.how.sub">From order to life-saving — 4 steps. No app on either side. Works on any Android or iPhone camera.</p>
     <div class="grid md:grid-cols-4 gap-5">
-      <%
-        var steps = [
-          { e:'🛒', t:'Buy & Attach', d:'Order a SafeTag keychain, card, sticker or wristband. Attach it to a bag, lanyard, collar, or ID badge.', step:1 },
-          { e:'📝', t:'Set Up Profile', d:'Scan the QR code on your tag, fill in name, blood group, emergency contacts, and medical info. Takes 2 minutes.', step:2 },
-          { e:'📷', t:'Stranger Scans', d:'In an emergency, anyone scans the QR with their phone camera — like a normal QR. No app download needed.', step:3 },
-          { e:'📞', t:'Instant Contact', d:'The emergency profile opens in under 3 seconds. They call directly. Your WhatsApp gets the location alert.', step:4 },
-        ];
-        steps.forEach(function(s){ %>
-        <div class="card p-5">
-          <div class="text-3xl mb-3"><%= s.e %></div>
-          <div class="text-xs font-bold text-brand mb-1 uppercase">Step <%= s.step %></div>
-          <h3 class="font-semibold mb-2 text-navy"><%= s.t %></h3>
-          <p class="text-sm leading-relaxed text-slate-600"><%= s.d %></p>
+
+      <!-- Step 1: Buy & Attach -->
+      <div class="card p-5">
+        <div class="mb-3 w-12 h-12">
+          <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="8" y="18" width="32" height="26" rx="4" fill="#ccfbf1" stroke="#0D9488" stroke-width="2"/>
+            <path d="M17 18v-4a7 7 0 0 1 14 0v4" stroke="#0D9488" stroke-width="2" stroke-linecap="round"/>
+            <rect x="16" y="26" width="5" height="5" rx="1" fill="#0A2342"/>
+            <rect x="27" y="26" width="5" height="5" rx="1" fill="#0A2342"/>
+            <rect x="16" y="35" width="5" height="5" rx="1" fill="#0A2342"/>
+            <rect x="27" y="35" width="2" height="2" fill="#0A2342"/>
+            <rect x="30" y="35" width="2" height="2" fill="#0A2342"/>
+            <rect x="27" y="38" width="2" height="2" fill="#0A2342"/>
+            <rect x="30" y="38" width="2" height="2" fill="#0A2342"/>
+          </svg>
         </div>
-      <% }); %>
+        <div class="text-xs font-bold text-brand mb-1 uppercase">Step 1</div>
+        <h3 class="font-semibold mb-2 text-navy">Buy &amp; Attach</h3>
+        <p class="text-sm leading-relaxed text-slate-600">Order a SafeTag keychain, card, sticker or wristband. Attach it to a bag, lanyard, collar, or ID badge.</p>
+      </div>
+
+      <!-- Step 2: Set Up Profile -->
+      <div class="card p-5">
+        <div class="mb-3 w-12 h-12">
+          <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="10" y="10" width="28" height="34" rx="4" fill="#ccfbf1" stroke="#0D9488" stroke-width="2"/>
+            <rect x="18" y="6" width="12" height="8" rx="4" fill="#0D9488"/>
+            <line x1="16" y1="24" x2="32" y2="24" stroke="#0A2342" stroke-width="2" stroke-linecap="round"/>
+            <line x1="16" y1="30" x2="28" y2="30" stroke="#0A2342" stroke-width="2" stroke-linecap="round"/>
+            <circle cx="33" cy="36" r="6" fill="#0D9488"/>
+            <path d="M30.5 36l2 2 4-4" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="text-xs font-bold text-brand mb-1 uppercase">Step 2</div>
+        <h3 class="font-semibold mb-2 text-navy">Set Up Profile</h3>
+        <p class="text-sm leading-relaxed text-slate-600">Scan the QR on your tag, fill in name, blood group, emergency contacts, and medical info. Takes 2 minutes.</p>
+      </div>
+
+      <!-- Step 3: Stranger Scans -->
+      <div class="card p-5">
+        <div class="mb-3 w-12 h-12">
+          <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="15" y="5" width="18" height="32" rx="4" fill="#ccfbf1" stroke="#0D9488" stroke-width="2"/>
+            <rect x="19" y="12" width="10" height="10" rx="1.5" fill="#0A2342"/>
+            <circle cx="24" cy="31" r="2" fill="#0D9488"/>
+            <path d="M7 14v-5h5" stroke="#0D9488" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M7 28v5h5" stroke="#0D9488" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M41 14v-5h-5" stroke="#0D9488" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M41 28v5h-5" stroke="#0D9488" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="text-xs font-bold text-brand mb-1 uppercase">Step 3</div>
+        <h3 class="font-semibold mb-2 text-navy">Stranger Scans</h3>
+        <p class="text-sm leading-relaxed text-slate-600">In an emergency, anyone scans the QR with their phone camera — like a normal QR. No app download needed.</p>
+      </div>
+
+      <!-- Step 4: Instant Contact -->
+      <div class="card p-5">
+        <div class="mb-3 w-12 h-12">
+          <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="24" cy="24" r="19" fill="#ccfbf1" stroke="#0D9488" stroke-width="2"/>
+            <path d="M17 16c0 0 1.5 2 1.5 6S17 28 17 28l3.5 3.5c0 0 2-1.5 6-1.5s5.5 1.5 5.5 1.5L34 30c0 0-3.5-3-3.5-7V17L17 16z" fill="#0D9488"/>
+            <path d="M29 14l2.5-2.5M31.5 17H35M29 20l2.5 2.5" stroke="#0D9488" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="text-xs font-bold text-brand mb-1 uppercase">Step 4</div>
+        <h3 class="font-semibold mb-2 text-navy">Instant Contact</h3>
+        <p class="text-sm leading-relaxed text-slate-600">The emergency profile opens in under 3 seconds. They call directly. Your WhatsApp gets the location alert.</p>
+      </div>
+
     </div>
     <div class="text-center mt-8">
       <a href="/demo" class="btn-brand">See the Emergency Page Live →</a>
@@ -188,9 +262,7 @@
 </section>
 
 <!-- ============================================================
-  SECTION 4 — REVIEWS: Social proof with specific outcomes
-  Research: 88% trust reviews as personal recommendations.
-  Use specific names, locations, outcomes — not generic praise.
+  SECTION 5 — REVIEWS: Real photos + specific outcomes
   ============================================================ -->
 <section class="section bg-slate-50 border-y border-slate-200">
   <div class="section-inner">
@@ -204,7 +276,7 @@
           "My son Arjun went missing at Pushkar Mela. Because of his SafeTag, a kind stranger called me within <strong>7 minutes</strong>. Seven minutes. I cannot explain what that felt like."
         </blockquote>
         <div class="flex items-center gap-3 border-t border-slate-100 pt-4">
-          <div class="w-9 h-9 rounded-full bg-teal-100 text-teal-700 font-bold flex items-center justify-center text-sm">R</div>
+          <img src="/static/images/review-rekha.png" alt="Rekha Mishra" class="w-9 h-9 rounded-full object-cover flex-shrink-0" onerror="this.outerHTML='<div class=\'w-9 h-9 rounded-full bg-teal-100 text-teal-700 font-bold flex items-center justify-center text-sm\'>R</div>'" />
           <div>
             <div class="font-semibold text-navy text-sm">Rekha Mishra</div>
             <div class="text-xs text-slate-500">Jaipur, Rajasthan · Child tag</div>
@@ -218,7 +290,7 @@
           "My mother has dementia. She walked out of the house three times last year. Each time, a neighbour scanned her SafeTag and called me. This device gives our whole family <strong>peace of mind</strong>."
         </blockquote>
         <div class="flex items-center gap-3 border-t border-slate-100 pt-4">
-          <div class="w-9 h-9 rounded-full bg-blue-100 text-blue-700 font-bold flex items-center justify-center text-sm">S</div>
+          <img src="/static/images/review-suresh.png" alt="Suresh Venkataraman" class="w-9 h-9 rounded-full object-cover flex-shrink-0" onerror="this.outerHTML='<div class=\'w-9 h-9 rounded-full bg-blue-100 text-blue-700 font-bold flex items-center justify-center text-sm\'>S</div>'" />
           <div>
             <div class="font-semibold text-navy text-sm">Suresh Venkataraman</div>
             <div class="text-xs text-slate-500">Chennai, Tamil Nadu · Elderly tag</div>
@@ -232,7 +304,7 @@
           "On a trek in Himachal I got separated from my group. A local farmer found me, scanned my SafeTag keychain, and reached my emergency contact in minutes. <strong>No language barrier</strong>."
         </blockquote>
         <div class="flex items-center gap-3 border-t border-slate-100 pt-4">
-          <div class="w-9 h-9 rounded-full bg-orange-100 text-orange-700 font-bold flex items-center justify-center text-sm">A</div>
+          <img src="/static/images/review-ananya.png" alt="Ananya Kapoor" class="w-9 h-9 rounded-full object-cover flex-shrink-0" onerror="this.outerHTML='<div class=\'w-9 h-9 rounded-full bg-orange-100 text-orange-700 font-bold flex items-center justify-center text-sm\'>A</div>'" />
           <div>
             <div class="font-semibold text-navy text-sm">Ananya Kapoor</div>
             <div class="text-xs text-slate-500">Mumbai, Maharashtra · Traveler tag</div>
@@ -245,38 +317,88 @@
 </section>
 
 <!-- ============================================================
-  SECTION 5 — WHO IS IT FOR: Use cases with emotional framing
+  SECTION 6 — WHO IS IT FOR: Use-case images
   ============================================================ -->
 <section class="section bg-white border-b border-slate-100">
   <div class="section-inner">
     <h2 class="text-3xl font-bold text-center mb-2" data-i18n="section.who">Who is SafeTag for?</h2>
     <p class="text-center text-slate-500 mb-10 max-w-xl mx-auto" data-i18n="section.who.sub">Everyone who could be separated from the people who love them.</p>
     <div class="grid md:grid-cols-3 sm:grid-cols-2 gap-4">
-      <%
-        var personas = [
-          { e:'👧', t:'Children',  d:'Lost at a railway station, fair, or temple? One scan finds the parents — before police reports are even filed.' },
-          { e:'👴', t:'Elderly',   d:'Dementia patients or seniors with no phone — a stranger can call family within seconds, no questions asked.' },
-          { e:'🧳', t:'Travelers', d:'Solo trips, Kumbh Mela, pilgrimages — instant ID for any helper. No language barrier, no app needed.' },
-          { e:'🐕', t:'Pets',      d:'Lost dogs and cats — the finder calls you directly. No separate database or app for the finder.' },
-          { e:'🚴', t:'Athletes',  d:'Cyclists, marathon runners, trekkers — full medical info for paramedics if you\'re in an accident.' },
-          { e:'🏫', t:'Schools',   d:'Bulk SafeTags for school ID badges — every student identified in seconds on any trip or emergency.' },
-        ];
-        personas.forEach(function(c){ %>
-        <div class="card p-5 flex gap-3 items-start">
-          <div class="text-2xl shrink-0"><%= c.e %></div>
+
+      <div class="card overflow-hidden hover:-translate-y-0.5 transition-transform">
+        <div class="h-36 bg-slate-100 overflow-hidden">
+          <img src="/static/images/usecase-child.png" alt="Child with SafeTag" class="w-full h-full object-cover" />
+        </div>
+        <div class="p-4 flex gap-3 items-start">
+          <span class="text-2xl shrink-0">👧</span>
           <div>
-            <h4 class="font-semibold mb-1 text-navy"><%= c.t %></h4>
-            <p class="text-sm text-slate-600 leading-relaxed"><%= c.d %></p>
+            <h4 class="font-semibold mb-1 text-navy">Children</h4>
+            <p class="text-sm text-slate-600 leading-relaxed">Lost at a railway station, fair, or temple? One scan finds the parents — before police reports are even filed.</p>
           </div>
         </div>
-      <% }); %>
+      </div>
+
+      <div class="card overflow-hidden hover:-translate-y-0.5 transition-transform">
+        <div class="h-36 bg-slate-100 overflow-hidden">
+          <img src="/static/images/usecase-elderly.png" alt="Elderly with SafeTag" class="w-full h-full object-cover" />
+        </div>
+        <div class="p-4 flex gap-3 items-start">
+          <span class="text-2xl shrink-0">👴</span>
+          <div>
+            <h4 class="font-semibold mb-1 text-navy">Elderly</h4>
+            <p class="text-sm text-slate-600 leading-relaxed">Dementia patients or seniors with no phone — a stranger can call family within seconds, no questions asked.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card overflow-hidden hover:-translate-y-0.5 transition-transform">
+        <div class="h-36 bg-slate-100 overflow-hidden">
+          <img src="/static/images/usecase-traveler.png" alt="Traveler with SafeTag" class="w-full h-full object-cover" />
+        </div>
+        <div class="p-4 flex gap-3 items-start">
+          <span class="text-2xl shrink-0">🧳</span>
+          <div>
+            <h4 class="font-semibold mb-1 text-navy">Travelers</h4>
+            <p class="text-sm text-slate-600 leading-relaxed">Solo trips, Kumbh Mela, pilgrimages — instant ID for any helper. No language barrier, no app needed.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card overflow-hidden hover:-translate-y-0.5 transition-transform">
+        <div class="h-36 bg-slate-100 overflow-hidden">
+          <img src="/static/images/usecase-pet.png" alt="Pet with SafeTag" class="w-full h-full object-cover" />
+        </div>
+        <div class="p-4 flex gap-3 items-start">
+          <span class="text-2xl shrink-0">🐕</span>
+          <div>
+            <h4 class="font-semibold mb-1 text-navy">Pets</h4>
+            <p class="text-sm text-slate-600 leading-relaxed">Lost dogs and cats — the finder calls you directly. No separate database or app for the finder.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card p-5 flex gap-3 items-start hover:-translate-y-0.5 transition-transform">
+        <span class="text-2xl shrink-0">🚴</span>
+        <div>
+          <h4 class="font-semibold mb-1 text-navy">Athletes</h4>
+          <p class="text-sm text-slate-600 leading-relaxed">Cyclists, marathon runners, trekkers — full medical info for paramedics if you're in an accident.</p>
+        </div>
+      </div>
+
+      <div class="card p-5 flex gap-3 items-start hover:-translate-y-0.5 transition-transform">
+        <span class="text-2xl shrink-0">🏫</span>
+        <div>
+          <h4 class="font-semibold mb-1 text-navy">Schools</h4>
+          <p class="text-sm text-slate-600 leading-relaxed">Bulk SafeTags for school ID badges — every student identified in seconds on any trip or emergency.</p>
+        </div>
+      </div>
+
     </div>
   </div>
 </section>
 
-
 <!-- ============================================================
-  SECTION 7 — EMOTIONAL STORY: Deepen commitment
+  SECTION 7 — EMOTIONAL STORY: with relief image
   ============================================================ -->
 <section class="bg-navy text-white">
   <div class="section-inner section">
@@ -290,17 +412,25 @@
           SafeTag turns any stranger with a phone into an instant link between a lost person and their family — in seconds, not hours.
         </p>
         <p class="mt-5 text-teal-300 font-semibold text-lg">SafeTag. Because emergencies don't wait.</p>
+        <div class="mt-6 flex flex-wrap gap-3">
+          <a href="/store" class="btn-warn">Get Your SafeTag — from ₹149</a>
+          <a href="/demo" class="text-teal-300 hover:text-teal-200 text-sm font-semibold self-center">See the emergency page demo →</a>
+        </div>
       </div>
-      <div class="text-center md:text-right flex flex-col items-center md:items-end gap-4">
-        <a href="/store" class="btn-warn">Get Your SafeTag — from ₹149</a>
-        <a href="/demo" class="text-teal-300 hover:text-teal-200 text-sm font-semibold">See the emergency page demo →</a>
+      <div class="flex justify-center md:justify-end">
+        <div class="rounded-cardLg overflow-hidden shadow-2xl max-w-xs w-full">
+          <img src="/static/images/hero-relief.png" alt="Paramedic using SafeTag emergency profile" class="w-full h-64 object-cover" />
+          <div class="bg-white/10 px-4 py-2 text-xs text-teal-200 text-center">
+            A paramedic reads blood group + contacts — in under 3 seconds.
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
 <!-- ============================================================
-  SECTION 8 — MANUFACTURER CTA: B2B conversion
+  SECTION 8 — MANUFACTURER CTA: B2B
   ============================================================ -->
 <section class="section bg-white border-y border-slate-100">
   <div class="section-inner">
@@ -366,8 +496,7 @@
 </section>
 
 <!-- ============================================================
-  SECTION 10 — FINAL CTA: Repeat purchase intent at decision stage
-  Research: Final CTA near testimonials/trust signals converts best.
+  SECTION 10 — FINAL CTA
   ============================================================ -->
 <section class="bg-gradient-to-br from-brand to-[#0F766E] text-white">
   <div class="section-inner section text-center max-w-2xl">
