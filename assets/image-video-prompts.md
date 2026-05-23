@@ -132,7 +132,27 @@ Indian man in his 30s at an airport departure gate, carrying a backpack. A teal 
 
 ---
 
-### 3.5 Emergency Responder Scanning Tag
+### 3.5 Athlete / Cyclist with SafeTag
+**Use:** "Who it's for — Athletes" section  
+**File name:** `usecase-athlete.jpg`
+
+```
+Action lifestyle photo of an Indian male cyclist in his late 20s, wearing a teal cycling jersey and helmet, pausing at the side of a mountain road. A teal SafeTag keychain is clipped to the zipper of his cycling jersey, clearly visible. He is catching his breath, looking into the distance. Background: blurred green hills and winding road. Golden hour light. Shallow depth of field. Photorealistic. Shot on Canon R5, 85mm f/1.8. --ar 3:2 --style raw
+```
+
+---
+
+### 3.6 School Children with SafeTag
+**Use:** "Who it's for — Schools" section  
+**File name:** `usecase-school.jpg`
+
+```
+Warm candid photo of a group of 4–5 Indian school children (ages 8–12) in uniform standing near a school gate, laughing and talking. Each child's school bag strap has a small teal SafeTag keychain clipped to it — the QR codes are softly visible. A teacher stands in the background smiling. Morning sunlight. Natural, joyful, safe atmosphere. Shallow depth of field — one child's tag in sharp focus in the foreground. Photorealistic. --ar 3:2 --style raw
+```
+
+---
+
+### 3.7 Emergency Responder Scanning Tag
 **Use:** Homepage "How it Works" step 3  
 **File name:** `usecase-scan.jpg`
 
@@ -297,5 +317,5 @@ Clean social share preview card. Left 40%: teal background with SafeTag logo (wh
 
 ---
 
-*Total assets: ~28 images + 5 video scenes + 7 icons*  
-*Priority order for generation: Section 1 (hero) → Section 2 (products) → Section 4 (testimonials) → Section 6 (videos) → rest*
+*Total assets: ~30 images + 5 video scenes + 7 icons*  
+*Priority order for generation: Section 1 (hero) → Section 2 (products) → Section 4 (testimonials) → Section 3.5–3.6 (new use-cases) → Section 6 (videos) → rest*
