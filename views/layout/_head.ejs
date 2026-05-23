@@ -3,6 +3,13 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <!-- Anti-flash: apply saved theme and lang before any paint -->
+  <script>
+    (function(){
+      if(localStorage.safetagTheme==='dark') document.documentElement.classList.add('dark');
+      if(localStorage.safetagLang==='hi') document.documentElement.setAttribute('lang','hi');
+    })();
+  </script>
 
   <%
     var _title = (typeof title !== 'undefined' && title) ? title : 'SafeTag — Scan. Know. Save a Life.';
@@ -47,6 +54,7 @@
 
   <script>
     tailwind.config = {
+      darkMode: 'class',
       theme: {
         extend: {
           colors: {
@@ -113,6 +121,32 @@
     .stepper-bubble.active { background:#0D9488; color:#fff; }
     .stepper-label { font-size:.7rem; color:#64748b; font-weight:500; }
     .stepper-line  { flex:1; height:2px; background:#e2e8f0; margin-bottom:18px; }
+    /* ---- Dark mode overrides ---- */
+    html.dark body { background:#0f172a; color:#94a3b8; }
+    html.dark h1,html.dark h2,html.dark h3,html.dark h4,html.dark h5 { color:#f1f5f9; }
+    html.dark .card { background:#1e293b; box-shadow:0 1px 6px rgba(0,0,0,.35); }
+    html.dark .input { background:#1e293b; border-color:#334155; color:#f1f5f9; }
+    html.dark .input:focus { border-color:#0D9488; }
+    html.dark .label { color:#e2e8f0; }
+    html.dark .navlink { color:#cbd5e1; }
+    html.dark .navlink:hover { background:#1e293b; color:#5eead4; }
+    html.dark .btn-outline { color:#e2e8f0; border-color:#475569; }
+    html.dark .btn-outline:hover { border-color:#0D9488; color:#0D9488; }
+    html.dark .table th { background:#1e293b; color:#f1f5f9; }
+    html.dark .table td { border-color:#334155; }
+    html.dark .table tr:hover td { background:#253349; }
+    html.dark .flash-success { background:#14532d; color:#bbf7d0; }
+    html.dark .flash-error { background:#7f1d1d; color:#fecaca; }
+    html.dark .flash-info { background:#1e3a5f; color:#bfdbfe; }
+    html.dark select.input option { background:#1e293b; }
+    html.dark .bg-slate-50 { background:#0f172a !important; }
+    html.dark .bg-white { background:#1e293b !important; }
+    html.dark .bg-slate-100 { background:#1e293b !important; }
+    html.dark .border-slate-100,.border-slate-200 { border-color:#334155 !important; }
+    html.dark .text-slate-500 { color:#94a3b8; }
+    html.dark .text-slate-600 { color:#94a3b8; }
+    html.dark .text-slate-700 { color:#cbd5e1; }
+    html.dark .section-inner .text-slate-500 { color:#94a3b8; }
   </style>
   <%- typeof head !== 'undefined' ? head : '' %>
 
@@ -131,6 +165,94 @@
     ],
     "contactPoint": { "@type": "ContactPoint", "email": "support@safe-tag.in", "contactType": "customer support" }
   }
+  </script>
+
+  <!-- Theme + Language runtime (called by navbar buttons; also on DOMContentLoaded) -->
+  <script>
+  // ---- Dark mode ----
+  function toggleTheme(){
+    var dark = document.documentElement.classList.toggle('dark');
+    localStorage.safetagTheme = dark ? 'dark' : 'light';
+    var ic = document.getElementById('themeIcon');
+    if(ic) ic.textContent = dark ? '☀️' : '🌙';
+  }
+
+  // ---- i18n dictionary ----
+  var _I18N = {
+    en:{
+      'nav.store':'Store','nav.how':'How it Works','nav.faq':'FAQ',
+      'nav.manufacturer':'Manufacturer','nav.dashboard':'Dashboard',
+      'nav.admin':'Admin','nav.login':'Login','nav.signout':'Sign out',
+      'nav.gettag':'Get Your Tag','nav.workshop':'My Workshop',
+      'hero.badge':'⚠️ 12,000+ children go missing in India every month',
+      'hero.tagline':'SafeTag exists so this never happens again.',
+      'hero.cta1':'🛒 Protect My Family — from ₹149','hero.cta2':'See Live Demo',
+      'section.shop':'Shop SafeTags','section.shop.sub':'Starts at ₹149. Ships across India.',
+      'section.how':'How SafeTag Works',
+      'section.how.sub':'From order to life-saving — 4 steps. No app on either side. Works on any Android or iPhone camera.',
+      'section.reviews':'Real families. Real reunions.',
+      'section.reviews.sub':'These are the moments SafeTag was built for.',
+      'section.who':'Who is SafeTag for?',
+      'section.who.sub':'Everyone who could be separated from the people who love them.',
+      'section.faq':'Frequently Asked Questions',
+      'cta.final':'Don\'t wait for an emergency to wish you had it.',
+      'cta.final.sub':'SafeTag takes 2 minutes to set up. It lasts years. And it could be the most important thing your family has.',
+      'btn.buy':'Get SafeTag Now — from ₹149','btn.demo':'See It Work First',
+    },
+    hi:{
+      'nav.store':'स्टोर','nav.how':'कैसे काम करता है','nav.faq':'सवाल जवाब',
+      'nav.manufacturer':'निर्माता','nav.dashboard':'डैशबोर्ड',
+      'nav.admin':'एडमिन','nav.login':'लॉगिन','nav.signout':'साइन आउट',
+      'nav.gettag':'टैग पाएं','nav.workshop':'मेरी वर्कशॉप',
+      'hero.badge':'⚠️ भारत में हर महीने 12,000+ बच्चे गुम हो जाते हैं',
+      'hero.tagline':'SafeTag इसीलिए बना — ताकि यह दोबारा न हो।',
+      'hero.cta1':'🛒 परिवार को सुरक्षित करें — ₹149 से','hero.cta2':'लाइव डेमो देखें',
+      'section.shop':'SafeTag खरीदें','section.shop.sub':'शुरुआत ₹149 से। पूरे भारत में डिलीवरी।',
+      'section.how':'SafeTag कैसे काम करता है',
+      'section.how.sub':'ऑर्डर से लेकर जीवन बचाने तक — 4 आसान कदम। किसी भी फ़ोन कैमरे से स्कैन करें।',
+      'section.reviews':'असली परिवार। असली मिलन।',
+      'section.reviews.sub':'ये वो पल हैं जिनके लिए SafeTag बना है।',
+      'section.who':'SafeTag किसके लिए है?',
+      'section.who.sub':'हर वो इंसान जो अपनों से बिछड़ सकता है।',
+      'section.faq':'अक्सर पूछे जाने वाले सवाल',
+      'cta.final':'आपात स्थिति आने पर पछताना मत।',
+      'cta.final.sub':'SafeTag सेटअप में सिर्फ 2 मिनट लगते हैं। यह सालों चलता है। और यह आपके परिवार की सबसे ज़रूरी चीज़ हो सकती है।',
+      'btn.buy':'अभी SafeTag पाएं — ₹149 से','btn.demo':'पहले देखें कैसे काम करता है',
+    },
+  };
+  function _applyLang(lang){
+    var d = _I18N[lang] || _I18N.en;
+    document.querySelectorAll('[data-i18n]').forEach(function(el){
+      var k=el.getAttribute('data-i18n'); if(d[k]!==undefined) el.textContent=d[k];
+    });
+    document.querySelectorAll('[data-i18n-html]').forEach(function(el){
+      var k=el.getAttribute('data-i18n-html'); if(d[k]!==undefined) el.innerHTML=d[k];
+    });
+  }
+  function _updateLangBtns(lang){
+    var en=document.getElementById('langEn'), hi=document.getElementById('langHi');
+    if(!en||!hi) return;
+    if(lang==='hi'){
+      en.className='px-2.5 py-1.5 transition text-slate-500 hover:bg-slate-100';
+      hi.className='px-2.5 py-1.5 transition bg-brand text-white';
+    } else {
+      en.className='px-2.5 py-1.5 transition bg-brand text-white';
+      hi.className='px-2.5 py-1.5 transition text-slate-500 hover:bg-slate-100';
+    }
+  }
+  function setLang(lang){
+    localStorage.safetagLang=lang;
+    _updateLangBtns(lang);
+    _applyLang(lang);
+    document.documentElement.setAttribute('lang', lang==='hi'?'hi':'en');
+  }
+  document.addEventListener('DOMContentLoaded',function(){
+    var dark=document.documentElement.classList.contains('dark');
+    var ic=document.getElementById('themeIcon'); if(ic) ic.textContent=dark?'☀️':'🌙';
+    var lang=localStorage.safetagLang||'en';
+    _updateLangBtns(lang);
+    _applyLang(lang);
+  });
   </script>
 </head>
 <body class="bg-slate-50 min-h-screen flex flex-col">

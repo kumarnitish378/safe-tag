@@ -11,7 +11,7 @@
 
       <!-- Left: Narrative hook -->
       <div>
-        <span class="inline-flex items-center gap-1.5 text-xs font-semibold bg-red-500/20 text-red-300 border border-red-400/20 px-3 py-1 rounded-full mb-5">
+        <span class="inline-flex items-center gap-1.5 text-xs font-semibold bg-red-500/20 text-red-300 border border-red-400/20 px-3 py-1 rounded-full mb-5" data-i18n="hero.badge">
           ⚠️ 12,000+ children go missing in India every month
         </span>
 
@@ -22,7 +22,7 @@
         <p class="text-slate-300 text-base leading-relaxed max-w-md mb-3">
           A 6-year-old went missing at Kumbh Mela. She had no phone, couldn't remember her parents' number, and was too scared to speak. It took fourteen hours to reunite her family.
         </p>
-        <p class="text-teal-300 font-semibold text-lg mb-7">
+        <p class="text-teal-300 font-semibold text-lg mb-7" data-i18n="hero.tagline">
           SafeTag exists so this never happens again.
         </p>
 
@@ -114,12 +114,56 @@
 </section>
 
 <!-- ============================================================
-  SECTION 3 — HOW IT WORKS: Confidence through clarity
+  SECTION 3 — STORE PREVIEW (moved up — friction reduction: show product early)
+  ============================================================ -->
+<section class="section bg-white" id="shop">
+  <div class="section-inner">
+    <div class="flex items-end justify-between mb-6">
+      <div>
+        <h2 class="text-3xl font-bold" data-i18n="section.shop">Shop SafeTags</h2>
+        <p class="text-slate-500 mt-1" data-i18n="section.shop.sub">Starts at ₹149. Ships across India.</p>
+      </div>
+      <a href="/store" class="text-brand font-semibold hover:underline">See all →</a>
+    </div>
+    <% if (featured && featured.length) { %>
+      <div class="grid md:grid-cols-3 gap-5">
+        <% featured.forEach(function(p){ %>
+          <a href="/store/<%= p.id %>" class="card p-5 hover:-translate-y-1 transition-transform block">
+            <div class="w-full h-40 bg-slate-100 rounded-card mb-4 flex items-center justify-center overflow-hidden">
+              <% if (p.photo_url) { %>
+                <img src="<%= p.photo_url %>" class="w-full h-40 object-cover rounded-card" alt="<%= p.name %>" />
+              <% } else { %>
+                <span class="text-5xl">🏷️</span>
+              <% } %>
+            </div>
+            <div class="capitalize text-xs text-slate-500 mb-1"><%= p.category %></div>
+            <h3 class="font-semibold mb-1 text-navy"><%= p.name %></h3>
+            <div class="mt-2 flex items-center justify-between">
+              <span class="font-sora text-xl text-navy font-bold">₹<%= p.price_inr %></span>
+              <span class="btn-brand text-sm py-1.5 px-3">Buy →</span>
+            </div>
+          </a>
+        <% }); %>
+      </div>
+    <% } else { %>
+      <div class="card p-10 text-center">
+        <div class="text-4xl mb-2">🏷️</div>
+        <p>New products coming soon. <a class="text-brand font-semibold" href="/store">Browse store</a>.</p>
+      </div>
+    <% } %>
+    <div class="text-center mt-8">
+      <a href="/store" class="btn-warn px-10 py-3 text-base">See All SafeTag Products →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+  SECTION 4 — HOW IT WORKS: Confidence through clarity
   ============================================================ -->
 <section id="how" class="section">
   <div class="section-inner">
-    <h2 class="text-3xl font-bold text-center mb-2">How SafeTag Works</h2>
-    <p class="text-center text-slate-500 mb-10 max-w-xl mx-auto">From order to life-saving — 4 steps. No app on either side. Works on any Android or iPhone camera.</p>
+    <h2 class="text-3xl font-bold text-center mb-2" data-i18n="section.how">How SafeTag Works</h2>
+    <p class="text-center text-slate-500 mb-10 max-w-xl mx-auto" data-i18n="section.how.sub">From order to life-saving — 4 steps. No app on either side. Works on any Android or iPhone camera.</p>
     <div class="grid md:grid-cols-4 gap-5">
       <%
         var steps = [
@@ -150,8 +194,8 @@
   ============================================================ -->
 <section class="section bg-slate-50 border-y border-slate-200">
   <div class="section-inner">
-    <h2 class="text-3xl font-bold text-center mb-2">Real families. Real reunions.</h2>
-    <p class="text-center text-slate-500 mb-10 max-w-xl mx-auto">These are the moments SafeTag was built for.</p>
+    <h2 class="text-3xl font-bold text-center mb-2" data-i18n="section.reviews">Real families. Real reunions.</h2>
+    <p class="text-center text-slate-500 mb-10 max-w-xl mx-auto" data-i18n="section.reviews.sub">These are the moments SafeTag was built for.</p>
     <div class="grid md:grid-cols-3 gap-6">
 
       <div class="card p-6 flex flex-col">
@@ -205,8 +249,8 @@
   ============================================================ -->
 <section class="section bg-white border-b border-slate-100">
   <div class="section-inner">
-    <h2 class="text-3xl font-bold text-center mb-2">Who is SafeTag for?</h2>
-    <p class="text-center text-slate-500 mb-10 max-w-xl mx-auto">Everyone who could be separated from the people who love them.</p>
+    <h2 class="text-3xl font-bold text-center mb-2" data-i18n="section.who">Who is SafeTag for?</h2>
+    <p class="text-center text-slate-500 mb-10 max-w-xl mx-auto" data-i18n="section.who.sub">Everyone who could be separated from the people who love them.</p>
     <div class="grid md:grid-cols-3 sm:grid-cols-2 gap-4">
       <%
         var personas = [
@@ -230,46 +274,6 @@
   </div>
 </section>
 
-<!-- ============================================================
-  SECTION 6 — STORE PREVIEW: Featured products
-  ============================================================ -->
-<section class="section">
-  <div class="section-inner">
-    <div class="flex items-end justify-between mb-6">
-      <div>
-        <h2 class="text-3xl font-bold">Shop SafeTags</h2>
-        <p class="text-slate-500 mt-1">Starts at ₹149. Ships across India.</p>
-      </div>
-      <a href="/store" class="text-brand font-semibold hover:underline">See all →</a>
-    </div>
-    <% if (featured && featured.length) { %>
-      <div class="grid md:grid-cols-3 gap-5">
-        <% featured.forEach(function(p){ %>
-          <a href="/store/<%= p.id %>" class="card p-5 hover:-translate-y-1 transition-transform block">
-            <div class="w-full h-40 bg-slate-100 rounded-card mb-4 flex items-center justify-center overflow-hidden">
-              <% if (p.photo_url) { %>
-                <img src="<%= p.photo_url %>" class="w-full h-40 object-cover rounded-card" alt="<%= p.name %>" />
-              <% } else { %>
-                <span class="text-5xl">🏷️</span>
-              <% } %>
-            </div>
-            <div class="capitalize text-xs text-slate-500 mb-1"><%= p.category %></div>
-            <h3 class="font-semibold mb-1 text-navy"><%= p.name %></h3>
-            <div class="mt-2 flex items-center justify-between">
-              <span class="font-sora text-xl text-navy font-bold">₹<%= p.price_inr %></span>
-              <span class="btn-brand text-sm py-1.5 px-3">Buy →</span>
-            </div>
-          </a>
-        <% }); %>
-      </div>
-    <% } else { %>
-      <div class="card p-10 text-center">
-        <div class="text-4xl mb-2">🏷️</div>
-        <p>New products coming soon. <a class="text-brand font-semibold" href="/store">Browse store</a>.</p>
-      </div>
-    <% } %>
-  </div>
-</section>
 
 <!-- ============================================================
   SECTION 7 — EMOTIONAL STORY: Deepen commitment
@@ -331,7 +335,7 @@
   ============================================================ -->
 <section id="faq" class="section">
   <div class="section-inner max-w-3xl">
-    <h2 class="text-3xl font-bold text-center mb-8">Frequently Asked Questions</h2>
+    <h2 class="text-3xl font-bold text-center mb-8" data-i18n="section.faq">Frequently Asked Questions</h2>
     <div class="space-y-3">
       <%
         var faqs = [
@@ -368,11 +372,11 @@
 <section class="bg-gradient-to-br from-brand to-[#0F766E] text-white">
   <div class="section-inner section text-center max-w-2xl">
     <div class="text-5xl mb-4">🏷️</div>
-    <h2 class="text-3xl font-bold text-white mb-3">Don't wait for an emergency to wish you had it.</h2>
-    <p class="text-teal-100 text-lg mb-7">SafeTag takes 2 minutes to set up. It lasts years. And it could be the most important thing your family has.</p>
+    <h2 class="text-3xl font-bold text-white mb-3" data-i18n="cta.final">Don't wait for an emergency to wish you had it.</h2>
+    <p class="text-teal-100 text-lg mb-7" data-i18n="cta.final.sub">SafeTag takes 2 minutes to set up. It lasts years. And it could be the most important thing your family has.</p>
     <div class="flex flex-wrap justify-center gap-3">
-      <a href="/store" class="btn-warn text-base px-8 py-3">Get SafeTag Now — from ₹149</a>
-      <a href="/demo" class="btn-outline border-white/30 text-white hover:!text-white hover:!border-white text-base">See It Work First</a>
+      <a href="/store" class="btn-warn text-base px-8 py-3" data-i18n="btn.buy">Get SafeTag Now — from ₹149</a>
+      <a href="/demo" class="btn-outline border-white/30 text-white hover:!text-white hover:!border-white text-base" data-i18n="btn.demo">See It Work First</a>
     </div>
     <p class="text-teal-200 text-sm mt-5">Ships across India · 7-day returns · 🇮🇳 Made in India</p>
   </div>

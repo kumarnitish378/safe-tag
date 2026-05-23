@@ -1342,6 +1342,77 @@ app.post('/api/location-alert', async (req, res) => {
 // =============================================================================
 // Payment (dummy / Razorpay)
 // =============================================================================
+
+// GET — show checkout page
+app.get('/checkout/:productId', requireUser, async (req, res) => {
+  const productId = parseInt(req.params.productId, 10);
+  const quantity = Math.max(1, parseInt(req.query.qty || '1', 10));
+  try {
+    const product = await prisma.productListing.findFirst({
+      where: { id: productId, isApproved: true, isRejected: false },
+      include: { manufacturer: true },
+    });
+    if (!product) {
+      req.flash('error', 'Product not available.');
+      return res.redirect('/store');
+    }
+    if (product.quantityAvailable < quantity) {
+      req.flash('error', 'Not enough stock.');
+      return res.redirect(`/store/${productId}`);
+    }
+    const p = formatProduct(product);
+    res.render('checkout', {
+      title: `Checkout — ${product.name}`,
+      noIndex: true,
+      product: p,
+      quantity,
+      totalInr: p.price_inr * quantity,
+      errors: {},
+      values: {},
+    });
+  } catch (e) {
+    req.flash('error', 'Server error.');
+    res.redirect('/store');
+  }
+});
+
+app.get('/order-confirmation/:orderId', requireUser, async (req, res) => {
+  try {
+    const orderId = parseInt(req.params.orderId, 10);
+    const order = await prisma.order.findFirst({
+      where: { id: orderId, userId: req.session.user.id },
+      include: { productListing: { include: { manufacturer: true } } },
+    });
+    if (!order) return res.redirect('/orders');
+
+    const trackingId = `ST${String(order.id).padStart(6, '0')}IN`;
+    const deliveryDate = new Date(order.createdAt);
+    deliveryDate.setDate(deliveryDate.getDate() + 7);
+    const deliveryStr = deliveryDate.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
+
+    const meta = (() => { try { return JSON.parse(order.shippingAddress || '{}'); } catch(e) { return {}; } })();
+    const paymentLabel = { upi: 'UPI Payment', card: 'Credit / Debit Card', cod: 'Cash on Delivery' }[meta.payment_method] || 'Online';
+    const addrParts = [meta.address_line1, meta.address_line2, meta.city, meta.state, meta.pincode].filter(Boolean);
+
+    res.render('order_confirmation', {
+      title: 'Order Confirmed — SafeTag',
+      noIndex: true,
+      order: formatOrder(order, false, true),
+      product: formatProduct(order.productListing),
+      trackingId,
+      deliveryDate: deliveryStr,
+      paymentLabel,
+      shippingAddress: addrParts.join(', '),
+      recipientName: meta.recipient_name || req.session.user.name || 'Customer',
+      userEmail: req.session.user.email || '',
+      emailSent: !!meta.email_sent,
+    });
+  } catch (e) {
+    console.error(e);
+    res.redirect('/orders');
+  }
+});
+
 app.post('/checkout/:productId', requireUser, async (req, res) => {
   const productId = parseInt(req.params.productId, 10);
   const quantity = parseInt(req.body.quantity || '1', 10) || 1;
@@ -1367,24 +1438,102 @@ app.post('/checkout/:productId', requireUser, async (req, res) => {
 
     if (DUMMY_PAYMENT) {
       const orderId = `order_dummy_${crypto.randomBytes(12).toString('hex')}`;
-      await prisma.order.create({
+      const paymentMethod = (req.body.payment_method || 'upi').trim();
+      const cod = paymentMethod === 'cod';
+      const finalAmount = amount + (cod ? 3000 : 0); // +30 INR = 3000 paise for COD
+
+      // Build structured shipping address (stored as JSON string)
+      const addrMeta = {
+        recipient_name: (req.body.recipient_name || '').trim(),
+        recipient_phone: (req.body.recipient_phone || '').trim(),
+        address_line1: (req.body.address_line1 || '').trim(),
+        address_line2: (req.body.address_line2 || '').trim(),
+        city: (req.body.city || '').trim(),
+        state: (req.body.state || '').trim(),
+        pincode: (req.body.pincode || '').trim(),
+        payment_method: paymentMethod,
+      };
+
+      // Validate required address fields
+      if (!addrMeta.recipient_name || !addrMeta.address_line1 || !addrMeta.city || !addrMeta.pincode) {
+        const p = formatProduct(product);
+        return res.render('checkout', {
+          title: `Checkout — ${product.name}`,
+          noIndex: true,
+          product: p,
+          quantity,
+          totalInr: p.price_inr * quantity,
+          errors: { _form: 'Please fill in all required delivery fields.' },
+          values: req.body,
+        });
+      }
+
+      // Send order confirmation email
+      const SMTP_USER = process.env.SMTP_USER || '';
+      const SMTP_PASS = process.env.SMTP_PASS || '';
+      let emailSent = false;
+      const userEmail = req.session.user.email || '';
+      if (SMTP_USER && SMTP_PASS && userEmail) {
+        try {
+          const nodemailer = require('nodemailer');
+          const transporter = nodemailer.createTransport({
+            host: process.env.SMTP_HOST || 'smtp.gmail.com',
+            port: parseInt(process.env.SMTP_PORT || '587', 10),
+            secure: false,
+            auth: { user: SMTP_USER, pass: SMTP_PASS },
+          });
+          const trackingId = `ST${Date.now().toString().slice(-6)}IN`;
+          await transporter.sendMail({
+            from: `"SafeTag Orders" <${SMTP_USER}>`,
+            to: userEmail,
+            subject: `Order Confirmed — SafeTag ${product.name}`,
+            text: [
+              `Hi ${addrMeta.recipient_name},`,
+              ``,
+              `Your SafeTag order has been confirmed!`,
+              ``,
+              `Product   : ${product.name}`,
+              `Quantity  : ${quantity}`,
+              `Amount    : ₹${(finalAmount / 100).toFixed(0)}`,
+              `Payment   : ${paymentMethod.toUpperCase()}`,
+              `Tracking  : ${trackingId}`,
+              ``,
+              `Delivery address:`,
+              `${addrMeta.address_line1}${addrMeta.address_line2 ? ', ' + addrMeta.address_line2 : ''}`,
+              `${addrMeta.city}, ${addrMeta.state} — ${addrMeta.pincode}`,
+              ``,
+              `Expected delivery: 5–7 business days.`,
+              ``,
+              `Activate your tag at: ${BASE_URL}`,
+              `Support: support@safe-tag.in`,
+              ``,
+              `— SafeTag Team`,
+            ].join('\n'),
+          });
+          emailSent = true;
+        } catch (e) {
+          console.error('Order email error:', e.message);
+        }
+      }
+      addrMeta.email_sent = emailSent;
+
+      const newOrder = await prisma.order.create({
         data: {
           userId: req.session.user.id,
           productListingId: product.id,
           quantity,
-          amount,
+          amount: finalAmount,
           status: 'pending',
           razorpayOrderId: orderId,
-          razorpayPaymentId: `pay_dummy_${Date.now()}`,
-          shippingAddress: (req.body.shipping_address || '').trim() || null,
+          razorpayPaymentId: `pay_dummy_${paymentMethod}_${Date.now()}`,
+          shippingAddress: JSON.stringify(addrMeta),
         },
       });
       await prisma.productListing.update({
         where: { id: product.id },
         data: { quantityAvailable: Math.max(0, product.quantityAvailable - quantity) },
       });
-      req.flash('success', 'Order placed (dummy payment mode).');
-      return res.redirect('/orders');
+      return res.redirect(`/order-confirmation/${newOrder.id}`);
     }
 
     // Real Razorpay flow

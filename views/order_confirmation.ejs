@@ -1,0 +1,116 @@
+<%- include('layout/_head', { noIndex: true }) %>
+
+<div class="max-w-2xl mx-auto px-4 py-10">
+
+  <!-- Success header -->
+  <div class="text-center mb-8">
+    <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-5 text-4xl">✅</div>
+    <h1 class="text-2xl font-bold text-navy">Order Confirmed!</h1>
+    <p class="text-slate-500 mt-2">Thank you, <strong><%= recipientName %></strong>. Your SafeTag is on its way.</p>
+    <% if (emailSent) { %>
+      <p class="text-xs text-slate-400 mt-1">Confirmation email sent to <strong><%= userEmail %></strong></p>
+    <% } %>
+  </div>
+
+  <!-- Order details card -->
+  <div class="card p-6 mb-5">
+    <div class="flex items-start justify-between mb-5">
+      <div>
+        <div class="text-xs uppercase text-slate-400 font-semibold mb-1">Order ID</div>
+        <div class="font-mono font-bold text-navy text-xl">#ST<%= String(order.id).padStart(6, '0') %></div>
+        <div class="text-xs text-slate-400 mt-1"><%= new Date(order.created_at).toLocaleDateString('en-IN', { day:'numeric', month:'long', year:'numeric' }) %></div>
+      </div>
+      <span class="pill pill-success">✓ Confirmed</span>
+    </div>
+
+    <!-- Product row -->
+    <div class="flex gap-4 py-4 border-y border-slate-100">
+      <div class="w-16 h-16 bg-slate-100 rounded-card flex items-center justify-center flex-shrink-0 overflow-hidden">
+        <% if (product.photo_url) { %>
+          <img src="<%= product.photo_url %>" class="w-16 h-16 object-cover" alt="<%= product.name %>" />
+        <% } else { %>
+          <span class="text-3xl">🏷️</span>
+        <% } %>
+      </div>
+      <div class="flex-1">
+        <div class="font-semibold text-navy"><%= product.name %></div>
+        <div class="text-sm text-slate-500 capitalize mt-0.5"><%= product.category %></div>
+        <div class="text-xs text-slate-400 mt-1">Qty: <%= order.quantity %></div>
+      </div>
+      <div class="text-right">
+        <div class="font-bold text-navy">₹<%= Math.round(order.amount / 100) %></div>
+        <div class="text-xs text-success mt-1">FREE shipping</div>
+      </div>
+    </div>
+
+    <!-- Tracking and delivery info grid -->
+    <div class="mt-5 grid sm:grid-cols-2 gap-4 text-sm">
+      <div class="bg-slate-50 rounded-card p-3">
+        <div class="text-xs uppercase text-slate-400 font-semibold mb-1">Tracking ID</div>
+        <div class="font-mono font-bold text-navy text-base"><%= trackingId %></div>
+        <div class="text-xs text-slate-400 mt-1">Updates via SMS & email</div>
+      </div>
+      <div class="bg-slate-50 rounded-card p-3">
+        <div class="text-xs uppercase text-slate-400 font-semibold mb-1">Expected Delivery</div>
+        <div class="font-semibold text-navy"><%= deliveryDate %></div>
+        <div class="text-xs text-slate-400 mt-1">5–7 business days</div>
+      </div>
+      <div class="bg-slate-50 rounded-card p-3">
+        <div class="text-xs uppercase text-slate-400 font-semibold mb-1">Payment</div>
+        <div class="font-semibold text-navy capitalize"><%= paymentLabel %></div>
+        <div class="text-xs text-success mt-1">✓ Confirmed</div>
+      </div>
+      <div class="bg-slate-50 rounded-card p-3">
+        <div class="text-xs uppercase text-slate-400 font-semibold mb-1">Ship To</div>
+        <div class="text-navy text-xs leading-relaxed"><%= shippingAddress %></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- What happens next -->
+  <div class="card p-6 mb-5">
+    <h2 class="font-semibold text-navy mb-5">What happens next?</h2>
+    <div class="space-y-4">
+      <div class="flex gap-3 items-start">
+        <div class="w-7 h-7 rounded-full bg-brand text-white text-xs flex items-center justify-center font-bold flex-shrink-0 mt-0.5">1</div>
+        <div>
+          <div class="font-semibold text-sm text-navy">Order confirmation email</div>
+          <div class="text-xs text-slate-500 mt-0.5">Check your inbox for a detailed receipt. Also check spam.</div>
+        </div>
+      </div>
+      <div class="flex gap-3 items-start">
+        <div class="w-7 h-7 rounded-full bg-brand text-white text-xs flex items-center justify-center font-bold flex-shrink-0 mt-0.5">2</div>
+        <div>
+          <div class="font-semibold text-sm text-navy">Dispatched in 1–2 business days</div>
+          <div class="text-xs text-slate-500 mt-0.5">You'll get an SMS and email with your shipping tracking link.</div>
+        </div>
+      </div>
+      <div class="flex gap-3 items-start">
+        <div class="w-7 h-7 rounded-full bg-brand text-white text-xs flex items-center justify-center font-bold flex-shrink-0 mt-0.5">3</div>
+        <div>
+          <div class="font-semibold text-sm text-navy">Activate your SafeTag on arrival</div>
+          <div class="text-xs text-slate-500 mt-0.5">Scan the QR code and fill emergency info in under 2 minutes. Your tag is live immediately.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WhatsApp share -->
+  <div class="card p-5 mb-6 flex items-center gap-4">
+    <div class="text-3xl">💬</div>
+    <div class="flex-1">
+      <div class="font-semibold text-navy text-sm">Tell someone who needs this</div>
+      <div class="text-xs text-slate-500 mt-0.5">SafeTag can protect a child, parent, or pet in your circle too.</div>
+    </div>
+    <a href="https://wa.me/?text=<%= encodeURIComponent('I just ordered a SafeTag emergency ID tag for my family. One QR scan opens emergency contacts + blood group in seconds. From ₹149: https://safe-tag.in') %>" target="_blank" rel="noopener" class="btn-brand text-sm flex-shrink-0">
+      Share →
+    </a>
+  </div>
+
+  <div class="flex flex-wrap gap-3 justify-center">
+    <a href="/dashboard" class="btn-brand">View My Tags</a>
+    <a href="/store" class="btn-outline">Continue Shopping</a>
+  </div>
+</div>
+
+<%- include('layout/_foot') %>

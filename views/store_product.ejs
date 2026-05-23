@@ -62,19 +62,28 @@
 
       <!-- Buy / OOS -->
       <% if (product.quantity_available > 0) { %>
-        <form method="POST" action="/checkout/<%= product.id %>" class="card p-5 space-y-4">
-          <%- include('layout/_csrf') %>
-          <div>
-            <label class="label">Quantity</label>
-            <input class="input" type="number" name="quantity" min="1" max="<%= product.quantity_available %>" value="1" />
+        <div class="card p-5 space-y-4">
+          <div class="flex items-center gap-3">
+            <label class="label mb-0">Quantity</label>
+            <div class="flex items-center gap-2">
+              <button onclick="var q=document.getElementById('qtyInput'); q.value=Math.max(1,+q.value-1); updateTotal();" class="w-8 h-8 rounded border border-slate-200 flex items-center justify-center font-bold text-slate-600 hover:bg-slate-100">−</button>
+              <input id="qtyInput" class="input text-center w-16 py-1.5" type="number" min="1" max="<%= product.quantity_available %>" value="1" onchange="updateTotal()" />
+              <button onclick="var q=document.getElementById('qtyInput'); q.value=Math.min(<%= product.quantity_available %>,+q.value+1); updateTotal();" class="w-8 h-8 rounded border border-slate-200 flex items-center justify-center font-bold text-slate-600 hover:bg-slate-100">+</button>
+            </div>
           </div>
-          <div>
-            <label class="label">Shipping address <span class="text-xs text-slate-400">(optional now)</span></label>
-            <textarea class="input" name="shipping_address" rows="2" placeholder="Full address with PIN code"></textarea>
-          </div>
-          <button class="btn-warn w-full justify-center text-base py-3">Buy Now — ₹<%= product.price_inr %></button>
+          <a id="buyBtn" href="/checkout/<%= product.id %>?qty=1" class="btn-warn w-full justify-center text-base py-3 block text-center">
+            Buy Now — ₹<span id="totalPrice"><%= product.price_inr %></span>
+          </a>
           <% if (!user) { %><p class="text-xs text-center text-slate-500">You'll be asked to sign in to complete the purchase.</p><% } %>
-        </form>
+        </div>
+        <script>
+          var _unitPrice = <%= product.price_inr %>;
+          function updateTotal(){
+            var q = Math.max(1, Math.min(<%= product.quantity_available %>, parseInt(document.getElementById('qtyInput').value)||1));
+            document.getElementById('totalPrice').textContent = _unitPrice * q;
+            document.getElementById('buyBtn').href = '/checkout/<%= product.id %>?qty=' + q;
+          }
+        </script>
       <% } else { %>
         <div class="card p-5 text-center">
           <span class="pill pill-danger text-base">Out of Stock</span>
