@@ -126,6 +126,33 @@
     .stepper-bubble.active { background:#0D9488; color:#fff; }
     .stepper-label { font-size:.7rem; color:#64748b; font-weight:500; }
     .stepper-line  { flex:1; height:2px; background:#e2e8f0; margin-bottom:18px; }
+    /* ---- Scrollbar hiding utility ---- */
+    .scrollbar-none { -ms-overflow-style:none; scrollbar-width:none; }
+    .scrollbar-none::-webkit-scrollbar { display:none; }
+    /* ---- Always-dark sections: force bg + text so non-layered h2{color} doesn't win over @layer utilities ---- */
+    /* Hero gradient */
+    .hero-grad { background: linear-gradient(135deg, #0A2342 0%, #0B1E3D 55%, #091224 100%) !important; }
+    .hero-grad h1,.hero-grad h2,.hero-grad blockquote { color:#fff !important; }
+    .hero-grad .text-slate-300 { color:#cbd5e1 !important; }
+    .hero-grad .text-teal-300 { color:#5eead4 !important; }
+    .hero-grad .text-slate-400 { color:#94a3b8 !important; }
+    /* bg-navy sections (story, manufacturer etc.) */
+    section.bg-navy { background:#0A2342 !important; }
+    section.bg-navy h1,section.bg-navy h2,section.bg-navy h3,
+    section.bg-navy h4,section.bg-navy h5 { color:#fff !important; }
+    section.bg-navy .text-slate-300 { color:#cbd5e1 !important; }
+    section.bg-navy .text-teal-300 { color:#5eead4 !important; }
+    section.bg-navy .text-slate-600 { color:#cbd5e1 !important; }
+    /* Final CTA gradient (from-brand to-[#0F766E]) */
+    .cta-grad { background: linear-gradient(135deg, #0D9488 0%, #0F766E 100%) !important; }
+    .cta-grad h1,.cta-grad h2 { color:#fff !important; }
+    .cta-grad p,.cta-grad .text-teal-100 { color:#ccfbf1 !important; }
+    .cta-grad .text-teal-200 { color:#99f6e4 !important; }
+    /* Footer always dark */
+    footer.bg-navy { background:#1e293b !important; }
+    footer.bg-navy h4 { color:#fff !important; }
+    footer.bg-navy .text-slate-300 { color:#94a3b8 !important; }
+    footer.bg-navy .text-slate-500 { color:#64748b !important; }
     /* ---- Dark mode overrides ---- */
     html.dark body { background:#0f172a; color:#94a3b8; }
     html.dark h1,html.dark h2,html.dark h3,html.dark h4,html.dark h5 { color:#f1f5f9; }
@@ -148,7 +175,7 @@
     html.dark .bg-slate-100 { background:#253349 !important; }
     /* sections go DARKER than cards so cards remain visible — hierarchy: body#0f172a < section#0f172a < card#1e293b */
     html.dark section.bg-white, html.dark .page-bg-white { background:#0f172a !important; }
-    html.dark footer { background:#1e293b !important; }
+    html.dark footer.bg-navy { background:#1e293b !important; }
     /* Bug fix: both selectors must be scoped to html.dark — comma-split was breaking light mode borders */
     html.dark .border-slate-100, html.dark .border-slate-200 { border-color:#334155 !important; }
     html.dark .text-slate-500 { color:#94a3b8; }

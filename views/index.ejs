@@ -3,7 +3,7 @@
 <!-- ============================================================
   SECTION 1 — HERO: Story-first with crowd background image
   ============================================================ -->
-<section class="relative bg-gradient-to-br from-navy via-[#0B1E3D] to-[#091224] text-white overflow-hidden">
+<section class="relative hero-grad text-white overflow-hidden">
   <!-- Background crowd image with dark overlay -->
   <div class="absolute inset-0">
     <img src="/static/images/hero-crowd-scan.jpg" alt="" class="w-full h-full object-cover object-center opacity-10" />
@@ -11,10 +11,9 @@
   </div>
 
   <div class="relative max-w-5xl mx-auto px-4 pt-6 pb-14 md:pb-20">
-    <div class="grid md:grid-cols-2 gap-10 items-center">
+    <div class="max-w-2xl">
 
-      <!-- Left: Narrative hook -->
-      <div>
+      <!-- Narrative hook -->
         <span class="inline-flex items-center gap-1.5 text-xs font-semibold bg-red-500/20 text-red-300 border border-red-400/20 px-3 py-1 rounded-full mb-5" data-i18n="hero.badge">
           ⚠️ 12,000+ children go missing in India every month
         </span>
@@ -54,47 +53,6 @@
             <div class="text-xs text-slate-400">Avg Open Time</div>
           </div>
         </div>
-      </div>
-
-      <!-- Right: Emergency card mockup -->
-      <div>
-        <div class="bg-white rounded-cardLg shadow-2xl p-0 overflow-hidden max-w-sm mx-auto light-card">
-          <div class="bg-brand text-white px-4 py-3 flex items-center justify-between">
-            <div class="flex items-center gap-2">
-              <img src="/static/images/websiteLogo.png" alt="SafeTag" class="h-6 object-contain bg-white/20 rounded p-0.5" style="max-width:24px;" onerror="this.style.display='none'" />
-              <span class="font-semibold text-sm">SafeTag · VERIFIED</span>
-            </div>
-            <span class="flex items-center gap-1 text-xs"><span class="w-2 h-2 bg-green-300 rounded-full"></span> LIVE</span>
-          </div>
-          <div class="bg-navy text-white p-4">
-            <div class="text-xs opacity-70 mb-1">⚠️ Emergency Identification</div>
-            <div class="text-2xl font-bold">Aarav Sharma</div>
-            <div class="text-sm flex items-center gap-2 mt-1">
-              Age 8
-              <span class="pill bg-red-500 text-white text-xs px-2 py-0.5 rounded-full font-bold">O+</span>
-              <span class="pill bg-white/10 text-white text-xs">CHILD</span>
-            </div>
-          </div>
-          <div class="p-4 text-sm space-y-2">
-            <div>
-              <div class="text-xs uppercase font-bold text-slate-500">Allergies</div>
-              <div class="flex gap-1 mt-1">
-                <span class="pill pill-warning">Peanuts</span>
-                <span class="pill pill-warning">Penicillin</span>
-              </div>
-            </div>
-            <div>
-              <div class="text-xs uppercase font-bold text-slate-500">Medical</div>
-              <div class="text-slate-700">Mild asthma · Salbutamol inhaler</div>
-            </div>
-          </div>
-          <div class="px-4 pb-4">
-            <a href="/demo" class="block text-center bg-success text-white font-bold py-3 rounded-card">
-              📞 Call Now — +91 98765 43210
-            </a>
-          </div>
-        </div>
-      </div>
 
     </div>
   </div>
@@ -145,31 +103,64 @@
       <a href="/store" class="text-brand font-semibold hover:underline">See all →</a>
     </div>
     <% if (featured && featured.length) { %>
-      <div class="flex gap-4 overflow-x-auto pb-3 snap-x snap-mandatory -mx-1 px-1" style="scrollbar-width:thin;">
-        <% featured.forEach(function(p){ %>
-          <a href="/store/<%= p.id %>" class="card p-4 flex-shrink-0 w-52 snap-start block hover:-translate-y-1 transition-transform">
-            <div class="w-full h-36 bg-slate-100 rounded-card mb-3 flex items-center justify-center overflow-hidden">
-              <% if (p.photo_url) { %>
-                <img src="<%= p.photo_url %>" class="w-full h-36 object-cover rounded-card" alt="<%= p.name %>" />
-              <% } else { %>
-                <span class="text-5xl">🏷️</span>
-              <% } %>
-            </div>
-            <% if (p.is_featured) { %><span class="pill pill-warning text-xs mb-1 inline-block">⭐ Best Value</span><% } %>
-            <div class="capitalize text-xs text-slate-500 mb-1"><%= p.category %></div>
-            <h3 class="font-semibold text-sm mb-2 text-navy leading-snug"><%= p.name %></h3>
-            <div class="flex items-center justify-between">
-              <span class="font-sora text-lg text-navy font-bold">₹<%= p.price_inr %></span>
-              <span class="btn-brand text-xs py-1 px-2.5">Buy →</span>
-            </div>
+      <div class="relative">
+        <!-- Prev button -->
+        <button id="shopPrev" aria-label="Previous" class="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-9 h-9 bg-white dark:bg-slate-700 shadow-md rounded-full flex items-center justify-center text-navy dark:text-white hover:bg-brand hover:text-white transition -ml-4 text-xl leading-none select-none">‹</button>
+        <!-- Track -->
+        <div id="shopTrack" class="flex gap-4 overflow-x-auto snap-x snap-mandatory scrollbar-none pb-2 px-10">
+          <% featured.forEach(function(p){ %>
+            <a href="/store/<%= p.id %>" class="card p-4 flex-shrink-0 w-52 snap-start block hover:-translate-y-1 transition-transform">
+              <div class="w-full h-36 bg-slate-100 rounded-card mb-3 flex items-center justify-center overflow-hidden">
+                <% if (p.photo_url) { %>
+                  <img src="<%= p.photo_url %>" class="w-full h-36 object-cover rounded-card" alt="<%= p.name %>" />
+                <% } else { %>
+                  <span class="text-5xl">🏷️</span>
+                <% } %>
+              </div>
+              <% if (p.is_featured) { %><span class="pill pill-warning text-xs mb-1 inline-block">⭐ Best Value</span><% } %>
+              <div class="capitalize text-xs text-slate-500 mb-1"><%= p.category %></div>
+              <h3 class="font-semibold text-sm mb-2 text-navy leading-snug"><%= p.name %></h3>
+              <div class="flex items-center justify-between">
+                <span class="font-sora text-lg text-navy font-bold">₹<%= p.price_inr %></span>
+                <span class="btn-brand text-xs py-1 px-2.5">Buy →</span>
+              </div>
+            </a>
+          <% }); %>
+          <!-- Browse all card -->
+          <a href="/store" class="card p-4 flex-shrink-0 w-44 snap-start flex flex-col items-center justify-center text-center gap-2 border-2 border-dashed border-slate-200 hover:border-brand transition">
+            <span class="text-3xl">🏪</span>
+            <span class="text-sm font-semibold text-brand">See all products →</span>
           </a>
-        <% }); %>
-        <!-- Browse all card -->
-        <a href="/store" class="card p-4 flex-shrink-0 w-44 snap-start flex flex-col items-center justify-center text-center gap-2 border-2 border-dashed border-slate-200 hover:border-brand transition">
-          <span class="text-3xl">🏪</span>
-          <span class="text-sm font-semibold text-brand">See all products →</span>
-        </a>
+        </div>
+        <!-- Next button -->
+        <button id="shopNext" aria-label="Next" class="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-9 h-9 bg-white dark:bg-slate-700 shadow-md rounded-full flex items-center justify-center text-navy dark:text-white hover:bg-brand hover:text-white transition -mr-4 text-xl leading-none select-none">›</button>
       </div>
+      <script>
+      (function(){
+        var track = document.getElementById('shopTrack');
+        var btnPrev = document.getElementById('shopPrev');
+        var btnNext = document.getElementById('shopNext');
+        if (!track || !btnPrev || !btnNext) return;
+        var STEP = 224; /* w-52 (208px) + gap-4 (16px) */
+        var timer;
+        function slide(dir) {
+          var max = track.scrollWidth - track.clientWidth;
+          var pos = track.scrollLeft + dir * STEP;
+          if (pos > max + 10) pos = 0;
+          if (pos < -10) pos = max;
+          track.scrollTo({ left: pos, behavior: 'smooth' });
+        }
+        function startAuto() { timer = setInterval(function(){ slide(1); }, 3200); }
+        function stopAuto() { clearInterval(timer); }
+        btnNext.addEventListener('click', function(){ stopAuto(); slide(1); startAuto(); });
+        btnPrev.addEventListener('click', function(){ stopAuto(); slide(-1); startAuto(); });
+        track.addEventListener('mouseenter', stopAuto);
+        track.addEventListener('mouseleave', startAuto);
+        track.addEventListener('touchstart', stopAuto, { passive: true });
+        track.addEventListener('touchend', startAuto, { passive: true });
+        startAuto();
+      })();
+      </script>
     <% } else { %>
       <div class="card p-10 text-center">
         <div class="text-4xl mb-2">🏷️</div>
@@ -514,7 +505,7 @@
 <!-- ============================================================
   SECTION 10 — FINAL CTA
   ============================================================ -->
-<section class="bg-gradient-to-br from-brand to-[#0F766E] text-white">
+<section class="cta-grad text-white">
   <div class="section-inner section text-center max-w-2xl">
     <div class="text-5xl mb-4">🏷️</div>
     <h2 class="text-3xl font-bold text-white mb-3" data-i18n="cta.final">Don't wait for an emergency to wish you had it.</h2>
