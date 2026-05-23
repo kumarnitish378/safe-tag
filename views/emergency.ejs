@@ -1,20 +1,22 @@
 <%- include('layout/_head', { hideNav: true, hideFooter: true }) %>
 
-<div class="scan-emergency-bg min-h-screen">
+<% var _theme = (profile && profile.theme) ? profile.theme : 'classic'; %>
+<div class="epage ep-page-bg min-h-screen" data-theme="<%= _theme %>">
   <div class="max-w-3xl mx-auto pb-10 lg:grid lg:grid-cols-5 lg:gap-0 lg:items-start">
+
   <!-- LEFT PANEL: emergency card (full width on mobile, 3/5 on desktop) -->
   <div class="lg:col-span-3">
     <!-- Brand bar -->
-    <div class="bg-brand text-white px-4 py-3 flex items-center justify-between">
+    <div class="ep-top-bar px-4 py-3 flex items-center justify-between">
       <a href="/" class="flex items-center gap-2">
-        <img src="/static/images/websiteLogo.png" alt="SafeTag" class="h-6 object-contain" style="max-width:24px;" onerror="this.style.display='none'" />
+        <img src="/static/images/websiteLogo.png" alt="SafeTag" class="h-6 object-contain" style="max-width:24px;filter:brightness(10);" onerror="this.style.display='none'" />
         <span class="font-semibold">SafeTag</span>
       </a>
-      <div class="flex items-center gap-2 text-xs"><span class="w-2 h-2 bg-success rounded-full inline-block"></span> VERIFIED PROFILE</div>
+      <div class="flex items-center gap-2 text-xs opacity-90"><span class="w-2 h-2 bg-green-400 rounded-full inline-block"></span> VERIFIED PROFILE</div>
     </div>
 
-    <!-- Emergency bar -->
-    <div class="bg-danger text-white px-4 py-3 flex items-center justify-between">
+    <!-- Emergency alert bar -->
+    <div class="ep-alert-bar px-4 py-3 flex items-center justify-between">
       <div class="flex items-center gap-2">
         <span class="text-xl">⚠️</span>
         <strong class="tracking-wide uppercase text-sm">Emergency Identification Card</strong>
@@ -28,7 +30,7 @@
 
     <!-- Identity card -->
     <div class="card mx-4 mt-4 overflow-hidden">
-      <div class="bg-navy text-white p-5 flex gap-4 items-center">
+      <div class="ep-id-header p-5 flex gap-4 items-center">
         <% if (profile.photo_url) { %>
           <img src="<%= profile.photo_url %>" alt="" class="w-16 h-16 rounded-full object-cover border-2 border-white/40" />
         <% } else { %>
@@ -37,7 +39,7 @@
           </div>
         <% } %>
         <div class="flex-1 min-w-0">
-          <div class="text-2xl font-bold text-white truncate"><%= profile.name %></div>
+          <div class="text-2xl font-bold truncate"><%= profile.name %></div>
           <div class="text-sm opacity-90 flex items-center gap-2 mt-1">
             <span>Age <%= profile.age %></span>
             <% if (profile.blood_group) { %><span class="pill pill-danger mono"><%= profile.blood_group %></span><% } %>
@@ -70,7 +72,7 @@
             <div>
               <%= profile.address %>
               <% if (profile.latitude && profile.longitude) { %>
-                <a class="text-brand font-semibold ml-1" target="_blank" rel="noopener" href="https://maps.google.com/?q=<%= profile.latitude %>,<%= profile.longitude %>">📍 Map</a>
+                <a class="ep-accent-text font-semibold ml-1" target="_blank" rel="noopener" href="https://maps.google.com/?q=<%= profile.latitude %>,<%= profile.longitude %>">📍 Map</a>
               <% } %>
             </div>
           </div>
@@ -86,11 +88,11 @@
 
     <!-- CALL BUTTONS -->
     <div class="px-4 mt-4 space-y-3">
-      <a href="tel:+91<%= profile.mobile_primary %>" class="block bg-success hover:bg-green-600 text-white text-center font-bold text-lg py-4 rounded-card">
+      <a href="tel:+91<%= profile.mobile_primary %>" class="ep-call-btn block text-center font-bold text-lg py-4 rounded-card">
         📞 Call Now — +91 <%= profile.mobile_primary %>
       </a>
       <% if (profile.mobile_secondary) { %>
-        <a href="tel:+91<%= profile.mobile_secondary %>" class="block border-2 border-success text-success font-semibold text-center py-3 rounded-card">
+        <a href="tel:+91<%= profile.mobile_secondary %>" class="block border-2 border-green-500 text-green-700 font-semibold text-center py-3 rounded-card">
           📞 Call alternate — +91 <%= profile.mobile_secondary %>
         </a>
       <% } %>
@@ -102,8 +104,8 @@
 
     <!-- Footer -->
     <div class="text-center text-xs text-slate-500 mt-6 px-4">
-      Powered by <a href="/" class="text-brand font-semibold">SafeTag · safe-tag.in</a><br/>
-      <a href="/store" class="text-brand">Protect your family → Get SafeTag ₹149</a>
+      Powered by <a href="/" class="ep-accent-text font-semibold">SafeTag · safe-tag.in</a><br/>
+      <a href="/store" class="ep-accent-text">Protect your family → Get SafeTag ₹149</a>
     </div>
   </div><!-- end left panel -->
 
@@ -165,7 +167,6 @@
     return 'https://wa.me/91' + primary + '?text=' + encodeURIComponent(msg);
   }
 
-  // Try to get geolocation silently on load — send alert to owner
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(function(p){
       coords = { lat: p.coords.latitude, lng: p.coords.longitude };

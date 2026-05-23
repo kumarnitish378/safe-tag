@@ -215,6 +215,7 @@ app.get('/demo', (req, res) => {
       category: 'CHILD',
       latitude: null,
       longitude: null,
+      theme: 'classic',
     },
     activated: false,
     flaskApiUrl: BASE_URL,
@@ -381,6 +382,7 @@ app.post('/register/:tag_id', async (req, res) => {
         ownerWhatsapp: ownerWhatsapp || null,
         photoUrl: (data.photo_url || '').trim() || null,
         category: (data.category || '').trim() || null,
+        theme: (data.theme || 'classic').trim(),
       },
     });
 
@@ -604,7 +606,7 @@ app.post('/profile/edit/:tag_id', requireUser, async (req, res) => {
     }
 
     const optText = ['parent_name', 'blood_group', 'address', 'medical_conditions',
-                     'allergies', 'medications', 'custom_message', 'photo_url', 'category', 'email'];
+                     'allergies', 'medications', 'custom_message', 'photo_url', 'category', 'email', 'theme'];
     const fieldMap = {
       parent_name: 'parentName', blood_group: 'bloodGroup',
       medical_conditions: 'medicalConditions', custom_message: 'customMessage', photo_url: 'photoUrl',

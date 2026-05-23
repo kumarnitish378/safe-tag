@@ -53,11 +53,54 @@
         <div><label class="label">Note to Rescuer</label><textarea class="input" name="custom_message" rows="2"><%= profile.custom_message||'' %></textarea></div>
       </div>
 
+      <!-- Emergency Page Theme -->
+      <div class="card p-5 space-y-3">
+        <h2 class="font-semibold">Emergency Page Theme</h2>
+        <p class="text-xs text-slate-500">How your emergency profile looks when someone scans your tag.</p>
+        <input type="hidden" name="theme" id="themeInput" value="<%= profile.theme||'classic' %>" />
+        <div class="grid grid-cols-6 gap-2" id="themePicker">
+          <%
+            var _themes = [
+              { id:'classic',   label:'Classic',   top:'#0D9488', alert:'#EF4444', id_bg:'#0A2342' },
+              { id:'guardian',  label:'Guardian',  top:'#1e293b', alert:'#7f1d1d', id_bg:'#0f172a' },
+              { id:'care',      label:'Care',      top:'#ea580c', alert:'#dc2626', id_bg:'#7c2d12' },
+              { id:'medical',   label:'Medical',   top:'#1d4ed8', alert:'#b91c1c', id_bg:'#1e3a8a' },
+              { id:'adventure', label:'Adventure', top:'#166534', alert:'#dc2626', id_bg:'#14532d' },
+              { id:'rose',      label:'Rose',      top:'#be123c', alert:'#9f1239', id_bg:'#881337' },
+            ];
+            _themes.forEach(function(t) {
+          %>
+          <div onclick="selectTheme('<%= t.id %>')" id="tp-<%= t.id %>"
+               class="theme-card cursor-pointer rounded-card overflow-hidden border-2 transition <%= (profile.theme||'classic')===t.id ? 'border-brand ring-2 ring-brand/40' : 'border-slate-200' %>">
+            <div style="background:<%= t.top %>;height:20px;"></div>
+            <div style="background:<%= t.alert %>;height:10px;"></div>
+            <div style="background:<%= t.id_bg %>;height:16px;"></div>
+            <div style="background:#fff;padding:4px 6px;">
+              <div class="text-center text-xs font-semibold text-slate-700 leading-tight"><%= t.label %></div>
+            </div>
+          </div>
+          <% }); %>
+        </div>
+      </div>
+
       <div class="flex gap-2">
         <button class="btn-brand flex-1 justify-center">Save changes</button>
         <a href="/emergency/<%= tag_id %>" target="_blank" class="btn-outline">Preview</a>
       </div>
     </form>
+
+    <script>
+      function selectTheme(id) {
+        document.getElementById('themeInput').value = id;
+        document.querySelectorAll('.theme-card').forEach(function(el) {
+          var sel = el.id === 'tp-' + id;
+          el.classList.toggle('border-brand', sel);
+          el.classList.toggle('ring-2', sel);
+          el.classList.toggle('ring-brand/40', sel);
+          el.classList.toggle('border-slate-200', !sel);
+        });
+      }
+    </script>
   </div>
 </section>
 

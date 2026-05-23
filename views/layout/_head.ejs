@@ -151,6 +151,23 @@
     html.dark .text-slate-600 { color:#94a3b8; }
     html.dark .text-slate-700 { color:#cbd5e1; }
     html.dark .section-inner .text-slate-500 { color:#94a3b8; }
+
+    /* ---- Emergency page themes ---- */
+    /* Default (classic) values are the SafeTag brand palette */
+    .epage { --ep-top-bg:#0D9488; --ep-top-text:#fff; --ep-alert-bg:#EF4444; --ep-alert-text:#fff; --ep-id-bg:#0A2342; --ep-id-text:#fff; --ep-call-bg:#22C55E; --ep-call-hover:#16A34A; --ep-accent:#0D9488; --ep-page-bg:#EAEFF4; }
+    .epage[data-theme="guardian"] { --ep-top-bg:#1e293b; --ep-top-text:#e2e8f0; --ep-alert-bg:#7f1d1d; --ep-alert-text:#fee2e2; --ep-id-bg:#0f172a; --ep-id-text:#f1f5f9; --ep-call-bg:#16A34A; --ep-call-hover:#15803D; --ep-accent:#38bdf8; --ep-page-bg:#1e293b; }
+    .epage[data-theme="care"]     { --ep-top-bg:#ea580c; --ep-top-text:#fff; --ep-alert-bg:#dc2626; --ep-alert-text:#fff; --ep-id-bg:#7c2d12; --ep-id-text:#fff; --ep-call-bg:#16a34a; --ep-call-hover:#15803d; --ep-accent:#ea580c; --ep-page-bg:#fff7ed; }
+    .epage[data-theme="medical"]  { --ep-top-bg:#1d4ed8; --ep-top-text:#fff; --ep-alert-bg:#b91c1c; --ep-alert-text:#fff; --ep-id-bg:#1e3a8a; --ep-id-text:#fff; --ep-call-bg:#16a34a; --ep-call-hover:#15803d; --ep-accent:#3b82f6; --ep-page-bg:#eff6ff; }
+    .epage[data-theme="adventure"]{ --ep-top-bg:#166534; --ep-top-text:#fff; --ep-alert-bg:#dc2626; --ep-alert-text:#fff; --ep-id-bg:#14532d; --ep-id-text:#f0fdf4; --ep-call-bg:#16a34a; --ep-call-hover:#15803d; --ep-accent:#22c55e; --ep-page-bg:#f0fdf4; }
+    .epage[data-theme="rose"]     { --ep-top-bg:#be123c; --ep-top-text:#fff; --ep-alert-bg:#9f1239; --ep-alert-text:#fff; --ep-id-bg:#881337; --ep-id-text:#fff; --ep-call-bg:#16a34a; --ep-call-hover:#15803d; --ep-accent:#fb7185; --ep-page-bg:#fff1f2; }
+    /* Utility classes that read the CSS vars — used only inside .epage */
+    .ep-top-bar   { background:var(--ep-top-bg) !important; color:var(--ep-top-text) !important; }
+    .ep-alert-bar { background:var(--ep-alert-bg) !important; color:var(--ep-alert-text) !important; }
+    .ep-id-header { background:var(--ep-id-bg) !important; color:var(--ep-id-text) !important; }
+    .ep-call-btn  { background:var(--ep-call-bg) !important; color:#fff !important; }
+    .ep-call-btn:hover { background:var(--ep-call-hover) !important; }
+    .ep-page-bg   { background:var(--ep-page-bg) !important; }
+    .ep-accent-text { color:var(--ep-accent) !important; }
   </style>
   <%- typeof head !== 'undefined' ? head : '' %>
 

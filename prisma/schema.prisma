@@ -46,6 +46,7 @@ model MedicalProfile {
   ownerWhatsapp     String?  @map("owner_whatsapp")
   photoUrl          String?  @map("photo_url")
   category          String?
+  theme             String?  @default("classic") @map("theme")
   createdAt         DateTime @default(now()) @map("created_at")
   updatedAt         DateTime @updatedAt @map("updated_at")
 
