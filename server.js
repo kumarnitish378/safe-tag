@@ -182,9 +182,9 @@ app.get('/', async (req, res) => {
     featured = listings.map(formatProduct);
   } catch (e) { /* homepage still renders */ }
   res.render('index', {
-    title: 'SafeTag — Scan. Know. Save a Life.',
+    title: 'SafeTag — Buy QR + NFC Emergency ID Tag India | Child Safety Tag from ₹149',
     featured,
-    seoDesc: 'SafeTag is India\'s QR + NFC emergency ID tag. One scan reveals blood group, emergency contacts, and medical info in under 3 seconds — no app needed. Trusted by families across India. From ₹149.',
+    seoDesc: 'SafeTag is India\'s QR + NFC emergency ID tag. One scan reveals blood group, emergency contacts and medical info in 3 seconds — no app needed. Free delivery across India. From ₹149.',
     seoImage: '/static/images/og-homepage.jpg',
   });
 });
