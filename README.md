@@ -15,7 +15,7 @@
 
 ## What is SafeTag?
 
-SafeTag is an emergency ID platform for India. Each tag (QR sticker, wristband, keychain, or RFID) is linked to a user's medical profile — blood group, allergies, emergency contacts, address, and more. When a bystander or first responder scans the tag, they instantly see everything they need to act. No login. No app. Works offline on any phone camera.
+SafeTag is an emergency ID platform for India. Each tag (QR sticker, wristband, keychain, or RFID/NFC card) is linked to a user's medical profile — blood group, allergies, emergency contacts, address, and more. When a bystander or first responder scans the QR code or taps the NFC chip, their phone opens the emergency profile in a browser. No app required, no account needed for the rescuer — just an internet connection to load the page.
 
 <div align="center">
   <img src="public/images/hero-crowd-scan.jpg" alt="SafeTag in use" width="720" style="border-radius:12px;" />
