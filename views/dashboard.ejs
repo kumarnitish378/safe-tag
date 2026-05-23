@@ -19,7 +19,20 @@
       <div class="card p-5"><div class="text-xs uppercase font-bold text-slate-500">Pending Activation</div><div class="text-3xl font-sora font-bold text-warning"><%= stats.pending %></div></div>
     </div>
 
-    <% if (!tags.length) { %>
+    <% if (!tags.length && orders && orders.length) { %>
+      <!-- User has orders but no activated tags yet -->
+      <div class="card p-6 mb-6 border-l-4 border-brand">
+        <div class="flex gap-3 items-start">
+          <span class="text-3xl flex-shrink-0">📦</span>
+          <div>
+            <h3 class="font-semibold text-navy mb-1">Your tags are on the way!</h3>
+            <p class="text-sm text-slate-600">Once you receive your SafeTag, scan the QR code on the tag to activate it — it will appear here automatically.</p>
+          </div>
+        </div>
+      </div>
+    <% } %>
+
+    <% if (!tags.length && (!orders || !orders.length)) { %>
       <div class="card p-10 text-center">
         <div class="text-5xl mb-2">🏷️</div>
         <h3 class="text-xl font-semibold mb-1">No tags yet</h3>
@@ -29,8 +42,11 @@
           <button onclick="document.getElementById('claimModal').classList.remove('hidden')" class="btn-outline">Already have one?</button>
         </div>
       </div>
-    <% } else { %>
-      <div class="grid md:grid-cols-2 gap-4">
+    <% } %>
+
+    <% if (tags.length) { %>
+      <h2 class="text-lg font-bold text-navy mb-3">My Tags</h2>
+      <div class="grid md:grid-cols-2 gap-4 mb-8">
         <% tags.forEach(function(t){ %>
           <div class="card p-5">
             <div class="flex items-center justify-between mb-2">
@@ -56,6 +72,51 @@
         <% }); %>
       </div>
     <% } %>
+
+    <% if (orders && orders.length) { %>
+      <h2 class="text-lg font-bold text-navy mb-3">My Orders</h2>
+      <div class="space-y-3">
+        <% orders.forEach(function(o){ %>
+          <%
+            var statusLabel = o.status === 'paid' ? 'Paid'
+              : o.status === 'dispatched' ? 'Dispatched'
+              : o.status === 'delivered' ? 'Delivered'
+              : o.status === 'cancelled' ? 'Cancelled'
+              : 'Order Placed';
+            var statusClass = o.status === 'delivered' ? 'pill-success'
+              : o.status === 'dispatched' ? 'pill-brand'
+              : o.status === 'cancelled' ? 'pill-danger'
+              : 'pill-warning';
+            var shippingAddr = '';
+            try { var addr = JSON.parse(o.shipping_address || '{}'); shippingAddr = [addr.address_line1, addr.city, addr.state, addr.pincode].filter(Boolean).join(', '); } catch(e) {}
+          %>
+          <div class="card p-5 flex gap-4 items-start">
+            <div class="w-14 h-14 bg-slate-100 rounded-xl flex items-center justify-center flex-shrink-0 overflow-hidden">
+              <% if (o.product && o.product.photo_url) { %>
+                <img src="<%= o.product.photo_url %>" class="w-14 h-14 object-cover" alt="<%= o.product.name %>" />
+              <% } else { %>
+                <span class="text-2xl">🏷️</span>
+              <% } %>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-start justify-between gap-2 flex-wrap">
+                <div>
+                  <div class="font-semibold text-navy text-sm"><%= o.product ? o.product.name : 'SafeTag' %></div>
+                  <div class="text-xs text-slate-500 mt-0.5">Qty: <%= o.quantity %> &nbsp;·&nbsp; ₹<%= o.amount_inr %></div>
+                  <% if (shippingAddr) { %><div class="text-xs text-slate-400 mt-0.5 truncate max-w-xs"><%= shippingAddr %></div><% } %>
+                  <% if (o.tracking_id) { %><div class="text-xs text-slate-500 mt-1">Tracking: <span class="font-mono"><%= o.tracking_id %></span></div><% } %>
+                </div>
+                <span class="pill <%= statusClass %> flex-shrink-0"><%= statusLabel %></span>
+              </div>
+              <% if (o.status !== 'delivered' && o.status !== 'cancelled') { %>
+                <p class="text-xs text-slate-500 mt-2">Once delivered, scan the QR code on your tag to activate it and it will appear in <strong>My Tags</strong> above.</p>
+              <% } %>
+            </div>
+          </div>
+        <% }); %>
+      </div>
+    <% } %>
+
   </div>
 </section>
 

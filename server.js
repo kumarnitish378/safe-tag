@@ -517,15 +517,25 @@ app.post('/logout', (req, res) => {
 // =============================================================================
 app.get('/dashboard', requireUser, async (req, res) => {
   try {
-    const tags = await prisma.tag.findMany({
-      where: { ownerId: req.session.user.id },
-      include: { profile: true },
-      orderBy: { createdAt: 'desc' },
-    });
+    const [tags, orders] = await Promise.all([
+      prisma.tag.findMany({
+        where: { ownerId: req.session.user.id },
+        include: { profile: true },
+        orderBy: { createdAt: 'desc' },
+      }),
+      prisma.order.findMany({
+        where: { userId: req.session.user.id },
+        include: { productListing: true },
+        orderBy: { createdAt: 'desc' },
+        take: 20,
+      }),
+    ]);
     const formatted = tags.map(t => formatTag(t, true));
+    const formattedOrders = orders.map(o => formatOrder(o, false, true));
     res.render('dashboard', {
       title: 'My SafeTags',
       tags: formatted,
+      orders: formattedOrders,
       stats: {
         total: formatted.length,
         active: formatted.filter(t => t.is_active).length,
@@ -533,7 +543,8 @@ app.get('/dashboard', requireUser, async (req, res) => {
       },
     });
   } catch (e) {
-    res.render('dashboard', { title: 'My SafeTags', tags: [], stats: { total: 0, active: 0, pending: 0 } });
+    console.error(e);
+    res.render('dashboard', { title: 'My SafeTags', tags: [], orders: [], stats: { total: 0, active: 0, pending: 0 } });
   }
 });
 
