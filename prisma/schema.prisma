@@ -1,0 +1,140 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Tag {
+  tagId          String    @id @map("tag_id")
+  securityKey    String    @map("security_key")
+  isActive       Boolean   @default(false) @map("is_active")
+  manufacturerId Int?      @map("manufacturer_id")
+  batchId        Int?      @map("batch_id")
+  ownerId        Int?      @map("owner_id")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  activatedAt    DateTime? @map("activated_at")
+  scanCount      Int       @default(0) @map("scan_count")
+
+  profile      MedicalProfile?
+  owner        User?           @relation(fields: [ownerId], references: [id])
+  manufacturer Manufacturer?   @relation(fields: [manufacturerId], references: [id])
+  batch        TagBatch?       @relation(fields: [batchId], references: [id])
+
+  @@map("tags")
+}
+
+model MedicalProfile {
+  id                Int      @id @default(autoincrement())
+  tagId             String   @unique @map("tag_id")
+  name              String
+  age               Int
+  mobilePrimary     String   @map("mobile_primary")
+  parentName        String?  @map("parent_name")
+  bloodGroup        String?  @map("blood_group")
+  address           String?
+  latitude          Float?
+  longitude         Float?
+  mobileSecondary   String?  @map("mobile_secondary")
+  email             String?
+  medicalConditions String?  @map("medical_conditions")
+  allergies         String?
+  medications       String?
+  customMessage     String?  @map("custom_message")
+  ownerWhatsapp     String?  @map("owner_whatsapp")
+  photoUrl          String?  @map("photo_url")
+  category          String?
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @updatedAt @map("updated_at")
+
+  tag Tag @relation(fields: [tagId], references: [tagId])
+
+  @@map("medical_profiles")
+}
+
+model User {
+  id           Int      @id @default(autoincrement())
+  email        String   @unique
+  mobile       String
+  passwordHash String   @map("password_hash")
+  name         String?
+  isAdmin      Boolean  @default(false) @map("is_admin")
+  isActive     Boolean  @default(true) @map("is_active")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  tags   Tag[]
+  orders Order[]
+
+  @@map("users")
+}
+
+model Manufacturer {
+  id           Int      @id @default(autoincrement())
+  businessName String   @map("business_name")
+  email        String   @unique
+  passwordHash String   @map("password_hash")
+  mobile       String
+  isApproved   Boolean  @default(false) @map("is_approved")
+  isBlocked    Boolean  @default(false) @map("is_blocked")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  batches  TagBatch[]
+  listings ProductListing[]
+  tags     Tag[]
+
+  @@map("manufacturers")
+}
+
+model TagBatch {
+  id             Int      @id @default(autoincrement())
+  manufacturerId Int      @map("manufacturer_id")
+  batchName      String   @map("batch_name")
+  quantity       Int
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  manufacturer Manufacturer @relation(fields: [manufacturerId], references: [id])
+  tags         Tag[]
+
+  @@map("tag_batches")
+}
+
+model ProductListing {
+  id                Int      @id @default(autoincrement())
+  manufacturerId    Int      @map("manufacturer_id")
+  name              String
+  description       String?
+  price             Int
+  category          String
+  quantityAvailable Int      @default(0) @map("quantity_available")
+  isApproved        Boolean  @default(false) @map("is_approved")
+  isFeatured        Boolean  @default(false) @map("is_featured")
+  isRejected        Boolean  @default(false) @map("is_rejected")
+  photoUrl          String?  @map("photo_url")
+  createdAt         DateTime @default(now()) @map("created_at")
+
+  manufacturer Manufacturer @relation(fields: [manufacturerId], references: [id])
+  orders       Order[]
+
+  @@map("product_listings")
+}
+
+model Order {
+  id                Int      @id @default(autoincrement())
+  userId            Int      @map("user_id")
+  productListingId  Int      @map("product_listing_id")
+  quantity          Int      @default(1)
+  amount            Int
+  status            String   @default("pending")
+  trackingId        String?  @map("tracking_id")
+  razorpayOrderId   String?  @map("razorpay_order_id")
+  razorpayPaymentId String?  @map("razorpay_payment_id")
+  shippingAddress   String?  @map("shipping_address")
+  createdAt         DateTime @default(now()) @map("created_at")
+
+  user           User           @relation(fields: [userId], references: [id])
+  productListing ProductListing @relation(fields: [productListingId], references: [id])
+
+  @@map("orders")
+}

@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "Bash(npm install *)",
+      "Bash(npx prisma *)",
+      "Bash(node -e ' *)",
+      "Bash(Remove-Item -Recurse -Force \"D:/safe-tag-project/backend\")",
+      "PowerShell(Get-ChildItem \"D:\\\\safe-tag-project\\\\frontend\" -Force | ForEach-Object { Move-Item -Path $_.FullName -Destination \"D:\\\\safe-tag-project\\\\\" -Force }; Remove-Item \"D:\\\\safe-tag-project\\\\frontend\" -Recurse -Force -ErrorAction SilentlyContinue)"
+    ]
+  }
+}
