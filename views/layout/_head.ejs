@@ -143,14 +143,21 @@
     html.dark select.input option { background:#1e293b; }
     html.dark .bg-slate-50 { background:#0f172a !important; }
     html.dark .bg-slate-100 { background:#253349 !important; }
-    /* bg-white: scope to page-level sections, not image containers or hero mockups */
-    html.dark section.bg-white, html.dark footer, html.dark .page-bg-white { background:#1e293b !important; }
+    /* sections go DARKER than cards so cards remain visible — hierarchy: body#0f172a < section#0f172a < card#1e293b */
+    html.dark section.bg-white, html.dark .page-bg-white { background:#0f172a !important; }
+    html.dark footer { background:#1e293b !important; }
     /* Bug fix: both selectors must be scoped to html.dark — comma-split was breaking light mode borders */
     html.dark .border-slate-100, html.dark .border-slate-200 { border-color:#334155 !important; }
     html.dark .text-slate-500 { color:#94a3b8; }
     html.dark .text-slate-600 { color:#94a3b8; }
     html.dark .text-slate-700 { color:#cbd5e1; }
     html.dark .section-inner .text-slate-500 { color:#94a3b8; }
+    /* text-navy on divs/spans/summaries not covered by the h1-h5 rule */
+    html.dark .text-navy { color:#e2e8f0 !important; }
+    /* light-card: white cards on dark hero — keep body text dark so it's readable on white bg */
+    html.dark .light-card .text-slate-700 { color:#374151 !important; }
+    html.dark .light-card .text-slate-400 { color:#9ca3af !important; }
+    html.dark .light-card .text-slate-600 { color:#4b5563 !important; }
 
     /* ---- Emergency page themes ---- */
     /* Default (classic) values are the SafeTag brand palette */

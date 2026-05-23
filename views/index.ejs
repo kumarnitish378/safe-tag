@@ -6,7 +6,7 @@
 <section class="relative bg-gradient-to-br from-navy via-[#0B1E3D] to-[#091224] text-white overflow-hidden">
   <!-- Background crowd image with dark overlay -->
   <div class="absolute inset-0">
-    <img src="/static/images/hero-crowd-scan.png" alt="" class="w-full h-full object-cover object-center opacity-20" />
+    <img src="/static/images/hero-crowd-scan.png" alt="" class="w-full h-full object-cover object-center opacity-10" />
     <div class="absolute inset-0 bg-gradient-to-r from-navy/90 via-navy/70 to-transparent"></div>
   </div>
 
@@ -58,7 +58,7 @@
 
       <!-- Right: Emergency card mockup -->
       <div class="hidden md:block">
-        <div class="bg-white rounded-cardLg shadow-2xl p-0 overflow-hidden max-w-sm mx-auto">
+        <div class="bg-white rounded-cardLg shadow-2xl p-0 overflow-hidden max-w-sm mx-auto light-card">
           <div class="bg-brand text-white px-4 py-3 flex items-center justify-between">
             <div class="flex items-center gap-2">
               <img src="/static/images/websiteLogo.png" alt="SafeTag" class="h-6 object-contain bg-white/20 rounded p-0.5" style="max-width:24px;" onerror="this.style.display='none'" />
@@ -377,19 +377,29 @@
         </div>
       </div>
 
-      <div class="card p-5 flex gap-3 items-start hover:-translate-y-0.5 transition-transform">
-        <span class="text-2xl shrink-0">🚴</span>
-        <div>
-          <h4 class="font-semibold mb-1 text-navy">Athletes</h4>
-          <p class="text-sm text-slate-600 leading-relaxed">Cyclists, marathon runners, trekkers — full medical info for paramedics if you're in an accident.</p>
+      <div class="card overflow-hidden hover:-translate-y-0.5 transition-transform">
+        <div class="h-36 bg-slate-100 overflow-hidden">
+          <img src="/static/images/usecase-athlete.png" alt="Athlete with SafeTag" class="w-full h-full object-cover" />
+        </div>
+        <div class="p-4 flex gap-3 items-start">
+          <span class="text-2xl shrink-0">🚴</span>
+          <div>
+            <h4 class="font-semibold mb-1 text-navy">Athletes</h4>
+            <p class="text-sm text-slate-600 leading-relaxed">Cyclists, marathon runners, trekkers — full medical info for paramedics if you're in an accident.</p>
+          </div>
         </div>
       </div>
 
-      <div class="card p-5 flex gap-3 items-start hover:-translate-y-0.5 transition-transform">
-        <span class="text-2xl shrink-0">🏫</span>
-        <div>
-          <h4 class="font-semibold mb-1 text-navy">Schools</h4>
-          <p class="text-sm text-slate-600 leading-relaxed">Bulk SafeTags for school ID badges — every student identified in seconds on any trip or emergency.</p>
+      <div class="card overflow-hidden hover:-translate-y-0.5 transition-transform">
+        <div class="h-36 bg-slate-100 overflow-hidden">
+          <img src="/static/images/usecase-school.png" alt="School children with SafeTag" class="w-full h-full object-cover" />
+        </div>
+        <div class="p-4 flex gap-3 items-start">
+          <span class="text-2xl shrink-0">🏫</span>
+          <div>
+            <h4 class="font-semibold mb-1 text-navy">Schools</h4>
+            <p class="text-sm text-slate-600 leading-relaxed">Bulk SafeTags for school ID badges — every student identified in seconds on any trip or emergency.</p>
+          </div>
         </div>
       </div>
 
