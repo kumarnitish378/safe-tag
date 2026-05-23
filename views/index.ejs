@@ -6,8 +6,8 @@
 <section class="relative bg-gradient-to-br from-navy via-[#0B1E3D] to-[#091224] text-white overflow-hidden">
   <!-- Background crowd image with dark overlay -->
   <div class="absolute inset-0">
-    <img src="/static/images/hero-crowd-scan.png" alt="" class="w-full h-full object-cover object-center opacity-10" />
-    <div class="absolute inset-0 bg-gradient-to-r from-navy/90 via-navy/70 to-transparent"></div>
+    <img src="/static/images/hero-crowd-scan.jpg" alt="" class="w-full h-full object-cover object-center opacity-10" />
+    <div class="absolute inset-0 bg-gradient-to-r from-navy/65 via-navy/35 to-transparent"></div>
   </div>
 
   <div class="relative max-w-5xl mx-auto px-4 pt-6 pb-14 md:pb-20">
@@ -57,7 +57,7 @@
       </div>
 
       <!-- Right: Emergency card mockup -->
-      <div class="hidden md:block">
+      <div>
         <div class="bg-white rounded-cardLg shadow-2xl p-0 overflow-hidden max-w-sm mx-auto light-card">
           <div class="bg-brand text-white px-4 py-3 flex items-center justify-between">
             <div class="flex items-center gap-2">
@@ -77,14 +77,14 @@
           </div>
           <div class="p-4 text-sm space-y-2">
             <div>
-              <div class="text-xs uppercase font-bold text-slate-400">Allergies</div>
+              <div class="text-xs uppercase font-bold text-slate-500">Allergies</div>
               <div class="flex gap-1 mt-1">
                 <span class="pill pill-warning">Peanuts</span>
                 <span class="pill pill-warning">Penicillin</span>
               </div>
             </div>
             <div>
-              <div class="text-xs uppercase font-bold text-slate-400">Medical</div>
+              <div class="text-xs uppercase font-bold text-slate-500">Medical</div>
               <div class="text-slate-700">Mild asthma · Salbutamol inhaler</div>
             </div>
           </div>
@@ -145,24 +145,30 @@
       <a href="/store" class="text-brand font-semibold hover:underline">See all →</a>
     </div>
     <% if (featured && featured.length) { %>
-      <div class="grid md:grid-cols-3 gap-5">
+      <div class="flex gap-4 overflow-x-auto pb-3 snap-x snap-mandatory -mx-1 px-1" style="scrollbar-width:thin;">
         <% featured.forEach(function(p){ %>
-          <a href="/store/<%= p.id %>" class="card p-5 hover:-translate-y-1 transition-transform block">
-            <div class="w-full h-40 bg-slate-100 rounded-card mb-4 flex items-center justify-center overflow-hidden">
+          <a href="/store/<%= p.id %>" class="card p-4 flex-shrink-0 w-52 snap-start block hover:-translate-y-1 transition-transform">
+            <div class="w-full h-36 bg-slate-100 rounded-card mb-3 flex items-center justify-center overflow-hidden">
               <% if (p.photo_url) { %>
-                <img src="<%= p.photo_url %>" class="w-full h-40 object-cover rounded-card" alt="<%= p.name %>" />
+                <img src="<%= p.photo_url %>" class="w-full h-36 object-cover rounded-card" alt="<%= p.name %>" />
               <% } else { %>
                 <span class="text-5xl">🏷️</span>
               <% } %>
             </div>
+            <% if (p.is_featured) { %><span class="pill pill-warning text-xs mb-1 inline-block">⭐ Best Value</span><% } %>
             <div class="capitalize text-xs text-slate-500 mb-1"><%= p.category %></div>
-            <h3 class="font-semibold mb-1 text-navy"><%= p.name %></h3>
-            <div class="mt-2 flex items-center justify-between">
-              <span class="font-sora text-xl text-navy font-bold">₹<%= p.price_inr %></span>
-              <span class="btn-brand text-sm py-1.5 px-3">Buy →</span>
+            <h3 class="font-semibold text-sm mb-2 text-navy leading-snug"><%= p.name %></h3>
+            <div class="flex items-center justify-between">
+              <span class="font-sora text-lg text-navy font-bold">₹<%= p.price_inr %></span>
+              <span class="btn-brand text-xs py-1 px-2.5">Buy →</span>
             </div>
           </a>
         <% }); %>
+        <!-- Browse all card -->
+        <a href="/store" class="card p-4 flex-shrink-0 w-44 snap-start flex flex-col items-center justify-center text-center gap-2 border-2 border-dashed border-slate-200 hover:border-brand transition">
+          <span class="text-3xl">🏪</span>
+          <span class="text-sm font-semibold text-brand">See all products →</span>
+        </a>
       </div>
     <% } else { %>
       <div class="card p-10 text-center">
@@ -170,7 +176,7 @@
         <p>New products coming soon. <a class="text-brand font-semibold" href="/store">Browse store</a>.</p>
       </div>
     <% } %>
-    <div class="text-center mt-8">
+    <div class="text-center mt-6">
       <a href="/store" class="btn-warn px-10 py-3 text-base">See All SafeTag Products →</a>
     </div>
   </div>
@@ -200,7 +206,7 @@
             <rect x="30" y="38" width="2" height="2" fill="#0A2342"/>
           </svg>
         </div>
-        <div class="text-xs font-bold text-brand mb-1 uppercase">Step 1</div>
+        <div class="text-xs font-bold text-brand-700 mb-1 uppercase">Step 1</div>
         <h3 class="font-semibold mb-2 text-navy">Buy &amp; Attach</h3>
         <p class="text-sm leading-relaxed text-slate-600">Order a SafeTag keychain, card, sticker or wristband. Attach it to a bag, lanyard, collar, or ID badge.</p>
       </div>
@@ -217,7 +223,7 @@
             <path d="M30.5 36l2 2 4-4" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
         </div>
-        <div class="text-xs font-bold text-brand mb-1 uppercase">Step 2</div>
+        <div class="text-xs font-bold text-brand-700 mb-1 uppercase">Step 2</div>
         <h3 class="font-semibold mb-2 text-navy">Set Up Profile</h3>
         <p class="text-sm leading-relaxed text-slate-600">Scan the QR on your tag, fill in name, blood group, emergency contacts, and medical info. Takes 2 minutes.</p>
       </div>
@@ -235,7 +241,7 @@
             <path d="M41 28v5h-5" stroke="#0D9488" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
         </div>
-        <div class="text-xs font-bold text-brand mb-1 uppercase">Step 3</div>
+        <div class="text-xs font-bold text-brand-700 mb-1 uppercase">Step 3</div>
         <h3 class="font-semibold mb-2 text-navy">Stranger Scans</h3>
         <p class="text-sm leading-relaxed text-slate-600">In an emergency, anyone scans the QR with their phone camera — like a normal QR. No app download needed.</p>
       </div>
@@ -249,7 +255,7 @@
             <path d="M29 14l2.5-2.5M31.5 17H35M29 20l2.5 2.5" stroke="#0D9488" stroke-width="1.8" stroke-linecap="round"/>
           </svg>
         </div>
-        <div class="text-xs font-bold text-brand mb-1 uppercase">Step 4</div>
+        <div class="text-xs font-bold text-brand-700 mb-1 uppercase">Step 4</div>
         <h3 class="font-semibold mb-2 text-navy">Instant Contact</h3>
         <p class="text-sm leading-relaxed text-slate-600">The emergency profile opens in under 3 seconds. They call directly. Your WhatsApp gets the location alert.</p>
       </div>
@@ -276,7 +282,7 @@
           "My son Arjun went missing at Pushkar Mela. Because of his SafeTag, a kind stranger called me within <strong>7 minutes</strong>. Seven minutes. I cannot explain what that felt like."
         </blockquote>
         <div class="flex items-center gap-3 border-t border-slate-100 pt-4">
-          <img src="/static/images/review-rekha.png" alt="Rekha Mishra" class="w-9 h-9 rounded-full object-cover flex-shrink-0" onerror="this.outerHTML='<div class=\'w-9 h-9 rounded-full bg-teal-100 text-teal-700 font-bold flex items-center justify-center text-sm\'>R</div>'" />
+          <img src="/static/images/review-rekha.jpg" alt="Rekha Mishra" class="w-9 h-9 rounded-full object-cover flex-shrink-0" onerror="this.outerHTML='<div class=\'w-9 h-9 rounded-full bg-teal-100 text-teal-700 font-bold flex items-center justify-center text-sm\'>R</div>'" />
           <div>
             <div class="font-semibold text-navy text-sm">Rekha Mishra</div>
             <div class="text-xs text-slate-500">Jaipur, Rajasthan · Child tag</div>
@@ -290,7 +296,7 @@
           "My mother has dementia. She walked out of the house three times last year. Each time, a neighbour scanned her SafeTag and called me. This device gives our whole family <strong>peace of mind</strong>."
         </blockquote>
         <div class="flex items-center gap-3 border-t border-slate-100 pt-4">
-          <img src="/static/images/review-suresh.png" alt="Suresh Venkataraman" class="w-9 h-9 rounded-full object-cover flex-shrink-0" onerror="this.outerHTML='<div class=\'w-9 h-9 rounded-full bg-blue-100 text-blue-700 font-bold flex items-center justify-center text-sm\'>S</div>'" />
+          <img src="/static/images/review-suresh.jpg" alt="Suresh Venkataraman" class="w-9 h-9 rounded-full object-cover flex-shrink-0" onerror="this.outerHTML='<div class=\'w-9 h-9 rounded-full bg-blue-100 text-blue-700 font-bold flex items-center justify-center text-sm\'>S</div>'" />
           <div>
             <div class="font-semibold text-navy text-sm">Suresh Venkataraman</div>
             <div class="text-xs text-slate-500">Chennai, Tamil Nadu · Elderly tag</div>
@@ -304,7 +310,7 @@
           "On a trek in Himachal I got separated from my group. A local farmer found me, scanned my SafeTag keychain, and reached my emergency contact in minutes. <strong>No language barrier</strong>."
         </blockquote>
         <div class="flex items-center gap-3 border-t border-slate-100 pt-4">
-          <img src="/static/images/review-ananya.png" alt="Ananya Kapoor" class="w-9 h-9 rounded-full object-cover flex-shrink-0" onerror="this.outerHTML='<div class=\'w-9 h-9 rounded-full bg-orange-100 text-orange-700 font-bold flex items-center justify-center text-sm\'>A</div>'" />
+          <img src="/static/images/review-ananya.jpg" alt="Ananya Kapoor" class="w-9 h-9 rounded-full object-cover flex-shrink-0" onerror="this.outerHTML='<div class=\'w-9 h-9 rounded-full bg-orange-100 text-orange-700 font-bold flex items-center justify-center text-sm\'>A</div>'" />
           <div>
             <div class="font-semibold text-navy text-sm">Ananya Kapoor</div>
             <div class="text-xs text-slate-500">Mumbai, Maharashtra · Traveler tag</div>
@@ -327,7 +333,7 @@
 
       <div class="card overflow-hidden hover:-translate-y-0.5 transition-transform">
         <div class="h-36 bg-slate-100 overflow-hidden">
-          <img src="/static/images/usecase-child.png" alt="Child with SafeTag" class="w-full h-full object-cover" />
+          <img src="/static/images/usecase-child.jpg" alt="Child with SafeTag" class="w-full h-full object-cover" />
         </div>
         <div class="p-4 flex gap-3 items-start">
           <span class="text-2xl shrink-0">👧</span>
@@ -340,7 +346,7 @@
 
       <div class="card overflow-hidden hover:-translate-y-0.5 transition-transform">
         <div class="h-36 bg-slate-100 overflow-hidden">
-          <img src="/static/images/usecase-elderly.png" alt="Elderly with SafeTag" class="w-full h-full object-cover" />
+          <img src="/static/images/usecase-elderly.jpg" alt="Elderly with SafeTag" class="w-full h-full object-cover" />
         </div>
         <div class="p-4 flex gap-3 items-start">
           <span class="text-2xl shrink-0">👴</span>
@@ -353,7 +359,7 @@
 
       <div class="card overflow-hidden hover:-translate-y-0.5 transition-transform">
         <div class="h-36 bg-slate-100 overflow-hidden">
-          <img src="/static/images/usecase-traveler.png" alt="Traveler with SafeTag" class="w-full h-full object-cover" />
+          <img src="/static/images/usecase-traveler.jpg" alt="Traveler with SafeTag" class="w-full h-full object-cover" />
         </div>
         <div class="p-4 flex gap-3 items-start">
           <span class="text-2xl shrink-0">🧳</span>
@@ -366,7 +372,7 @@
 
       <div class="card overflow-hidden hover:-translate-y-0.5 transition-transform">
         <div class="h-36 bg-slate-100 overflow-hidden">
-          <img src="/static/images/usecase-pet.png" alt="Pet with SafeTag" class="w-full h-full object-cover" />
+          <img src="/static/images/usecase-pet.jpg" alt="Pet with SafeTag" class="w-full h-full object-cover" />
         </div>
         <div class="p-4 flex gap-3 items-start">
           <span class="text-2xl shrink-0">🐕</span>
@@ -379,7 +385,7 @@
 
       <div class="card overflow-hidden hover:-translate-y-0.5 transition-transform">
         <div class="h-36 bg-slate-100 overflow-hidden">
-          <img src="/static/images/usecase-athlete.png" alt="Athlete with SafeTag" class="w-full h-full object-cover" />
+          <img src="/static/images/usecase-athlete.jpg" alt="Athlete with SafeTag" class="w-full h-full object-cover" />
         </div>
         <div class="p-4 flex gap-3 items-start">
           <span class="text-2xl shrink-0">🚴</span>
@@ -392,7 +398,7 @@
 
       <div class="card overflow-hidden hover:-translate-y-0.5 transition-transform">
         <div class="h-36 bg-slate-100 overflow-hidden">
-          <img src="/static/images/usecase-school.png" alt="School children with SafeTag" class="w-full h-full object-cover" />
+          <img src="/static/images/usecase-school.jpg" alt="School children with SafeTag" class="w-full h-full object-cover" />
         </div>
         <div class="p-4 flex gap-3 items-start">
           <span class="text-2xl shrink-0">🏫</span>
@@ -429,7 +435,7 @@
       </div>
       <div class="flex justify-center md:justify-end">
         <div class="rounded-cardLg overflow-hidden shadow-2xl max-w-xs w-full">
-          <img src="/static/images/hero-relief.png" alt="Paramedic using SafeTag emergency profile" class="w-full h-64 object-cover" />
+          <img src="/static/images/hero-relief.jpg" alt="Paramedic using SafeTag emergency profile" class="w-full h-64 object-cover" />
           <div class="bg-white/10 px-4 py-2 text-xs text-teal-200 text-center">
             A paramedic reads blood group + contacts — in under 3 seconds.
           </div>

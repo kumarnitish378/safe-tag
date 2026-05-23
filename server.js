@@ -174,10 +174,10 @@ app.get('/', async (req, res) => {
   let featured = [];
   try {
     const listings = await prisma.productListing.findMany({
-      where: { isApproved: true, isFeatured: true, isRejected: false },
+      where: { isApproved: true, isRejected: false },
       include: { manufacturer: true },
-      orderBy: { createdAt: 'desc' },
-      take: 3,
+      orderBy: [{ isFeatured: 'desc' }, { createdAt: 'desc' }],
+      take: 10,
     });
     featured = listings.map(formatProduct);
   } catch (e) { /* homepage still renders */ }
@@ -185,7 +185,7 @@ app.get('/', async (req, res) => {
     title: 'SafeTag — Scan. Know. Save a Life.',
     featured,
     seoDesc: 'SafeTag is India\'s QR + NFC emergency ID tag. One scan reveals blood group, emergency contacts, and medical info in under 3 seconds — no app needed. Trusted by families across India. From ₹149.',
-    seoImage: '/static/images/og-homepage.png',
+    seoImage: '/static/images/og-homepage.jpg',
   });
 });
 

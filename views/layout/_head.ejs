@@ -7,9 +7,12 @@
   <script>
     (function(){
       try {
-        if(localStorage.safetagTheme==='dark') document.documentElement.classList.add('dark');
-        if(localStorage.safetagLang==='hi') document.documentElement.setAttribute('lang','hi');
-      } catch(e) { /* localStorage blocked (private browsing / strict mode) — skip */ }
+        var t = localStorage.safetagTheme;
+        if (!t || t === 'dark') document.documentElement.classList.add('dark');
+        if (localStorage.safetagLang === 'hi') document.documentElement.setAttribute('lang','hi');
+      } catch(e) {
+        document.documentElement.classList.add('dark'); /* default dark when localStorage blocked */
+      }
     })();
   </script>
 

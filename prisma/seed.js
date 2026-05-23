@@ -64,15 +64,15 @@ async function main() {
 
   // Demo products (approved)
   const demoProducts = [
-    { name: 'SafeTag Classic Keychain', price: 14900, category: 'keychain', quantityAvailable: 200, isFeatured: true,  photoUrl: '/static/images/demoTag1.png',
+    { name: 'SafeTag Classic Keychain', price: 14900, category: 'keychain', quantityAvailable: 200, isFeatured: true,  photoUrl: '/static/images/product-keychain.jpg',
       description: 'SafeTag Classic Keychain — the most popular choice for families.\n\nMaterial: High-grade ABS plastic with UV-resistant coating\n\nKey Features:\n• QR code laser-etched (scratch and fade resistant)\n• NFC chip: NTAG213, 13.56 MHz\n• Stainless steel split ring included\n• Waterproof and dustproof body\n\nWhat\'s in the box:\n1× SafeTag Keychain · 1× Tag ID card · 1× Setup guide\n\nWarranty: 1 year.' },
-    { name: 'SafeTag Smart Card', price: 19900, category: 'card', quantityAvailable: 150, isFeatured: false, photoUrl: '/static/images/demoTag2.png',
+    { name: 'SafeTag Smart Card', price: 19900, category: 'card', quantityAvailable: 150, isFeatured: false, photoUrl: '/static/images/product-card.jpg',
       description: 'Slim PVC card — fits in any wallet or ID holder.\n\nMaterial: PVC, credit-card thickness (0.76 mm)\n\nKey Features:\n• QR code laminated (water-resistant)\n• NFC chip embedded (NTAG213)\n• ISO CR80 standard size\n\nWhat\'s in the box:\n1× SafeTag Card · 1× Tag ID card · 1× Setup guide\n\nIdeal for school ID lanyards and elderly wallets.' },
-    { name: 'SafeTag Sticker Pack (3 pcs)', price: 24900, category: 'sticker', quantityAvailable: 500, isFeatured: false, photoUrl: '/static/images/demoProjectOne.png',
+    { name: 'SafeTag Sticker Pack (3 pcs)', price: 24900, category: 'sticker', quantityAvailable: 500, isFeatured: false, photoUrl: '/static/images/product-stickers.jpg',
       description: 'Adhesive sticker tags — stick anywhere in seconds.\n\nMaterial: Polypropylene with 3M adhesive backing\n\nKey Features:\n• Pack of 3 uniquely coded stickers\n• High-resolution QR code (600 DPI)\n• Weatherproof — UV, water, and scratch resistant\n• 50×50 mm circular design\n\nWhat\'s in the box:\n3× SafeTag Stickers (each unique) · 3× Tag ID cards · 1× Setup guide\n\nBest for pet collars, bicycle helmets, school bags, luggage.' },
-    { name: 'SafeTag Silicone Wristband', price: 34900, category: 'wristband', quantityAvailable: 100, isFeatured: false, photoUrl: '/static/images/demoTag1.png',
+    { name: 'SafeTag Silicone Wristband', price: 34900, category: 'wristband', quantityAvailable: 100, isFeatured: false, photoUrl: '/static/images/product-wristband.jpg',
       description: 'Comfortable, durable wristband for children, athletes, and the elderly.\n\nMaterial: Medical-grade silicone, hypoallergenic\n\nKey Features:\n• QR code on stainless steel plate (inset)\n• NFC chip inside band (NTAG213)\n• Adjustable sizes: S / M / L\n• Waterproof — swim and shower safe\n\nWhat\'s in the box:\n1× SafeTag Wristband · 1× Tag ID card · 1× Setup guide\n\nBest for children, dementia patients, and marathon runners.' },
-    { name: 'SafeTag Family Pack (3 Keychains)', price: 49900, category: 'keychain', quantityAvailable: 75, isFeatured: true,  photoUrl: '/static/images/demoTag2.png',
+    { name: 'SafeTag Family Pack (3 Keychains)', price: 49900, category: 'keychain', quantityAvailable: 75, isFeatured: true,  photoUrl: '/static/images/product-family-pack.jpg',
       description: 'Protect the whole family with one order.\n\n3 Classic Keychains — each with a unique Tag ID, independent profile, and separate security key.\n\nKey Features:\n• 3 fully independent tags (not linked)\n• Each with QR + NFC\n• Mix of colours: Teal, Navy, Orange\n\nWhat\'s in the box:\n3× SafeTag Keychains · 3× Tag ID cards · 3× Setup guides\n\nWarranty: 1 year per piece.' },
   ];
 

@@ -84,9 +84,9 @@
             Payment Method
           </h2>
 
-          <div class="space-y-3" id="paymentOptions">
+          <div class="space-y-2" id="paymentOptions">
             <!-- UPI (selected by default) -->
-            <div class="payment-opt selected flex items-center gap-4 p-4 border-2 border-brand rounded-card cursor-pointer bg-teal-50/40" data-value="upi" onclick="selectPM(this)">
+            <div class="payment-opt flex items-center gap-4 p-4 border border-slate-200 rounded-card cursor-pointer hover:bg-slate-50 transition" data-value="upi" onclick="selectPM(this)">
               <div class="pm-radio w-5 h-5 rounded-full border-2 border-brand flex items-center justify-center flex-shrink-0">
                 <div class="w-2.5 h-2.5 rounded-full bg-brand"></div>
               </div>
@@ -97,7 +97,7 @@
               <span class="text-2xl">📱</span>
             </div>
             <!-- Card -->
-            <div class="payment-opt flex items-center gap-4 p-4 border-2 border-slate-200 rounded-card cursor-pointer hover:border-slate-300" data-value="card" onclick="selectPM(this)">
+            <div class="payment-opt flex items-center gap-4 p-4 border border-slate-200 rounded-card cursor-pointer hover:bg-slate-50 transition" data-value="card" onclick="selectPM(this)">
               <div class="pm-radio w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center flex-shrink-0">
                 <div class="w-2.5 h-2.5 rounded-full bg-transparent"></div>
               </div>
@@ -108,7 +108,7 @@
               <span class="text-2xl">💳</span>
             </div>
             <!-- COD -->
-            <div class="payment-opt flex items-center gap-4 p-4 border-2 border-slate-200 rounded-card cursor-pointer hover:border-slate-300" data-value="cod" onclick="selectPM(this)">
+            <div class="payment-opt flex items-center gap-4 p-4 border border-slate-200 rounded-card cursor-pointer hover:bg-slate-50 transition" data-value="cod" onclick="selectPM(this)">
               <div class="pm-radio w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center flex-shrink-0">
                 <div class="w-2.5 h-2.5 rounded-full bg-transparent"></div>
               </div>
@@ -191,16 +191,12 @@ var _isCod = false;
 function selectPM(el) {
   document.querySelectorAll('.payment-opt').forEach(function(o) {
     var sel = o === el;
-    o.classList.toggle('selected', sel);
-    o.classList.toggle('border-brand', sel);
-    o.classList.toggle('border-slate-200', !sel);
-    o.classList.toggle('bg-teal-50/40', sel);
     var dot = o.querySelector('.pm-radio div');
+    var ring = o.querySelector('.pm-radio');
     if (dot) {
       dot.classList.toggle('bg-brand', sel);
       dot.classList.toggle('bg-transparent', !sel);
     }
-    var ring = o.querySelector('.pm-radio');
     if (ring) {
       ring.classList.toggle('border-brand', sel);
       ring.classList.toggle('border-slate-300', !sel);

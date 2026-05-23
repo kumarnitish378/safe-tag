@@ -319,3 +319,137 @@ Clean social share preview card. Left 40%: teal background with SafeTag logo (wh
 
 *Total assets: ~30 images + 5 video scenes + 7 icons*  
 *Priority order for generation: Section 1 (hero) → Section 2 (products) → Section 4 (testimonials) → Section 3.5–3.6 (new use-cases) → Section 6 (videos) → rest*
+
+---
+
+## SECTION 9 — EMERGENCY PAGE UI/UX LAYOUT CONCEPTS
+
+These prompts are for generating **UI mockup images** to visualise different emergency page layout directions before coding. Use them in **Midjourney**, **DALL·E 3**, or **Claude Artifacts** (claude.ai/artifacts) for instant mockups.
+
+**Context:** A stranger scans the SafeTag QR. They see the emergency page. They are stressed, possibly outdoors in harsh light, one hand free, and need to act in seconds. The design must: (1) show the person's name and blood group at a glance, (2) put the CALL button within immediate thumb reach, (3) never require scrolling to take action.
+
+---
+
+### Layout A — "Glanceable SOS" (Contact-First, Minimal)
+
+**Design philosophy:** Strip everything. The rescuer sees only what they need to act. Call button occupies the bottom half of the screen — impossible to miss. Medical details load below the fold for paramedics who need more.
+
+```
+Mobile UI mockup, flat design, phone frame (iPhone 15 style), portrait orientation.
+
+Top 25% — full-bleed colored header (teal #0D9488): "⚠️ EMERGENCY ID" label top-left in white bold. Tag ID small top-right. Below: person's name in 32px white bold — "Aarav Sharma". Age badge and blood group badge (blood group "O+" in bright red pill, large) side by side.
+
+Middle 20% — white card: allergies in amber pills ("Peanuts", "Penicillin"), medical condition one line, parent name one line.
+
+Bottom 55% — full-bleed bright green call button, white phone icon + "📞 CALL NOW — +91 98765 43210" in 24px bold. Below it: smaller white-bordered "💬 WhatsApp Location" button. Below that: very small grey "More info ↓" text link.
+
+Overall: extreme negative space, nothing decorative, instant scanability. UI kit style. Clean, modern, no gradients.
+
+Style: flat UI mockup, light background, --ar 9:19
+```
+
+---
+
+### Layout B — "Medical ID Card" (Clinical Emergency Standard)
+
+**Design philosophy:** Inspired by hospital ID wristbands and WHO emergency protocols. Color-coded information bands replace card sections. Designed for paramedics — they know exactly where to look for what. Photo top-left like a hospital badge.
+
+```
+Mobile UI mockup, phone frame (Android Pixel style), portrait orientation.
+
+Pure white background. Top section: horizontal band — left: circular avatar photo placeholder with person's photo (or emoji for category), right: "AARAV SHARMA" in large bold dark text, age line below, "TAG: ST-0001" in monospace small text.
+
+Below avatar row: 3 full-width colored information bands:
+- Band 1 (bright red, 60px): "BLOOD GROUP: O+" in 28px white bold, centered
+- Band 2 (amber, 50px): "ALLERGIES: Peanuts · Penicillin" in dark bold text
+- Band 3 (blue, 40px): "CONDITION: Mild asthma — carry inhaler" in white text
+
+Below bands: parent/guardian row in light grey card — "👨‍👩‍👧 Parent: Priya Sharma" large text.
+
+Bottom section: large green CTA button spanning full width, 70px height — "📞 CALL PRIYA SHARMA — +91 98765 43210". Second smaller button: "📞 Alternate Contact". Third: "💬 Send Location on WhatsApp".
+
+Footer: SafeTag logo + "safe-tag.in" small grey text.
+
+Style: clinical, high contrast, medical UI aesthetic, flat design mockup. --ar 9:19
+```
+
+---
+
+### Layout C — "Hero Contact Cards" (Family-First Design)
+
+**Design philosophy:** For lost children and elderly — calling family is the ONLY action. Each emergency contact gets a large, tappable card with name, relationship, and number. Medical detail is secondary. Feels like a personal phonebook page more than a form.
+
+```
+Mobile UI mockup, phone frame, portrait orientation.
+
+Top section — colored header band (navy #0A2342): SafeTag logo and "VERIFIED EMERGENCY PROFILE" text. Below: person's photo in a large circle (80px), name "AARAV SHARMA" in 28px white bold, "Child · Age 8 · Blood: O+" subtitle row with color-coded badges.
+
+Middle section — full-width label "Emergency Contacts" in teal uppercase bold, then 2 large contact cards stacked:
+Card 1 (green border, 90px tall): "👩 MOM — Priya Sharma" in 20px bold, "+91 98765 43210" in large monospace, full-width green "CALL NOW" button inside the card.
+Card 2 (blue border, 90px tall): "👨 DAD — Ravi Sharma" in 20px bold, "+91 87654 32109", full-width blue "CALL NOW" button.
+
+Below contacts — collapsed accordion: "⚕️ Medical Info (tap to expand)" in grey — allergies and conditions hidden until tapped.
+
+Bottom fixed bar — "💬 Share My Location via WhatsApp" green bar spanning full width.
+
+Style: warm, human, accessible, large tap targets, family phonebook aesthetic, flat UI mockup. --ar 9:19
+```
+
+---
+
+### Layout D — "Swipe Cards" (Progressive Disclosure, App-Like)
+
+**Design philosophy:** One card fills the screen at a time. Swipe left to reveal more. Card 1 (always visible): name + blood group + call button. Card 2: medical details. Card 3: address and location map. Dots at the bottom show progress. Action is always one thumb-tap away regardless of which card is shown — a floating call button pinned at the bottom of every card.
+
+```
+Mobile UI mockup, phone frame, portrait orientation.
+
+Showing Card 1 of 3. Background: light grey page (#F1F5F9).
+
+Card 1 — full screen white card with shadow:
+- Top of card: colored strip (teal, 8px, full width) — theme accent
+- Large circular avatar (100px, centered) with person photo or category emoji
+- "AARAV SHARMA" — 30px bold dark text, centered
+- Row of badges centered: "Age 8" grey pill, "O+" bright red pill (larger), "CHILD" teal pill
+- "Parent: Priya Sharma" — 16px muted text
+
+Dot pagination at bottom of card: ●○○ (on card 1 of 3)
+
+Bottom of screen (outside card, fixed): full-width green pill button — "📞 Call Emergency Contact" with phone icon left, 60px height, always visible.
+
+Right edge: slight peek of Card 2 (blurred, darker) hinting swipe gesture. Small label: "⚕️ Medical →"
+
+Style: modern card UI, Material Design influence, clean. --ar 9:19
+```
+
+---
+
+### Layout E — "High Visibility SOS" (Outdoor / Panic Mode)
+
+**Design philosophy:** Designed for worst-case conditions — bright sunlight, shaking hands, stressed rescuer. Pure black background with maximum contrast. Blood group in an enormous colored block visible at arm's length. Call button is 40% of the screen. Zero visual noise.
+
+```
+Mobile UI mockup, phone frame, portrait orientation.
+
+Full black background (#000000) throughout.
+
+Top bar (60px, dark grey #1a1a1a): white "SafeTag" logo left, "⚡ EMERGENCY" label in bright red right.
+
+Identity block (120px): name "AARAV SHARMA" in 36px white bold on black, centered. Below: "Age 8 · Child" in 18px grey.
+
+Blood group block — full width, 100px, bright red background (#DC2626): "BLOOD GROUP" label 12px white above, "O+" in 56px ultra-bold white, centered. Visible from 2 meters away.
+
+Allergies block — full width, 80px, amber background (#D97706): "ALLERGIES" label 12px above, "Peanuts · Penicillin" in 22px white bold.
+
+Call block — 45% of remaining screen, full width, bright green background (#16A34A): "📞 CALL NOW" in 24px white bold, number "+91 98765 43210" in 18px white below.
+
+WhatsApp button below (60px, dark green): "💬 Send Location via WhatsApp".
+
+Text at very bottom: "More medical info ↓" in small grey.
+
+Style: maximum contrast, accessible, outdoor emergency aesthetic, no decorative elements. WCAG AAA contrast. --ar 9:19
+```
+
+---
+
+*After generating these mockups: share the one that resonates most and we will rebuild emergency.ejs using that layout as the design system.*
