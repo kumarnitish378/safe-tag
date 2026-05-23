@@ -458,7 +458,11 @@ app.post('/login', async (req, res) => {
     }
     req.session.user = formatUser(user);
     req.flash('success', 'Signed in.');
-    return res.redirect(req.body.next || (user.isAdmin ? '/admin' : '/dashboard'));
+    if (user.isAdmin) {
+      const next = req.body.next;
+      return res.redirect(next && next !== '/dashboard' ? next : '/admin');
+    }
+    return res.redirect(req.body.next || '/dashboard');
   } catch (e) {
     res.render('auth/login', {
       title: 'Sign in',
@@ -507,9 +511,10 @@ app.post('/register', async (req, res) => {
 });
 
 app.post('/logout', (req, res) => {
+  const isAdmin = req.session.user && req.session.user.is_admin;
   req.session.user = null;
   req.flash('success', 'Signed out.');
-  res.redirect('/');
+  res.redirect(isAdmin ? '/login' : '/');
 });
 
 // =============================================================================
@@ -794,7 +799,8 @@ app.post('/manufacturer/login', async (req, res) => {
 
 app.post('/manufacturer/logout', (req, res) => {
   req.session.manufacturer = null;
-  res.redirect('/');
+  req.flash('success', 'Signed out.');
+  res.redirect('/manufacturer/login');
 });
 
 app.post('/manufacturer/request-approval', requireManufacturer, async (req, res) => {

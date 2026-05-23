@@ -23,15 +23,22 @@
         </blockquote>
 
         <p class="text-slate-300 text-base leading-relaxed max-w-md mb-3">
-          A 6-year-old went missing at Kumbh Mela. She had no phone, couldn't remember her parents' number, and was too scared to speak. It took fourteen hours to reunite her family.
+          A 6-year-old went missing at Kumbh Mela. No phone, no voice, fourteen hours of terror before her family found her. One small tag on her wrist would have ended it in 7 minutes.
         </p>
-        <p class="text-teal-300 font-semibold text-lg mb-7" data-i18n="hero.tagline">
-          SafeTag exists so this never happens again.
+        <p class="text-teal-300 font-semibold text-lg mb-5" data-i18n="hero.tagline">
+          SafeTag exists so this never happens to your family.
         </p>
 
-        <p class="text-slate-300 text-sm leading-relaxed max-w-sm mb-6">
-          One QR scan on any phone camera opens a name, blood group, emergency contacts, and a direct call button — in under 3 seconds. No app. No registration. No barrier for the rescuer.
+        <p class="text-slate-300 text-sm leading-relaxed max-w-sm mb-2">
+          Every SafeTag has <strong class="text-white">two ways to save a life</strong>: a QR code any phone camera can scan in 3 seconds, and a built-in RFID/NFC chip that works even if the QR is scratched or in complete darkness. No app. No internet required for the rescuer.
         </p>
+        <div class="flex items-center gap-3 mb-6 mt-3">
+          <span class="flex items-center gap-1.5 text-xs text-teal-300 font-semibold"><span>📷</span> QR Scan</span>
+          <span class="text-slate-500 text-xs">+</span>
+          <span class="flex items-center gap-1.5 text-xs text-teal-300 font-semibold"><span>📡</span> RFID/NFC Tap</span>
+          <span class="text-slate-500 text-xs">=</span>
+          <span class="flex items-center gap-1.5 text-xs text-white font-bold bg-teal-600/30 px-2.5 py-1 rounded-full border border-teal-500/30">Dual Protection</span>
+        </div>
 
         <div class="flex flex-wrap gap-3">
           <a href="/store" class="btn-warn" data-i18n="hero.cta1">🛒 Protect My Family — from ₹149</a>
@@ -78,14 +85,14 @@
       Data never shared
     </span>
     <span class="text-slate-300">|</span>
-    <span class="flex items-center gap-2">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#ccfbf1" stroke="#0D9488" stroke-width="2"/><path d="M12 7v5l3 3" stroke="#0D9488" stroke-width="2" stroke-linecap="round"/></svg>
-      Opens in under 3 seconds
+    <span class="flex items-center gap-2 text-brand font-bold">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><ellipse cx="12" cy="12" rx="8" ry="5" stroke="#0D9488" stroke-width="2"/><ellipse cx="12" cy="12" rx="5" ry="3" stroke="#0D9488" stroke-width="1.5" opacity=".6"/><ellipse cx="12" cy="12" rx="2" ry="1.2" fill="#0D9488"/></svg>
+      QR + RFID/NFC backup
     </span>
     <span class="text-slate-300">|</span>
     <span class="flex items-center gap-2">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#ccfbf1" stroke="#0D9488" stroke-width="2"/><path d="M8 12h8M12 8l4 4-4 4" stroke="#0D9488" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      Works on any phone camera
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#ccfbf1" stroke="#0D9488" stroke-width="2"/><path d="M12 7v5l3 3" stroke="#0D9488" stroke-width="2" stroke-linecap="round"/></svg>
+      Opens in under 3 seconds
     </span>
   </div>
 </section>
@@ -219,7 +226,7 @@
         <p class="text-sm leading-relaxed text-slate-600">Scan the QR on your tag, fill in name, blood group, emergency contacts, and medical info. Takes 2 minutes.</p>
       </div>
 
-      <!-- Step 3: Stranger Scans -->
+      <!-- Step 3: Stranger Scans or Taps -->
       <div class="card p-5">
         <div class="mb-3 w-12 h-12">
           <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -233,8 +240,12 @@
           </svg>
         </div>
         <div class="text-xs font-bold text-brand-700 mb-1 uppercase">Step 3</div>
-        <h3 class="font-semibold mb-2 text-navy">Stranger Scans</h3>
-        <p class="text-sm leading-relaxed text-slate-600">In an emergency, anyone scans the QR with their phone camera — like a normal QR. No app download needed.</p>
+        <h3 class="font-semibold mb-2 text-navy">Scan QR or Tap NFC</h3>
+        <p class="text-sm leading-relaxed text-slate-600">Anyone scans the QR with their camera — or simply taps the RFID/NFC chip with their phone. Either method opens the emergency profile instantly. No app ever.</p>
+        <div class="flex gap-2 mt-2 flex-wrap">
+          <span class="text-xs bg-teal-50 text-teal-700 font-semibold px-2 py-0.5 rounded-full border border-teal-100">📷 QR Scan</span>
+          <span class="text-xs bg-teal-50 text-teal-700 font-semibold px-2 py-0.5 rounded-full border border-teal-100">📡 NFC Tap</span>
+        </div>
       </div>
 
       <!-- Step 4: Instant Contact -->
@@ -411,15 +422,25 @@
   <div class="section-inner section">
     <div class="grid md:grid-cols-2 gap-10 items-center">
       <div>
-        <h2 class="text-3xl font-bold text-white mb-4">The day SafeTag was born.</h2>
+        <h2 class="text-3xl font-bold text-white mb-4">Built for the worst moments.</h2>
         <p class="text-slate-300 leading-relaxed">
-          A 6-year-old went missing at Kumbh Mela. She had no phone, didn't know her parents' number, and was too scared to speak. It took fourteen hours to reunite her family. Fourteen hours of terror.
+          A 6-year-old went missing at Kumbh Mela. No phone, no voice, fourteen hours of terror. SafeTag would have ended it in minutes — one scan by a bystander, one call to her parents.
         </p>
         <p class="mt-4 text-slate-300 leading-relaxed">
-          SafeTag turns any stranger with a phone into an instant link between a lost person and their family — in seconds, not hours.
+          Every SafeTag carries <strong class="text-white">two independent technologies</strong>: a QR code for any camera, and an RFID/NFC chip for a tap. Even if the sticker is scratched, worn, or the rescuer is in the dark — the chip still works.
         </p>
-        <p class="mt-5 text-teal-300 font-semibold text-lg">SafeTag. Because emergencies don't wait.</p>
-        <div class="mt-6 flex flex-wrap gap-3">
+        <div class="mt-5 grid grid-cols-2 gap-3 max-w-sm">
+          <div class="rounded-xl bg-white/8 border border-white/10 px-4 py-3">
+            <div class="text-teal-300 font-bold text-sm mb-1">📷 QR Code</div>
+            <div class="text-slate-300 text-xs leading-relaxed">Any phone camera, any angle, works in 3 seconds without touching the tag</div>
+          </div>
+          <div class="rounded-xl bg-white/8 border border-white/10 px-4 py-3">
+            <div class="text-teal-300 font-bold text-sm mb-1">📡 RFID / NFC</div>
+            <div class="text-slate-300 text-xs leading-relaxed">Tap the chip — works in darkness, water, or if QR is scratched beyond recognition</div>
+          </div>
+        </div>
+        <p class="mt-5 text-teal-300 font-semibold text-lg">SafeTag. Dual protection. One tag.</p>
+        <div class="mt-5 flex flex-wrap gap-3">
           <a href="/store" class="btn-warn">Get Your SafeTag — from ₹149</a>
           <a href="/demo" class="text-teal-300 hover:text-teal-200 text-sm font-semibold self-center">See the emergency page demo →</a>
         </div>
@@ -477,17 +498,19 @@
       <%
         var faqs = [
           { q:'Do I need an app to scan a SafeTag?',
-            a:'No. Any modern phone camera opens the SafeTag URL like a standard QR code. NFC-equipped phones can also tap the chip. The rescuer needs zero setup.' },
+            a:'No app, ever — for either the owner or the rescuer. Any modern phone camera opens the emergency profile by scanning the QR code. Phones with NFC can also tap the built-in RFID chip. The rescuer just points their camera or brings their phone close. That\'s it.' },
+          { q:'What if the QR code gets scratched or damaged?',
+            a:'This is the question we get most. Every SafeTag has a built-in RFID/NFC chip — completely independent of the printed QR. If the QR is scratched, wet, faded, or the tag is used in darkness, a rescuer can tap their NFC-enabled phone to the chip and instantly open the same emergency profile. One physical tag. Two ways to save a life.' },
+          { q:'How does the RFID/NFC chip work?',
+            a:'The NFC chip inside every SafeTag is pre-programmed with a secure URL pointing to the owner\'s emergency profile. When an NFC-enabled smartphone (most Android and iPhone 7+ models) is held near the tag, the phone reads the chip and opens a browser tab automatically — no scanning required. It works in darkness, at any angle, and in wet conditions.' },
           { q:'Can I update the information after buying?',
-            a:'Yes. Sign in to your dashboard and update the profile at any time. Changes go live instantly — no need to replace the tag.' },
+            a:'Yes. Sign in to your dashboard and update the profile at any time. Changes go live in seconds on both the QR link and the NFC chip URL — no need to replace or reprogram the physical tag.' },
           { q:'Is my personal information private?',
-            a:'Your data is only shown when someone physically scans your tag — it cannot be listed or searched online. We never share data with third parties.' },
-          { q:'What if the QR code gets scratched?',
-            a:'Every SafeTag also carries an RFID/NFC chip. Either method opens the same emergency profile.' },
+            a:'Your emergency profile is only accessible when someone physically scans your tag or taps the NFC chip — it cannot be found by searching the internet. We never share your data with third parties. Only people who have your physical tag in their hand can access your profile.' },
           { q:'Can I use it for my pet?',
-            a:'Yes. Select "PET" as the category and fill in your own details as the emergency contact. Any finder can scan and reach you immediately.' },
+            a:'Yes. Select "PET" as the category and enter your own contact details as the emergency contact. Any finder can scan the QR or tap the NFC chip to reach you immediately — no separate pet-finding app needed.' },
           { q:'Do you do bulk orders for schools or hospitals?',
-            a:'Yes. Contact us via the manufacturer portal. Batches of up to 10,000 tags can be created at once with CSV output for RFID programming and QR printing.' },
+            a:'Yes. Batches of up to 10,000 tags can be created at once with a CSV export containing QR codes, NFC payloads, and unique tag IDs. Contact us via the manufacturer portal. Hospitals and first-responder teams particularly benefit from the NFC chip — scannable even when a patient is unconscious.' },
         ];
         faqs.forEach(function(f){ %>
         <details class="card p-5 cursor-pointer group">

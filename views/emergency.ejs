@@ -1,70 +1,496 @@
 <%- include('layout/_head', { hideNav: true, hideFooter: true }) %>
 
 <% var _theme = (profile && profile.theme) ? profile.theme : 'classic'; %>
+<% var _isSwipe = (_theme === 'classic'); %>
 
 <style>
-  /* Page shell */
-  .ep-shell { min-height:100vh; display:flex; flex-direction:column; align-items:center; }
-  /* Card container — phone-width on desktop, full-width on mobile */
-  .ep-card { width:100%; max-width:420px; display:flex; flex-direction:column; min-height:100vh; background:#fff; }
-  html.dark .ep-card { background:#1e293b; }
-  /* Top status bar */
-  .ep-top { display:flex; align-items:center; justify-content:space-between; padding:.6rem 1rem; }
-  /* Alert bar */
-  .ep-alert { display:flex; align-items:center; justify-content:space-between; padding:.7rem 1rem; }
-  /* Identity header */
-  .ep-identity { padding:1.25rem 1rem 1rem; display:flex; align-items:center; gap:.9rem; }
-  .ep-avatar { width:72px; height:72px; border-radius:50%; flex-shrink:0; border:2.5px solid rgba(255,255,255,.35); display:flex; align-items:center; justify-content:center; font-size:2.2rem; overflow:hidden; }
-  .ep-name { font-size:1.5rem; font-weight:800; line-height:1.15; }
-  .ep-badges { display:flex; align-items:center; flex-wrap:wrap; gap:.35rem; margin-top:.4rem; }
-  .ep-badge-blood { background:#dc2626; color:#fff; font-weight:800; font-size:.95rem; padding:.25rem .65rem; border-radius:99px; font-family:monospace; letter-spacing:.02em; }
-  .ep-badge-cat { background:rgba(255,255,255,.18); color:rgba(255,255,255,.9); font-size:.7rem; font-weight:600; padding:.2rem .55rem; border-radius:99px; text-transform:capitalize; }
-  .ep-age { font-size:.85rem; opacity:.8; }
-  /* Action area */
-  .ep-actions { padding:.9rem 1rem; display:flex; flex-direction:column; gap:.6rem; }
-  .ep-btn-call { display:flex; align-items:center; justify-content:center; gap:.65rem; border-radius:14px; padding:1.1rem; font-weight:800; text-decoration:none; }
-  .ep-btn-call-secondary { border:2px solid #16a34a; color:#15803d; border-radius:12px; padding:.75rem; font-weight:700; font-size:.9rem; display:flex; align-items:center; justify-content:center; gap:.5rem; text-decoration:none; background:#f0fdf4; }
-  .ep-btn-wa { background:#25D366; color:#fff; border-radius:12px; padding:.75rem; font-weight:700; font-size:.9rem; display:flex; align-items:center; justify-content:center; gap:.5rem; border:none; cursor:pointer; width:100%; }
-  .ep-btn-wa:hover { background:#1da851; }
-  /* Medical card */
-  .ep-medical { margin:.2rem 1rem 0; border-radius:12px; overflow:hidden; border:1px solid #fbbf24; }
-  .ep-medical-head { background:#fef3c7; padding:.55rem .85rem; font-size:.72rem; font-weight:700; color:#92400e; text-transform:uppercase; letter-spacing:.04em; }
-  html.dark .ep-medical { border-color:#78350f; }
-  html.dark .ep-medical-head { background:#451a03; color:#fcd34d; }
-  .ep-medical-body { padding:.75rem .85rem; display:flex; flex-direction:column; gap:.6rem; }
-  .ep-field-label { font-size:.68rem; font-weight:700; color:#94a3b8; text-transform:uppercase; letter-spacing:.05em; margin-bottom:.2rem; }
-  .ep-allergy-tag { background:#fee2e2; color:#991b1b; font-size:.75rem; font-weight:600; padding:.2rem .55rem; border-radius:99px; }
-  html.dark .ep-allergy-tag { background:#7f1d1d; color:#fca5a5; }
-  .ep-field-val { font-size:.85rem; color:#374151; line-height:1.5; }
-  html.dark .ep-field-val { color:#cbd5e1; }
-  /* Expandable extra info */
-  .ep-more { margin:.6rem 1rem 0; border-radius:12px; border:1px solid #e2e8f0; overflow:hidden; }
-  html.dark .ep-more { border-color:#334155; }
-  .ep-more summary { padding:.65rem .85rem; font-size:.82rem; font-weight:600; color:#475569; cursor:pointer; display:flex; align-items:center; justify-content:space-between; list-style:none; background:#f8fafc; }
-  html.dark .ep-more summary { background:#253349; color:#94a3b8; }
-  .ep-more summary::-webkit-details-marker { display:none; }
-  .ep-more-body { padding:.75rem .85rem; display:flex; flex-direction:column; gap:.6rem; }
-  /* Steps guide */
-  .ep-steps { margin:.8rem 1rem 0; }
-  .ep-steps-label { font-size:.7rem; font-weight:700; color:#94a3b8; text-transform:uppercase; letter-spacing:.06em; margin-bottom:.5rem; }
-  .ep-steps-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:.5rem; }
-  .ep-step { background:#f8fafc; border-radius:10px; padding:.65rem .4rem; text-align:center; }
-  html.dark .ep-step { background:#253349; }
-  .ep-step-icon { font-size:1.3rem; margin-bottom:.2rem; }
-  .ep-step-title { font-size:.72rem; font-weight:700; color:#374151; }
-  html.dark .ep-step-title { color:#cbd5e1; }
-  .ep-step-sub { font-size:.62rem; color:#94a3b8; margin-top:.1rem; }
-  /* Footer CTA */
-  .ep-footer { margin:1rem 1rem 1.5rem; padding:1rem; background:#f0fdfa; border-radius:12px; text-align:center; border:1px solid #ccfbf1; }
-  html.dark .ep-footer { background:#134e4a; border-color:#0f766e; }
-  .ep-footer p { font-size:.75rem; color:#475569; margin-bottom:.6rem; }
-  html.dark .ep-footer p { color:#5eead4; }
+<%# ── LAYOUT D: Swipe Cards (default / classic theme) ─────────────────── %>
+.sc-page { min-height:100vh; background:#f1f5f9; display:flex; flex-direction:column; align-items:center; }
+html.dark .sc-page { background:#0f172a; }
+.sc-shell { width:100%; max-width:420px; min-height:100vh; display:flex; flex-direction:column; position:relative; }
+
+/* Sticky header */
+.sc-header { display:flex; align-items:center; justify-content:space-between; padding:.6rem 1rem; background:#fff; border-bottom:1px solid #e2e8f0; position:sticky; top:0; z-index:10; }
+html.dark .sc-header { background:#1e293b; border-color:#334155; }
+.sc-header-logo { display:flex; align-items:center; gap:.45rem; text-decoration:none; }
+.sc-header-verified { display:flex; align-items:center; gap:.4rem; font-size:.7rem; font-weight:700; color:#16a34a; }
+.sc-header-tag { font-family:monospace; font-size:.7rem; color:#94a3b8; }
+
+/* Emergency alert bar */
+.sc-alert { display:flex; align-items:center; justify-content:space-between; padding:.55rem 1rem; background:#dc2626; color:#fff; font-weight:800; font-size:.78rem; letter-spacing:.05em; text-transform:uppercase; }
+
+/* Horizontal scroll track */
+.sc-track { display:flex; overflow-x:scroll; scroll-snap-type:x mandatory; scroll-behavior:smooth; -webkit-overflow-scrolling:touch; scrollbar-width:none; flex:1; }
+.sc-track::-webkit-scrollbar { display:none; }
+
+/* Each card wrapper */
+.sc-slide { flex:0 0 100vw; max-width:420px; scroll-snap-align:start; display:flex; flex-direction:column; padding-bottom:80px; }
+
+/* White card surface */
+.sc-card { background:#fff; margin:.85rem .85rem 0; border-radius:20px; box-shadow:0 2px 16px rgba(0,0,0,.09); overflow:hidden; flex:1; display:flex; flex-direction:column; }
+html.dark .sc-card { background:#1e293b; box-shadow:0 2px 16px rgba(0,0,0,.4); }
+
+/* Colored top accent strip */
+.sc-accent { height:5px; background:#0D9488; }
+
+/* Card 1 — Identity */
+.sc-avatar-wrap { display:flex; flex-direction:column; align-items:center; padding:1.5rem 1rem .75rem; }
+.sc-avatar { width:88px; height:88px; border-radius:50%; border:3px solid #0D9488; background:#f0fdfa; display:flex; align-items:center; justify-content:center; font-size:2.5rem; overflow:hidden; margin-bottom:.75rem; }
+html.dark .sc-avatar { border-color:#0f766e; background:#134e4a; }
+.sc-name { font-size:1.6rem; font-weight:800; color:#0a2342; text-align:center; line-height:1.2; margin:0 0 .55rem; }
+html.dark .sc-name { color:#f1f5f9; }
+.sc-badges { display:flex; align-items:center; justify-content:center; flex-wrap:wrap; gap:.4rem; margin-bottom:.5rem; }
+.sc-badge-blood { background:#dc2626; color:#fff; font-weight:900; font-size:1rem; padding:.25rem .75rem; border-radius:99px; font-family:monospace; }
+.sc-badge-age { background:#f1f5f9; color:#475569; font-size:.8rem; font-weight:600; padding:.2rem .6rem; border-radius:99px; }
+html.dark .sc-badge-age { background:#334155; color:#94a3b8; }
+.sc-badge-cat { background:#f0fdfa; color:#0f766e; font-size:.75rem; font-weight:600; padding:.2rem .6rem; border-radius:99px; text-transform:capitalize; }
+html.dark .sc-badge-cat { background:#134e4a; color:#5eead4; }
+.sc-parent { font-size:.85rem; color:#64748b; text-align:center; margin:.1rem 0 .5rem; }
+html.dark .sc-parent { color:#94a3b8; }
+
+/* Contacts inside card 1 */
+.sc-contacts { padding:.5rem 1rem .85rem; display:flex; flex-direction:column; gap:.5rem; }
+.sc-contact-primary { display:flex; align-items:center; justify-content:center; gap:.55rem; background:#0D9488; color:#fff; border-radius:12px; padding:.85rem 1rem; font-weight:700; font-size:.95rem; text-decoration:none; }
+.sc-contact-primary:hover { background:#0f766e; }
+.sc-contact-alt { display:flex; align-items:center; justify-content:center; gap:.5rem; border:2px solid #0D9488; color:#0f766e; border-radius:12px; padding:.65rem 1rem; font-weight:600; font-size:.88rem; text-decoration:none; background:#fff; }
+html.dark .sc-contact-alt { background:#1e293b; color:#5eead4; border-color:#0f766e; }
+
+/* Swipe hint */
+.sc-hint { text-align:center; font-size:.75rem; color:#94a3b8; padding:.6rem 1rem 1rem; display:flex; align-items:center; justify-content:center; gap:.3rem; }
+
+/* Dot navigation */
+.sc-dots { display:flex; justify-content:center; gap:.45rem; padding:.85rem 0 .55rem; }
+.sc-dot { width:8px; height:8px; border-radius:50%; background:#cbd5e1; border:none; cursor:pointer; padding:0; transition:background .2s,transform .2s; }
+html.dark .sc-dot { background:#334155; }
+.sc-dot.active { background:#0D9488; transform:scale(1.35); }
+
+/* Card 2 — Medical */
+.sc-card-head { display:flex; align-items:center; gap:.55rem; padding:.9rem 1rem .7rem; border-bottom:1px solid #f1f5f9; }
+html.dark .sc-card-head { border-color:#334155; }
+.sc-card-head-icon { font-size:1.4rem; }
+.sc-card-head-title { font-size:1rem; font-weight:700; color:#0a2342; }
+html.dark .sc-card-head-title { color:#f1f5f9; }
+.sc-card-body { padding:.85rem 1rem; display:flex; flex-direction:column; gap:.9rem; flex:1; }
+.sc-field-label { font-size:.66rem; font-weight:700; color:#94a3b8; text-transform:uppercase; letter-spacing:.06em; margin-bottom:.3rem; }
+.sc-field-val { font-size:.88rem; color:#374151; line-height:1.55; }
+html.dark .sc-field-val { color:#cbd5e1; }
+.sc-allergy-row { display:flex; flex-wrap:wrap; gap:.35rem; }
+.sc-allergy-pill { background:#fee2e2; color:#991b1b; font-size:.77rem; font-weight:600; padding:.2rem .6rem; border-radius:99px; }
+html.dark .sc-allergy-pill { background:#7f1d1d; color:#fca5a5; }
+.sc-no-medical { text-align:center; padding:2rem 1rem; }
+.sc-no-medical-icon { font-size:2.5rem; margin-bottom:.5rem; }
+.sc-no-medical-text { font-size:.88rem; color:#94a3b8; }
+
+/* Card 3 — Location + Actions */
+.sc-wa-btn { display:flex; align-items:center; justify-content:center; gap:.55rem; background:#25D366; color:#fff; border-radius:12px; padding:.85rem 1rem; font-weight:700; font-size:.95rem; border:none; cursor:pointer; width:100%; }
+.sc-wa-btn:hover { background:#1da851; }
+.sc-addr-block { background:#f8fafc; border-radius:12px; padding:.85rem 1rem; }
+html.dark .sc-addr-block { background:#253349; }
+.sc-steps-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:.5rem; margin-top:.25rem; }
+.sc-step { background:#f8fafc; border-radius:10px; padding:.65rem .4rem; text-align:center; }
+html.dark .sc-step { background:#253349; }
+.sc-step-icon { font-size:1.25rem; margin-bottom:.2rem; }
+.sc-step-title { font-size:.7rem; font-weight:700; color:#374151; }
+html.dark .sc-step-title { color:#cbd5e1; }
+.sc-step-sub { font-size:.6rem; color:#94a3b8; margin-top:.1rem; }
+.sc-loc-status { text-align:center; font-size:.8rem; color:#475569; margin-top:.3rem; display:none; }
+
+/* Promo footer (inside card 3) */
+.sc-promo { margin-top:auto; padding:.9rem 1rem 1rem; background:#f0fdfa; border-top:1px solid #ccfbf1; text-align:center; }
+html.dark .sc-promo { background:#134e4a; border-color:#0f766e; }
+.sc-promo p { font-size:.75rem; color:#475569; margin-bottom:.55rem; }
+html.dark .sc-promo p { color:#5eead4; }
+
+/* Floating call button (fixed at bottom) */
+.sc-float { position:fixed; bottom:0; left:50%; transform:translateX(-50%); width:100%; max-width:420px; background:#16a34a; color:#fff; display:flex; align-items:center; justify-content:center; gap:.6rem; padding:1.1rem 1.25rem; font-weight:800; font-size:1rem; text-decoration:none; z-index:20; box-shadow:0 -4px 20px rgba(0,0,0,.18); }
+.sc-float:hover { background:#15803d; }
+.sc-float-num { font-family:monospace; font-size:.9rem; opacity:.85; }
+
+<%# ── LEGACY THEMES (all themes other than classic) ─────────────────── %>
+.ep-shell { min-height:100vh; display:flex; flex-direction:column; align-items:center; }
+.ep-card { width:100%; max-width:420px; display:flex; flex-direction:column; min-height:100vh; background:#fff; }
+html.dark .ep-card { background:#1e293b; }
+.ep-top { display:flex; align-items:center; justify-content:space-between; padding:.6rem 1rem; }
+.ep-alert { display:flex; align-items:center; justify-content:space-between; padding:.7rem 1rem; }
+.ep-identity { padding:1.25rem 1rem 1rem; display:flex; align-items:center; gap:.9rem; }
+.ep-avatar { width:72px; height:72px; border-radius:50%; flex-shrink:0; border:2.5px solid rgba(255,255,255,.35); display:flex; align-items:center; justify-content:center; font-size:2.2rem; overflow:hidden; }
+.ep-name { font-size:1.5rem; font-weight:800; line-height:1.15; }
+.ep-badges { display:flex; align-items:center; flex-wrap:wrap; gap:.35rem; margin-top:.4rem; }
+.ep-badge-blood { background:#dc2626; color:#fff; font-weight:800; font-size:.95rem; padding:.25rem .65rem; border-radius:99px; font-family:monospace; letter-spacing:.02em; }
+.ep-badge-cat { background:rgba(255,255,255,.18); color:rgba(255,255,255,.9); font-size:.7rem; font-weight:600; padding:.2rem .55rem; border-radius:99px; text-transform:capitalize; }
+.ep-age { font-size:.85rem; opacity:.8; }
+.ep-actions { padding:.9rem 1rem; display:flex; flex-direction:column; gap:.6rem; }
+.ep-btn-call { display:flex; align-items:center; justify-content:center; gap:.65rem; border-radius:14px; padding:1.1rem; font-weight:800; text-decoration:none; }
+.ep-btn-call-secondary { border:2px solid #16a34a; color:#15803d; border-radius:12px; padding:.75rem; font-weight:700; font-size:.9rem; display:flex; align-items:center; justify-content:center; gap:.5rem; text-decoration:none; background:#f0fdf4; }
+.ep-btn-wa { background:#25D366; color:#fff; border-radius:12px; padding:.75rem; font-weight:700; font-size:.9rem; display:flex; align-items:center; justify-content:center; gap:.5rem; border:none; cursor:pointer; width:100%; }
+.ep-btn-wa:hover { background:#1da851; }
+.ep-medical { margin:.2rem 1rem 0; border-radius:12px; overflow:hidden; border:1px solid #fbbf24; }
+.ep-medical-head { background:#fef3c7; padding:.55rem .85rem; font-size:.72rem; font-weight:700; color:#92400e; text-transform:uppercase; letter-spacing:.04em; }
+html.dark .ep-medical { border-color:#78350f; }
+html.dark .ep-medical-head { background:#451a03; color:#fcd34d; }
+.ep-medical-body { padding:.75rem .85rem; display:flex; flex-direction:column; gap:.6rem; }
+.ep-field-label { font-size:.68rem; font-weight:700; color:#94a3b8; text-transform:uppercase; letter-spacing:.05em; margin-bottom:.2rem; }
+.ep-allergy-tag { background:#fee2e2; color:#991b1b; font-size:.75rem; font-weight:600; padding:.2rem .55rem; border-radius:99px; }
+html.dark .ep-allergy-tag { background:#7f1d1d; color:#fca5a5; }
+.ep-field-val { font-size:.85rem; color:#374151; line-height:1.5; }
+html.dark .ep-field-val { color:#cbd5e1; }
+.ep-more { margin:.6rem 1rem 0; border-radius:12px; border:1px solid #e2e8f0; overflow:hidden; }
+html.dark .ep-more { border-color:#334155; }
+.ep-more summary { padding:.65rem .85rem; font-size:.82rem; font-weight:600; color:#475569; cursor:pointer; display:flex; align-items:center; justify-content:space-between; list-style:none; background:#f8fafc; }
+html.dark .ep-more summary { background:#253349; color:#94a3b8; }
+.ep-more summary::-webkit-details-marker { display:none; }
+.ep-more-body { padding:.75rem .85rem; display:flex; flex-direction:column; gap:.6rem; }
+.ep-steps { margin:.8rem 1rem 0; }
+.ep-steps-label { font-size:.7rem; font-weight:700; color:#94a3b8; text-transform:uppercase; letter-spacing:.06em; margin-bottom:.5rem; }
+.ep-steps-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:.5rem; }
+.ep-step { background:#f8fafc; border-radius:10px; padding:.65rem .4rem; text-align:center; }
+html.dark .ep-step { background:#253349; }
+.ep-step-icon { font-size:1.3rem; margin-bottom:.2rem; }
+.ep-step-title { font-size:.72rem; font-weight:700; color:#374151; }
+html.dark .ep-step-title { color:#cbd5e1; }
+.ep-step-sub { font-size:.62rem; color:#94a3b8; margin-top:.1rem; }
+.ep-footer { margin:1rem 1rem 1.5rem; padding:1rem; background:#f0fdfa; border-radius:12px; text-align:center; border:1px solid #ccfbf1; }
+html.dark .ep-footer { background:#134e4a; border-color:#0f766e; }
+.ep-footer p { font-size:.75rem; color:#475569; margin-bottom:.6rem; }
+html.dark .ep-footer p { color:#5eead4; }
 </style>
 
+<% if (_isSwipe) { %>
+<!-- ═══════════════════════════════════════════════════════════════
+     LAYOUT D — SWIPE CARDS (default / classic theme)
+═══════════════════════════════════════════════════════════════ -->
+<div class="sc-page">
+<div class="sc-shell">
+
+  <!-- Header -->
+  <div class="sc-header">
+    <a href="/" class="sc-header-logo" style="text-decoration:none;">
+      <img src="/static/images/websiteLogo.png" alt="SafeTag" style="height:20px;width:auto;object-fit:contain;" onerror="this.style.display='none'" />
+      <span style="font-weight:700;font-size:.88rem;color:#0a2342;" class="dark:text-white">SafeTag</span>
+    </a>
+    <div class="sc-header-verified">
+      <span style="width:7px;height:7px;background:#16a34a;border-radius:50%;display:inline-block;"></span>
+      Verified Profile
+    </div>
+    <span class="sc-header-tag"><%= tag_id %></span>
+  </div>
+
+  <!-- Emergency alert -->
+  <div class="sc-alert">
+    <span>⚠️ &nbsp;Emergency Identification</span>
+    <span style="font-family:monospace;font-size:.68rem;opacity:.85;">ID: <%= tag_id %></span>
+  </div>
+
+  <% if (activated) { %>
+    <div style="margin:.75rem .85rem 0;">
+      <div class="flash flash-success">✅ Your SafeTag is now active. Bookmark this page or share with family.</div>
+    </div>
+  <% } %>
+
+  <!-- ── Horizontal card track ───────────────────────────────── -->
+  <div class="sc-track" id="scTrack">
+
+    <!-- ── CARD 1: Identity + Contacts ──────────────────────── -->
+    <div class="sc-slide">
+      <div class="sc-card">
+        <div class="sc-accent"></div>
+
+        <!-- Avatar + name + badges -->
+        <div class="sc-avatar-wrap">
+          <div class="sc-avatar">
+            <% if (profile.photo_url) { %>
+              <img src="<%= profile.photo_url %>" alt="" style="width:100%;height:100%;object-fit:cover;" />
+            <% } else { %>
+              <span><% if(profile.category==='CHILD'){%>👧<%}else if(profile.category==='ELDERLY'){%>👴<%}else if(profile.category==='PET'){%>🐕<%}else if(profile.category==='TRAVELER'){%>🧳<%}else if(profile.category==='ATHLETE'){%>🚴<%}else{%>👤<%}%></span>
+            <% } %>
+          </div>
+          <h1 class="sc-name"><%= profile.name %></h1>
+          <div class="sc-badges">
+            <% if (profile.age) { %><span class="sc-badge-age">Age <%= profile.age %></span><% } %>
+            <% if (profile.blood_group) { %><span class="sc-badge-blood"><%= profile.blood_group %></span><% } %>
+            <% if (profile.category) { %><span class="sc-badge-cat"><%= profile.category.toLowerCase() %></span><% } %>
+          </div>
+          <% if (profile.parent_name) { %>
+            <div class="sc-parent">👨‍👩‍👧 <%= profile.parent_name %></div>
+          <% } %>
+        </div>
+
+        <!-- Contact buttons -->
+        <div class="sc-contacts">
+          <a href="tel:+91<%= profile.mobile_primary %>" class="sc-contact-primary">
+            <span style="font-size:1.3rem;">📞</span>
+            <div style="text-align:left;">
+              <div style="font-size:.72rem;opacity:.85;letter-spacing:.04em;text-transform:uppercase;">Call Emergency Contact</div>
+              <div style="font-family:monospace;font-size:1rem;letter-spacing:.02em;">+91 <%= profile.mobile_primary %></div>
+            </div>
+          </a>
+          <% if (profile.mobile_secondary) { %>
+            <a href="tel:+91<%= profile.mobile_secondary %>" class="sc-contact-alt">
+              📞 <span>Alternate — +91 <%= profile.mobile_secondary %></span>
+            </a>
+          <% } %>
+        </div>
+
+        <!-- Swipe hint -->
+        <div class="sc-hint">
+          <span>Swipe left for medical info</span>
+          <span style="font-size:1rem;">⚕️ →</span>
+        </div>
+      </div>
+
+      <!-- Dots for card 1 -->
+      <div class="sc-dots">
+        <button class="sc-dot active" data-idx="0" onclick="scGo(0)" aria-label="Identity"></button>
+        <button class="sc-dot" data-idx="1" onclick="scGo(1)" aria-label="Medical"></button>
+        <button class="sc-dot" data-idx="2" onclick="scGo(2)" aria-label="Location"></button>
+      </div>
+    </div>
+
+    <!-- ── CARD 2: Medical Info ───────────────────────────────── -->
+    <div class="sc-slide">
+      <div class="sc-card">
+        <div class="sc-accent" style="background:#d97706;"></div>
+        <div class="sc-card-head">
+          <span class="sc-card-head-icon">⚕️</span>
+          <span class="sc-card-head-title">Critical Medical Info</span>
+          <span style="margin-left:auto;font-size:.72rem;color:#94a3b8;">Show to paramedics</span>
+        </div>
+
+        <% if (profile.allergies || profile.medical_conditions || profile.medications) { %>
+          <div class="sc-card-body">
+            <% if (profile.blood_group) { %>
+              <div>
+                <div class="sc-field-label">Blood Group</div>
+                <div style="display:inline-flex;background:#dc2626;color:#fff;font-family:monospace;font-weight:900;font-size:1.3rem;padding:.25rem .9rem;border-radius:99px;"><%= profile.blood_group %></div>
+              </div>
+            <% } %>
+            <% if (profile.allergies) { %>
+              <div>
+                <div class="sc-field-label">Allergies</div>
+                <div class="sc-allergy-row">
+                  <% profile.allergies.split(',').map(function(a){return a.trim();}).filter(Boolean).forEach(function(a){ %>
+                    <span class="sc-allergy-pill">⚠️ <%= a %></span>
+                  <% }); %>
+                </div>
+              </div>
+            <% } %>
+            <% if (profile.medical_conditions) { %>
+              <div>
+                <div class="sc-field-label">Medical Conditions</div>
+                <div class="sc-field-val"><%= profile.medical_conditions %></div>
+              </div>
+            <% } %>
+            <% if (profile.medications) { %>
+              <div>
+                <div class="sc-field-label">Current Medications</div>
+                <div class="sc-field-val"><%= profile.medications %></div>
+              </div>
+            <% } %>
+          </div>
+        <% } else { %>
+          <div class="sc-no-medical">
+            <div class="sc-no-medical-icon">✅</div>
+            <div class="sc-no-medical-text">No critical medical conditions on record.<br/>Swipe right to go back or left for location.</div>
+          </div>
+        <% } %>
+
+        <!-- Swipe hint -->
+        <div class="sc-hint" style="margin-top:auto;">
+          <span style="font-size:1rem;">← 👤</span>
+          <span style="margin:0 .5rem;color:#cbd5e1;">|</span>
+          <span>📍 location →</span>
+        </div>
+      </div>
+
+      <!-- Dots for card 2 -->
+      <div class="sc-dots">
+        <button class="sc-dot" data-idx="0" onclick="scGo(0)" aria-label="Identity"></button>
+        <button class="sc-dot active" data-idx="1" onclick="scGo(1)" aria-label="Medical"></button>
+        <button class="sc-dot" data-idx="2" onclick="scGo(2)" aria-label="Location"></button>
+      </div>
+    </div>
+
+    <!-- ── CARD 3: Location + Actions + Guide ────────────────── -->
+    <div class="sc-slide">
+      <div class="sc-card">
+        <div class="sc-accent" style="background:#2563eb;"></div>
+        <div class="sc-card-head">
+          <span class="sc-card-head-icon">📍</span>
+          <span class="sc-card-head-title">Share Location & Help</span>
+        </div>
+
+        <div class="sc-card-body">
+          <button id="scWaBtn" class="sc-wa-btn">
+            💬 <span>Send My Location via WhatsApp</span>
+          </button>
+          <div id="scLocStatus" class="sc-loc-status"></div>
+
+          <% if (profile.address) { %>
+            <div class="sc-addr-block">
+              <div class="sc-field-label">Home Address</div>
+              <div class="sc-field-val"><%= profile.address %></div>
+              <% if (profile.latitude && profile.longitude) { %>
+                <a style="color:#0D9488;font-size:.82rem;font-weight:600;text-decoration:none;display:inline-flex;align-items:center;gap:.3rem;margin-top:.4rem;" target="_blank" rel="noopener" href="https://maps.google.com/?q=<%= profile.latitude %>,<%= profile.longitude %>">📍 Open in Maps →</a>
+              <% } %>
+            </div>
+          <% } %>
+
+          <% if (profile.custom_message) { %>
+            <div>
+              <div class="sc-field-label">Message from Family</div>
+              <div class="sc-field-val" style="font-style:italic;"><%= profile.custom_message %></div>
+            </div>
+          <% } %>
+
+          <!-- 3-step guide -->
+          <div>
+            <div class="sc-field-label">What to do right now</div>
+            <div class="sc-steps-grid">
+              <div class="sc-step">
+                <div class="sc-step-icon">📞</div>
+                <div class="sc-step-title">Call</div>
+                <div class="sc-step-sub">emergency contact</div>
+              </div>
+              <div class="sc-step">
+                <div class="sc-step-icon">📍</div>
+                <div class="sc-step-title">Share</div>
+                <div class="sc-step-sub">location via WA</div>
+              </div>
+              <div class="sc-step">
+                <div class="sc-step-icon">⚕️</div>
+                <div class="sc-step-title">Note</div>
+                <div class="sc-step-sub">blood type + allergy</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Promo footer -->
+        <div class="sc-promo">
+          <p>You just saw SafeTag work in a real emergency. Protect your family too.</p>
+          <a href="/store" class="btn-warn" style="font-size:.82rem;padding:.55rem 1.1rem;display:inline-flex;">Get SafeTag from ₹149 →</a>
+          <div style="font-size:.68rem;color:#94a3b8;margin-top:.4rem;">safe-tag.in · QR + RFID/NFC · Made in India 🇮🇳</div>
+        </div>
+      </div>
+
+      <!-- Dots for card 3 -->
+      <div class="sc-dots">
+        <button class="sc-dot" data-idx="0" onclick="scGo(0)" aria-label="Identity"></button>
+        <button class="sc-dot" data-idx="1" onclick="scGo(1)" aria-label="Medical"></button>
+        <button class="sc-dot active" data-idx="2" onclick="scGo(2)" aria-label="Location"></button>
+      </div>
+    </div>
+
+  </div><!-- end sc-track -->
+
+  <!-- ── Floating call button (always visible) ─────────────── -->
+  <a href="tel:+91<%= profile.mobile_primary %>" class="sc-float" id="scFloatCall">
+    <span style="font-size:1.3rem;">📞</span>
+    <div>
+      <div style="font-size:.72rem;opacity:.85;letter-spacing:.04em;">CALL NOW</div>
+      <span class="sc-float-num">+91 <%= profile.mobile_primary %></span>
+    </div>
+  </a>
+
+</div><!-- end sc-shell -->
+</div><!-- end sc-page -->
+
+<script>
+(function(){
+  var track = document.getElementById('scTrack');
+  if (!track) return;
+
+  var tagId  = <%- JSON.stringify(tag_id) %>;
+  var apiUrl = <%- JSON.stringify(flaskApiUrl) %>;
+  var primary = <%- JSON.stringify(profile.mobile_primary || '') %>;
+  var coords = null;
+
+  /* ── Dot update ─────────────────────────────── */
+  function updateDots(idx) {
+    document.querySelectorAll('.sc-dot[data-idx]').forEach(function(d){
+      d.classList.toggle('active', parseInt(d.getAttribute('data-idx')) === idx);
+    });
+  }
+
+  /* ── Programmatic scroll ─────────────────────── */
+  function scGo(idx) {
+    track.scrollTo({ left: idx * track.clientWidth, behavior: 'smooth' });
+  }
+  window.scGo = scGo;
+
+  /* ── Track scroll → update dots ─────────────── */
+  track.addEventListener('scroll', function(){
+    var idx = Math.round(track.scrollLeft / (track.clientWidth || 1));
+    updateDots(idx);
+  }, { passive: true });
+
+  /* ── Touch swipe (for older browsers that ignore scroll-snap) */
+  var startX, startY;
+  track.addEventListener('touchstart', function(e){ startX = e.touches[0].clientX; startY = e.touches[0].clientY; }, { passive: true });
+  track.addEventListener('touchend', function(e){
+    var dx = startX - e.changedTouches[0].clientX;
+    var dy = Math.abs(startY - e.changedTouches[0].clientY);
+    if (Math.abs(dx) > 40 && Math.abs(dx) > dy) {
+      var cur = Math.round(track.scrollLeft / (track.clientWidth || 1));
+      scGo(dx > 0 ? Math.min(cur + 1, 2) : Math.max(cur - 1, 0));
+    }
+  }, { passive: true });
+
+  /* ── Geolocation ─────────────────────────────── */
+  function buildWa(lat, lng) {
+    var maps = (lat && lng) ? ('https://maps.google.com/?q=' + lat + ',' + lng) : '';
+    var msg = 'Hello, I found someone with a SafeTag (' + tagId + ').' + (maps ? ' Location: ' + maps : '');
+    return 'https://wa.me/91' + primary + '?text=' + encodeURIComponent(msg);
+  }
+
+  function setStatus(msg, ok) {
+    var el = document.getElementById('scLocStatus');
+    if (!el) return;
+    el.style.color = ok ? '#15803d' : '#475569';
+    el.textContent = msg;
+    el.style.display = 'block';
+  }
+
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(function(p){
+      coords = { lat: p.coords.latitude, lng: p.coords.longitude };
+      try {
+        fetch(apiUrl + '/api/location-alert', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ tag_id: tagId, lat: coords.lat, lng: coords.lng })
+        }).then(function(r){ return r.json(); }).then(function(d){
+          if (d && d.delivered) setStatus('✅ Owner notified with your location', true);
+        }).catch(function(){});
+      } catch(e){}
+    }, function(){}, { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 });
+  }
+
+  var waBtn = document.getElementById('scWaBtn');
+  if (waBtn) {
+    waBtn.addEventListener('click', function(){
+      if (coords) {
+        window.location.href = buildWa(coords.lat, coords.lng);
+      } else if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          function(p){ window.location.href = buildWa(p.coords.latitude, p.coords.longitude); },
+          function(){ window.location.href = buildWa(null, null); }
+        );
+      } else {
+        window.location.href = buildWa(null, null);
+      }
+    });
+  }
+})();
+</script>
+
+<% } else { %>
+<!-- ═══════════════════════════════════════════════════════════════
+     LEGACY THEMES (guardian / care / medical / adventure / rose)
+═══════════════════════════════════════════════════════════════ -->
 <div class="ep-shell" style="background:var(--ep-page-bg, #EAEFF4);">
   <div class="ep-card" data-theme="<%= _theme %>" style="<% if(_theme==='guardian'){%>--ep-page-bg:#1e293b<% }else if(_theme==='care'){%>--ep-page-bg:#fff7ed<% }else if(_theme==='medical'){%>--ep-page-bg:#eff6ff<% }else if(_theme==='adventure'){%>--ep-page-bg:#f0fdf4<% }else if(_theme==='rose'){%>--ep-page-bg:#fff1f2<% }else{%>--ep-page-bg:#EAEFF4<% } %>;">
 
-    <!-- 1. Brand top bar (theme color) -->
+    <!-- 1. Brand top bar -->
     <div class="ep-top ep-top-bar">
       <a href="/" style="display:flex;align-items:center;gap:.45rem;text-decoration:none;">
         <img src="/static/images/websiteLogo.png" alt="SafeTag" style="height:22px;max-width:22px;object-fit:contain;filter:brightness(10);" onerror="this.style.display='none'" />
@@ -76,7 +502,7 @@
       </div>
     </div>
 
-    <!-- 2. Emergency alert banner (red) -->
+    <!-- 2. Emergency alert banner -->
     <div class="ep-alert ep-alert-bar">
       <div style="display:flex;align-items:center;gap:.5rem;font-weight:800;font-size:.82rem;letter-spacing:.04em;text-transform:uppercase;">
         <span style="font-size:1rem;">⚠️</span>
@@ -91,7 +517,7 @@
       </div>
     <% } %>
 
-    <!-- 3. Identity header (theme id-header color) -->
+    <!-- 3. Identity header -->
     <div class="ep-identity ep-id-header">
       <div class="ep-avatar" style="background:rgba(255,255,255,.15);">
         <% if (profile.photo_url) { %>
@@ -113,7 +539,7 @@
       </div>
     </div>
 
-    <!-- 4. Call actions (always above fold) -->
+    <!-- 4. Call actions -->
     <div class="ep-actions">
       <a href="tel:+91<%= profile.mobile_primary %>" class="ep-btn-call ep-call-btn" style="font-size:1rem;">
         <span style="font-size:1.5rem;">📞</span>
@@ -133,7 +559,7 @@
       <div id="locStatus" style="text-align:center;font-size:.82rem;display:none;color:#475569;"></div>
     </div>
 
-    <!-- 5. Critical medical info (amber card, always visible) -->
+    <!-- 5. Medical info -->
     <% if (profile.allergies || profile.medical_conditions || profile.medications) { %>
       <div class="ep-medical">
         <div class="ep-medical-head">⚕️ Critical Medical Info — Show to paramedics</div>
@@ -193,33 +619,21 @@
       </details>
     <% } %>
 
-    <!-- 7. Rescuer action guide -->
+    <!-- 7. Rescuer guide -->
     <div class="ep-steps">
       <div class="ep-steps-label">What to do now</div>
       <div class="ep-steps-grid">
-        <div class="ep-step">
-          <div class="ep-step-icon">📞</div>
-          <div class="ep-step-title">Call</div>
-          <div class="ep-step-sub">emergency contact</div>
-        </div>
-        <div class="ep-step">
-          <div class="ep-step-icon">📍</div>
-          <div class="ep-step-title">Share</div>
-          <div class="ep-step-sub">location via WA</div>
-        </div>
-        <div class="ep-step">
-          <div class="ep-step-icon">⚕️</div>
-          <div class="ep-step-title">Note</div>
-          <div class="ep-step-sub">blood type + allergy</div>
-        </div>
+        <div class="ep-step"><div class="ep-step-icon">📞</div><div class="ep-step-title">Call</div><div class="ep-step-sub">emergency contact</div></div>
+        <div class="ep-step"><div class="ep-step-icon">📍</div><div class="ep-step-title">Share</div><div class="ep-step-sub">location via WA</div></div>
+        <div class="ep-step"><div class="ep-step-icon">⚕️</div><div class="ep-step-title">Note</div><div class="ep-step-sub">blood type + allergy</div></div>
       </div>
     </div>
 
-    <!-- 8. SafeTag promo footer -->
+    <!-- 8. Promo footer -->
     <div class="ep-footer" style="margin-top:auto;">
       <p>You just saw SafeTag work in a real emergency. Protect your family too.</p>
       <a href="/store" class="btn-warn" style="font-size:.82rem;padding:.55rem 1.1rem;display:inline-flex;">Get SafeTag from ₹149 →</a>
-      <div style="font-size:.7rem;color:#94a3b8;margin-top:.5rem;">safe-tag.in · Scan. Know. Save a Life.</div>
+      <div style="font-size:.7rem;color:#94a3b8;margin-top:.5rem;">safe-tag.in · QR + RFID/NFC · Made in India 🇮🇳</div>
     </div>
 
   </div><!-- end ep-card -->
@@ -233,46 +647,29 @@
   var btn = document.getElementById('whatsappBtn');
   var status = document.getElementById('locStatus');
   var coords = null;
-
-  function setStatus(msg, ok) {
-    status.style.color = ok ? '#15803d' : '#475569';
-    status.textContent = msg;
-    status.style.display = 'block';
-  }
-
+  function setStatus(msg, ok) { status.style.color = ok ? '#15803d' : '#475569'; status.textContent = msg; status.style.display = 'block'; }
   function buildWaLink(lat, lng) {
     var maps = (lat && lng) ? ('https://maps.google.com/?q=' + lat + ',' + lng) : '';
     var msg = 'Hello, I found someone with a SafeTag (' + tagId + ').' + (maps ? (' Location: ' + maps) : '');
     return 'https://wa.me/91' + primary + '?text=' + encodeURIComponent(msg);
   }
-
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(function(p){
       coords = { lat: p.coords.latitude, lng: p.coords.longitude };
       try {
-        fetch(flaskUrl + '/api/location-alert', {
-          method:'POST', headers:{'Content-Type':'application/json'},
-          body: JSON.stringify({ tag_id:tagId, lat:coords.lat, lng:coords.lng })
-        }).then(function(r){ return r.json(); }).then(function(d){
-          if (d && d.delivered) setStatus('✅ Owner notified with your location', true);
-        }).catch(function(){});
+        fetch(flaskUrl + '/api/location-alert', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ tag_id:tagId, lat:coords.lat, lng:coords.lng }) })
+          .then(function(r){ return r.json(); }).then(function(d){ if (d && d.delivered) setStatus('✅ Owner notified with your location', true); }).catch(function(){});
       } catch(e){}
     }, function(){}, { enableHighAccuracy:true, timeout:8000, maximumAge:0 });
   }
-
-  btn.addEventListener('click', function(){
-    if (coords) {
-      window.location.href = buildWaLink(coords.lat, coords.lng);
-    } else if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        function(p){ window.location.href = buildWaLink(p.coords.latitude, p.coords.longitude); },
-        function(){ window.location.href = buildWaLink(null, null); }
-      );
-    } else {
-      window.location.href = buildWaLink(null, null);
-    }
+  if (btn) btn.addEventListener('click', function(){
+    if (coords) { window.location.href = buildWaLink(coords.lat, coords.lng); }
+    else if (navigator.geolocation) { navigator.geolocation.getCurrentPosition(function(p){ window.location.href = buildWaLink(p.coords.latitude, p.coords.longitude); }, function(){ window.location.href = buildWaLink(null, null); }); }
+    else { window.location.href = buildWaLink(null, null); }
   });
 })();
 </script>
+
+<% } %>
 
 <%- include('layout/_foot', { hideFooter: true }) %>
