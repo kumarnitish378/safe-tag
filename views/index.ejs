@@ -10,56 +10,100 @@
     <div class="absolute inset-0 bg-gradient-to-r from-navy/65 via-navy/35 to-transparent"></div>
   </div>
 
-  <div class="relative max-w-5xl mx-auto px-4 pt-6 pb-14 md:pb-20">
-    <div class="max-w-2xl">
+  <div class="relative max-w-5xl mx-auto px-4 pt-8 pb-12 md:pb-16">
+    <div class="grid md:grid-cols-2 gap-10 lg:gap-16 items-center">
 
-      <!-- Narrative hook -->
-        <span class="inline-flex items-center gap-1.5 text-xs font-semibold bg-red-500/20 text-red-300 border border-red-400/20 px-3 py-1 rounded-full mb-5" data-i18n="hero.badge">
+      <!-- LEFT: Story + CTAs -->
+      <div>
+        <!-- Narrative hook -->
+        <span class="inline-flex items-center gap-1.5 text-sm font-semibold bg-red-500/20 text-red-300 border border-red-400/20 px-3 py-1 rounded-full mb-5" data-i18n="hero.badge">
           ⚠️ 12,000+ children go missing in India every month
         </span>
 
-        <blockquote class="text-3xl md:text-4xl font-extrabold text-white leading-tight mb-4">
+        <blockquote class="text-3xl md:text-4xl lg:text-5xl font-extrabold text-white leading-tight mb-4">
           "14 hours.<br/>No ID. No way<br/>to reach her family."
         </blockquote>
 
-        <p class="text-slate-300 text-base leading-relaxed max-w-md mb-3">
-          A 6-year-old went missing at Kumbh Mela. No phone, no voice, fourteen hours of terror before her family found her. One small tag on her wrist would have ended it in 7 minutes.
+        <p class="text-slate-300 text-lg leading-relaxed mb-3">
+          A 6-year-old went missing at Kumbh Mela. No phone, no voice, fourteen hours of terror before her family found her. One small tag would have ended it in 7 minutes.
         </p>
-        <p class="text-teal-300 font-semibold text-lg mb-5" data-i18n="hero.tagline">
+        <p class="text-teal-300 font-semibold text-xl mb-5" data-i18n="hero.tagline">
           SafeTag exists so this never happens to your family.
         </p>
 
-        <p class="text-slate-300 text-sm leading-relaxed max-w-sm mb-2">
-          Every SafeTag has <strong class="text-white">two ways to save a life</strong>: a QR code any phone camera can scan in 3 seconds, and a built-in RFID/NFC chip that works even if the QR is scratched or in complete darkness. No app. No internet required for the rescuer.
+        <p class="text-slate-300 text-base leading-relaxed mb-3">
+          Every SafeTag has <strong class="text-white">two ways to save a life</strong>: a QR code any camera can scan, and a built-in RFID/NFC chip that works even if the QR is scratched or in darkness.
         </p>
-        <div class="flex items-center gap-3 mb-6 mt-3">
-          <span class="flex items-center gap-1.5 text-xs text-teal-300 font-semibold"><span>📷</span> QR Scan</span>
-          <span class="text-slate-500 text-xs">+</span>
-          <span class="flex items-center gap-1.5 text-xs text-teal-300 font-semibold"><span>📡</span> RFID/NFC Tap</span>
-          <span class="text-slate-500 text-xs">=</span>
-          <span class="flex items-center gap-1.5 text-xs text-white font-bold bg-teal-600/30 px-2.5 py-1 rounded-full border border-teal-500/30">Dual Protection</span>
+        <div class="flex items-center gap-3 mb-7 mt-1 flex-wrap">
+          <span class="flex items-center gap-1.5 text-sm text-teal-300 font-semibold">📷 QR Scan</span>
+          <span class="text-slate-500">+</span>
+          <span class="flex items-center gap-1.5 text-sm text-teal-300 font-semibold">📡 RFID/NFC Tap</span>
+          <span class="text-slate-500">=</span>
+          <span class="flex items-center gap-1.5 text-sm text-white font-bold bg-teal-600/30 px-3 py-1 rounded-full border border-teal-500/30">Dual Protection</span>
         </div>
 
         <div class="flex flex-wrap gap-3">
-          <a href="/store" class="btn-warn" data-i18n="hero.cta1">🛒 Protect My Family — from ₹149</a>
-          <a href="/demo" class="btn-outline border-white/30 text-white hover:!text-white hover:!border-white" data-i18n="hero.cta2">See Live Demo</a>
+          <a href="/store" class="btn-warn text-base px-6 py-3" data-i18n="hero.cta1">🛒 Protect My Family — from ₹149</a>
+          <a href="/demo" class="btn-outline border-white/30 text-white hover:!text-white hover:!border-white text-base" data-i18n="hero.cta2">See Live Demo</a>
         </div>
 
         <!-- Stats bar -->
-        <div class="mt-10 grid grid-cols-3 gap-3 max-w-sm">
+        <div class="mt-8 grid grid-cols-3 gap-4 border-t border-white/10 pt-6">
           <div>
-            <div class="font-sora font-bold text-white text-2xl">12,400+</div>
-            <div class="text-xs text-slate-400">Tags Activated</div>
+            <div class="font-sora font-bold text-white text-3xl">12,400+</div>
+            <div class="text-sm text-slate-400 mt-0.5">Tags Activated</div>
           </div>
           <div>
-            <div class="font-sora font-bold text-white text-2xl">182</div>
-            <div class="text-xs text-slate-400">Happy Reunions</div>
+            <div class="font-sora font-bold text-white text-3xl">182</div>
+            <div class="text-sm text-slate-400 mt-0.5">Happy Reunions</div>
           </div>
           <div>
-            <div class="font-sora font-bold text-white text-2xl">&lt; 3s</div>
-            <div class="text-xs text-slate-400">Avg Open Time</div>
+            <div class="font-sora font-bold text-white text-3xl">&lt; 3s</div>
+            <div class="text-sm text-slate-400 mt-0.5">Avg Open Time</div>
           </div>
         </div>
+      </div>
+
+      <!-- RIGHT: Emergency profile mockup (desktop only) -->
+      <div class="hidden md:flex flex-col items-center gap-4">
+        <!-- Mini emergency card preview -->
+        <div class="w-full max-w-xs bg-white rounded-2xl shadow-2xl overflow-hidden border border-white/10">
+          <!-- Red alert strip -->
+          <div style="background:#dc2626;color:#fff;padding:.5rem 1rem;font-size:.75rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;display:flex;align-items:center;gap:.4rem;">
+            <span>⚠️</span> Emergency Profile — SafeTag
+          </div>
+          <!-- Identity row -->
+          <div style="padding:1rem 1rem .75rem;display:flex;align-items:center;gap:.85rem;">
+            <div style="width:62px;height:62px;border-radius:50%;background:#f0fdfa;border:2.5px solid #0D9488;display:flex;align-items:center;justify-content:center;font-size:1.9rem;flex-shrink:0;">👧</div>
+            <div>
+              <div style="font-size:1.15rem;font-weight:800;color:#0a2342;line-height:1.2;">Aarav Sharma</div>
+              <div style="display:flex;gap:.35rem;margin-top:.4rem;flex-wrap:wrap;align-items:center;">
+                <span style="background:#dc2626;color:#fff;border-radius:99px;padding:.15rem .65rem;font-size:.82rem;font-weight:900;font-family:monospace;">O+</span>
+                <span style="background:#f0fdfa;color:#0f766e;border-radius:99px;padding:.15rem .6rem;font-size:.72rem;font-weight:600;">Age 8</span>
+                <span style="background:#f0fdfa;color:#0f766e;border-radius:99px;padding:.15rem .6rem;font-size:.72rem;font-weight:600;">Child</span>
+              </div>
+              <div style="font-size:.8rem;color:#64748b;margin-top:.3rem;">👨‍👩‍👧 Parent: Priya Sharma</div>
+            </div>
+          </div>
+          <!-- Allergy alert -->
+          <div style="margin:0 1rem;background:#fef3c7;border:1px solid #fbbf24;border-radius:8px;padding:.45rem .75rem;font-size:.75rem;color:#92400e;font-weight:600;">
+            ⚠️ Allergies: Peanuts, Penicillin
+          </div>
+          <!-- Action buttons -->
+          <div style="padding:.75rem 1rem 1rem;display:flex;flex-direction:column;gap:.45rem;">
+            <div style="background:#16a34a;color:#fff;border-radius:10px;padding:.7rem;text-align:center;font-weight:700;font-size:.92rem;">📞 Call Emergency Contact</div>
+            <div style="background:#25D366;color:#fff;border-radius:10px;padding:.6rem;text-align:center;font-weight:600;font-size:.85rem;">💬 Send Location via WhatsApp</div>
+          </div>
+        </div>
+        <!-- Caption + tech badges -->
+        <div class="text-center">
+          <div class="text-sm text-slate-400 mb-2">↑ What a rescuer sees after scanning</div>
+          <div class="flex justify-center gap-2 flex-wrap">
+            <span class="text-xs bg-white/10 text-teal-300 border border-teal-500/30 px-3 py-1 rounded-full font-semibold">📷 Any phone camera</span>
+            <span class="text-xs bg-white/10 text-teal-300 border border-teal-500/30 px-3 py-1 rounded-full font-semibold">📡 NFC tap also works</span>
+          </div>
+        </div>
+      </div>
 
     </div>
   </div>
@@ -104,8 +148,8 @@
   <div class="section-inner">
     <div class="flex items-end justify-between mb-6">
       <div>
-        <h2 class="text-3xl font-bold" data-i18n="section.shop">Shop SafeTags</h2>
-        <p class="text-slate-500 mt-1" data-i18n="section.shop.sub">Starts at ₹149. Ships across India.</p>
+        <h2 class="text-4xl font-bold" data-i18n="section.shop">Shop SafeTags</h2>
+        <p class="text-slate-500 mt-1 text-lg" data-i18n="section.shop.sub">Starts at ₹149. Ships across India.</p>
       </div>
       <a href="/store" class="text-brand font-semibold hover:underline">See all →</a>
     </div>
@@ -185,8 +229,8 @@
   ============================================================ -->
 <section id="how" class="section">
   <div class="section-inner">
-    <h2 class="text-3xl font-bold text-center mb-2" data-i18n="section.how">How SafeTag Works</h2>
-    <p class="text-center text-slate-500 mb-10 max-w-xl mx-auto" data-i18n="section.how.sub">From order to life-saving — 4 steps. No app on either side. Works on any Android or iPhone camera.</p>
+    <h2 class="text-4xl font-bold text-center mb-2" data-i18n="section.how">How SafeTag Works</h2>
+    <p class="text-center text-slate-500 mb-10 max-w-xl mx-auto text-lg" data-i18n="section.how.sub">From order to life-saving — 4 steps. No app on either side. Works on any Android or iPhone camera.</p>
     <div class="grid md:grid-cols-4 gap-5">
 
       <!-- Step 1: Buy & Attach -->
@@ -204,9 +248,9 @@
             <rect x="30" y="38" width="2" height="2" fill="#0A2342"/>
           </svg>
         </div>
-        <div class="text-xs font-bold text-brand-700 mb-1 uppercase">Step 1</div>
-        <h3 class="font-semibold mb-2 text-navy">Buy &amp; Attach</h3>
-        <p class="text-sm leading-relaxed text-slate-600">Order a SafeTag keychain, card, sticker or wristband. Attach it to a bag, lanyard, collar, or ID badge.</p>
+        <div class="text-sm font-bold text-brand-700 mb-1 uppercase">Step 1</div>
+        <h3 class="font-semibold mb-2 text-navy text-lg">Buy &amp; Attach</h3>
+        <p class="text-base leading-relaxed text-slate-600">Order a SafeTag keychain, card, sticker or wristband. Attach it to a bag, lanyard, collar, or ID badge.</p>
       </div>
 
       <!-- Step 2: Set Up Profile -->
@@ -221,9 +265,9 @@
             <path d="M30.5 36l2 2 4-4" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
         </div>
-        <div class="text-xs font-bold text-brand-700 mb-1 uppercase">Step 2</div>
-        <h3 class="font-semibold mb-2 text-navy">Set Up Profile</h3>
-        <p class="text-sm leading-relaxed text-slate-600">Scan the QR on your tag, fill in name, blood group, emergency contacts, and medical info. Takes 2 minutes.</p>
+        <div class="text-sm font-bold text-brand-700 mb-1 uppercase">Step 2</div>
+        <h3 class="font-semibold mb-2 text-navy text-lg">Set Up Profile</h3>
+        <p class="text-base leading-relaxed text-slate-600">Scan the QR on your tag, fill in name, blood group, emergency contacts, and medical info. Takes 2 minutes.</p>
       </div>
 
       <!-- Step 3: Stranger Scans or Taps -->
@@ -239,9 +283,9 @@
             <path d="M41 28v5h-5" stroke="#0D9488" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
         </div>
-        <div class="text-xs font-bold text-brand-700 mb-1 uppercase">Step 3</div>
-        <h3 class="font-semibold mb-2 text-navy">Scan QR or Tap NFC</h3>
-        <p class="text-sm leading-relaxed text-slate-600">Anyone scans the QR with their camera — or simply taps the RFID/NFC chip with their phone. Either method opens the emergency profile instantly. No app ever.</p>
+        <div class="text-sm font-bold text-brand-700 mb-1 uppercase">Step 3</div>
+        <h3 class="font-semibold mb-2 text-navy text-lg">Scan QR or Tap NFC</h3>
+        <p class="text-base leading-relaxed text-slate-600">Anyone scans the QR with their camera — or simply taps the RFID/NFC chip with their phone. Either method opens the emergency profile instantly. No app ever.</p>
         <div class="flex gap-2 mt-2 flex-wrap">
           <span class="text-xs bg-teal-50 text-teal-700 font-semibold px-2 py-0.5 rounded-full border border-teal-100">📷 QR Scan</span>
           <span class="text-xs bg-teal-50 text-teal-700 font-semibold px-2 py-0.5 rounded-full border border-teal-100">📡 NFC Tap</span>
@@ -257,9 +301,9 @@
             <path d="M29 14l2.5-2.5M31.5 17H35M29 20l2.5 2.5" stroke="#0D9488" stroke-width="1.8" stroke-linecap="round"/>
           </svg>
         </div>
-        <div class="text-xs font-bold text-brand-700 mb-1 uppercase">Step 4</div>
-        <h3 class="font-semibold mb-2 text-navy">Instant Contact</h3>
-        <p class="text-sm leading-relaxed text-slate-600">The emergency profile opens in under 3 seconds. They call directly. Your WhatsApp gets the location alert.</p>
+        <div class="text-sm font-bold text-brand-700 mb-1 uppercase">Step 4</div>
+        <h3 class="font-semibold mb-2 text-navy text-lg">Instant Contact</h3>
+        <p class="text-base leading-relaxed text-slate-600">The emergency profile opens in under 3 seconds. They call directly. Your WhatsApp gets the location alert.</p>
       </div>
 
     </div>
@@ -274,48 +318,48 @@
   ============================================================ -->
 <section class="section bg-slate-50 border-y border-slate-200">
   <div class="section-inner">
-    <h2 class="text-3xl font-bold text-center mb-2" data-i18n="section.reviews">Real families. Real reunions.</h2>
-    <p class="text-center text-slate-500 mb-10 max-w-xl mx-auto" data-i18n="section.reviews.sub">These are the moments SafeTag was built for.</p>
+    <h2 class="text-4xl font-bold text-center mb-2" data-i18n="section.reviews">Real families. Real reunions.</h2>
+    <p class="text-center text-slate-500 mb-10 max-w-xl mx-auto text-lg" data-i18n="section.reviews.sub">These are the moments SafeTag was built for.</p>
     <div class="grid md:grid-cols-3 gap-6">
 
       <div class="card p-6 flex flex-col">
         <div class="flex items-center gap-1 text-warning mb-3 text-sm">★★★★★</div>
-        <blockquote class="text-slate-700 leading-relaxed flex-1 mb-4">
+        <blockquote class="text-slate-700 text-base leading-relaxed flex-1 mb-4">
           "My son Arjun went missing at Pushkar Mela. Because of his SafeTag, a kind stranger called me within <strong>7 minutes</strong>. Seven minutes. I cannot explain what that felt like."
         </blockquote>
         <div class="flex items-center gap-3 border-t border-slate-100 pt-4">
           <img src="/static/images/review-rekha.jpg" alt="Rekha Mishra" class="w-9 h-9 rounded-full object-cover flex-shrink-0" onerror="this.outerHTML='<div class=\'w-9 h-9 rounded-full bg-teal-100 text-teal-700 font-bold flex items-center justify-center text-sm\'>R</div>'" />
           <div>
-            <div class="font-semibold text-navy text-sm">Rekha Mishra</div>
-            <div class="text-xs text-slate-500">Jaipur, Rajasthan · Child tag</div>
+            <div class="font-semibold text-navy text-base">Rekha Mishra</div>
+            <div class="text-sm text-slate-500">Jaipur, Rajasthan · Child tag</div>
           </div>
         </div>
       </div>
 
       <div class="card p-6 flex flex-col">
         <div class="flex items-center gap-1 text-warning mb-3 text-sm">★★★★★</div>
-        <blockquote class="text-slate-700 leading-relaxed flex-1 mb-4">
+        <blockquote class="text-slate-700 text-base leading-relaxed flex-1 mb-4">
           "My mother has dementia. She walked out of the house three times last year. Each time, a neighbour scanned her SafeTag and called me. This device gives our whole family <strong>peace of mind</strong>."
         </blockquote>
         <div class="flex items-center gap-3 border-t border-slate-100 pt-4">
           <img src="/static/images/review-suresh.jpg" alt="Suresh Venkataraman" class="w-9 h-9 rounded-full object-cover flex-shrink-0" onerror="this.outerHTML='<div class=\'w-9 h-9 rounded-full bg-blue-100 text-blue-700 font-bold flex items-center justify-center text-sm\'>S</div>'" />
           <div>
-            <div class="font-semibold text-navy text-sm">Suresh Venkataraman</div>
-            <div class="text-xs text-slate-500">Chennai, Tamil Nadu · Elderly tag</div>
+            <div class="font-semibold text-navy text-base">Suresh Venkataraman</div>
+            <div class="text-sm text-slate-500">Chennai, Tamil Nadu · Elderly tag</div>
           </div>
         </div>
       </div>
 
       <div class="card p-6 flex flex-col">
         <div class="flex items-center gap-1 text-warning mb-3 text-sm">★★★★★</div>
-        <blockquote class="text-slate-700 leading-relaxed flex-1 mb-4">
+        <blockquote class="text-slate-700 text-base leading-relaxed flex-1 mb-4">
           "On a trek in Himachal I got separated from my group. A local farmer found me, scanned my SafeTag keychain, and reached my emergency contact in minutes. <strong>No language barrier</strong>."
         </blockquote>
         <div class="flex items-center gap-3 border-t border-slate-100 pt-4">
           <img src="/static/images/review-ananya.jpg" alt="Ananya Kapoor" class="w-9 h-9 rounded-full object-cover flex-shrink-0" onerror="this.outerHTML='<div class=\'w-9 h-9 rounded-full bg-orange-100 text-orange-700 font-bold flex items-center justify-center text-sm\'>A</div>'" />
           <div>
-            <div class="font-semibold text-navy text-sm">Ananya Kapoor</div>
-            <div class="text-xs text-slate-500">Mumbai, Maharashtra · Traveler tag</div>
+            <div class="font-semibold text-navy text-base">Ananya Kapoor</div>
+            <div class="text-sm text-slate-500">Mumbai, Maharashtra · Traveler tag</div>
           </div>
         </div>
       </div>
@@ -329,8 +373,8 @@
   ============================================================ -->
 <section class="section bg-white border-b border-slate-100">
   <div class="section-inner">
-    <h2 class="text-3xl font-bold text-center mb-2" data-i18n="section.who">Who is SafeTag for?</h2>
-    <p class="text-center text-slate-500 mb-10 max-w-xl mx-auto" data-i18n="section.who.sub">Everyone who could be separated from the people who love them.</p>
+    <h2 class="text-4xl font-bold text-center mb-2" data-i18n="section.who">Who is SafeTag for?</h2>
+    <p class="text-center text-slate-500 mb-10 max-w-xl mx-auto text-lg" data-i18n="section.who.sub">Everyone who could be separated from the people who love them.</p>
     <div class="grid md:grid-cols-3 sm:grid-cols-2 gap-4">
 
       <div class="card overflow-hidden hover:-translate-y-0.5 transition-transform">
@@ -340,8 +384,8 @@
         <div class="p-4 flex gap-3 items-start">
           <span class="text-2xl shrink-0">👧</span>
           <div>
-            <h4 class="font-semibold mb-1 text-navy">Children</h4>
-            <p class="text-sm text-slate-600 leading-relaxed">Lost at a railway station, fair, or temple? One scan finds the parents — before police reports are even filed.</p>
+            <h4 class="font-semibold mb-1 text-navy text-lg">Children</h4>
+            <p class="text-base text-slate-600 leading-relaxed">Lost at a railway station, fair, or temple? One scan finds the parents — before police reports are even filed.</p>
           </div>
         </div>
       </div>
@@ -353,8 +397,8 @@
         <div class="p-4 flex gap-3 items-start">
           <span class="text-2xl shrink-0">👴</span>
           <div>
-            <h4 class="font-semibold mb-1 text-navy">Elderly</h4>
-            <p class="text-sm text-slate-600 leading-relaxed">Dementia patients or seniors with no phone — a stranger can call family within seconds, no questions asked.</p>
+            <h4 class="font-semibold mb-1 text-navy text-lg">Elderly</h4>
+            <p class="text-base text-slate-600 leading-relaxed">Dementia patients or seniors with no phone — a stranger can call family within seconds, no questions asked.</p>
           </div>
         </div>
       </div>
@@ -366,8 +410,8 @@
         <div class="p-4 flex gap-3 items-start">
           <span class="text-2xl shrink-0">🧳</span>
           <div>
-            <h4 class="font-semibold mb-1 text-navy">Travelers</h4>
-            <p class="text-sm text-slate-600 leading-relaxed">Solo trips, Kumbh Mela, pilgrimages — instant ID for any helper. No language barrier, no app needed.</p>
+            <h4 class="font-semibold mb-1 text-navy text-lg">Travelers</h4>
+            <p class="text-base text-slate-600 leading-relaxed">Solo trips, Kumbh Mela, pilgrimages — instant ID for any helper. No language barrier, no app needed.</p>
           </div>
         </div>
       </div>
@@ -379,8 +423,8 @@
         <div class="p-4 flex gap-3 items-start">
           <span class="text-2xl shrink-0">🐕</span>
           <div>
-            <h4 class="font-semibold mb-1 text-navy">Pets</h4>
-            <p class="text-sm text-slate-600 leading-relaxed">Lost dogs and cats — the finder calls you directly. No separate database or app for the finder.</p>
+            <h4 class="font-semibold mb-1 text-navy text-lg">Pets</h4>
+            <p class="text-base text-slate-600 leading-relaxed">Lost dogs and cats — the finder calls you directly. No separate database or app for the finder.</p>
           </div>
         </div>
       </div>
@@ -392,8 +436,8 @@
         <div class="p-4 flex gap-3 items-start">
           <span class="text-2xl shrink-0">🚴</span>
           <div>
-            <h4 class="font-semibold mb-1 text-navy">Athletes</h4>
-            <p class="text-sm text-slate-600 leading-relaxed">Cyclists, marathon runners, trekkers — full medical info for paramedics if you're in an accident.</p>
+            <h4 class="font-semibold mb-1 text-navy text-lg">Athletes</h4>
+            <p class="text-base text-slate-600 leading-relaxed">Cyclists, marathon runners, trekkers — full medical info for paramedics if you're in an accident.</p>
           </div>
         </div>
       </div>
@@ -405,8 +449,8 @@
         <div class="p-4 flex gap-3 items-start">
           <span class="text-2xl shrink-0">🏫</span>
           <div>
-            <h4 class="font-semibold mb-1 text-navy">Schools</h4>
-            <p class="text-sm text-slate-600 leading-relaxed">Bulk SafeTags for school ID badges — every student identified in seconds on any trip or emergency.</p>
+            <h4 class="font-semibold mb-1 text-navy text-lg">Schools</h4>
+            <p class="text-base text-slate-600 leading-relaxed">Bulk SafeTags for school ID badges — every student identified in seconds on any trip or emergency.</p>
           </div>
         </div>
       </div>
@@ -422,27 +466,27 @@
   <div class="section-inner section">
     <div class="grid md:grid-cols-2 gap-10 items-center">
       <div>
-        <h2 class="text-3xl font-bold text-white mb-4">Built for the worst moments.</h2>
-        <p class="text-slate-300 leading-relaxed">
+        <h2 class="text-4xl font-bold text-white mb-4">Built for the worst moments.</h2>
+        <p class="text-slate-300 text-lg leading-relaxed">
           A 6-year-old went missing at Kumbh Mela. No phone, no voice, fourteen hours of terror. SafeTag would have ended it in minutes — one scan by a bystander, one call to her parents.
         </p>
-        <p class="mt-4 text-slate-300 leading-relaxed">
+        <p class="mt-4 text-slate-300 text-lg leading-relaxed">
           Every SafeTag carries <strong class="text-white">two independent technologies</strong>: a QR code for any camera, and an RFID/NFC chip for a tap. Even if the sticker is scratched, worn, or the rescuer is in the dark — the chip still works.
         </p>
         <div class="mt-5 grid grid-cols-2 gap-3 max-w-sm">
           <div class="rounded-xl bg-white/8 border border-white/10 px-4 py-3">
-            <div class="text-teal-300 font-bold text-sm mb-1">📷 QR Code</div>
-            <div class="text-slate-300 text-xs leading-relaxed">Any phone camera, any angle, works in 3 seconds without touching the tag</div>
+            <div class="text-teal-300 font-bold text-base mb-1">📷 QR Code</div>
+            <div class="text-slate-300 text-sm leading-relaxed">Any phone camera, any angle, works in 3 seconds without touching the tag</div>
           </div>
           <div class="rounded-xl bg-white/8 border border-white/10 px-4 py-3">
-            <div class="text-teal-300 font-bold text-sm mb-1">📡 RFID / NFC</div>
-            <div class="text-slate-300 text-xs leading-relaxed">Tap the chip — works in darkness, water, or if QR is scratched beyond recognition</div>
+            <div class="text-teal-300 font-bold text-base mb-1">📡 RFID / NFC</div>
+            <div class="text-slate-300 text-sm leading-relaxed">Tap the chip — works in darkness, water, or if QR is scratched beyond recognition</div>
           </div>
         </div>
-        <p class="mt-5 text-teal-300 font-semibold text-lg">SafeTag. Dual protection. One tag.</p>
+        <p class="mt-5 text-teal-300 font-semibold text-xl">SafeTag. Dual protection. One tag.</p>
         <div class="mt-5 flex flex-wrap gap-3">
-          <a href="/store" class="btn-warn">Get Your SafeTag — from ₹149</a>
-          <a href="/demo" class="text-teal-300 hover:text-teal-200 text-sm font-semibold self-center">See the emergency page demo →</a>
+          <a href="/store" class="btn-warn text-base">Get Your SafeTag — from ₹149</a>
+          <a href="/demo" class="text-teal-300 hover:text-teal-200 text-base font-semibold self-center">See the emergency page demo →</a>
         </div>
       </div>
       <div class="flex justify-center md:justify-end">
@@ -465,8 +509,8 @@
     <div class="grid md:grid-cols-3 gap-6 items-center">
       <div class="md:col-span-2">
         <span class="pill pill-brand mb-3">For manufacturers</span>
-        <h2 class="text-3xl font-bold mt-2 mb-3">Make and sell SafeTags on our platform.</h2>
-        <p class="leading-relaxed text-slate-600">If you produce keychains, ID cards, PVC stickers, or wristbands — list your products on SafeTag and reach Indian families. We provide the unique tag IDs, QR codes, RFID payloads, and activation infrastructure. You make the physical tag and ship to customers.</p>
+        <h2 class="text-4xl font-bold mt-2 mb-3">Make and sell SafeTags on our platform.</h2>
+        <p class="text-lg leading-relaxed text-slate-600">If you produce keychains, ID cards, PVC stickers, or wristbands — list your products on SafeTag and reach Indian families. We provide the unique tag IDs, QR codes, RFID payloads, and activation infrastructure. You make the physical tag and ship to customers.</p>
         <div class="mt-5 flex flex-wrap gap-3">
           <a href="/manufacturer/register" class="btn-brand">🏭 Become a Manufacturer</a>
           <a href="/manufacturer/login" class="btn-outline">Already registered? Sign in</a>
@@ -474,8 +518,8 @@
       </div>
       <div>
         <div class="card p-5">
-          <div class="text-xs uppercase font-bold text-slate-500 mb-3">What you get</div>
-          <ul class="text-sm space-y-2 text-slate-700">
+          <div class="text-sm uppercase font-bold text-slate-500 mb-3">What you get</div>
+          <ul class="text-base space-y-2 text-slate-700">
             <li class="flex gap-2"><span class="text-brand font-bold">✓</span>Bulk batches up to 10,000 unique tag IDs</li>
             <li class="flex gap-2"><span class="text-brand font-bold">✓</span>Instant CSV with QR codes and RFID payloads</li>
             <li class="flex gap-2"><span class="text-brand font-bold">✓</span>Dedicated manufacturer dashboard</li>
@@ -493,7 +537,7 @@
   ============================================================ -->
 <section id="faq" class="section">
   <div class="section-inner max-w-3xl">
-    <h2 class="text-3xl font-bold text-center mb-8" data-i18n="section.faq">Frequently Asked Questions</h2>
+    <h2 class="text-4xl font-bold text-center mb-8" data-i18n="section.faq">Frequently Asked Questions</h2>
     <div class="space-y-3">
       <%
         var faqs = [
@@ -514,11 +558,11 @@
         ];
         faqs.forEach(function(f){ %>
         <details class="card p-5 cursor-pointer group">
-          <summary class="font-semibold text-navy list-none flex items-center justify-between">
+          <summary class="font-semibold text-navy text-lg list-none flex items-center justify-between gap-3">
             <%= f.q %>
-            <span class="text-brand text-lg group-open:rotate-45 transition-transform">+</span>
+            <span class="text-brand text-xl flex-shrink-0 group-open:rotate-45 transition-transform">+</span>
           </summary>
-          <p class="mt-3 text-sm leading-relaxed text-slate-600"><%= f.a %></p>
+          <p class="mt-3 text-base leading-relaxed text-slate-600"><%= f.a %></p>
         </details>
       <% }); %>
     </div>
@@ -531,8 +575,8 @@
 <section class="cta-grad text-white">
   <div class="section-inner section text-center max-w-2xl">
     <div class="text-5xl mb-4">🏷️</div>
-    <h2 class="text-3xl font-bold text-white mb-3" data-i18n="cta.final">Don't wait for an emergency to wish you had it.</h2>
-    <p class="text-teal-100 text-lg mb-7" data-i18n="cta.final.sub">SafeTag takes 2 minutes to set up. It lasts years. And it could be the most important thing your family has.</p>
+    <h2 class="text-4xl font-bold text-white mb-3" data-i18n="cta.final">Don't wait for an emergency to wish you had it.</h2>
+    <p class="text-teal-100 text-xl mb-7" data-i18n="cta.final.sub">SafeTag takes 2 minutes to set up. It lasts years. And it could be the most important thing your family has.</p>
     <div class="flex flex-wrap justify-center gap-3">
       <a href="/store" class="btn-warn text-base px-8 py-3" data-i18n="btn.buy">Get SafeTag Now — from ₹149</a>
       <a href="/demo" class="btn-outline border-white/30 text-white hover:!text-white hover:!border-white text-base" data-i18n="btn.demo">See It Work First</a>
