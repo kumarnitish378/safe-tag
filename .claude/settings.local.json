@@ -9,13 +9,17 @@
       "PowerShell(Get-ChildItem \"D:\\\\safe-tag-project\\\\frontend\" -Force | ForEach-Object { Move-Item -Path $_.FullName -Destination \"D:\\\\safe-tag-project\\\\\" -Force }; Remove-Item \"D:\\\\safe-tag-project\\\\frontend\" -Recurse -Force -ErrorAction SilentlyContinue)",
       "Bash(git add *)",
       "Bash(git commit -m ' *)",
-      "PowerShell",
       "PowerShell(New-Item -ItemType Directory -Force \"D:\\\\safe-tag-project\\\\public\\\\images\")",
       "PowerShell(Copy-Item \"D:\\\\safe-tag-project\\\\assets\\\\productImage\\\\demoProjectOne.png\" \"D:\\\\safe-tag-project\\\\public\\\\images\\\\demoProjectOne.png\" -Force)",
       "PowerShell(Copy-Item \"D:\\\\safe-tag-project\\\\assets\\\\productImage\\\\demoTag1.png\" \"D:\\\\safe-tag-project\\\\public\\\\images\\\\demoTag1.png\" -Force)",
       "PowerShell(Copy-Item \"D:\\\\safe-tag-project\\\\assets\\\\productImage\\\\demoTag2.png\" \"D:\\\\safe-tag-project\\\\public\\\\images\\\\demoTag2.png\" -Force)",
       "PowerShell(Copy-Item \"D:\\\\safe-tag-project\\\\assets\\\\websiteLogo.png\" \"D:\\\\safe-tag-project\\\\public\\\\images\\\\websiteLogo.png\" -Force)",
-      "PowerShell(Copy-Item \"D:\\\\safe-tag-project\\\\assets\\\\faviconIcon.png\" \"D:\\\\safe-tag-project\\\\public\\\\favicon.png\" -Force)"
+      "PowerShell(Copy-Item \"D:\\\\safe-tag-project\\\\assets\\\\faviconIcon.png\" \"D:\\\\safe-tag-project\\\\public\\\\favicon.png\" -Force)",
+      "Bash(dir \"D:\\\\safe-tag-project\\\\public\\\\images\")",
+      "Bash(dir \"D:\\\\safe-tag-project\\\\assets\")",
+      "Bash(node -e \"require\\('./server.js'\\)\")",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3000/)",
+      "Bash(node --check \"D:/safe-tag-project/server.js\")"
     ]
   }
 }
