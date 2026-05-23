@@ -5,9 +5,10 @@
     <a href="/manufacturer/dashboard" class="text-sm text-brand font-semibold">← Dashboard</a>
     <h1 class="text-3xl font-bold mt-2 mb-4">Create new tag batch</h1>
 
+    <div id="form-error" class="flash flash-error" style="display:none"></div>
     <% if (errors._form) { %><div class="flash flash-error">⚠️ <%= errors._form %></div><% } %>
 
-    <form method="POST" action="/manufacturer/batch/new" class="card p-6 space-y-4">
+    <form id="batchForm" method="POST" action="/manufacturer/batch/new" class="card p-6 space-y-4">
       <%- include('../layout/_csrf') %>
       <div>
         <label class="label">Quantity</label>
@@ -18,10 +19,60 @@
         <label class="label">Batch name</label>
         <input class="input" name="batch_name" required maxlength="120" value="<%= values.batch_name || '' %>" placeholder="e.g. Batch-Jan-2025-Keychains" />
       </div>
-      <button class="btn-brand w-full justify-center">Generate & Download CSV</button>
+      <button id="submitBtn" class="btn-brand w-full justify-center">Generate &amp; Download CSV</button>
       <p class="text-xs text-slate-500">The CSV contains tag_id, security_key, full_url, qr_data, rfid_payload — ready for RFID programming and QR printing.</p>
     </form>
   </div>
 </section>
+
+<script>
+document.getElementById('batchForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  const form = e.target;
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.textContent = 'Generating…';
+
+  const params = new URLSearchParams();
+  new FormData(form).forEach(function(v, k) { params.append(k, v); });
+
+  try {
+    const resp = await fetch(form.action, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: params.toString(),
+    });
+
+    if (resp.ok && (resp.headers.get('Content-Type') || '').includes('text/csv')) {
+      const blob = await resp.blob();
+      const cd = resp.headers.get('Content-Disposition') || '';
+      const fname = (cd.match(/filename="([^"]+)"/) || [])[1] || 'batch.csv';
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = fname;
+      document.body.appendChild(a); a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      window.location.href = '/manufacturer/dashboard';
+    } else {
+      // Server returned an error page — display it inline
+      const html = await resp.text();
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(html, 'text/html');
+      const err = doc.querySelector('.flash-error');
+      const msg = err ? err.textContent.trim() : 'Server error. Please try again.';
+      document.getElementById('form-error').textContent = msg;
+      document.getElementById('form-error').style.display = 'flex';
+      btn.disabled = false;
+      btn.textContent = 'Generate & Download CSV';
+    }
+  } catch(err) {
+    document.getElementById('form-error').textContent = 'Network error. Please try again.';
+    document.getElementById('form-error').style.display = 'flex';
+    btn.disabled = false;
+    btn.textContent = 'Generate & Download CSV';
+  }
+});
+</script>
 
 <%- include('../layout/_foot') %>

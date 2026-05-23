@@ -14,7 +14,16 @@
     </div>
 
     <% if (!manufacturer.is_approved) { %>
-      <div class="flash flash-info">ℹ️ Your account is awaiting approval. You can prepare batches and listings, but they won't go live until SafeTag admin approves you.</div>
+      <div class="card p-5 mb-4 border border-blue-200 bg-blue-50 flex flex-col sm:flex-row sm:items-center gap-4">
+        <div class="flex-1">
+          <p class="font-semibold text-navy">Your account is pending admin approval.</p>
+          <p class="text-sm text-slate-500 mt-1">You can prepare batches and listings now, but they won't go live until SafeTag admin approves you. Click the button to send a request.</p>
+        </div>
+        <form method="POST" action="/manufacturer/request-approval" class="shrink-0">
+          <%- include('../layout/_csrf') %>
+          <button class="btn-brand text-sm whitespace-nowrap">📧 Request Approval</button>
+        </form>
+      </div>
     <% } %>
 
     <% var totalTags = (batches||[]).reduce(function(a,b){ return a+b.quantity; },0);

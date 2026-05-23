@@ -1,25 +1,55 @@
 <%- include('../layout/_head') %>
 
 <section class="section">
-  <div class="section-inner max-w-md">
+  <div class="section-inner max-w-lg">
     <div class="card p-6">
-      <h1 class="text-2xl font-bold mb-2">Manufacturer registration</h1>
-      <p class="text-sm text-slate-500 mb-5">Your account will be reviewed and approved by SafeTag admin before you can create batches.</p>
+      <h1 class="text-2xl font-bold mb-1">Manufacturer registration</h1>
+      <p class="text-sm text-slate-500 mb-6">Your account will be reviewed and approved by SafeTag admin before you can create batches and list products.</p>
 
-      <% if (errors._form) { %><div class="flash flash-error">⚠️ <%= errors._form %></div><% } %>
+      <% if (errors._form) { %><div class="flash flash-error mb-4">⚠️ <%= errors._form %></div><% } %>
 
       <form method="POST" action="/manufacturer/register" class="space-y-4">
-      <%- include('../layout/_csrf') %>
-        <div><label class="label">Business Name</label><input class="input" name="business_name" required value="<%= values.business_name||'' %>" />
-          <% if (errors.business_name) { %><div class="field-error"><%= errors.business_name %></div><% } %></div>
-        <div><label class="label">Email</label><input class="input" type="email" name="email" required value="<%= values.email||'' %>" />
-          <% if (errors.email) { %><div class="field-error"><%= errors.email %></div><% } %></div>
-        <div><label class="label">Mobile</label><input class="input" name="mobile" required value="<%= values.mobile||'' %>" />
-          <% if (errors.mobile) { %><div class="field-error"><%= errors.mobile %></div><% } %></div>
-        <div><label class="label">Password</label><input class="input" type="password" name="password" required minlength="6" />
-          <% if (errors.password) { %><div class="field-error"><%= errors.password %></div><% } %></div>
+        <%- include('../layout/_csrf') %>
+
+        <div>
+          <label class="label">Business Name <span class="text-red-500">*</span></label>
+          <input class="input" name="business_name" required value="<%= values.business_name||'' %>" placeholder="e.g. Ravi Enterprises" />
+          <% if (errors.business_name) { %><div class="field-error"><%= errors.business_name %></div><% } %>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="label">Email <span class="text-red-500">*</span></label>
+            <input class="input" type="email" name="email" required value="<%= values.email||'' %>" />
+            <% if (errors.email) { %><div class="field-error"><%= errors.email %></div><% } %>
+          </div>
+          <div>
+            <label class="label">Mobile <span class="text-red-500">*</span></label>
+            <input class="input" name="mobile" required value="<%= values.mobile||'' %>" placeholder="10-digit number" />
+            <% if (errors.mobile) { %><div class="field-error"><%= errors.mobile %></div><% } %>
+          </div>
+        </div>
+
+        <div>
+          <label class="label">Password <span class="text-red-500">*</span></label>
+          <input class="input" type="password" name="password" required minlength="6" />
+          <% if (errors.password) { %><div class="field-error"><%= errors.password %></div><% } %>
+        </div>
+
+        <div>
+          <label class="label">Business Address</label>
+          <input class="input" name="address" value="<%= values.address||'' %>" placeholder="Full address with city and PIN code" />
+        </div>
+
+        <div>
+          <label class="label">Business Description</label>
+          <textarea class="input" name="description" rows="3" maxlength="1000" placeholder="Briefly describe your business — what products you make, materials used, production capacity, etc."><%= values.description||'' %></textarea>
+          <p class="text-xs text-slate-500 mt-1">Helps admin review your application faster.</p>
+        </div>
+
         <button class="btn-brand w-full justify-center">Create manufacturer account</button>
       </form>
+
       <p class="text-sm text-slate-500 mt-4 text-center">Already approved? <a class="text-brand font-semibold" href="/manufacturer/login">Sign in</a>.</p>
     </div>
   </div>

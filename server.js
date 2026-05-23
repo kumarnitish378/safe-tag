@@ -66,6 +66,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(express.urlencoded({ extended: true, limit: '5mb' }));
 app.use(express.json({ limit: '5mb' }));
 app.use('/static', express.static(path.join(__dirname, 'public')));
+app.get('/favicon.ico', (req, res) => res.redirect('/static/favicon.png'));
 
 app.use(session({
   secret: SESSION_SECRET,
@@ -181,6 +182,37 @@ app.get('/', async (req, res) => {
     featured = listings.map(formatProduct);
   } catch (e) { /* homepage still renders */ }
   res.render('index', { title: 'SafeTag — Scan. Know. Save a Life.', featured });
+});
+
+// =============================================================================
+// Demo emergency page (hardcoded — always works regardless of DB state)
+// =============================================================================
+app.get('/demo', (req, res) => {
+  res.render('emergency', {
+    title: 'SafeTag Demo — Emergency Profile',
+    tag_id: 'DEMO',
+    profile: {
+      name: 'Aarav Sharma',
+      age: 8,
+      blood_group: 'O+',
+      mobile_primary: '9876543210',
+      mobile_secondary: '9123456780',
+      email: 'parent@example.com',
+      address: '12 MG Road, Bengaluru 560001',
+      medical_conditions: 'Mild asthma',
+      allergies: 'Peanuts, Penicillin',
+      medications: 'Salbutamol inhaler (as needed)',
+      custom_message: 'Please call both numbers. Father speaks English and Kannada.',
+      parent_name: 'Rajesh Sharma',
+      owner_whatsapp: null,
+      photo_url: null,
+      category: 'CHILD',
+      latitude: null,
+      longitude: null,
+    },
+    activated: false,
+    flaskApiUrl: BASE_URL,
+  });
 });
 
 // =============================================================================
@@ -652,6 +684,8 @@ app.post('/manufacturer/register', async (req, res) => {
     const mobile = normaliseMobile(req.body.mobile);
     const password = req.body.password || '';
     const businessName = (req.body.business_name || '').trim();
+    const address = (req.body.address || '').trim() || null;
+    const description = (req.body.description || '').trim() || null;
     const errors = {};
 
     if (!businessName || businessName.length < 2) errors.business_name = 'Business name required';
@@ -671,7 +705,7 @@ app.post('/manufacturer/register', async (req, res) => {
     }
 
     const passwordHash = await bcrypt.hash(password, 10);
-    await prisma.manufacturer.create({ data: { email, mobile, businessName, passwordHash } });
+    await prisma.manufacturer.create({ data: { email, mobile, businessName, passwordHash, address, description } });
     req.flash('success', 'Account created. Awaiting admin approval.');
     return res.redirect('/manufacturer/login');
   } catch (e) {
@@ -725,6 +759,49 @@ app.post('/manufacturer/login', async (req, res) => {
 app.post('/manufacturer/logout', (req, res) => {
   req.session.manufacturer = null;
   res.redirect('/');
+});
+
+app.post('/manufacturer/request-approval', requireManufacturer, async (req, res) => {
+  const mfr = req.session.manufacturer;
+  const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'nitish.ns377@gmail.com';
+  const SMTP_USER = process.env.SMTP_USER || '';
+  const SMTP_PASS = process.env.SMTP_PASS || '';
+
+  if (SMTP_USER && SMTP_PASS) {
+    try {
+      const nodemailer = require('nodemailer');
+      const transporter = nodemailer.createTransport({
+        host: process.env.SMTP_HOST || 'smtp.gmail.com',
+        port: parseInt(process.env.SMTP_PORT || '587', 10),
+        secure: false,
+        auth: { user: SMTP_USER, pass: SMTP_PASS },
+      });
+      await transporter.sendMail({
+        from: `"SafeTag Platform" <${SMTP_USER}>`,
+        to: ADMIN_EMAIL,
+        subject: `Manufacturer Approval Request — ${mfr.business_name}`,
+        text: [
+          `A manufacturer has requested approval on SafeTag.`,
+          ``,
+          `Business Name : ${mfr.business_name}`,
+          `Email         : ${mfr.email}`,
+          `Mobile        : ${mfr.mobile}`,
+          `Address       : ${mfr.address || '—'}`,
+          `Description   : ${mfr.description || '—'}`,
+          `Registered    : ${mfr.created_at}`,
+          ``,
+          `Review at: ${BASE_URL}/admin/manufacturers`,
+        ].join('\n'),
+      });
+    } catch (e) {
+      console.error('Approval email error:', e.message);
+    }
+  } else {
+    console.log(`[Approval Request] ${mfr.business_name} <${mfr.email}> — configure SMTP to send email.`);
+  }
+
+  req.flash('success', 'Approval request sent to admin. You will be notified once reviewed.');
+  res.redirect('/manufacturer/dashboard');
 });
 
 app.get('/manufacturer/dashboard', requireManufacturer, async (req, res) => {
@@ -1378,6 +1455,17 @@ app.use((err, req, res, next) => {
 // =============================================================================
 // Boot
 // =============================================================================
-app.listen(PORT, () => {
-  console.log(`SafeTag listening on http://localhost:${PORT}`);
+const os = require('os');
+app.listen(PORT, '0.0.0.0', () => {
+  const ifaces = os.networkInterfaces();
+  let lanIp = null;
+  for (const iface of Object.values(ifaces)) {
+    for (const alias of iface) {
+      if (alias.family === 'IPv4' && !alias.internal) { lanIp = alias.address; break; }
+    }
+    if (lanIp) break;
+  }
+  console.log(`SafeTag listening:`);
+  console.log(`  Local:   http://localhost:${PORT}`);
+  if (lanIp) console.log(`  Network: http://${lanIp}:${PORT}`);
 });

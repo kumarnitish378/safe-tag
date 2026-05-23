@@ -76,6 +76,8 @@ model Manufacturer {
   email        String   @unique
   passwordHash String   @map("password_hash")
   mobile       String
+  address      String?
+  description  String?
   isApproved   Boolean  @default(false) @map("is_approved")
   isBlocked    Boolean  @default(false) @map("is_blocked")
   createdAt    DateTime @default(now()) @map("created_at")

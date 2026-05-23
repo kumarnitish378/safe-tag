@@ -1,34 +1,119 @@
 <%- include('../layout/_head') %>
 
 <section class="section">
-  <div class="section-inner max-w-md">
+  <div class="section-inner max-w-2xl">
     <a href="/manufacturer/listings" class="text-sm text-brand font-semibold">← Listings</a>
-    <h1 class="text-3xl font-bold mt-2 mb-4">List a new product</h1>
+    <h1 class="text-3xl font-bold mt-2 mb-1">List a new product</h1>
+    <p class="text-sm text-slate-500 mb-6">Complete all sections. Your listing is reviewed by SafeTag admin before going live in the store.</p>
 
-    <% if (errors._form) { %><div class="flash flash-error">⚠️ <%= errors._form %></div><% } %>
+    <% if (errors._form) { %><div class="flash flash-error mb-4">⚠️ <%= errors._form %></div><% } %>
 
-    <form method="POST" action="/manufacturer/listings/new" class="card p-6 space-y-4">
+    <form method="POST" action="/manufacturer/listings/new" class="space-y-5">
       <%- include('../layout/_csrf') %>
-      <div><label class="label">Name</label><input class="input" name="name" required maxlength="200" value="<%= values.name||'' %>" />
-        <% if (errors.name) { %><div class="field-error"><%= errors.name %></div><% } %></div>
-      <div>
-        <label class="label">Category</label>
-        <select class="input" name="category" required>
-          <option value="">—</option>
-          <% ['keychain','card','sticker','wristband'].forEach(function(c){ %><option <%= values.category===c?'selected':'' %>><%= c %></option><% }); %>
-        </select>
+
+      <!-- Section 1: Basic Info -->
+      <div class="card p-6">
+        <div class="flex items-center gap-3 mb-5">
+          <span class="w-7 h-7 rounded-full bg-brand text-white text-sm font-bold flex items-center justify-center shrink-0">1</span>
+          <h2 class="font-bold text-lg text-navy">Basic Information</h2>
+        </div>
+        <div class="space-y-4">
+          <div>
+            <label class="label">Product Name <span class="text-red-500">*</span></label>
+            <input class="input" name="name" required maxlength="200" value="<%= values.name||'' %>" placeholder="e.g. SafeTag Classic Keychain" />
+            <% if (errors.name) { %><div class="field-error"><%= errors.name %></div><% } %>
+          </div>
+          <div>
+            <label class="label">Category <span class="text-red-500">*</span></label>
+            <select class="input" name="category" required>
+              <option value="">— select one —</option>
+              <% [['keychain','🔑 Keychain'],['card','💳 Card'],['sticker','🏷️ Sticker'],['wristband','⌚ Wristband']].forEach(function(c){ %>
+                <option value="<%= c[0] %>" <%= values.category===c[0]?'selected':'' %>><%= c[1] %></option>
+              <% }); %>
+            </select>
+            <% if (errors.category) { %><div class="field-error"><%= errors.category %></div><% } %>
+          </div>
+        </div>
       </div>
-      <div class="grid grid-cols-2 gap-3">
-        <div><label class="label">Price (₹)</label><input class="input" type="number" step="0.01" min="0.5" name="price_inr" required value="<%= values.price_inr || '149' %>" />
-          <% if (errors.price) { %><div class="field-error"><%= errors.price %></div><% } %></div>
-        <div><label class="label">Stock</label><input class="input" type="number" min="0" name="quantity_available" required value="<%= values.quantity_available || '100' %>" /></div>
+
+      <!-- Section 2: Pricing & Inventory -->
+      <div class="card p-6">
+        <div class="flex items-center gap-3 mb-5">
+          <span class="w-7 h-7 rounded-full bg-brand text-white text-sm font-bold flex items-center justify-center shrink-0">2</span>
+          <h2 class="font-bold text-lg text-navy">Pricing &amp; Inventory</h2>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="label">Price (₹) <span class="text-red-500">*</span></label>
+            <input class="input" type="number" step="0.01" min="1" name="price_inr" required value="<%= values.price_inr || '149' %>" />
+            <p class="text-xs text-slate-500 mt-1">Customer-facing price in rupees</p>
+            <% if (errors.price) { %><div class="field-error"><%= errors.price %></div><% } %>
+          </div>
+          <div>
+            <label class="label">Stock qty <span class="text-red-500">*</span></label>
+            <input class="input" type="number" min="0" name="quantity_available" required value="<%= values.quantity_available || '100' %>" />
+            <p class="text-xs text-slate-500 mt-1">Units ready to ship</p>
+          </div>
+        </div>
       </div>
-      <div><label class="label">Photo URL (Cloudinary or any HTTPS URL)</label><input class="input" name="photo_url" value="<%= values.photo_url||'' %>" placeholder="https://..." /></div>
-      <div><label class="label">Description</label><textarea class="input" name="description" rows="5" required maxlength="5000"><%= values.description||'' %></textarea>
-        <% if (errors.description) { %><div class="field-error"><%= errors.description %></div><% } %></div>
-      <button class="btn-brand w-full justify-center">Submit for admin approval</button>
+
+      <!-- Section 3: Product Image -->
+      <div class="card p-6">
+        <div class="flex items-center gap-3 mb-5">
+          <span class="w-7 h-7 rounded-full bg-brand text-white text-sm font-bold flex items-center justify-center shrink-0">3</span>
+          <h2 class="font-bold text-lg text-navy">Product Image</h2>
+        </div>
+        <div>
+          <label class="label">Photo URL</label>
+          <input class="input" name="photo_url" value="<%= values.photo_url||'' %>" placeholder="https://res.cloudinary.com/..." id="photoUrlInput" />
+          <p class="text-xs text-slate-500 mt-1">Paste any HTTPS image URL (Cloudinary recommended). Square images, min 600×600 px.</p>
+        </div>
+        <div id="photoPreview" class="mt-3 hidden">
+          <img id="photoImg" src="" alt="Preview" class="w-32 h-32 object-cover rounded-card border border-slate-200" />
+        </div>
+      </div>
+
+      <!-- Section 4: Description -->
+      <div class="card p-6">
+        <div class="flex items-center gap-3 mb-5">
+          <span class="w-7 h-7 rounded-full bg-brand text-white text-sm font-bold flex items-center justify-center shrink-0">4</span>
+          <h2 class="font-bold text-lg text-navy">Product Description</h2>
+        </div>
+        <div>
+          <label class="label">Description <span class="text-red-500">*</span></label>
+          <p class="text-xs text-slate-500 mb-2">Describe your product in detail. Suggest covering: material, key features, what's in the box, RFID/NFC spec, warranty, care instructions.</p>
+          <textarea class="input" name="description" rows="10" required maxlength="5000"
+            placeholder="SafeTag Classic Keychain&#10;&#10;Material: High-grade ABS plastic with UV-resistant coating&#10;&#10;Key Features:&#10;• QR code laser-etched (no fading)&#10;• NFC chip (NTAG213, 13.56 MHz)&#10;• Stainless steel split ring included&#10;&#10;What's in the box:&#10;• 1× SafeTag keychain&#10;• 1× Tag ID + security key card&#10;• 1× Setup guide&#10;&#10;Warranty: 1 year manufacturing defect"><%= values.description||'' %></textarea>
+          <div class="flex justify-between mt-1">
+            <% if (errors.description) { %><div class="field-error"><%= errors.description %></div><% } %>
+            <span class="text-xs text-slate-400 ml-auto" id="charCount">0 / 5000</span>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn-brand w-full justify-center text-base py-3">Submit for Admin Approval →</button>
+      <p class="text-xs text-center text-slate-400 pb-4">Reviewed within 24 hours. Check your listings page for status updates.</p>
     </form>
   </div>
 </section>
+
+<script>
+// Photo preview
+document.getElementById('photoUrlInput').addEventListener('blur', function() {
+  const url = this.value.trim();
+  if (url) {
+    document.getElementById('photoImg').src = url;
+    document.getElementById('photoPreview').classList.remove('hidden');
+  } else {
+    document.getElementById('photoPreview').classList.add('hidden');
+  }
+});
+// Char counter
+const desc = document.querySelector('[name="description"]');
+const counter = document.getElementById('charCount');
+function updateCount() { counter.textContent = desc.value.length + ' / 5000'; }
+desc.addEventListener('input', updateCount);
+updateCount();
+</script>
 
 <%- include('../layout/_foot') %>

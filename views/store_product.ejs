@@ -1,40 +1,125 @@
 <%- include('layout/_head') %>
 
+<!-- Breadcrumb -->
+<div class="max-w-5xl mx-auto px-4 pt-5 pb-0">
+  <nav class="text-sm text-slate-500 flex items-center gap-1">
+    <a href="/store" class="text-brand font-semibold hover:underline">Store</a>
+    <span>›</span>
+    <span class="capitalize"><%= product.category %></span>
+    <span>›</span>
+    <span class="text-navy font-medium truncate"><%= product.name %></span>
+  </nav>
+</div>
+
+<!-- Hero: image + buy panel -->
 <section class="section">
-  <div class="section-inner grid md:grid-cols-2 gap-10">
+  <div class="section-inner grid md:grid-cols-2 gap-10 items-start">
+
+    <!-- Left: Image + badges -->
     <div>
-      <div class="w-full bg-slate-100 rounded-cardLg flex items-center justify-center text-7xl" style="min-height: 360px">
-        <% if (product.photo_url) { %><img src="<%= product.photo_url %>" class="w-full max-h-[420px] object-cover rounded-cardLg" alt="<%= product.name %>" /><% } else { %>🏷️<% } %>
+      <div class="w-full bg-slate-100 rounded-cardLg overflow-hidden flex items-center justify-center" style="min-height:360px;">
+        <% if (product.photo_url) { %>
+          <img src="<%= product.photo_url %>" class="w-full max-h-[440px] object-cover" alt="<%= product.name %>" />
+        <% } else { %>
+          <div class="text-7xl">🏷️</div>
+        <% } %>
+      </div>
+      <div class="mt-3 flex flex-wrap gap-2">
+        <span class="pill pill-brand capitalize"><%= product.category %></span>
+        <% if (product.is_featured) { %><span class="pill pill-warning">⭐ Best Value</span><% } %>
+        <% if (product.quantity_available > 0) { %>
+          <span class="pill pill-success">✓ In Stock (<%= product.quantity_available %> left)</span>
+        <% } else { %>
+          <span class="pill pill-danger">Out of Stock</span>
+        <% } %>
       </div>
     </div>
-    <div>
-      <div class="text-xs capitalize text-slate-500"><%= product.category %> · by <%= product.manufacturer_name %></div>
-      <h1 class="text-3xl font-bold mt-2 mb-3"><%= product.name %></h1>
-      <div class="flex items-center gap-3 mb-5">
-        <span class="font-sora text-3xl text-navy font-bold">₹<%= product.price_inr %></span>
-        <% if (product.is_featured) { %><span class="pill pill-warning">Best value</span><% } %>
-      </div>
-      <p class="text-base leading-relaxed mb-6 whitespace-pre-line"><%= product.description %></p>
 
+    <!-- Right: Info + buy -->
+    <div class="space-y-5">
+      <div>
+        <p class="text-xs text-slate-400 uppercase font-semibold tracking-wide">by <%= product.manufacturer_name %></p>
+        <h1 class="text-3xl font-bold mt-1 mb-3"><%= product.name %></h1>
+        <div class="flex items-center gap-3 flex-wrap">
+          <span class="font-sora text-4xl text-navy font-bold">₹<%= product.price_inr %></span>
+          <% if (product.is_featured) { %>
+            <span class="text-sm text-slate-400 line-through">₹<%= Math.round(product.price_inr * 1.2) %></span>
+            <span class="pill pill-success">Save ₹<%= Math.round(product.price_inr * 0.2) %></span>
+          <% } %>
+        </div>
+      </div>
+
+      <!-- What's in the box -->
+      <div class="card p-4">
+        <p class="text-xs uppercase font-bold text-slate-500 mb-3">What's in the box</p>
+        <ul class="text-sm space-y-1.5">
+          <li class="flex gap-2"><span class="text-brand font-bold">✓</span>1× SafeTag (<span class="capitalize"><%= product.category %></span>)</li>
+          <li class="flex gap-2"><span class="text-brand font-bold">✓</span>Unique Tag ID + Security Key card</li>
+          <li class="flex gap-2"><span class="text-brand font-bold">✓</span>QR code label (pre-applied)</li>
+          <li class="flex gap-2"><span class="text-brand font-bold">✓</span>Setup guide (scan to activate)</li>
+        </ul>
+      </div>
+
+      <!-- Buy / OOS -->
       <% if (product.quantity_available > 0) { %>
-        <form method="POST" action="/checkout/<%= product.id %>" class="card p-5 space-y-3">
-      <%- include('layout/_csrf') %>
+        <form method="POST" action="/checkout/<%= product.id %>" class="card p-5 space-y-4">
+          <%- include('layout/_csrf') %>
           <div>
             <label class="label">Quantity</label>
             <input class="input" type="number" name="quantity" min="1" max="<%= product.quantity_available %>" value="1" />
           </div>
           <div>
-            <label class="label">Shipping address (optional now — confirm later)</label>
-            <textarea class="input" name="shipping_address" rows="3" placeholder="Full address with PIN code"></textarea>
+            <label class="label">Shipping address <span class="text-xs text-slate-400">(optional now)</span></label>
+            <textarea class="input" name="shipping_address" rows="2" placeholder="Full address with PIN code"></textarea>
           </div>
-          <button class="btn-warn w-full justify-center text-base">Buy Now — ₹<%= product.price_inr %></button>
+          <button class="btn-warn w-full justify-center text-base py-3">Buy Now — ₹<%= product.price_inr %></button>
           <% if (!user) { %><p class="text-xs text-center text-slate-500">You'll be asked to sign in to complete the purchase.</p><% } %>
         </form>
       <% } else { %>
         <div class="card p-5 text-center">
-          <span class="pill pill-danger">Out of stock</span>
+          <span class="pill pill-danger text-base">Out of Stock</span>
+          <p class="text-sm text-slate-500 mt-3">Check back soon or <a href="/store" class="text-brand font-semibold">browse other products</a>.</p>
         </div>
       <% } %>
+
+      <!-- Trust badges -->
+      <div class="grid grid-cols-3 gap-2 text-center text-xs text-slate-500">
+        <div class="card p-3">🔒<br/><span class="font-semibold">Secure</span><br/>checkout</div>
+        <div class="card p-3">🚚<br/><span class="font-semibold">Pan-India</span><br/>shipping</div>
+        <div class="card p-3">↩️<br/><span class="font-semibold">7-day</span><br/>returns</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- About -->
+<section class="bg-white border-t border-slate-100">
+  <div class="section-inner section max-w-3xl">
+    <h2 class="text-xl font-bold mb-4">About this product</h2>
+    <div class="text-base leading-relaxed whitespace-pre-line text-slate-600"><%= product.description %></div>
+  </div>
+</section>
+
+<!-- How it works -->
+<section class="section bg-slate-50 border-t border-slate-100">
+  <div class="section-inner max-w-3xl">
+    <h2 class="text-xl font-bold mb-5">How it works</h2>
+    <div class="grid sm:grid-cols-3 gap-4">
+      <div class="card p-4 text-center">
+        <div class="text-3xl mb-2">📦</div>
+        <div class="font-semibold mb-1">1. Receive &amp; Attach</div>
+        <div class="text-sm text-slate-500">Attach the tag to a bag, lanyard, collar or wristband.</div>
+      </div>
+      <div class="card p-4 text-center">
+        <div class="text-3xl mb-2">📱</div>
+        <div class="font-semibold mb-1">2. Scan to Activate</div>
+        <div class="text-sm text-slate-500">Scan the QR, fill in emergency info. Takes under 2 minutes.</div>
+      </div>
+      <div class="card p-4 text-center">
+        <div class="text-3xl mb-2">🆘</div>
+        <div class="font-semibold mb-1">3. One Scan in Emergency</div>
+        <div class="text-sm text-slate-500">Any phone camera opens the emergency profile instantly.</div>
+      </div>
     </div>
   </div>
 </section>
