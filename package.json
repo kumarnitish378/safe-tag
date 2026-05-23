@@ -28,6 +28,7 @@
     "twilio": "^5.0.0"
   },
   "devDependencies": {
+    "pptxgenjs": "^4.0.1",
     "prisma": "^5.14.0",
     "sharp": "^0.34.5"
   },
