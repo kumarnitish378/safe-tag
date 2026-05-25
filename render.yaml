@@ -1,0 +1,30 @@
+services:
+  - type: web
+    name: safe-tag
+    runtime: node
+    plan: free
+    buildCommand: npm install && npx prisma generate && npx prisma db push
+    startCommand: node server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
+      - key: DATABASE_URL
+        sync: false          # Set this in Render dashboard → Environment
+      - key: NODE_SESSION_SECRET
+        generateValue: true  # Render auto-generates a secure random value
+      - key: BASE_URL
+        sync: false          # e.g. https://safe-tag.onrender.com
+      - key: DUMMY_PAYMENT
+        value: "true"
+      - key: SMTP_HOST
+        value: smtp.gmail.com
+      - key: SMTP_PORT
+        value: "587"
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASS
+        sync: false
+      - key: ADMIN_EMAIL
+        sync: false

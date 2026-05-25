@@ -502,6 +502,7 @@ app.post('/register', async (req, res) => {
     req.flash('success', 'Welcome to SafeTag.');
     return res.redirect('/dashboard');
   } catch (e) {
+    console.error('[POST /register]', e);
     res.render('auth/register', {
       title: 'Create account',
       errors: { _form: 'Server error' },
