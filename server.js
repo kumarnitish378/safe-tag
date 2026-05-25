@@ -273,9 +273,10 @@ app.get('/store/:productId', async (req, res) => {
 
 // =============================================================================
 // P4 — Tag Scan Router
+// New short format: /t/AAAAAABBBBBBBB  (6-char tagId + 8-char key, no separator)
+// Old format kept for backward compat with already-printed tags.
 // =============================================================================
-app.get('/:tag_id([A-Z0-9]{6,12})/:security_key([A-Za-z0-9_-]{8,32})', async (req, res) => {
-  const { tag_id, security_key } = req.params;
+async function handleTagScan(req, res, tag_id, security_key) {
   try {
     const tag = await prisma.tag.findUnique({ where: { tagId: tag_id } });
     if (!tag || tag.securityKey !== security_key) {
@@ -289,11 +290,24 @@ app.get('/:tag_id([A-Z0-9]{6,12})/:security_key([A-Za-z0-9_-]{8,32})', async (re
       return res.redirect(`/emergency/${tag_id}`);
     }
     req.session.lastScannedTag = { tag_id, security_key };
-    return res.redirect(`/register/${tag_id}`);
+    return req.session.save(() => res.redirect(`/register/${tag_id}`));
   } catch (e) {
     return res.status(500).render('404', { title: 'Unable to reach server' });
   }
+}
+
+// Short URL: /t/W6315V5zrlgIxl  (6 + 8 = 14 chars, ~31-char total URL with short domain)
+app.get('/t/:combined([A-Za-z0-9_-]{14})', (req, res) => {
+  const combined = req.params.combined;
+  const tag_id = combined.slice(0, 6).toUpperCase();
+  const security_key = combined.slice(6);
+  return handleTagScan(req, res, tag_id, security_key);
 });
+
+// Legacy long format: /W6315VW8/5zrlgIxlKlE3PyD8 (old printed tags still work)
+app.get('/:tag_id([A-Z0-9]{6,12})/:security_key([A-Za-z0-9_-]{8,32})', (req, res) =>
+  handleTagScan(req, res, req.params.tag_id, req.params.security_key)
+);
 
 // =============================================================================
 // P5 — Registration Page
@@ -926,7 +940,7 @@ app.post('/manufacturer/batch/new', requireManufacturer, async (req, res) => {
       do { tid = generateTagId(); } while (existingIds.has(tid));
       existingIds.add(tid);
       const key = generateSecurityKey();
-      const url = `${BASE_URL}/${tid}/${key}`;
+      const url = `${BASE_URL}/t/${tid}${key}`;
       tagsData.push({ tagId: tid, securityKey: key, manufacturerId: mfr.id, batchId: batch.id });
       rows.push({ tag_id: tid, security_key: key, full_url: url, qr_data: url,
                   rfid_payload: url, batch_id: batch.id, batch_name: batchName,
