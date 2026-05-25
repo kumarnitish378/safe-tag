@@ -1326,8 +1326,10 @@ app.get('/qr/:tag_id', async (req, res) => {
     const tagId = req.params.tag_id.toUpperCase();
     const tag = await prisma.tag.findUnique({ where: { tagId } });
     if (!tag) return res.status(404).render('404');
-    const url = `${BASE_URL}/${tag.tagId}/${tag.securityKey}`;
-    const buf = await QRCode.toBuffer(url, { type: 'png', width: 300, margin: 2 });
+    const url = `${BASE_URL}/t/${tag.tagId}${tag.securityKey}`;
+    // errorCorrectionLevel L = fewest modules for same data → smaller QR → fits 18mm tags
+    // margin 1 = minimum quiet zone (saves space on small tags)
+    const buf = await QRCode.toBuffer(url, { type: 'png', width: 600, margin: 1, errorCorrectionLevel: 'L' });
     res.set('Content-Type', 'image/png');
     res.set('Content-Disposition', `inline; filename="safetag-${tagId}.png"`);
     return res.send(buf);
