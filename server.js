@@ -39,6 +39,9 @@ const app = express();
 // CRITICAL: case-sensitive routing so /:tag_id([A-Z0-9]) does NOT match /emergency etc.
 app.set('case sensitive routing', true);
 app.set('strict routing', false);
+// Required for secure session cookies behind Render/Heroku/nginx reverse proxy.
+// Without this, req.secure is false → express-session won't set the Secure cookie.
+app.set('trust proxy', 1);
 
 // -----------------------------------------------------------------------------
 // Config
@@ -458,11 +461,13 @@ app.post('/login', async (req, res) => {
     }
     req.session.user = formatUser(user);
     req.flash('success', 'Signed in.');
-    if (user.isAdmin) {
-      const next = req.body.next;
-      return res.redirect(next && next !== '/dashboard' ? next : '/admin');
-    }
-    return res.redirect(req.body.next || '/dashboard');
+    const nextUrl = user.isAdmin
+      ? (req.body.next && req.body.next !== '/dashboard' ? req.body.next : '/admin')
+      : (req.body.next || '/dashboard');
+    return req.session.save((err) => {
+      if (err) console.error('[session.save /login]', err);
+      res.redirect(nextUrl);
+    });
   } catch (e) {
     res.render('auth/login', {
       title: 'Sign in',
@@ -500,7 +505,10 @@ app.post('/register', async (req, res) => {
     const user = await prisma.user.create({ data: { email, mobile, passwordHash, name } });
     req.session.user = formatUser(user);
     req.flash('success', 'Welcome to SafeTag.');
-    return res.redirect('/dashboard');
+    return req.session.save((err) => {
+      if (err) console.error('[session.save /register]', err);
+      res.redirect('/dashboard');
+    });
   } catch (e) {
     console.error('[POST /register]', e);
     res.render('auth/register', {
