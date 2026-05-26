@@ -50,7 +50,14 @@
   <link rel="icon" href="/static/favicon.png" type="image/png" />
   <link rel="apple-touch-icon" href="/static/favicon.png" />
 
-  <!-- Tailwind config MUST come before the CDN script so darkMode:'class' is honoured on first parse -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <% if (IS_PROD) { %>
+  <!-- Production: Tailwind CLI-built CSS (~20-50 KB, only used classes) -->
+  <link rel="stylesheet" href="/static/css/safetag.build.css" />
+  <% } else { %>
+  <!-- Dev: Tailwind CDN for rapid iteration (no build step needed) -->
   <script>
     tailwind = { config: {
       darkMode: 'class',
@@ -75,12 +82,9 @@
       }
     }};
   </script>
-  <!-- CDN loads AFTER config is defined — darkMode:'class' and custom colours are applied on first parse -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/static/css/safetag.css" />
+  <% } %>
   <style>
     html, body { font-family: 'DM Sans', system-ui, sans-serif; color: #475569; }
     h1, h2, h3, h4, h5 { font-family: 'Sora', sans-serif; color: #0A2342; }
