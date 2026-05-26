@@ -9,6 +9,7 @@ require('dotenv').config();
 
 const path = require('path');
 const crypto = require('crypto');
+const compression = require('compression');
 const express = require('express');
 const session = require('express-session');
 const flash = require('connect-flash');
@@ -43,6 +44,8 @@ app.set('strict routing', false);
 // Required for secure session cookies behind Render/Heroku/nginx reverse proxy.
 // Without this, req.secure is false → express-session won't set the Secure cookie.
 app.set('trust proxy', 1);
+// Cache compiled EJS templates in production to skip re-parsing on each request.
+if (process.env.NODE_ENV === 'production') app.set('view cache', true);
 
 // -----------------------------------------------------------------------------
 // Config
@@ -67,9 +70,14 @@ app.set('views', path.join(__dirname, 'views'));
 // -----------------------------------------------------------------------------
 // Middleware
 // -----------------------------------------------------------------------------
+app.use(compression());
 app.use(express.urlencoded({ extended: true, limit: '5mb' }));
 app.use(express.json({ limit: '5mb' }));
-app.use('/static', express.static(path.join(__dirname, 'public')));
+app.use('/static', express.static(path.join(__dirname, 'public'), {
+  maxAge: process.env.NODE_ENV === 'production' ? '1y' : 0,
+  immutable: process.env.NODE_ENV === 'production',
+  etag: true,
+}));
 app.get('/favicon.ico', (req, res) => res.redirect('/static/favicon.png'));
 
 app.use(session({
@@ -119,6 +127,7 @@ app.use((req, res, next) => {
 
 // Expose common locals to every template
 app.use((req, res, next) => {
+  res.locals.IS_PROD = process.env.NODE_ENV === 'production';
   res.locals.csrfToken = req.session.csrfToken;
   res.locals.user = req.session.user || null;
   res.locals.userToken = null; // kept for template compat
