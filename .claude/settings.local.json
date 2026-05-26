@@ -22,7 +22,15 @@
       "Bash(node --check \"D:/safe-tag-project/server.js\")",
       "Bash(netstat -ano)",
       "Bash(taskkill //PID 2696 //F)",
-      "Bash(git push *)"
+      "Bash(git push *)",
+      "Bash(dir public\\\\images /b)",
+      "Bash(node -e \"console.log\\(require\\('pptxgenjs/package.json'\\).version\\)\")",
+      "Bash(node -e \"const d=require\\('fs'\\).readFileSync\\('/dev/stdin','utf8'\\); console.log\\(JSON.parse\\(d\\).version\\)\")",
+      "Bash(powershell -Command \"\\(Get-Content node_modules\\\\\\\\pptxgenjs\\\\\\\\package.json | ConvertFrom-Json\\).version\")",
+      "Bash(node scripts/generate-ppt.js)",
+      "Bash(gh repo *)",
+      "PowerShell(gh repo view kumarnitish378/safe-tag --json name,description,url 2>&1)",
+      "PowerShell(git ls-remote https://github.com/kumarnitish378/safe-tag.wiki.git 2>&1)"
     ]
   }
 }
