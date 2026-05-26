@@ -210,9 +210,7 @@ html.dark .ep-footer p { color:#5eead4; }
             <% if (profile.blood_group) { %><span class="sc-badge-blood"><%= profile.blood_group %></span><% } %>
             <% if (profile.category) { %><span class="sc-badge-cat"><%= profile.category.toLowerCase() %></span><% } %>
           </div>
-          <% if (profile.parent_name) { %>
-            <div class="sc-parent">👨‍👩‍👧 <%= profile.parent_name %></div>
-          <% } %>
+          <div class="sc-parent">👨‍👩‍👧 Emergency Contact</div>
         </div>
 
         <!-- Contact buttons -->
@@ -220,13 +218,13 @@ html.dark .ep-footer p { color:#5eead4; }
           <a href="tel:+91<%= profile.mobile_primary %>" class="sc-contact-primary">
             <span style="font-size:1.3rem;">📞</span>
             <div style="text-align:left;">
-              <div style="font-size:.72rem;opacity:.85;letter-spacing:.04em;text-transform:uppercase;">Call Emergency Contact</div>
-              <div style="font-family:monospace;font-size:1rem;letter-spacing:.02em;">+91 <%= profile.mobile_primary %></div>
+              <div style="font-size:.72rem;opacity:.85;letter-spacing:.04em;text-transform:uppercase;">Call Emergency Contact 1</div>
+              <div style="font-size:.9rem;opacity:.7;">Tap to call</div>
             </div>
           </a>
           <% if (profile.mobile_secondary) { %>
             <a href="tel:+91<%= profile.mobile_secondary %>" class="sc-contact-alt">
-              📞 <span>Alternate — +91 <%= profile.mobile_secondary %></span>
+              📞 <span>Call Emergency Contact 2</span>
             </a>
           <% } %>
         </div>
@@ -388,7 +386,7 @@ html.dark .ep-footer p { color:#5eead4; }
     <span style="font-size:1.3rem;">📞</span>
     <div>
       <div style="font-size:.72rem;opacity:.85;letter-spacing:.04em;">CALL NOW</div>
-      <span class="sc-float-num">+91 <%= profile.mobile_primary %></span>
+      <span class="sc-float-num">Emergency Contact</span>
     </div>
   </a>
 
@@ -449,20 +447,6 @@ html.dark .ep-footer p { color:#5eead4; }
     el.style.color = ok ? '#15803d' : '#475569';
     el.textContent = msg;
     el.style.display = 'block';
-  }
-
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(function(p){
-      coords = { lat: p.coords.latitude, lng: p.coords.longitude };
-      try {
-        fetch(apiUrl + '/api/location-alert', {
-          method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ tag_id: tagId, lat: coords.lat, lng: coords.lng })
-        }).then(function(r){ return r.json(); }).then(function(d){
-          if (d && d.delivered) setStatus('✅ Owner notified with your location', true);
-        }).catch(function(){});
-      } catch(e){}
-    }, function(){}, { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 });
   }
 
   var waBtn = document.getElementById('scWaBtn');
@@ -533,9 +517,7 @@ html.dark .ep-footer p { color:#5eead4; }
           <% if (profile.blood_group) { %><span class="ep-badge-blood"><%= profile.blood_group %></span><% } %>
           <% if (profile.category) { %><span class="ep-badge-cat"><%= profile.category.toLowerCase() %></span><% } %>
         </div>
-        <% if (profile.parent_name) { %>
-          <div style="font-size:.8rem;opacity:.8;margin-top:.3rem;">👨‍👩‍👧 <%= profile.parent_name %></div>
-        <% } %>
+        <div style="font-size:.8rem;opacity:.8;margin-top:.3rem;">👨‍👩‍👧 Emergency Contact</div>
       </div>
     </div>
 
@@ -544,13 +526,13 @@ html.dark .ep-footer p { color:#5eead4; }
       <a href="tel:+91<%= profile.mobile_primary %>" class="ep-btn-call ep-call-btn" style="font-size:1rem;">
         <span style="font-size:1.5rem;">📞</span>
         <div style="text-align:left;">
-          <div style="font-size:.75rem;font-weight:600;opacity:.85;letter-spacing:.04em;text-transform:uppercase;">Call Emergency Contact</div>
-          <div style="font-size:1.1rem;font-family:monospace;letter-spacing:.02em;">+91 <%= profile.mobile_primary %></div>
+          <div style="font-size:.75rem;font-weight:600;opacity:.85;letter-spacing:.04em;text-transform:uppercase;">Call Emergency Contact 1</div>
+          <div style="font-size:.85rem;opacity:.7;">Tap to call</div>
         </div>
       </a>
       <% if (profile.mobile_secondary) { %>
         <a href="tel:+91<%= profile.mobile_secondary %>" class="ep-btn-call-secondary">
-          📞 <span>Alternate — +91 <%= profile.mobile_secondary %></span>
+          📞 <span>Call Emergency Contact 2</span>
         </a>
       <% } %>
       <button id="whatsappBtn" class="ep-btn-wa">
@@ -652,15 +634,6 @@ html.dark .ep-footer p { color:#5eead4; }
     var maps = (lat && lng) ? ('https://maps.google.com/?q=' + lat + ',' + lng) : '';
     var msg = 'Hello, I found someone with a SafeTag (' + tagId + ').' + (maps ? (' Location: ' + maps) : '');
     return 'https://wa.me/91' + primary + '?text=' + encodeURIComponent(msg);
-  }
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(function(p){
-      coords = { lat: p.coords.latitude, lng: p.coords.longitude };
-      try {
-        fetch(flaskUrl + '/api/location-alert', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ tag_id:tagId, lat:coords.lat, lng:coords.lng }) })
-          .then(function(r){ return r.json(); }).then(function(d){ if (d && d.delivered) setStatus('✅ Owner notified with your location', true); }).catch(function(){});
-      } catch(e){}
-    }, function(){}, { enableHighAccuracy:true, timeout:8000, maximumAge:0 });
   }
   if (btn) btn.addEventListener('click', function(){
     if (coords) { window.location.href = buildWaLink(coords.lat, coords.lng); }
