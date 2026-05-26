@@ -18,6 +18,7 @@ const prisma = require('./lib/db');
 const {
   generateTagId,
   generateSecurityKey,
+  generateTagCode,
   normaliseMobile,
   isValidMobile,
   isValidEmail,
@@ -296,12 +297,20 @@ async function handleTagScan(req, res, tag_id, security_key) {
   }
 }
 
-// Short URL: /t/W6315V5zrlgIxl  (6 + 8 = 14 chars, ~31-char total URL with short domain)
-app.get('/t/:combined([A-Za-z0-9_-]{14})', (req, res) => {
-  const combined = req.params.combined;
-  const tag_id = combined.slice(0, 6).toUpperCase();
-  const security_key = combined.slice(6);
-  return handleTagScan(req, res, tag_id, security_key);
+// New short URL: /t/ABcd3fg7k  (9-char base62, no split — code IS both ID and security)
+// 62^9 = 13.5 quadrillion → 0.00018% guess probability → covers 3× world population
+app.get('/t/:code([a-zA-Z0-9]{9})', async (req, res) => {
+  const code = req.params.code;
+  try {
+    const tag = await prisma.tag.findUnique({ where: { tagId: code } });
+    if (!tag) return res.status(404).render('404', { title: 'Tag not found' });
+    await prisma.tag.update({ where: { tagId: code }, data: { scanCount: { increment: 1 } } });
+    if (tag.isActive) return res.redirect(`/emergency/${code}`);
+    req.session.lastScannedTag = { tag_id: code, security_key: null };
+    return req.session.save(() => res.redirect(`/register/${code}`));
+  } catch (e) {
+    return res.status(500).render('404', { title: 'Unable to reach server' });
+  }
 });
 
 // Legacy long format: /W6315VW8/5zrlgIxlKlE3PyD8 (old printed tags still work)
@@ -313,7 +322,7 @@ app.get('/:tag_id([A-Z0-9]{6,12})/:security_key([A-Za-z0-9_-]{8,32})', (req, res
 // P5 — Registration Page
 // =============================================================================
 app.get('/register/:tag_id', async (req, res) => {
-  const tagId = req.params.tag_id.toUpperCase();
+  const tagId = req.params.tag_id;
   try {
     const tag = await prisma.tag.findUnique({ where: { tagId } });
     if (!tag) return res.status(404).render('404');
@@ -332,7 +341,7 @@ app.get('/register/:tag_id', async (req, res) => {
 });
 
 app.post('/register/:tag_id', async (req, res) => {
-  const tagId = req.params.tag_id.toUpperCase();
+  const tagId = req.params.tag_id;
   const renderErr = (errors) => res.render('register_tag', {
     title: 'Register your SafeTag',
     tag_id: tagId,
@@ -425,7 +434,7 @@ app.post('/register/:tag_id', async (req, res) => {
 // P6 — Emergency Page
 // =============================================================================
 app.get('/emergency/:tag_id', async (req, res) => {
-  const tagId = req.params.tag_id.toUpperCase();
+  const tagId = req.params.tag_id;
   try {
     const tag = await prisma.tag.findUnique({
       where: { tagId },
@@ -599,7 +608,7 @@ app.post('/dashboard/claim', requireUser, async (req, res) => {
 // P10 — Edit Profile
 // =============================================================================
 app.get('/profile/edit/:tag_id', requireUser, async (req, res) => {
-  const tagId = req.params.tag_id.toUpperCase();
+  const tagId = req.params.tag_id;
   try {
     const tag = await prisma.tag.findUnique({ where: { tagId }, include: { profile: true } });
     if (!tag || !tag.profile) return res.status(404).render('404');
@@ -619,7 +628,7 @@ app.get('/profile/edit/:tag_id', requireUser, async (req, res) => {
 });
 
 app.post('/profile/edit/:tag_id', requireUser, async (req, res) => {
-  const tagId = req.params.tag_id.toUpperCase();
+  const tagId = req.params.tag_id;
   try {
     const tag = await prisma.tag.findUnique({ where: { tagId }, include: { profile: true } });
     if (!tag || !tag.profile) return res.status(404).render('404');
@@ -936,13 +945,12 @@ app.post('/manufacturer/batch/new', requireManufacturer, async (req, res) => {
     const tagsData = [];
     const rows = [];
     for (let i = 0; i < quantity; i++) {
-      let tid;
-      do { tid = generateTagId(); } while (existingIds.has(tid));
-      existingIds.add(tid);
-      const key = generateSecurityKey();
-      const url = `${BASE_URL}/t/${tid}${key}`;
-      tagsData.push({ tagId: tid, securityKey: key, manufacturerId: mfr.id, batchId: batch.id });
-      rows.push({ tag_id: tid, security_key: key, full_url: url, qr_data: url,
+      let code;
+      do { code = generateTagCode(); } while (existingIds.has(code));
+      existingIds.add(code);
+      const url = `${BASE_URL}/t/${code}`;
+      tagsData.push({ tagId: code, securityKey: null, manufacturerId: mfr.id, batchId: batch.id });
+      rows.push({ tag_id: code, security_key: '', full_url: url, qr_data: url,
                   rfid_payload: url, batch_id: batch.id, batch_name: batchName,
                   created_at: new Date().toISOString() });
     }
@@ -1323,10 +1331,14 @@ app.post('/admin/users/:id/activate', requireAdmin, async (req, res) => {
 // =============================================================================
 app.get('/qr/:tag_id', async (req, res) => {
   try {
-    const tagId = req.params.tag_id.toUpperCase();
+    const tagId = req.params.tag_id;
     const tag = await prisma.tag.findUnique({ where: { tagId } });
     if (!tag) return res.status(404).render('404');
-    const url = `${BASE_URL}/t/${tag.tagId}${tag.securityKey}`;
+    // New-style tags (securityKey null): short /t/code URL
+    // Old-style tags: keep legacy /tagId/securityKey URL
+    const url = tag.securityKey
+      ? `${BASE_URL}/${tag.tagId}/${tag.securityKey}`
+      : `${BASE_URL}/t/${tag.tagId}`;
     // errorCorrectionLevel L = fewest modules for same data → smaller QR → fits 18mm tags
     // margin 1 = minimum quiet zone (saves space on small tags)
     const buf = await QRCode.toBuffer(url, { type: 'png', width: 600, margin: 1, errorCorrectionLevel: 'L' });
@@ -1343,7 +1355,7 @@ app.get('/qr/:tag_id', async (req, res) => {
 // =============================================================================
 app.post('/api/location-alert', async (req, res) => {
   try {
-    const tagId = (req.body.tag_id || '').trim().toUpperCase();
+    const tagId = (req.body.tag_id || '').trim();
     const lat = toFloat(req.body.lat);
     const lng = toFloat(req.body.lng);
 
