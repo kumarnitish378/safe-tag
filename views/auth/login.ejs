@@ -1,29 +1,124 @@
+<%
+  hideNav    = true;
+  hideFooter = true;
+  head = `<style>
+    html, html.dark { background: #fff !important; }
+    html.dark body  { background: #fff !important; color: #475569 !important; }
+    .auth-wrap { display: flex; min-height: 100%; }
+    .auth-left {
+      display: none;
+      width: 44%;
+      min-width: 340px;
+      background: #0A2342;
+      padding: 3rem 3.5rem;
+      flex-direction: column;
+      justify-content: space-between;
+      position: sticky; top: 0; height: 100vh; overflow: hidden;
+    }
+    @media (min-width: 960px) { .auth-left { display: flex; } }
+    .auth-right {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2.5rem 2rem;
+      background: #fff;
+      min-height: 100vh;
+    }
+    .auth-box { width: 100%; max-width: 400px; }
+    .auth-box .input  { background:#fff !important; border-color:#e2e8f0 !important; color:#0A2342 !important; }
+    .auth-box .input:focus { border-color:#0D9488 !important; box-shadow:0 0 0 3px rgba(13,148,136,.15) !important; }
+    .auth-box .label  { color:#0A2342 !important; }
+    .auth-logo-mobile { display:flex; justify-content:center; margin-bottom:2rem; }
+    @media (min-width: 960px) { .auth-logo-mobile { display:none; } }
+  </style>`;
+%>
 <%- include('../layout/_head') %>
 
-<section class="section">
-  <div class="section-inner max-w-md">
-    <div class="card p-6">
-      <h1 class="text-2xl font-bold mb-1">Welcome back</h1>
-      <p class="text-sm text-slate-500 mb-5">Sign in to manage your SafeTags.</p>
+<div class="auth-wrap">
 
-      <% if (errors._form) { %><div class="flash flash-error">⚠️ <%= errors._form %></div><% } %>
+  <!-- ── Left branding panel (desktop only) ── -->
+  <div class="auth-left">
+    <a href="/" style="display:flex;align-items:center;gap:.6rem;color:#fff;font-weight:700;font-size:1.1rem;text-decoration:none;font-family:'Sora',sans-serif;">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/>
+        <circle cx="7" cy="7" r="1" fill="white" stroke="none"/>
+      </svg>
+      SafeTag
+    </a>
 
-      <form method="POST" action="/login" class="space-y-4">
-      <%- include('../layout/_csrf') %>
+    <div>
+      <h1 style="font-size:2rem;font-weight:800;color:#fff;line-height:1.25;margin:0 0 1rem;font-family:'Sora',sans-serif;">
+        Emergency identity.<br>One scan.
+      </h1>
+      <p style="color:#5eead4;font-size:.93rem;line-height:1.7;margin:0 0 1.75rem;">
+        Your SafeTag connects first responders to blood group, allergies, and emergency contacts in under 3 seconds. No app needed.
+      </p>
+      <div style="display:flex;flex-direction:column;gap:.65rem;">
+        <div style="display:flex;align-items:flex-start;gap:.75rem;color:#cbd5e1;font-size:.88rem;line-height:1.45;">
+          <span style="color:#0D9488;font-weight:700;flex-shrink:0;margin-top:.05rem;">✓</span>
+          QR + NFC tags for children, elderly &amp; pets
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:.75rem;color:#cbd5e1;font-size:.88rem;line-height:1.45;">
+          <span style="color:#0D9488;font-weight:700;flex-shrink:0;margin-top:.05rem;">✓</span>
+          Works on any Android or iPhone — no app needed
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:.75rem;color:#cbd5e1;font-size:.88rem;line-height:1.45;">
+          <span style="color:#0D9488;font-weight:700;flex-shrink:0;margin-top:.05rem;">✓</span>
+          Blood group, allergies &amp; emergency contacts
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:.75rem;color:#cbd5e1;font-size:.88rem;line-height:1.45;">
+          <span style="color:#0D9488;font-weight:700;flex-shrink:0;margin-top:.05rem;">✓</span>
+          Ships across India from ₹149
+        </div>
+      </div>
+    </div>
+
+    <p style="color:#334155;font-size:.75rem;">© 2025 SafeTag. All rights reserved.</p>
+  </div>
+
+  <!-- ── Right form panel ── -->
+  <div class="auth-right">
+    <div class="auth-box">
+
+      <!-- Mobile logo -->
+      <div class="auth-logo-mobile">
+        <a href="/" style="display:flex;align-items:center;gap:.6rem;color:#0A2342;font-weight:700;font-size:1.1rem;text-decoration:none;font-family:'Sora',sans-serif;">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0A2342" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/>
+            <circle cx="7" cy="7" r="1" fill="#0A2342" stroke="none"/>
+          </svg>
+          SafeTag
+        </a>
+      </div>
+
+      <h2 style="font-size:1.65rem;font-weight:700;color:#0A2342;margin:0 0 .3rem;font-family:'Sora',sans-serif;">Welcome back</h2>
+      <p style="color:#64748b;font-size:.9rem;margin:0 0 1.5rem;">Sign in to manage your SafeTags.</p>
+
+      <% if (errors._form) { %>
+      <div class="flash flash-error" style="margin-bottom:1rem;">⚠️ <%= errors._form %></div>
+      <% } %>
+
+      <form method="POST" action="/login" style="display:flex;flex-direction:column;gap:.9rem;">
+        <%- include('../layout/_csrf') %>
         <input type="hidden" name="next" value="<%= next || '/dashboard' %>" />
         <div>
           <label class="label">Email</label>
-          <input class="input" type="email" name="email" required value="<%= (values.email||'') %>" />
+          <input class="input" type="email" name="email" required value="<%= (values.email||'') %>" autocomplete="email" />
         </div>
         <div>
           <label class="label">Password</label>
-          <input class="input" type="password" name="password" required />
+          <input class="input" type="password" name="password" required autocomplete="current-password" />
         </div>
-        <button class="btn-brand w-full justify-center">Sign in</button>
+        <button type="submit" class="btn-brand" style="justify-content:center;width:100%;margin-top:.2rem;">Sign in</button>
       </form>
-      <p class="text-sm text-slate-500 mt-5 text-center">New to SafeTag? <a class="text-brand font-semibold" href="/register">Create an account</a>.</p>
+
+      <p style="text-align:center;color:#64748b;font-size:.875rem;margin-top:1.25rem;">
+        New to SafeTag? <a href="/register" style="color:#0D9488;font-weight:600;">Create an account</a>
+      </p>
     </div>
   </div>
-</section>
+
+</div>
 
 <%- include('../layout/_foot') %>

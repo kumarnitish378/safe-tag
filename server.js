@@ -474,6 +474,8 @@ app.get('/login', (req, res) => {
     errors: {},
     values: {},
     next: req.query.next || '/dashboard',
+    hideNav: true,
+    hideFooter: true,
   });
 });
 
@@ -489,6 +491,8 @@ app.post('/login', async (req, res) => {
         errors: { _form: 'Invalid credentials' },
         values: { email: req.body.email },
         next: req.body.next || '/dashboard',
+        hideNav: true,
+        hideFooter: true,
       });
     }
     req.session.user = formatUser(user);
@@ -506,12 +510,14 @@ app.post('/login', async (req, res) => {
       errors: { _form: 'Server error' },
       values: { email: req.body.email },
       next: req.body.next || '/dashboard',
+      hideNav: true,
+      hideFooter: true,
     });
   }
 });
 
 app.get('/register', (req, res) => {
-  res.render('auth/register', { title: 'Create account', errors: {}, values: {} });
+  res.render('auth/register', { title: 'Create account', errors: {}, values: {}, hideNav: true, hideFooter: true });
 });
 
 app.post('/register', async (req, res) => {
@@ -530,7 +536,7 @@ app.post('/register', async (req, res) => {
       if (existing) errors.email = 'Email already registered';
     }
     if (Object.keys(errors).length > 0) {
-      return res.render('auth/register', { title: 'Create account', errors, values: req.body });
+      return res.render('auth/register', { title: 'Create account', errors, values: req.body, hideNav: true, hideFooter: true });
     }
 
     const passwordHash = await bcrypt.hash(password, 10);
@@ -547,6 +553,8 @@ app.post('/register', async (req, res) => {
       title: 'Create account',
       errors: { _form: 'Server error' },
       values: req.body,
+      hideNav: true,
+      hideFooter: true,
     });
   }
 });

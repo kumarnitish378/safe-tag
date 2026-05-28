@@ -82,9 +82,11 @@ html, body { background: #f1f5f9; margin: 0; padding: 0; }
 .ep-name {
   font-size: 1.65rem;
   font-weight: 800;
-  color: #0a2342;
+  color: #0a2342 !important;   /* navy — tri-color: teal header + white card + navy text */
   margin: 0 0 .25rem;
   line-height: 1.15;
+  text-shadow: none !important;
+  opacity: 1 !important;
 }
 .ep-subtitle {
   font-size: .85rem;
@@ -293,9 +295,10 @@ html, body { background: #f1f5f9; margin: 0; padding: 0; }
   <!-- ── Sticky green header ── -->
   <header class="ep-header">
     <a href="/" class="ep-header-logo">
-      <img src="/static/images/websiteLogo.png" alt=""
-           style="height:22px;width:auto;filter:brightness(0) invert(1);"
-           onerror="this.style.display='none'" />
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/>
+        <circle cx="7" cy="7" r="1" fill="white" stroke="none"/>
+      </svg>
       SafeTag
     </a>
     <div class="ep-verified">✓ Verified Profile</div>
@@ -330,7 +333,7 @@ html, body { background: #f1f5f9; margin: 0; padding: 0; }
           👤
         <% } %>
       </div>
-      <h1 class="ep-name"><%= profile.name %></h1>
+      <h1 class="ep-name" style="color:#0a2342;"><%= profile.name %></h1>
       <p class="ep-subtitle">Emergency Profile</p>
       <div class="ep-chip-row">
         <% if (profile.age) { %>
@@ -445,7 +448,7 @@ html, body { background: #f1f5f9; margin: 0; padding: 0; }
     <!-- Share location via WhatsApp (on-demand, not auto-triggered) -->
     <% if (profile.mobile_primary) { %>
     <button id="epLocBtn" class="ep-loc-btn" onclick="shareLocation()">
-      📍 &nbsp;Share My Location via WhatsApp
+      🆘 &nbsp;Alert Emergency Contact via WhatsApp
     </button>
     <div id="epLocStatus" class="ep-loc-status"></div>
     <% } %>
@@ -487,7 +490,7 @@ html, body { background: #f1f5f9; margin: 0; padding: 0; }
           'My location: ' + maps
         );
         window.open('https://wa.me/91' + primary + '?text=' + msg, '_blank');
-        btn.textContent = '📍  Share My Location via WhatsApp';
+        btn.textContent = '🆘  Alert Emergency Contact via WhatsApp';
         btn.disabled = false;
       },
       function () {
@@ -498,7 +501,7 @@ html, body { background: #f1f5f9; margin: 0; padding: 0; }
           '(Could not get precise location)'
         );
         window.open('https://wa.me/91' + primary + '?text=' + msg, '_blank');
-        btn.textContent = '📍  Share My Location via WhatsApp';
+        btn.textContent = '🆘  Alert Emergency Contact via WhatsApp';
         btn.disabled = false;
       },
       { timeout: 10000 }
