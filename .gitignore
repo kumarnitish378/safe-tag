@@ -30,7 +30,6 @@ instance/
 dist/
 build/
 *.log
-public/css/safetag.build.css
 
 # OS
 .DS_Store
