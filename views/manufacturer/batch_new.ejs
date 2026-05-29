@@ -1,78 +1,108 @@
 <%- include('../layout/_head') %>
 
 <section class="section">
-  <div class="section-inner max-w-md">
+  <div class="section-inner max-w-lg">
     <a href="/manufacturer/dashboard" class="text-sm text-brand font-semibold">← Dashboard</a>
-    <h1 class="text-3xl font-bold mt-2 mb-4">Create new tag batch</h1>
+    <h1 class="text-3xl font-bold mt-2 mb-6">Create new tag batch</h1>
 
-    <div id="form-error" class="flash flash-error" style="display:none"></div>
     <% if (errors._form) { %><div class="flash flash-error">⚠️ <%= errors._form %></div><% } %>
 
-    <form id="batchForm" method="POST" action="/manufacturer/batch/new" class="card p-6 space-y-4">
+    <!-- Pricing tiers -->
+    <div class="card p-5 mb-5">
+      <p class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3">Tag ID generation fee</p>
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="text-left text-xs text-slate-500 uppercase tracking-wide">
+            <th class="pb-2">Batch size</th>
+            <th class="pb-2">Rate per tag</th>
+            <th class="pb-2 text-right">Max total</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
+          <tr id="tier-1" class="transition-colors">
+            <td class="py-2">1 – 100 tags</td>
+            <td class="py-2 font-mono">₹5.00 / tag</td>
+            <td class="py-2 text-right text-slate-500">₹500</td>
+          </tr>
+          <tr id="tier-2" class="transition-colors">
+            <td class="py-2">101 – 1,000 tags</td>
+            <td class="py-2 font-mono">₹3.00 / tag</td>
+            <td class="py-2 text-right text-slate-500">₹3,000</td>
+          </tr>
+          <tr id="tier-3" class="transition-colors">
+            <td class="py-2">1,001 – 10,000 tags</td>
+            <td class="py-2 font-mono">₹1.50 / tag</td>
+            <td class="py-2 text-right text-slate-500">₹15,000</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <form method="POST" action="/manufacturer/batch/new" class="card p-6 space-y-5">
       <%- include('../layout/_csrf') %>
       <div>
         <label class="label">Quantity</label>
-        <input class="input" type="number" name="quantity" min="1" max="10000" required value="<%= values.quantity || 100 %>" />
+        <input id="qty" class="input" type="number" name="quantity" min="1" max="10000" required value="<%= values.quantity || 100 %>" />
         <p class="text-xs text-slate-500 mt-1">Up to 10,000 tags per batch.</p>
       </div>
       <div>
         <label class="label">Batch name</label>
         <input class="input" name="batch_name" required maxlength="120" value="<%= values.batch_name || '' %>" placeholder="e.g. Batch-Jan-2025-Keychains" />
       </div>
-      <button id="submitBtn" class="btn-brand w-full justify-center">Generate &amp; Download CSV</button>
-      <p class="text-xs text-slate-500">The CSV contains tag_id, security_key, full_url, qr_data, rfid_payload — ready for RFID programming and QR printing.</p>
+
+      <!-- Live price display -->
+      <div class="rounded-lg bg-teal-50 dark:bg-teal-900/20 border border-teal-200 dark:border-teal-800 p-4 flex items-center justify-between">
+        <div>
+          <p class="text-xs text-slate-500 uppercase tracking-wide">You will be charged</p>
+          <p id="priceDisplay" class="text-2xl font-bold text-brand mt-0.5">₹500</p>
+        </div>
+        <div class="text-right text-xs text-slate-500">
+          <span id="priceBreakdown">100 tags × ₹5</span>
+        </div>
+      </div>
+
+      <button class="btn-brand w-full justify-center">Proceed to Payment →</button>
+      <p class="text-xs text-slate-500 text-center">Secure payment via Razorpay. Tags are generated immediately after payment.</p>
     </form>
   </div>
 </section>
 
 <script>
-document.getElementById('batchForm').addEventListener('submit', async function(e) {
-  e.preventDefault();
-  const form = e.target;
-  const btn = document.getElementById('submitBtn');
-  btn.disabled = true;
-  btn.textContent = 'Generating…';
+(function () {
+  const qtyInput = document.getElementById('qty');
+  const priceDisplay = document.getElementById('priceDisplay');
+  const breakdown = document.getElementById('priceBreakdown');
+  const tiers = [
+    document.getElementById('tier-1'),
+    document.getElementById('tier-2'),
+    document.getElementById('tier-3'),
+  ];
 
-  const params = new URLSearchParams();
-  new FormData(form).forEach(function(v, k) { params.append(k, v); });
-
-  try {
-    const resp = await fetch(form.action, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: params.toString(),
-    });
-
-    if (resp.ok && (resp.headers.get('Content-Type') || '').includes('text/csv')) {
-      const blob = await resp.blob();
-      const cd = resp.headers.get('Content-Disposition') || '';
-      const fname = (cd.match(/filename="([^"]+)"/) || [])[1] || 'batch.csv';
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url; a.download = fname;
-      document.body.appendChild(a); a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-      window.location.href = '/manufacturer/dashboard';
-    } else {
-      // Server returned an error page — display it inline
-      const html = await resp.text();
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(html, 'text/html');
-      const err = doc.querySelector('.flash-error');
-      const msg = err ? err.textContent.trim() : 'Server error. Please try again.';
-      document.getElementById('form-error').textContent = msg;
-      document.getElementById('form-error').style.display = 'flex';
-      btn.disabled = false;
-      btn.textContent = 'Generate & Download CSV';
-    }
-  } catch(err) {
-    document.getElementById('form-error').textContent = 'Network error. Please try again.';
-    document.getElementById('form-error').style.display = 'flex';
-    btn.disabled = false;
-    btn.textContent = 'Generate & Download CSV';
+  function calcPrice(qty) {
+    if (qty <= 100)  return { rate: 5,   total: qty * 5 };
+    if (qty <= 1000) return { rate: 3,   total: qty * 3 };
+    return             { rate: 1.5, total: qty * 1.5 };
   }
-});
+
+  function highlightTier(qty) {
+    tiers.forEach(t => t.classList.remove('bg-teal-50', 'dark:bg-teal-900/20', 'font-semibold'));
+    const idx = qty <= 100 ? 0 : qty <= 1000 ? 1 : 2;
+    tiers[idx].classList.add('bg-teal-50', 'dark:bg-teal-900/20', 'font-semibold');
+  }
+
+  function update() {
+    const qty = parseInt(qtyInput.value, 10) || 0;
+    if (qty < 1) { priceDisplay.textContent = '—'; breakdown.textContent = ''; return; }
+    const { rate, total } = calcPrice(qty);
+    const rateStr = rate === 1.5 ? '₹1.50' : `₹${rate}`;
+    priceDisplay.textContent = '₹' + total.toLocaleString('en-IN');
+    breakdown.textContent = `${qty.toLocaleString('en-IN')} tags × ${rateStr}`;
+    highlightTier(qty);
+  }
+
+  qtyInput.addEventListener('input', update);
+  update();
+})();
 </script>
 
 <%- include('../layout/_foot') %>

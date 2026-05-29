@@ -3,30 +3,54 @@
 <section class="section">
   <div class="section-inner">
     <a href="/manufacturer/dashboard" class="text-sm text-brand font-semibold">← Dashboard</a>
-    <div class="flex items-center justify-between mt-2 mb-4 flex-wrap gap-2">
+    <div class="flex items-center justify-between mt-2 mb-4 flex-wrap gap-3">
       <div>
-        <h1 class="text-3xl font-bold"><%= batch.batch_name %></h1>
-        <p class="text-sm text-slate-500">Batch #<%= batch.id %> · <%= batch.quantity %> tags</p>
+        <div class="flex items-center gap-2">
+          <h1 class="text-3xl font-bold"><%= batch.batch_name %></h1>
+          <% if (batch.payment_status === 'paid') { %>
+            <span class="pill pill-success">Paid</span>
+          <% } else { %>
+            <span class="pill pill-warning">Payment pending</span>
+          <% } %>
+        </div>
+        <p class="text-sm text-slate-500 mt-0.5">
+          Batch #<%= batch.id %> · <%= batch.quantity %> tags
+          <% if (batch.paid_amount) { %>
+            · ₹<%= (batch.paid_amount / 100).toLocaleString('en-IN', { minimumFractionDigits: 2 }) %> charged
+          <% } %>
+        </p>
       </div>
-      <a class="btn-brand text-sm" href="/manufacturer/batch/<%= batch.id %>/csv" onclick="window.location.href='/api/manufacturer/batch/<%= batch.id %>/csv';return false;">⬇ Download CSV</a>
+      <% if (batch.payment_status === 'paid') { %>
+        <a class="btn-brand text-sm" href="/manufacturer/batch/<%= batch.id %>/csv">⬇ Download CSV</a>
+      <% } else { %>
+        <a class="btn-brand text-sm" href="/manufacturer/batch/<%= batch.id %>/pay">Complete Payment →</a>
+      <% } %>
     </div>
 
+    <% if (batch.payment_status !== 'paid') { %>
+      <div class="flash flash-error mb-4">
+        ⚠️ Tags will be generated after payment is completed.
+        <a href="/manufacturer/batch/<%= batch.id %>/pay" class="underline font-semibold ml-1">Pay now →</a>
+      </div>
+    <% } %>
+
+    <% if (tags.length > 0) { %>
     <div class="card overflow-hidden">
       <table class="table">
-        <thead><tr><th>Tag ID</th><th>Status</th><th>Scans</th><th>URL</th><th>Activated</th></tr></thead>
+        <thead><tr><th>Tag ID</th><th>Status</th><th>Scans</th><th>Activated</th></tr></thead>
         <tbody>
           <% tags.forEach(function(t){ %>
             <tr>
               <td class="mono"><%= t.tag_id %></td>
               <td><% if (t.is_active) { %><span class="pill pill-success">Active</span><% } else { %><span class="pill pill-warning">Inactive</span><% } %></td>
               <td><%= t.scan_count %></td>
-              <td class="break-all text-xs"><%= t.url %></td>
               <td class="text-xs text-slate-500"><%= t.activated_at ? t.activated_at.split('T')[0] : '—' %></td>
             </tr>
           <% }); %>
         </tbody>
       </table>
     </div>
+    <% } %>
   </div>
 </section>
 

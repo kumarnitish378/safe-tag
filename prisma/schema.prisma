@@ -91,11 +91,15 @@ model Manufacturer {
 }
 
 model TagBatch {
-  id             Int      @id @default(autoincrement())
-  manufacturerId Int      @map("manufacturer_id")
-  batchName      String   @map("batch_name")
-  quantity       Int
-  createdAt      DateTime @default(now()) @map("created_at")
+  id                Int      @id @default(autoincrement())
+  manufacturerId    Int      @map("manufacturer_id")
+  batchName         String   @map("batch_name")
+  quantity          Int
+  paidAmount        Int?     @map("paid_amount")
+  paymentStatus     String   @default("pending") @map("payment_status")
+  razorpayOrderId   String?  @map("razorpay_order_id")
+  razorpayPaymentId String?  @map("razorpay_payment_id")
+  createdAt         DateTime @default(now()) @map("created_at")
 
   manufacturer Manufacturer @relation(fields: [manufacturerId], references: [id])
   tags         Tag[]
