@@ -100,6 +100,11 @@
       <% if (errors._form) { %>
       <div class="flash flash-error" style="margin-bottom:1rem;">⚠️ <%= errors._form %></div>
       <% } %>
+      <% if (flash && flash.error && flash.error.length) { %>
+        <% flash.error.forEach(function(m){ %>
+        <div class="flash flash-error" style="margin-bottom:1rem;">⚠️ <%= m %></div>
+        <% }); %>
+      <% } %>
 
       <form method="POST" action="/register" style="display:flex;flex-direction:column;gap:.9rem;">
         <%- include('../layout/_csrf') %>

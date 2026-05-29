@@ -119,10 +119,12 @@ app.use((req, res, next) => {
     (req.body && (req.body._csrf || req.body.csrf_token)) ||
     req.headers['x-csrf-token'];
   if (!submitted || submitted !== req.session.csrfToken) {
+    console.warn('[CSRF] FAIL path=%s submitted=%s session=%s', req.path, submitted, req.session.csrfToken);
     req.session.csrfToken = crypto.randomBytes(24).toString('hex');
     req.flash('error', 'Your session expired. Please reload the page and try again.');
     return res.redirect(req.get('Referer') || '/');
   }
+  console.log('[CSRF] OK path=%s', req.path);
   next();
 });
 
@@ -484,6 +486,7 @@ app.post('/login', async (req, res) => {
   try {
     const email = (req.body.email || '').trim().toLowerCase();
     const password = req.body.password || '';
+    console.log('[LOGIN] attempt email=%s', email);
     const user = await prisma.user.findUnique({ where: { email } });
     const valid = user && user.isActive && await bcrypt.compare(password, user.passwordHash);
     if (!valid) {
@@ -506,6 +509,7 @@ app.post('/login', async (req, res) => {
       res.redirect(nextUrl);
     });
   } catch (e) {
+    console.error('[LOGIN] error', e.message);
     res.render('auth/login', {
       title: 'Sign in',
       errors: { _form: 'Server error' },
@@ -561,10 +565,11 @@ app.post('/register', async (req, res) => {
 });
 
 app.post('/logout', (req, res) => {
-  const isAdmin = req.session.user && req.session.user.is_admin;
+  const redirectTo = (req.session.user && req.session.user.is_admin) ? '/login' : '/';
   req.session.user = null;
+  req.session.manufacturer = null;
   req.flash('success', 'Signed out.');
-  res.redirect(isAdmin ? '/login' : '/');
+  req.session.save(() => res.redirect(redirectTo));
 });
 
 // =============================================================================
@@ -849,8 +854,9 @@ app.post('/manufacturer/login', async (req, res) => {
 
 app.post('/manufacturer/logout', (req, res) => {
   req.session.manufacturer = null;
+  req.session.user = null;
   req.flash('success', 'Signed out.');
-  res.redirect('/manufacturer/login');
+  req.session.save(() => res.redirect('/manufacturer/login'));
 });
 
 app.post('/manufacturer/request-approval', requireManufacturer, async (req, res) => {
@@ -1114,11 +1120,12 @@ app.get('/manufacturer/batch/:id/csv', requireManufacturer, async (req, res) => 
       where: { id, manufacturerId: req.session.manufacturer.id },
     });
     if (!batch) return res.status(404).render('404');
-    if (batch.paymentStatus !== 'paid') {
+    const tags = await prisma.tag.findMany({ where: { batchId: id }, orderBy: { createdAt: 'asc' } });
+    // Gate: block only if payment is pending AND no tags exist yet (pre-payment batches are exempt)
+    if (batch.paymentStatus !== 'paid' && tags.length === 0) {
       req.flash('error', 'Complete payment before downloading the CSV.');
       return res.redirect(`/manufacturer/batch/${id}/pay`);
     }
-    const tags = await prisma.tag.findMany({ where: { batchId: id }, orderBy: { createdAt: 'asc' } });
     const header = 'tag_id,security_key,full_url,qr_data,rfid_payload,batch_id,batch_name,created_at\n';
     const body = tags.map(t => {
       const url = `${BASE_URL}/t/${t.tagId}`;
