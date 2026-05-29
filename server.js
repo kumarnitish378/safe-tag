@@ -23,6 +23,7 @@ const {
   normaliseMobile,
   isValidMobile,
   isValidEmail,
+  calcBatchPrice,
   validateListing,
   formatTag,
   formatProfile,
@@ -922,6 +923,38 @@ app.get('/manufacturer/dashboard', requireManufacturer, async (req, res) => {
   }
 });
 
+// Shared helper: generate tag rows for a paid batch (does NOT create the batch record)
+async function generateTagsForBatch(batchId, manufacturerId, quantity, batchName) {
+  const existingIds = new Set(
+    (await prisma.tag.findMany({ select: { tagId: true } })).map(t => t.tagId)
+  );
+  const tagsData = [];
+  const rows = [];
+  for (let i = 0; i < quantity; i++) {
+    let code;
+    do { code = generateTagCode(); } while (existingIds.has(code));
+    existingIds.add(code);
+    const url = `${BASE_URL}/t/${code}`;
+    tagsData.push({ tagId: code, securityKey: null, manufacturerId, batchId });
+    rows.push({ tag_id: code, full_url: url, qr_data: url, rfid_payload: url,
+                batch_id: batchId, batch_name: batchName,
+                created_at: new Date().toISOString() });
+  }
+  await prisma.tag.createMany({ data: tagsData });
+  return rows;
+}
+
+function batchCsvResponse(res, batchId, batchName, rows) {
+  const fname = `safetag-batch-${batchId}-${batchName.replace(/\s+/g, '_')}.csv`;
+  const header = 'tag_id,security_key,full_url,qr_data,rfid_payload,batch_id,batch_name,created_at\n';
+  const body = rows.map(r =>
+    `${r.tag_id},,${r.full_url},${r.qr_data},${r.rfid_payload},${r.batch_id},"${r.batch_name}",${r.created_at}`
+  ).join('\n');
+  res.set('Content-Type', 'text/csv');
+  res.set('Content-Disposition', `attachment; filename="${fname}"`);
+  return res.send(header + body);
+}
+
 app.get('/manufacturer/batch/new', requireManufacturer, (req, res) => {
   res.render('manufacturer/batch_new', { title: 'New batch', errors: {}, values: {} });
 });
@@ -937,7 +970,7 @@ app.post('/manufacturer/batch/new', requireManufacturer, async (req, res) => {
     });
   }
 
-  let quantity = parseInt(req.body.quantity, 10) || 0;
+  const quantity = parseInt(req.body.quantity, 10) || 0;
   const batchName = (req.body.batch_name || '').trim() ||
     `Batch-${new Date().toISOString().slice(0, 10)}`;
 
@@ -949,49 +982,102 @@ app.post('/manufacturer/batch/new', requireManufacturer, async (req, res) => {
     });
   }
 
+  const amountPaise = calcBatchPrice(quantity);
+
   try {
-    const batch = await prisma.tagBatch.create({
-      data: { manufacturerId: mfr.id, batchName, quantity },
-    });
-
-    // Load existing tag IDs to avoid collisions
-    const existingIds = new Set(
-      (await prisma.tag.findMany({ select: { tagId: true } })).map(t => t.tagId)
-    );
-
-    const tagsData = [];
-    const rows = [];
-    for (let i = 0; i < quantity; i++) {
-      let code;
-      do { code = generateTagCode(); } while (existingIds.has(code));
-      existingIds.add(code);
-      const url = `${BASE_URL}/t/${code}`;
-      tagsData.push({ tagId: code, securityKey: null, manufacturerId: mfr.id, batchId: batch.id });
-      rows.push({ tag_id: code, security_key: '', full_url: url, qr_data: url,
-                  rfid_payload: url, batch_id: batch.id, batch_name: batchName,
-                  created_at: new Date().toISOString() });
+    if (DUMMY_PAYMENT) {
+      const batch = await prisma.tagBatch.create({
+        data: { manufacturerId: mfr.id, batchName, quantity,
+                paidAmount: amountPaise, paymentStatus: 'paid' },
+      });
+      const rows = await generateTagsForBatch(batch.id, mfr.id, quantity, batchName);
+      req.flash('success', `Batch created — ${quantity} tag IDs generated.`);
+      return res.redirect(`/manufacturer/batch/${batch.id}`);
     }
 
-    await prisma.tag.createMany({ data: tagsData });
+    // Real Razorpay: create pending batch, then create order
+    const batch = await prisma.tagBatch.create({
+      data: { manufacturerId: mfr.id, batchName, quantity,
+              paidAmount: amountPaise, paymentStatus: 'pending' },
+    });
 
-    // Build CSV
-    const header = 'tag_id,security_key,full_url,qr_data,rfid_payload,batch_id,batch_name,created_at\n';
-    const body = rows.map(r =>
-      `${r.tag_id},${r.security_key},${r.full_url},${r.qr_data},${r.rfid_payload},${r.batch_id},"${r.batch_name}",${r.created_at}`
-    ).join('\n');
-    const fname = `safetag-batch-${batch.id}-${batchName.replace(/\s+/g, '_')}.csv`;
+    const Razorpay = require('razorpay');
+    const rzp = new Razorpay({ key_id: RAZORPAY_KEY_ID, key_secret: RAZORPAY_KEY_SECRET });
+    const rzpOrder = await rzp.orders.create({
+      amount: amountPaise, currency: 'INR', payment_capture: 1,
+      receipt: `batch_${batch.id}`,
+      notes: { batch_id: String(batch.id) },
+    });
 
-    res.set('Content-Type', 'text/csv');
-    res.set('Content-Disposition', `attachment; filename="${fname}"`);
-    res.set('X-Batch-Id', String(batch.id));
-    return res.send(header + body);
+    await prisma.tagBatch.update({
+      where: { id: batch.id },
+      data: { razorpayOrderId: rzpOrder.id },
+    });
+
+    return res.redirect(`/manufacturer/batch/${batch.id}/pay`);
   } catch (e) {
     console.error(e);
     res.render('manufacturer/batch_new', {
       title: 'New batch',
-      errors: { _form: 'Server error' },
+      errors: { _form: 'Server error. Please try again.' },
       values: req.body,
     });
+  }
+});
+
+app.get('/manufacturer/batch/:id/pay', requireManufacturer, async (req, res) => {
+  try {
+    const id = parseInt(req.params.id, 10);
+    const batch = await prisma.tagBatch.findFirst({
+      where: { id, manufacturerId: req.session.manufacturer.id },
+    });
+    if (!batch) return res.redirect('/manufacturer/dashboard');
+    if (batch.paymentStatus === 'paid') return res.redirect(`/manufacturer/batch/${id}`);
+    res.render('manufacturer/batch_payment', {
+      title: `Pay for batch — ${batch.batchName}`,
+      batch: formatBatch(batch),
+      razorpayKeyId: RAZORPAY_KEY_ID,
+      mfrEmail: req.session.manufacturer.email,
+      mfrName: req.session.manufacturer.business_name,
+    });
+  } catch (e) {
+    res.redirect('/manufacturer/dashboard');
+  }
+});
+
+app.post('/manufacturer/batch/:id/pay-verify', requireManufacturer, async (req, res) => {
+  const id = parseInt(req.params.id, 10);
+  const mfr = req.session.manufacturer;
+  try {
+    const batch = await prisma.tagBatch.findFirst({
+      where: { id, manufacturerId: mfr.id, paymentStatus: 'pending' },
+    });
+    if (!batch) return res.redirect('/manufacturer/dashboard');
+
+    try {
+      const Razorpay = require('razorpay');
+      const rzp = new Razorpay({ key_id: RAZORPAY_KEY_ID, key_secret: RAZORPAY_KEY_SECRET });
+      rzp.utility.verifyPaymentSignature({
+        razorpay_order_id: req.body.razorpay_order_id,
+        razorpay_payment_id: req.body.razorpay_payment_id,
+        razorpay_signature: req.body.razorpay_signature,
+      });
+    } catch (e) {
+      req.flash('error', 'Payment verification failed. Contact support@safe-tag.in.');
+      return res.redirect(`/manufacturer/batch/${id}/pay`);
+    }
+
+    await prisma.tagBatch.update({
+      where: { id },
+      data: { paymentStatus: 'paid', razorpayPaymentId: req.body.razorpay_payment_id || null },
+    });
+
+    const rows = await generateTagsForBatch(id, mfr.id, batch.quantity, batch.batchName);
+    return batchCsvResponse(res, id, batch.batchName, rows);
+  } catch (e) {
+    console.error(e);
+    req.flash('error', 'Error generating tags. Contact support@safe-tag.in.');
+    res.redirect(`/manufacturer/batch/${id}`);
   }
 });
 
@@ -1028,11 +1114,15 @@ app.get('/manufacturer/batch/:id/csv', requireManufacturer, async (req, res) => 
       where: { id, manufacturerId: req.session.manufacturer.id },
     });
     if (!batch) return res.status(404).render('404');
+    if (batch.paymentStatus !== 'paid') {
+      req.flash('error', 'Complete payment before downloading the CSV.');
+      return res.redirect(`/manufacturer/batch/${id}/pay`);
+    }
     const tags = await prisma.tag.findMany({ where: { batchId: id }, orderBy: { createdAt: 'asc' } });
     const header = 'tag_id,security_key,full_url,qr_data,rfid_payload,batch_id,batch_name,created_at\n';
     const body = tags.map(t => {
-      const url = `${BASE_URL}/${t.tagId}/${t.securityKey}`;
-      return `${t.tagId},${t.securityKey},${url},${url},${url},${batch.id},"${batch.batchName}",${t.createdAt?.toISOString() || ''}`;
+      const url = `${BASE_URL}/t/${t.tagId}`;
+      return `${t.tagId},,${url},${url},${url},${batch.id},"${batch.batchName}",${t.createdAt?.toISOString() || ''}`;
     }).join('\n');
     res.set('Content-Type', 'text/csv');
     res.set('Content-Disposition', `attachment; filename="safetag-batch-${id}.csv"`);

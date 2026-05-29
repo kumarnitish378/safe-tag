@@ -1,0 +1,91 @@
+<%- include('../layout/_head') %>
+
+<section class="section">
+  <div class="section-inner max-w-md">
+    <a href="/manufacturer/dashboard" class="text-sm text-brand font-semibold">← Dashboard</a>
+    <h1 class="text-3xl font-bold mt-2 mb-6">Complete payment</h1>
+
+    <!-- Order summary -->
+    <div class="card p-6 mb-5 space-y-3">
+      <div class="flex justify-between text-sm">
+        <span class="text-slate-500">Batch</span>
+        <span class="font-semibold"><%= batch.batch_name %></span>
+      </div>
+      <div class="flex justify-between text-sm">
+        <span class="text-slate-500">Tag IDs</span>
+        <span class="font-semibold"><%= batch.quantity.toLocaleString() %></span>
+      </div>
+      <div class="flex justify-between text-sm">
+        <span class="text-slate-500">Rate</span>
+        <span class="font-semibold">
+          <% if (batch.quantity <= 100) { %>₹5.00 / tag
+          <% } else if (batch.quantity <= 1000) { %>₹3.00 / tag
+          <% } else { %>₹1.50 / tag<% } %>
+        </span>
+      </div>
+      <hr class="border-slate-200 dark:border-slate-700" />
+      <div class="flex justify-between">
+        <span class="font-bold">Total</span>
+        <span class="text-2xl font-bold text-brand">
+          ₹<%= (batch.paid_amount / 100).toLocaleString('en-IN', { minimumFractionDigits: 2 }) %>
+        </span>
+      </div>
+    </div>
+
+    <!-- Hidden form to POST payment result for server-side verification -->
+    <form id="verifyForm" method="POST" action="/manufacturer/batch/<%= batch.id %>/pay-verify">
+      <%- include('../layout/_csrf') %>
+      <input type="hidden" name="razorpay_order_id" id="rzpOrderId" />
+      <input type="hidden" name="razorpay_payment_id" id="rzpPaymentId" />
+      <input type="hidden" name="razorpay_signature" id="rzpSignature" />
+    </form>
+
+    <button id="payBtn" class="btn-brand w-full justify-center text-lg py-3">
+      Pay ₹<%= (batch.paid_amount / 100).toLocaleString('en-IN', { minimumFractionDigits: 2 }) %> →
+    </button>
+    <p class="text-xs text-slate-500 text-center mt-3">
+      Secured by Razorpay · UPI, cards, net banking accepted
+    </p>
+  </div>
+</section>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+document.getElementById('payBtn').addEventListener('click', function () {
+  const btn = this;
+  btn.disabled = true;
+  btn.textContent = 'Opening payment…';
+
+  const options = {
+    key:         '<%= razorpayKeyId %>',
+    amount:      <%= batch.paid_amount %>,
+    currency:    'INR',
+    name:        'SafeTag',
+    description: 'Tag ID generation — <%= batch.batch_name %>',
+    order_id:    '<%= batch.razorpay_order_id %>',
+    prefill: {
+      email: '<%= mfrEmail %>',
+      name:  '<%= mfrName %>',
+    },
+    theme: { color: '#0D9488' },
+    handler: function (response) {
+      document.getElementById('rzpOrderId').value   = response.razorpay_order_id;
+      document.getElementById('rzpPaymentId').value = response.razorpay_payment_id;
+      document.getElementById('rzpSignature').value = response.razorpay_signature;
+      btn.textContent = 'Verifying payment…';
+      document.getElementById('verifyForm').submit();
+    },
+    modal: {
+      ondismiss: function () {
+        btn.disabled = false;
+        btn.textContent = 'Pay ₹<%= (batch.paid_amount / 100).toLocaleString("en-IN", { minimumFractionDigits: 2 }) %> →';
+      },
+    },
+  };
+
+  const rzp = new Razorpay(options);
+  rzp.open();
+});
+</script>
+
+<%- include('../layout/_foot') %>
