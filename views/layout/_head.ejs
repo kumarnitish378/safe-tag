@@ -19,7 +19,7 @@
   <%
     var _title = (typeof title !== 'undefined' && title) ? title : 'SafeTag — Scan. Know. Save a Life.';
     var _desc  = (typeof seoDesc !== 'undefined' && seoDesc) ? seoDesc
-               : 'SafeTag — India\'s QR + NFC emergency identity tag. One scan opens blood group, emergency contacts, and medical info in under 3 seconds. No app required.';
+               : 'India\'s QR + NFC emergency ID tag. One scan shows blood group, contacts & medical info in 3 seconds. No app needed. Ships across India from ₹149.';
     var _image = (typeof seoImage !== 'undefined' && seoImage) ? seoImage : '/static/images/websiteLogo.png';
   %>
 
@@ -221,11 +221,25 @@
     "url": "<%= baseUrl %>",
     "logo": "<%= baseUrl %>/static/images/websiteLogo.png",
     "description": "India's QR + NFC emergency identity tag for children, elderly, and pets.",
-    "sameAs": [
-      "https://instagram.com/safetag.in",
-      "https://facebook.com/safetag.in"
-    ],
     "contactPoint": { "@type": "ContactPoint", "email": "support@safe-tag.in", "contactType": "customer support" }
+  }
+  </script>
+
+  <!-- JSON-LD WebSite (enables Google Sitelinks Searchbox) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "SafeTag",
+    "url": "<%= baseUrl %>",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": {
+        "@type": "EntryPoint",
+        "urlTemplate": "<%= baseUrl %>/store?q={search_term_string}"
+      },
+      "query-input": "required name=search_term_string"
+    }
   }
   </script>
 
