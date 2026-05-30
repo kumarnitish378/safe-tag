@@ -73,41 +73,77 @@
 
       <!-- RIGHT: Emergency profile mockup -->
       <div class="hidden md:flex flex-col items-center gap-5">
-        <div class="lq-float-slow w-full max-w-xs">
-          <!-- Outer glow ring -->
-          <div class="grad-border rounded-2xl">
-            <div class="bg-white rounded-2xl shadow-2xl overflow-hidden">
-              <!-- Alert strip -->
-              <div style="background:#dc2626;color:#fff;padding:.5rem 1rem;font-size:.75rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;display:flex;align-items:center;gap:.4rem;">
-                <span>⚠️</span> Emergency Profile — SafeTag
+        <!-- Apple-liquid glass card -->
+        <div class="lq-float-slow w-full max-w-sm" style="filter:drop-shadow(0 32px 64px rgba(0,0,0,0.45));">
+          <div style="
+            background: rgba(255,255,255,0.11);
+            backdrop-filter: blur(40px) saturate(1.8);
+            -webkit-backdrop-filter: blur(40px) saturate(1.8);
+            border: 1px solid rgba(255,255,255,0.18);
+            border-radius: 28px;
+            padding: 24px 22px 20px;
+            display: flex; flex-direction: column; gap: 16px;
+          ">
+
+            <!-- Top label — subtle, not aggressive -->
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <span style="font-size:.7rem;font-weight:700;letter-spacing:.1em;color:rgba(255,255,255,0.45);text-transform:uppercase;">Emergency Profile</span>
+              <span style="display:flex;align-items:center;gap:5px;background:rgba(239,68,68,0.18);border:1px solid rgba(239,68,68,0.3);border-radius:99px;padding:3px 10px;">
+                <span style="width:6px;height:6px;border-radius:50%;background:#ef4444;display:inline-block;animation:badge-pulse 2s infinite;"></span>
+                <span style="font-size:.68rem;font-weight:700;color:#fca5a5;letter-spacing:.04em;">LIVE</span>
+              </span>
+            </div>
+
+            <!-- Identity -->
+            <div style="display:flex;align-items:center;gap:14px;">
+              <div class="pulse-ring-wrap" style="width:58px;height:58px;flex-shrink:0;">
+                <div class="lq-pulse"></div>
+                <div class="lq-pulse p2"></div>
+                <div style="width:58px;height:58px;border-radius:50%;background:rgba(13,148,136,0.2);border:2px solid rgba(13,148,136,0.5);display:flex;align-items:center;justify-content:center;font-size:1.75rem;position:relative;z-index:1;backdrop-filter:blur(8px);">👧</div>
               </div>
-              <!-- Identity -->
-              <div style="padding:1rem 1rem .75rem;display:flex;align-items:center;gap:.85rem;">
-                <div class="pulse-ring-wrap" style="width:62px;height:62px;flex-shrink:0;">
-                  <div class="lq-pulse"></div>
-                  <div class="lq-pulse p2"></div>
-                  <div style="width:62px;height:62px;border-radius:50%;background:#f0fdfa;border:2.5px solid #0D9488;display:flex;align-items:center;justify-content:center;font-size:1.9rem;position:relative;z-index:1;">👧</div>
+              <div style="flex:1;">
+                <div style="font-size:1.2rem;font-weight:700;color:#fff;line-height:1.25;letter-spacing:-.01em;">Aarav Sharma</div>
+                <div style="font-size:.78rem;color:rgba(255,255,255,0.5);margin-top:2px;">👨‍👩‍👧 Guardian: Priya Sharma</div>
+                <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;">
+                  <span style="background:rgba(239,68,68,0.2);border:1px solid rgba(239,68,68,0.4);color:#fca5a5;border-radius:99px;padding:3px 10px;font-size:.75rem;font-weight:700;font-family:monospace;letter-spacing:.03em;">O+</span>
+                  <span style="background:rgba(13,148,136,0.15);border:1px solid rgba(13,148,136,0.3);color:#5eead4;border-radius:99px;padding:3px 10px;font-size:.73rem;font-weight:600;">Age 8</span>
+                  <span style="background:rgba(13,148,136,0.15);border:1px solid rgba(13,148,136,0.3);color:#5eead4;border-radius:99px;padding:3px 10px;font-size:.73rem;font-weight:600;">Child</span>
                 </div>
-                <div>
-                  <div style="font-size:1.15rem;font-weight:800;color:#0a2342;line-height:1.2;">Aarav Sharma</div>
-                  <div style="display:flex;gap:.35rem;margin-top:.4rem;flex-wrap:wrap;align-items:center;">
-                    <span style="background:#dc2626;color:#fff;border-radius:99px;padding:.15rem .65rem;font-size:.82rem;font-weight:900;font-family:monospace;">O+</span>
-                    <span style="background:#f0fdfa;color:#0f766e;border-radius:99px;padding:.15rem .6rem;font-size:.72rem;font-weight:600;">Age 8</span>
-                    <span style="background:#f0fdfa;color:#0f766e;border-radius:99px;padding:.15rem .6rem;font-size:.72rem;font-weight:600;">Child</span>
-                  </div>
-                  <div style="font-size:.8rem;color:#64748b;margin-top:.3rem;">👨‍👩‍👧 Parent: Priya Sharma</div>
-                </div>
-              </div>
-              <!-- Allergy -->
-              <div style="margin:0 1rem;background:#fef3c7;border:1px solid #fbbf24;border-radius:8px;padding:.45rem .75rem;font-size:.75rem;color:#92400e;font-weight:600;">
-                ⚠️ Allergies: Peanuts, Penicillin
-              </div>
-              <!-- Buttons -->
-              <div style="padding:.75rem 1rem 1rem;display:flex;flex-direction:column;gap:.45rem;">
-                <div style="background:#16a34a;color:#fff;border-radius:10px;padding:.7rem;text-align:center;font-weight:700;font-size:.92rem;">📞 Call Emergency Contact</div>
-                <div style="background:#25D366;color:#fff;border-radius:10px;padding:.6rem;text-align:center;font-weight:600;font-size:.85rem;">💬 Send Location via WhatsApp</div>
               </div>
             </div>
+
+            <!-- Divider -->
+            <div style="height:1px;background:rgba(255,255,255,0.08);border-radius:1px;"></div>
+
+            <!-- Allergy pill — soft, not a box -->
+            <div style="display:flex;align-items:center;gap:8px;background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.25);border-radius:12px;padding:9px 12px;">
+              <span style="font-size:1rem;flex-shrink:0;">⚠️</span>
+              <div>
+                <div style="font-size:.67rem;font-weight:700;color:rgba(251,191,36,0.7);text-transform:uppercase;letter-spacing:.07em;margin-bottom:1px;">Allergies</div>
+                <div style="font-size:.82rem;font-weight:600;color:#fef3c7;">Peanuts · Penicillin</div>
+              </div>
+            </div>
+
+            <!-- Action buttons — glass style -->
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              <div style="
+                background: rgba(22,163,74,0.25);
+                border: 1px solid rgba(22,163,74,0.4);
+                border-radius: 14px; padding: 11px;
+                text-align:center; font-weight:700; font-size:.88rem;
+                color:#86efac; letter-spacing:.01em;
+                backdrop-filter:blur(8px);
+              ">📞 Call Emergency Contact</div>
+              <div style="
+                background: rgba(37,211,102,0.18);
+                border: 1px solid rgba(37,211,102,0.3);
+                border-radius: 14px; padding: 10px;
+                text-align:center; font-weight:600; font-size:.82rem;
+                color:#86efac; letter-spacing:.01em;
+                backdrop-filter:blur(8px);
+              ">💬 Send Location via WhatsApp</div>
+            </div>
+
           </div>
         </div>
         <div class="text-center">
