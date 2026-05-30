@@ -289,6 +289,25 @@ html.dark .lq-nav button.navlink:hover {
 }
 .badge-pulse { animation: badge-pulse 2.5s ease-in-out infinite; }
 
+/* Dark mode: sections with light bg that use inline style — force text visibility */
+html.dark .bg-slate-50,
+html.dark .bg-slate-100,
+html.dark section.bg-slate-50,
+html.dark section.bg-slate-100 {
+  background: #0f172a !important;
+}
+html.dark .bg-slate-50 h1, html.dark .bg-slate-50 h2,
+html.dark .bg-slate-50 h3, html.dark .bg-slate-50 h4,
+html.dark section.bg-slate-50 h1, html.dark section.bg-slate-50 h2,
+html.dark section.bg-slate-50 h3 {
+  color: #f1f5f9 !important;
+}
+html.dark .bg-slate-50 p, html.dark section.bg-slate-50 p,
+html.dark .bg-slate-50 .text-slate-500,
+html.dark .bg-slate-50 .text-slate-600 {
+  color: #94a3b8 !important;
+}
+
 /* ── Gradient text ── */
 .grad-txt {
   background: linear-gradient(135deg, #0D9488 0%, #5eead4 60%, #0D9488 100%);
