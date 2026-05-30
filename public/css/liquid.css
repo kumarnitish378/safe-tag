@@ -220,6 +220,27 @@ html.dark .lq-nav.scrolled {
   box-shadow: 0 4px 24px rgba(0,0,0,0.35);
 }
 
+/* ── Navbar link contrast — light mode ── */
+.lq-nav a.navlink,
+.lq-nav button.navlink {
+  color: #0f172a;
+  font-weight: 600;
+}
+.lq-nav a.navlink:hover,
+.lq-nav button.navlink:hover {
+  background: rgba(13,148,136,0.08);
+  color: #0D9488;
+}
+html.dark .lq-nav a.navlink,
+html.dark .lq-nav button.navlink {
+  color: #e2e8f0;
+}
+html.dark .lq-nav a.navlink:hover,
+html.dark .lq-nav button.navlink:hover {
+  background: rgba(255,255,255,0.07);
+  color: #5eead4;
+}
+
 /* ── Stat counter card ── */
 .stat-num {
   font-variant-numeric: tabular-nums;
