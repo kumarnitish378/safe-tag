@@ -865,7 +865,7 @@ app.post('/manufacturer/logout', (req, res) => {
 
 app.post('/manufacturer/request-approval', requireManufacturer, async (req, res) => {
   const mfr = req.session.manufacturer;
-  const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'nitish.ns377@gmail.com';
+  const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'nitish.ns378@gmail.com';
   const SMTP_USER = process.env.SMTP_USER || '';
   const SMTP_PASS = process.env.SMTP_PASS || '';
 
@@ -877,6 +877,7 @@ app.post('/manufacturer/request-approval', requireManufacturer, async (req, res)
         port: parseInt(process.env.SMTP_PORT || '587', 10),
         secure: false,
         auth: { user: SMTP_USER, pass: SMTP_PASS },
+        tls: { rejectUnauthorized: false },
       });
       await transporter.sendMail({
         from: `"SafeTag Platform" <${SMTP_USER}>`,
@@ -895,11 +896,12 @@ app.post('/manufacturer/request-approval', requireManufacturer, async (req, res)
           `Review at: ${BASE_URL}/admin/manufacturers`,
         ].join('\n'),
       });
+      console.log(`[Approval Request] email sent to ${ADMIN_EMAIL} for ${mfr.business_name}`);
     } catch (e) {
-      console.error('Approval email error:', e.message);
+      console.error('[Approval Request] email FAILED:', e.message);
     }
   } else {
-    console.log(`[Approval Request] ${mfr.business_name} <${mfr.email}> — configure SMTP to send email.`);
+    console.log(`[Approval Request] SMTP not configured — SMTP_USER or SMTP_PASS missing.`);
   }
 
   req.flash('success', 'Approval request sent to admin. You will be notified once reviewed.');
