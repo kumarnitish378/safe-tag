@@ -28,6 +28,15 @@ jobs:
       - name: Generate Prisma client
         run: npx prisma generate
 
+      - name: Run tests
+        run: npm test -- --no-coverage --forceExit
+        env:
+          NODE_ENV: test
+          NODE_SESSION_SECRET: ci-test-secret-at-least-32-chars-long
+          DATABASE_URL: file:./prisma/test.db
+          BASE_URL: http://localhost:3000
+          DUMMY_PAYMENT: 'true'
+
       - name: Build Tailwind CSS (dist)
         run: npx tailwindcss -i ./public/css/input.css -o ./public/css/safetag.build.css --minify
 

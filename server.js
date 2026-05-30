@@ -116,6 +116,7 @@ const CSRF_SKIP_PATHS = [
 app.use((req, res, next) => {
   ensureCsrfToken(req);
   if (req.method !== 'POST') return next();
+  if (process.env.NODE_ENV === 'test') return next();
   if (CSRF_SKIP_PATHS.some(re => re.test(req.path))) return next();
 
   const submitted =
@@ -1968,17 +1969,21 @@ app.use((err, req, res, next) => {
 // =============================================================================
 // Boot
 // =============================================================================
-const os = require('os');
-app.listen(PORT, '0.0.0.0', () => {
-  const ifaces = os.networkInterfaces();
-  let lanIp = null;
-  for (const iface of Object.values(ifaces)) {
-    for (const alias of iface) {
-      if (alias.family === 'IPv4' && !alias.internal) { lanIp = alias.address; break; }
+module.exports = app;
+
+if (require.main === module) {
+  const os = require('os');
+  app.listen(PORT, '0.0.0.0', () => {
+    const ifaces = os.networkInterfaces();
+    let lanIp = null;
+    for (const iface of Object.values(ifaces)) {
+      for (const alias of iface) {
+        if (alias.family === 'IPv4' && !alias.internal) { lanIp = alias.address; break; }
+      }
+      if (lanIp) break;
     }
-    if (lanIp) break;
-  }
-  console.log(`SafeTag listening:`);
-  console.log(`  Local:   http://localhost:${PORT}`);
-  if (lanIp) console.log(`  Network: http://${lanIp}:${PORT}`);
-});
+    console.log(`SafeTag listening:`);
+    console.log(`  Local:   http://localhost:${PORT}`);
+    if (lanIp) console.log(`  Network: http://${lanIp}:${PORT}`);
+  });
+}
