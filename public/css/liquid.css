@@ -289,6 +289,25 @@ html.dark .lq-nav button.navlink:hover {
 }
 .badge-pulse { animation: badge-pulse 2.5s ease-in-out infinite; }
 
+/* Dark mode: sections with light bg that use inline style — force text visibility */
+html.dark .bg-slate-50,
+html.dark .bg-slate-100,
+html.dark section.bg-slate-50,
+html.dark section.bg-slate-100 {
+  background: #0f172a !important;
+}
+html.dark .bg-slate-50 h1, html.dark .bg-slate-50 h2,
+html.dark .bg-slate-50 h3, html.dark .bg-slate-50 h4,
+html.dark section.bg-slate-50 h1, html.dark section.bg-slate-50 h2,
+html.dark section.bg-slate-50 h3 {
+  color: #f1f5f9 !important;
+}
+html.dark .bg-slate-50 p, html.dark section.bg-slate-50 p,
+html.dark .bg-slate-50 .text-slate-500,
+html.dark .bg-slate-50 .text-slate-600 {
+  color: #94a3b8 !important;
+}
+
 /* ── Gradient text ── */
 .grad-txt {
   background: linear-gradient(135deg, #0D9488 0%, #5eead4 60%, #0D9488 100%);
@@ -298,3 +317,135 @@ html.dark .lq-nav button.navlink:hover {
   -webkit-text-fill-color: transparent;
   animation: shimmer-flow 4s linear infinite;
 }
+
+/* ============================================================
+   DARK MODE REFINEMENTS
+   ============================================================ */
+
+html.dark .glass-light {
+  background: rgba(15,23,42,0.82);
+  border-color: rgba(13,148,136,0.18);
+  box-shadow: 0 2px 24px rgba(0,0,0,0.4), 0 1px 4px rgba(0,0,0,0.3);
+}
+html.dark .glass-light:hover {
+  background: rgba(15,23,42,0.92);
+  border-color: rgba(13,148,136,0.32);
+  box-shadow: 0 12px 48px rgba(0,0,0,0.5), 0 0 0 1px rgba(13,148,136,0.2);
+}
+
+/* Glass on dark bg — slightly brighter in dark mode so it stands out */
+html.dark .glass {
+  background: rgba(255,255,255,0.06);
+  border-color: rgba(255,255,255,0.1);
+}
+html.dark .glass:hover {
+  background: rgba(255,255,255,0.1);
+  border-color: rgba(255,255,255,0.18);
+}
+
+/* Blobs — tone down in dark mode (they were too vivid) */
+html.dark .lq-blob { opacity: 0.14 !important; }
+
+/* Table rows in dark mode inside glass cards */
+html.dark .glass-light .table th { background: rgba(15,23,42,0.6); }
+html.dark .glass-light .table td { border-color: rgba(51,65,85,0.5); }
+html.dark .glass-light .table tr:hover td { background: rgba(13,148,136,0.06); }
+
+/* Pills in dark mode */
+html.dark .pill-success { background: rgba(20,83,45,0.6); color: #86efac; }
+html.dark .pill-warning { background: rgba(120,53,15,0.6); color: #fcd34d; }
+html.dark .pill-danger  { background: rgba(127,29,29,0.6); color: #fca5a5; }
+html.dark .pill-brand   { background: rgba(13,148,136,0.2); color: #5eead4; }
+html.dark .pill-mono    { background: rgba(30,41,59,0.8);   color: #cbd5e1; }
+
+/* Flash messages in dark mode */
+html.dark .flash-error   { background: rgba(127,29,29,0.5);  border-left: 3px solid #ef4444; color: #fecaca; }
+html.dark .flash-success { background: rgba(20,83,45,0.5);   border-left: 3px solid #22c55e; color: #bbf7d0; }
+html.dark .flash-info    { background: rgba(30,58,95,0.5);   border-left: 3px solid #3b82f6; color: #bfdbfe; }
+
+/* ============================================================
+   MOBILE RESPONSIVENESS
+   ============================================================ */
+
+/* Prevent blobs from causing horizontal overflow on mobile */
+@media (max-width: 768px) {
+  .lq-blob {
+    opacity: 0.12 !important;
+    filter: blur(48px);
+  }
+  /* Scale down blobs on mobile so they don't dominate */
+  .lq-blob[style*="width:520px"] { width: 280px !important; height: 280px !important; }
+  .lq-blob[style*="width:420px"] { width: 220px !important; height: 220px !important; }
+  .lq-blob[style*="width:400px"] { width: 200px !important; height: 200px !important; }
+  .lq-blob[style*="width:380px"] { width: 180px !important; height: 180px !important; }
+  .lq-blob[style*="width:360px"] { width: 180px !important; height: 180px !important; }
+  .lq-blob[style*="width:300px"] { width: 150px !important; height: 150px !important; }
+  .lq-blob[style*="width:280px"] { width: 140px !important; height: 140px !important; }
+
+  /* Tilt disabled on touch (no hover) — reset transform */
+  .tilt-card { transform: none !important; }
+
+  /* Glass cards — slightly more opaque on mobile for readability */
+  .glass-light {
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+  html.dark .glass-light {
+    background: rgba(15,23,42,0.92);
+  }
+
+  /* Reveal animations — shorter travel on mobile */
+  .reveal { transform: translateY(20px); }
+  .reveal-left { transform: translateX(-20px); }
+  .reveal-right { transform: translateX(20px); }
+
+  /* Nav links hidden on mobile — hamburger handles it */
+  .lq-nav .navlink { font-size: 0.9rem; }
+}
+
+/* Mobile nav drawer */
+#mobile-menu {
+  display: none;
+  flex-direction: column;
+  gap: 2px;
+  padding: 12px 16px 16px;
+  border-top: 1px solid rgba(226,232,240,0.6);
+}
+html.dark #mobile-menu {
+  border-color: rgba(51,65,85,0.5);
+}
+#mobile-menu.open { display: flex; }
+#mobile-menu a, #mobile-menu button {
+  padding: .6rem .8rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: .95rem;
+  color: #0f172a;
+  text-decoration: none;
+  transition: background .15s;
+  text-align: left;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+#mobile-menu a:hover, #mobile-menu button:hover {
+  background: rgba(13,148,136,0.08);
+  color: #0D9488;
+}
+html.dark #mobile-menu a,
+html.dark #mobile-menu button { color: #e2e8f0; }
+html.dark #mobile-menu a:hover,
+html.dark #mobile-menu button:hover { background: rgba(255,255,255,0.07); color: #5eead4; }
+
+/* Hamburger icon */
+.hamburger { display: flex; flex-direction: column; gap: 5px; width: 22px; cursor: pointer; }
+.hamburger span {
+  display: block; height: 2px; border-radius: 2px;
+  background: #0f172a; transition: all .25s;
+}
+html.dark .hamburger span { background: #e2e8f0; }
+.hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+.hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
