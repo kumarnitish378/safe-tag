@@ -878,8 +878,11 @@ app.post('/manufacturer/request-approval', requireManufacturer, async (req, res)
         secure: false,
         auth: { user: SMTP_USER, pass: SMTP_PASS },
         tls: { rejectUnauthorized: false },
+        connectionTimeout: 6000,
+        greetingTimeout: 6000,
+        socketTimeout: 8000,
       });
-      await transporter.sendMail({
+      const mailOptions = {
         from: `"SafeTag Platform" <${SMTP_USER}>`,
         to: ADMIN_EMAIL,
         subject: `Manufacturer Approval Request — ${mfr.business_name}`,
@@ -895,7 +898,11 @@ app.post('/manufacturer/request-approval', requireManufacturer, async (req, res)
           ``,
           `Review at: ${BASE_URL}/admin/manufacturers`,
         ].join('\n'),
-      });
+      };
+      await Promise.race([
+        transporter.sendMail(mailOptions),
+        new Promise((_, reject) => setTimeout(() => reject(new Error('SMTP timeout (10s)')), 10000)),
+      ]);
       console.log(`[Approval Request] email sent to ${ADMIN_EMAIL} for ${mfr.business_name}`);
     } catch (e) {
       console.error('[Approval Request] email FAILED:', e.message);
