@@ -81,9 +81,9 @@ app.use('/static', express.static(path.join(__dirname, 'public'), {
 }));
 app.get('/favicon.ico', (req, res) => res.redirect('/static/favicon.png'));
 
-// SECURE_COOKIES=true only in real HTTPS environments (Render sets this automatically via NODE_ENV).
-// Never set NODE_ENV=production on localhost — secure cookies require HTTPS and will break sessions.
-const SECURE_COOKIES = process.env.NODE_ENV === 'production' && process.env.LOCALHOST_DEV !== 'true';
+// Secure cookies require HTTPS. Set SECURE_COOKIES=true only in Render env vars (never locally).
+// NODE_ENV alone is NOT used — running NODE_ENV=production on localhost (HTTP) breaks sessions.
+const SECURE_COOKIES = process.env.SECURE_COOKIES === 'true';
 app.use(session({
   secret: SESSION_SECRET,
   resave: false,
@@ -122,7 +122,8 @@ app.use((req, res, next) => {
     (req.body && (req.body._csrf || req.body.csrf_token)) ||
     req.headers['x-csrf-token'];
   if (!submitted || submitted !== req.session.csrfToken) {
-    console.warn('[CSRF] FAIL path=%s submitted=%s session=%s', req.path, submitted, req.session.csrfToken);
+    console.warn('[CSRF] FAIL path=%s cookie=%s sessionId=%s', req.path,
+      req.headers.cookie ? 'PRESENT' : 'MISSING', req.sessionID);
     req.session.csrfToken = crypto.randomBytes(24).toString('hex');
     req.flash('error', 'Your session expired. Please reload the page and try again.');
     return res.redirect(req.get('Referer') || '/');

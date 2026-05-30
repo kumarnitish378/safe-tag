@@ -3,7 +3,7 @@ services:
     name: safe-tag
     runtime: node
     plan: free
-    buildCommand: npm ci --include=dev && npx prisma generate && npx tailwindcss -i ./public/css/input.css -o ./public/css/safetag.build.css --minify && npx prisma db push
+    buildCommand: npm ci --include=dev && node scripts/patch-schema-for-prod.js && npx prisma generate && npx tailwindcss -i ./public/css/input.css -o ./public/css/safetag.build.css --minify && npx prisma db push
     startCommand: node server.js
     envVars:
       - key: NODE_ENV
