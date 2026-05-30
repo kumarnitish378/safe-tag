@@ -882,22 +882,134 @@ app.post('/manufacturer/request-approval', requireManufacturer, async (req, res)
         greetingTimeout: 6000,
         socketTimeout: 8000,
       });
+      const reviewUrl = `${BASE_URL}/admin/manufacturers`;
       const mailOptions = {
         from: `"SafeTag Platform" <${SMTP_USER}>`,
         to: ADMIN_EMAIL,
         subject: `Manufacturer Approval Request — ${mfr.business_name}`,
         text: [
-          `A manufacturer has requested approval on SafeTag.`,
+          `Manufacturer Approval Request`,
           ``,
           `Business Name : ${mfr.business_name}`,
           `Email         : ${mfr.email}`,
           `Mobile        : ${mfr.mobile}`,
           `Address       : ${mfr.address || '—'}`,
           `Description   : ${mfr.description || '—'}`,
-          `Registered    : ${mfr.created_at}`,
+          `Registered    : ${new Date(mfr.created_at).toLocaleString('en-IN')}`,
           ``,
-          `Review at: ${BASE_URL}/admin/manufacturers`,
+          `Review at: ${reviewUrl}`,
         ].join('\n'),
+        html: `<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/></head>
+<body style="margin:0;padding:0;background:#f1f5f9;font-family:'Segoe UI',Arial,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f1f5f9;padding:32px 0;">
+    <tr><td align="center">
+      <table width="560" cellpadding="0" cellspacing="0" style="max-width:560px;width:100%;background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.08);">
+
+        <!-- Header -->
+        <tr>
+          <td style="background:#0A2342;padding:28px 32px;text-align:center;">
+            <table cellpadding="0" cellspacing="0" style="margin:0 auto;">
+              <tr>
+                <td style="padding-right:10px;vertical-align:middle;">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/>
+                    <circle cx="7" cy="7" r="1" fill="white" stroke="none"/>
+                  </svg>
+                </td>
+                <td style="color:#ffffff;font-size:22px;font-weight:700;vertical-align:middle;letter-spacing:-0.3px;">SafeTag</td>
+              </tr>
+            </table>
+            <p style="color:#5eead4;margin:8px 0 0;font-size:13px;">Admin Notification</p>
+          </td>
+        </tr>
+
+        <!-- Alert banner -->
+        <tr>
+          <td style="background:#0D9488;padding:14px 32px;">
+            <p style="margin:0;color:#ffffff;font-size:15px;font-weight:600;">
+              📋 New Manufacturer Approval Request
+            </p>
+          </td>
+        </tr>
+
+        <!-- Body -->
+        <tr>
+          <td style="padding:28px 32px 8px;">
+            <p style="margin:0 0 20px;color:#475569;font-size:14px;line-height:1.6;">
+              A manufacturer has submitted an approval request on SafeTag and is waiting for your review.
+            </p>
+
+            <!-- Info card -->
+            <table width="100%" cellpadding="0" cellspacing="0" style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;overflow:hidden;margin-bottom:24px;">
+              <tr>
+                <td style="padding:16px 20px;border-bottom:1px solid #e2e8f0;">
+                  <p style="margin:0;font-size:11px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:0.06em;">Business Name</p>
+                  <p style="margin:4px 0 0;font-size:16px;font-weight:700;color:#0A2342;">${mfr.business_name}</p>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding:0;">
+                  <table width="100%" cellpadding="0" cellspacing="0">
+                    <tr>
+                      <td width="50%" style="padding:14px 20px;border-bottom:1px solid #e2e8f0;border-right:1px solid #e2e8f0;vertical-align:top;">
+                        <p style="margin:0;font-size:11px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:0.06em;">Email</p>
+                        <p style="margin:4px 0 0;font-size:13px;color:#0A2342;">${mfr.email}</p>
+                      </td>
+                      <td width="50%" style="padding:14px 20px;border-bottom:1px solid #e2e8f0;vertical-align:top;">
+                        <p style="margin:0;font-size:11px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:0.06em;">Mobile</p>
+                        <p style="margin:4px 0 0;font-size:13px;color:#0A2342;">${mfr.mobile}</p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td width="50%" style="padding:14px 20px;border-bottom:1px solid #e2e8f0;border-right:1px solid #e2e8f0;vertical-align:top;">
+                        <p style="margin:0;font-size:11px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:0.06em;">Address</p>
+                        <p style="margin:4px 0 0;font-size:13px;color:#0A2342;">${mfr.address || '—'}</p>
+                      </td>
+                      <td width="50%" style="padding:14px 20px;border-bottom:1px solid #e2e8f0;vertical-align:top;">
+                        <p style="margin:0;font-size:11px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:0.06em;">Registered</p>
+                        <p style="margin:4px 0 0;font-size:13px;color:#0A2342;">${new Date(mfr.created_at).toLocaleString('en-IN')}</p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td colspan="2" style="padding:14px 20px;vertical-align:top;">
+                        <p style="margin:0;font-size:11px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:0.06em;">Description</p>
+                        <p style="margin:4px 0 0;font-size:13px;color:#0A2342;">${mfr.description || '—'}</p>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+
+            <!-- CTA button -->
+            <table cellpadding="0" cellspacing="0" style="margin:0 auto 28px;">
+              <tr>
+                <td style="background:#0D9488;border-radius:8px;text-align:center;">
+                  <a href="${reviewUrl}" style="display:inline-block;padding:13px 32px;color:#ffffff;font-size:15px;font-weight:700;text-decoration:none;letter-spacing:0.02em;">
+                    Review &amp; Approve →
+                  </a>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <!-- Footer -->
+        <tr>
+          <td style="background:#f8fafc;border-top:1px solid #e2e8f0;padding:16px 32px;text-align:center;">
+            <p style="margin:0;font-size:12px;color:#94a3b8;">
+              SafeTag Admin · <a href="${BASE_URL}" style="color:#0D9488;text-decoration:none;">${BASE_URL}</a>
+            </p>
+          </td>
+        </tr>
+
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>`,
       };
       await Promise.race([
         transporter.sendMail(mailOptions),
