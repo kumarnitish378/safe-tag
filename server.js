@@ -81,13 +81,16 @@ app.use('/static', express.static(path.join(__dirname, 'public'), {
 }));
 app.get('/favicon.ico', (req, res) => res.redirect('/static/favicon.png'));
 
+// SECURE_COOKIES=true only in real HTTPS environments (Render sets this automatically via NODE_ENV).
+// Never set NODE_ENV=production on localhost — secure cookies require HTTPS and will break sessions.
+const SECURE_COOKIES = process.env.NODE_ENV === 'production' && process.env.LOCALHOST_DEV !== 'true';
 app.use(session({
   secret: SESSION_SECRET,
   resave: false,
   saveUninitialized: true,
   cookie: {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
+    secure: SECURE_COOKIES,
     sameSite: 'lax',
     maxAge: 1000 * 60 * 60 * 24 * 30, // 30 days
   },
