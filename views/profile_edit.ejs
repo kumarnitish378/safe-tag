@@ -12,7 +12,7 @@
 
     <form method="POST" action="/profile/edit/<%= tag_id %>" class="space-y-5">
       <%- include('layout/_csrf') %>
-      <div class="card p-5 space-y-4">
+      <div class="glass-light p-5 space-y-4 reveal">
         <div><label class="label">Full Name</label><input class="input" name="name" required value="<%= profile.name||'' %>" /></div>
         <div class="grid grid-cols-2 gap-3">
           <div><label class="label">Age</label><input class="input" type="number" name="age" min="1" max="120" value="<%= profile.age||'' %>" /></div>
@@ -34,7 +34,7 @@
         </div>
       </div>
 
-      <div class="card p-5 space-y-4">
+      <div class="glass-light p-5 space-y-4 reveal">
         <div><label class="label">Primary Mobile (10-digit)</label><input class="input" name="mobile_primary" value="<%= profile.mobile_primary||'' %>" /></div>
         <div><label class="label">Secondary Mobile</label><input class="input" name="mobile_secondary" value="<%= profile.mobile_secondary||'' %>" /></div>
         <div><label class="label">Owner WhatsApp</label><input class="input" name="owner_whatsapp" value="<%= profile.owner_whatsapp||'' %>" /></div>
@@ -46,7 +46,7 @@
         </div>
       </div>
 
-      <div class="card p-5 space-y-4">
+      <div class="glass-light p-5 space-y-4 reveal">
         <div><label class="label">Allergies</label><textarea class="input" name="allergies" rows="2"><%= profile.allergies||'' %></textarea></div>
         <div><label class="label">Medical Conditions</label><textarea class="input" name="medical_conditions" rows="2"><%= profile.medical_conditions||'' %></textarea></div>
         <div><label class="label">Medications</label><textarea class="input" name="medications" rows="2"><%= profile.medications||'' %></textarea></div>
@@ -54,7 +54,7 @@
       </div>
 
       <!-- Emergency Page Theme -->
-      <div class="card p-5 space-y-3">
+      <div class="glass-light p-5 space-y-3 reveal">
         <h2 class="font-semibold">Emergency Page Theme</h2>
         <p class="text-xs text-slate-500">How your emergency profile looks when someone scans your tag.</p>
         <input type="hidden" name="theme" id="themeInput" value="<%= profile.theme||'classic' %>" />
@@ -84,8 +84,8 @@
       </div>
 
       <div class="flex gap-2">
-        <button class="btn-brand flex-1 justify-center">Save changes</button>
-        <a href="/emergency/<%= tag_id %>" target="_blank" class="btn-outline">Preview</a>
+        <button class="btn-brand btn-lq flex-1 justify-center">Save changes</button>
+        <a href="/emergency/<%= tag_id %>" target="_blank" class="btn-outline btn-lq">Preview</a>
       </div>
     </form>
 

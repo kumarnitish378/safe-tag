@@ -3,9 +3,9 @@
 <section class="section">
   <div class="section-inner">
     <a href="/admin" class="text-sm text-brand font-semibold">← Admin dashboard</a>
-    <h1 class="text-3xl font-bold mt-2 mb-6">Customers</h1>
+    <h1 class="text-3xl font-bold mt-2 mb-6 reveal">Customers</h1>
 
-    <div class="card overflow-hidden">
+    <div class="glass-light overflow-hidden reveal">
       <table class="table">
         <thead><tr><th>#</th><th>Email</th><th>Name</th><th>Mobile</th><th>Tags</th><th>Orders</th><th>Status</th><th>Actions</th></tr></thead>
         <tbody>
@@ -23,10 +23,10 @@
               <td>
                 <% if (u.is_active) { %>
                   <form method="POST" action="/admin/users/<%= u.id %>/deactivate">
-      <%- include('../layout/_csrf') %><button class="btn-outline text-xs py-1 px-2">Deactivate</button></form>
+      <%- include('../layout/_csrf') %><button class="btn-outline btn-lq text-xs py-1 px-2">Deactivate</button></form>
                 <% } else { %>
                   <form method="POST" action="/admin/users/<%= u.id %>/activate">
-      <%- include('../layout/_csrf') %><button class="btn-brand text-xs py-1 px-2">Activate</button></form>
+      <%- include('../layout/_csrf') %><button class="btn-brand btn-lq text-xs py-1 px-2">Activate</button></form>
                 <% } %>
               </td>
             </tr>

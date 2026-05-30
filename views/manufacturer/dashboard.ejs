@@ -2,26 +2,26 @@
 
 <section class="section">
   <div class="section-inner">
-    <div class="flex items-center justify-between flex-wrap gap-2 mb-6">
+    <div class="flex items-center justify-between flex-wrap gap-2 mb-6 reveal">
       <div>
         <h1 class="text-3xl font-bold"><%= manufacturer.business_name %></h1>
         <p class="text-sm text-slate-500"><%= manufacturer.email %> · <%= manufacturer.mobile %></p>
       </div>
       <div class="flex gap-2">
-        <a class="btn-outline text-sm" href="/manufacturer/listings">My Listings</a>
-        <a class="btn-brand text-sm" href="/manufacturer/batch/new">+ New Batch</a>
+        <a class="btn-outline btn-lq text-sm" href="/manufacturer/listings">My Listings</a>
+        <a class="btn-brand btn-lq text-sm" href="/manufacturer/batch/new">+ New Batch</a>
       </div>
     </div>
 
     <% if (!manufacturer.is_approved) { %>
-      <div class="card p-5 mb-4 border border-blue-200 bg-blue-50 flex flex-col sm:flex-row sm:items-center gap-4">
+      <div class="glass-light p-5 mb-4 border border-blue-200 bg-blue-50 flex flex-col sm:flex-row sm:items-center gap-4">
         <div class="flex-1">
           <p class="font-semibold text-navy">Your account is pending admin approval.</p>
           <p class="text-sm text-slate-500 mt-1">You can prepare batches and listings now, but they won't go live until SafeTag admin approves you. Click the button to send a request.</p>
         </div>
         <form method="POST" action="/manufacturer/request-approval" class="shrink-0">
           <%- include('../layout/_csrf') %>
-          <button class="btn-brand text-sm whitespace-nowrap">📧 Request Approval</button>
+          <button class="btn-brand btn-lq text-sm whitespace-nowrap">📧 Request Approval</button>
         </form>
       </div>
     <% } %>
@@ -32,16 +32,16 @@
     %>
 
     <div class="grid sm:grid-cols-3 gap-3 mb-6">
-      <div class="card p-5"><div class="text-xs uppercase font-bold text-slate-500">Total tags produced</div><div class="text-3xl font-sora font-bold text-navy"><%= totalTags %></div></div>
-      <div class="card p-5"><div class="text-xs uppercase font-bold text-slate-500">Activated</div><div class="text-3xl font-sora font-bold text-success"><%= totalActive %></div><div class="text-xs"><%= rate %>%</div></div>
-      <div class="card p-5"><div class="text-xs uppercase font-bold text-slate-500">Listings</div><div class="text-3xl font-sora font-bold text-navy"><%= listings.length %></div></div>
+      <div class="glass-light p-5 reveal d1"><div class="text-xs uppercase font-bold text-slate-500">Total tags produced</div><div class="text-3xl font-sora font-bold text-navy" data-count="<%= totalTags %>"><%= totalTags %></div></div>
+      <div class="glass-light p-5 reveal d2"><div class="text-xs uppercase font-bold text-slate-500">Activated</div><div class="text-3xl font-sora font-bold text-success" data-count="<%= totalActive %>"><%= totalActive %></div><div class="text-xs"><%= rate %>%</div></div>
+      <div class="glass-light p-5 reveal d3"><div class="text-xs uppercase font-bold text-slate-500">Listings</div><div class="text-3xl font-sora font-bold text-navy" data-count="<%= listings.length %>"><%= listings.length %></div></div>
     </div>
 
     <h2 class="text-xl font-bold mb-3">Batches</h2>
     <% if (!batches.length) { %>
-      <div class="card p-6 text-center">No batches yet. <a class="text-brand font-semibold" href="/manufacturer/batch/new">Create your first batch</a>.</div>
+      <div class="glass-light p-6 text-center reveal">No batches yet. <a class="text-brand font-semibold" href="/manufacturer/batch/new">Create your first batch</a>.</div>
     <% } else { %>
-      <div class="card overflow-hidden mb-8">
+      <div class="glass-light overflow-hidden mb-8 reveal">
         <table class="table">
           <thead><tr><th>#</th><th>Batch name</th><th>Quantity</th><th>Activated</th><th>Rate</th><th></th></tr></thead>
           <tbody>
@@ -62,9 +62,9 @@
 
     <h2 class="text-xl font-bold mb-3">My listings</h2>
     <% if (!listings.length) { %>
-      <div class="card p-6 text-center">No listings yet. <a class="text-brand font-semibold" href="/manufacturer/listings/new">List a product</a>.</div>
+      <div class="glass-light p-6 text-center reveal">No listings yet. <a class="text-brand font-semibold" href="/manufacturer/listings/new">List a product</a>.</div>
     <% } else { %>
-      <div class="card overflow-hidden">
+      <div class="glass-light overflow-hidden reveal">
         <table class="table">
           <thead><tr><th>Name</th><th>Category</th><th>Price</th><th>Stock</th><th>Status</th></tr></thead>
           <tbody>

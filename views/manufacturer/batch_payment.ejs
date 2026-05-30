@@ -6,7 +6,7 @@
     <h1 class="text-3xl font-bold mt-2 mb-6">Complete payment</h1>
 
     <!-- Order summary -->
-    <div class="card p-6 mb-5 space-y-3">
+    <div class="glass-light p-6 mb-5 space-y-3 reveal">
       <div class="flex justify-between text-sm">
         <span class="text-slate-500">Batch</span>
         <span class="font-semibold"><%= batch.batch_name %></span>
@@ -39,7 +39,7 @@
       </div>
       <form method="POST" action="/manufacturer/batch/<%= batch.id %>/pay-verify">
         <%- include('../layout/_csrf') %>
-        <button type="submit" class="btn-brand w-full justify-center text-lg py-3">
+        <button type="submit" class="btn-brand btn-lq w-full justify-center text-lg py-3">
           Simulate Payment →
         </button>
       </form>
@@ -52,7 +52,7 @@
         <input type="hidden" name="razorpay_signature" id="rzpSignature" />
       </form>
 
-      <button id="payBtn" class="btn-brand w-full justify-center text-lg py-3">
+      <button id="payBtn" class="btn-brand btn-lq w-full justify-center text-lg py-3">
         Pay ₹<%= (batch.paid_amount / 100).toLocaleString('en-IN', { minimumFractionDigits: 2 }) %> →
       </button>
       <p class="text-xs text-slate-500 text-center mt-3">

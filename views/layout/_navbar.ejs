@@ -1,4 +1,4 @@
-<nav class="sticky top-0 z-30 bg-white dark:bg-[#0A2342] border-b border-slate-200 dark:border-slate-700 shadow-soft">
+<nav class="lq-nav sticky top-0 z-30">
   <div class="max-w-5xl mx-auto px-4 py-3 flex items-center gap-2">
     <a href="/" class="flex items-center flex-shrink-0">
       <img src="/static/images/websiteLogo.png" alt="SafeTag" class="h-9 w-auto object-contain" onerror="this.style.display='none'" />
@@ -11,12 +11,12 @@
     </div>
     <div class="ml-auto flex items-center gap-1.5">
       <!-- Language toggle -->
-      <div class="flex items-center rounded-lg border border-slate-200 dark:border-slate-600 overflow-hidden text-xs font-bold select-none">
+      <div class="flex items-center rounded-lg border border-slate-300 dark:border-slate-600 overflow-hidden text-xs font-bold select-none" style="box-shadow:0 1px 3px rgba(0,0,0,0.08);">
         <button onclick="setLang('en')" id="langEn" class="px-2.5 py-1.5 transition bg-brand text-white" title="English">EN</button>
-        <button onclick="setLang('hi')" id="langHi" class="px-2.5 py-1.5 transition text-slate-500 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700" title="हिन्दी">हिं</button>
+        <button onclick="setLang('hi')" id="langHi" class="px-2.5 py-1.5 transition text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700" title="हिन्दी">हिं</button>
       </div>
       <!-- Dark mode toggle -->
-      <button onclick="toggleTheme()" id="themeBtn" class="w-8 h-8 flex items-center justify-center rounded-lg border border-slate-200 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700 transition text-base" title="Toggle dark/light mode">
+      <button onclick="toggleTheme()" id="themeBtn" class="w-8 h-8 flex items-center justify-center rounded-lg border border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700 transition text-base" style="box-shadow:0 1px 3px rgba(0,0,0,0.08);" title="Toggle dark/light mode">
         <span id="themeIcon">🌙</span>
       </button>
       <% if (user) { %>
@@ -31,7 +31,7 @@
           <%- include('_csrf') %><button class="btn-outline dark:border-slate-600 dark:text-slate-200 text-sm" data-i18n="nav.signout">Sign out</button>
         </form>
       <% } else { %>
-        <a class="navlink dark:text-slate-200 hidden sm:block" href="/login" data-i18n="nav.login">Login</a>
+        <a class="navlink font-semibold hidden sm:block" style="color:#0A2342;" href="/login" data-i18n="nav.login">Login</a>
         <a class="btn-warn text-sm" href="/store" data-i18n="nav.gettag">Get Your Tag</a>
       <% } %>
     </div>

@@ -21,9 +21,9 @@
         </p>
       </div>
       <% if (batch.payment_status === 'paid') { %>
-        <a class="btn-brand text-sm" href="/manufacturer/batch/<%= batch.id %>/csv">⬇ Download CSV</a>
+        <a class="btn-brand btn-lq text-sm" href="/manufacturer/batch/<%= batch.id %>/csv">⬇ Download CSV</a>
       <% } else { %>
-        <a class="btn-brand text-sm" href="/manufacturer/batch/<%= batch.id %>/pay">Complete Payment →</a>
+        <a class="btn-brand btn-lq text-sm" href="/manufacturer/batch/<%= batch.id %>/pay">Complete Payment →</a>
       <% } %>
     </div>
 
@@ -56,7 +56,7 @@
       </div>
     </div>
 
-    <div class="card overflow-hidden">
+    <div class="glass-light overflow-hidden reveal">
       <table class="table" id="tagTable">
         <thead><tr><th>QR Code</th><th>Tag ID</th><th>Status</th><th>Scans</th><th>Activated</th></tr></thead>
         <tbody>

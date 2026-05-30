@@ -16,7 +16,7 @@
   <div class="section-inner grid md:grid-cols-2 gap-10 items-start">
 
     <!-- Left: Image + badges -->
-    <div>
+    <div class="reveal-left">
       <div class="w-full bg-slate-100 rounded-cardLg overflow-hidden flex items-center justify-center" style="min-height:360px;">
         <% if (product.photo_url) { %>
           <img src="<%= product.photo_url %>" class="w-full max-h-[440px] object-cover" alt="<%= product.name %>" />
@@ -36,7 +36,7 @@
     </div>
 
     <!-- Right: Info + buy -->
-    <div class="space-y-5">
+    <div class="space-y-5 reveal">
       <div>
         <p class="text-xs text-slate-400 uppercase font-semibold tracking-wide">by <%= product.manufacturer_name %></p>
         <h1 class="text-3xl font-bold mt-1 mb-3"><%= product.name %></h1>
@@ -50,7 +50,7 @@
       </div>
 
       <!-- What's in the box -->
-      <div class="card p-4">
+      <div class="glass-light p-4">
         <p class="text-xs uppercase font-bold text-slate-500 mb-3">What's in the box</p>
         <ul class="text-sm space-y-1.5">
           <li class="flex gap-2"><span class="text-brand font-bold">✓</span>1× SafeTag (<span class="capitalize"><%= product.category %></span>)</li>
@@ -62,7 +62,7 @@
 
       <!-- Buy / OOS -->
       <% if (product.quantity_available > 0) { %>
-        <div class="card p-5 space-y-4">
+        <div class="glass-light p-5 space-y-4">
           <div class="flex items-center gap-3">
             <label class="label mb-0">Quantity</label>
             <div class="flex items-center gap-2">
@@ -71,7 +71,7 @@
               <button onclick="var q=document.getElementById('qtyInput'); q.value=Math.min(<%= product.quantity_available %>,+q.value+1); updateTotal();" class="w-8 h-8 rounded border border-slate-200 flex items-center justify-center font-bold text-slate-600 hover:bg-slate-100">+</button>
             </div>
           </div>
-          <a id="buyBtn" href="/checkout/<%= product.id %>?qty=1" class="btn-warn w-full justify-center text-base py-3 block text-center">
+          <a id="buyBtn" href="/checkout/<%= product.id %>?qty=1" class="btn-warn btn-lq w-full justify-center text-base py-3 block text-center">
             Buy Now — ₹<span id="totalPrice"><%= product.price_inr %></span>
           </a>
           <% if (!user) { %><p class="text-xs text-center text-slate-500">You'll be asked to sign in to complete the purchase.</p><% } %>
@@ -85,7 +85,7 @@
           }
         </script>
       <% } else { %>
-        <div class="card p-5 text-center">
+        <div class="glass-light p-5 text-center">
           <span class="pill pill-danger text-base">Out of Stock</span>
           <p class="text-sm text-slate-500 mt-3">Check back soon or <a href="/store" class="text-brand font-semibold">browse other products</a>.</p>
         </div>
@@ -93,9 +93,9 @@
 
       <!-- Trust badges -->
       <div class="grid grid-cols-3 gap-2 text-center text-xs text-slate-500">
-        <div class="card p-3">🔒<br/><span class="font-semibold">Secure</span><br/>checkout</div>
-        <div class="card p-3">🚚<br/><span class="font-semibold">Pan-India</span><br/>shipping</div>
-        <div class="card p-3">↩️<br/><span class="font-semibold">7-day</span><br/>returns</div>
+        <div class="glass-light p-3">🔒<br/><span class="font-semibold">Secure</span><br/>checkout</div>
+        <div class="glass-light p-3">🚚<br/><span class="font-semibold">Pan-India</span><br/>shipping</div>
+        <div class="glass-light p-3">↩️<br/><span class="font-semibold">7-day</span><br/>returns</div>
       </div>
     </div>
   </div>
@@ -104,27 +104,27 @@
 <!-- About -->
 <section class="bg-white border-t border-slate-100">
   <div class="section-inner section max-w-3xl">
-    <h2 class="text-xl font-bold mb-4">About this product</h2>
-    <div class="text-base leading-relaxed whitespace-pre-line text-slate-600"><%= product.description %></div>
+    <h2 class="text-xl font-bold mb-4 reveal">About this product</h2>
+    <div class="text-base leading-relaxed whitespace-pre-line text-slate-600 reveal"><%= product.description %></div>
   </div>
 </section>
 
 <!-- How it works -->
 <section class="section bg-slate-50 border-t border-slate-100">
   <div class="section-inner max-w-3xl">
-    <h2 class="text-xl font-bold mb-5">How it works</h2>
+    <h2 class="text-xl font-bold mb-5 reveal">How it works</h2>
     <div class="grid sm:grid-cols-3 gap-4">
-      <div class="card p-4 text-center">
+      <div class="glass-light p-4 text-center tilt-card glow-on-hover d1 reveal">
         <div class="text-3xl mb-2">📦</div>
         <div class="font-semibold mb-1">1. Receive &amp; Attach</div>
         <div class="text-sm text-slate-500">Attach the tag to a bag, lanyard, collar or wristband.</div>
       </div>
-      <div class="card p-4 text-center">
+      <div class="glass-light p-4 text-center tilt-card glow-on-hover d2 reveal">
         <div class="text-3xl mb-2">📱</div>
         <div class="font-semibold mb-1">2. Scan to Activate</div>
         <div class="text-sm text-slate-500">Scan the QR, fill in emergency info. Takes under 2 minutes.</div>
       </div>
-      <div class="card p-4 text-center">
+      <div class="glass-light p-4 text-center tilt-card glow-on-hover d3 reveal">
         <div class="text-3xl mb-2">🆘</div>
         <div class="font-semibold mb-1">3. One Scan in Emergency</div>
         <div class="text-sm text-slate-500">Any phone camera opens the emergency profile instantly.</div>

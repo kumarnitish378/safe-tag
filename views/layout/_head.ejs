@@ -53,6 +53,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <!-- Liquid UI design system (always loaded) -->
+  <link rel="stylesheet" href="/static/css/liquid.css" />
+
   <% if (IS_PROD) { %>
   <!-- Production: Tailwind CLI-built CSS (~20-50 KB, only used classes) -->
   <link rel="stylesheet" href="/static/css/safetag.build.css" />
@@ -328,6 +331,105 @@
     var lang='en'; try { lang=localStorage.safetagLang||'en'; } catch(e) {}
     _updateLangBtns(lang);
     _applyLang(lang);
+  });
+  </script>
+
+  <!-- ── Liquid UI interactions ── -->
+  <script>
+  document.addEventListener('DOMContentLoaded', function () {
+
+    // 1. Scroll-reveal observer
+    var revealEls = document.querySelectorAll('.reveal,.reveal-fade,.reveal-left,.reveal-right');
+    if (revealEls.length && 'IntersectionObserver' in window) {
+      var obs = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); }
+        });
+      }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+      revealEls.forEach(function (el) { obs.observe(el); });
+    } else {
+      revealEls.forEach(function (el) { el.classList.add('visible'); });
+    }
+
+    // 2. Ripple on .btn-lq clicks
+    document.body.addEventListener('click', function (e) {
+      var btn = e.target.closest('.btn-lq');
+      if (!btn) return;
+      var r = document.createElement('span');
+      r.className = 'lq-ripple';
+      var rect = btn.getBoundingClientRect();
+      var size = Math.max(rect.width, rect.height);
+      r.style.cssText = 'width:'+size+'px;height:'+size+'px;left:'+(e.clientX-rect.left-size/2)+'px;top:'+(e.clientY-rect.top-size/2)+'px;';
+      btn.appendChild(r);
+      setTimeout(function () { r.remove(); }, 700);
+    });
+
+    // 3. Liquid button cursor-tracking radial highlight
+    document.querySelectorAll('.btn-lq').forEach(function (btn) {
+      btn.addEventListener('mousemove', function (e) {
+        var r = btn.getBoundingClientRect();
+        btn.style.setProperty('--bx', ((e.clientX - r.left) / r.width * 100) + '%');
+        btn.style.setProperty('--by', ((e.clientY - r.top)  / r.height * 100) + '%');
+      });
+    });
+
+    // 4. Navbar scroll glass intensify
+    var nav = document.querySelector('.lq-nav');
+    if (nav) {
+      window.addEventListener('scroll', function () {
+        nav.classList.toggle('scrolled', window.scrollY > 12);
+      }, { passive: true });
+    }
+
+    // 5. Hero cursor glow
+    var glow = document.querySelector('.cursor-glow');
+    if (glow) {
+      glow.parentElement.addEventListener('mousemove', function (e) {
+        var r = glow.parentElement.getBoundingClientRect();
+        glow.style.left = (e.clientX - r.left) + 'px';
+        glow.style.top  = (e.clientY - r.top)  + 'px';
+      });
+    }
+
+    // 6. Animated stat counters
+    document.querySelectorAll('[data-count]').forEach(function (el) {
+      var target = parseFloat(el.dataset.count);
+      var suffix = el.dataset.suffix || '';
+      var prefix = el.dataset.prefix || '';
+      var decimals = el.dataset.decimals ? parseInt(el.dataset.decimals) : 0;
+      var started = false;
+      var cObs = new IntersectionObserver(function (entries) {
+        if (entries[0].isIntersecting && !started) {
+          started = true;
+          var start = 0, dur = 1600, startTime = null;
+          function step(ts) {
+            if (!startTime) startTime = ts;
+            var prog = Math.min((ts - startTime) / dur, 1);
+            var ease = 1 - Math.pow(1 - prog, 3);
+            var val = start + (target - start) * ease;
+            el.textContent = prefix + val.toFixed(decimals) + suffix;
+            if (prog < 1) requestAnimationFrame(step);
+          }
+          requestAnimationFrame(step);
+          cObs.disconnect();
+        }
+      }, { threshold: 0.5 });
+      cObs.observe(el);
+    });
+
+    // 7. Tilt effect on .tilt-card
+    document.querySelectorAll('.tilt-card').forEach(function (card) {
+      card.addEventListener('mousemove', function (e) {
+        var r = card.getBoundingClientRect();
+        var x = (e.clientX - r.left) / r.width  - 0.5;
+        var y = (e.clientY - r.top)  / r.height - 0.5;
+        card.style.transform = 'perspective(600px) rotateY('+(x*8)+'deg) rotateX('+(-y*8)+'deg) translateY(-3px)';
+      });
+      card.addEventListener('mouseleave', function () {
+        card.style.transform = '';
+      });
+    });
+
   });
   </script>
 </head>

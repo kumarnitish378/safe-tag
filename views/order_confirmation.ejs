@@ -3,7 +3,7 @@
 <div class="max-w-2xl mx-auto px-4 py-10">
 
   <!-- Success header -->
-  <div class="text-center mb-8">
+  <div class="text-center mb-8 reveal">
     <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-5 text-4xl">✅</div>
     <h1 class="text-2xl font-bold text-navy">Order Confirmed!</h1>
     <p class="text-slate-500 mt-2">Thank you, <strong><%= recipientName %></strong>. Your SafeTag is on its way.</p>
@@ -13,7 +13,7 @@
   </div>
 
   <!-- Order details card -->
-  <div class="card p-6 mb-5">
+  <div class="glass-light p-6 mb-5 reveal">
     <div class="flex items-start justify-between mb-5">
       <div>
         <div class="text-xs uppercase text-slate-400 font-semibold mb-1">Order ID</div>
@@ -68,7 +68,7 @@
   </div>
 
   <!-- What happens next -->
-  <div class="card p-6 mb-5">
+  <div class="glass-light p-6 mb-5 reveal">
     <h2 class="font-semibold text-navy mb-5">What happens next?</h2>
     <div class="space-y-4">
       <div class="flex gap-3 items-start">
@@ -96,20 +96,20 @@
   </div>
 
   <!-- WhatsApp share -->
-  <div class="card p-5 mb-6 flex items-center gap-4">
+  <div class="glass-light p-5 mb-6 flex items-center gap-4 reveal">
     <div class="text-3xl">💬</div>
     <div class="flex-1">
       <div class="font-semibold text-navy text-sm">Tell someone who needs this</div>
       <div class="text-xs text-slate-500 mt-0.5">SafeTag can protect a child, parent, or pet in your circle too.</div>
     </div>
-    <a href="https://wa.me/?text=<%= encodeURIComponent('I just ordered a SafeTag emergency ID tag for my family. One QR scan opens emergency contacts + blood group in seconds. From ₹149: https://safe-tag.in') %>" target="_blank" rel="noopener" class="btn-brand text-sm flex-shrink-0">
+    <a href="https://wa.me/?text=<%= encodeURIComponent('I just ordered a SafeTag emergency ID tag for my family. One QR scan opens emergency contacts + blood group in seconds. From ₹149: https://safe-tag.in') %>" target="_blank" rel="noopener" class="btn-brand btn-lq text-sm flex-shrink-0">
       Share →
     </a>
   </div>
 
-  <div class="flex flex-wrap gap-3 justify-center">
-    <a href="/dashboard" class="btn-brand">View My Tags</a>
-    <a href="/store" class="btn-outline">Continue Shopping</a>
+  <div class="flex flex-wrap gap-3 justify-center reveal">
+    <a href="/dashboard" class="btn-brand btn-lq">View My Tags</a>
+    <a href="/store" class="btn-outline btn-lq">Continue Shopping</a>
   </div>
 </div>
 
