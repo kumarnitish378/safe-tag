@@ -42,3 +42,4 @@ desktop.ini
 *.swp
 test_write.txt
 frontend/node_modules
+wiki/
