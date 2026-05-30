@@ -443,13 +443,3 @@ html.dark #mobile-menu button { color: #e2e8f0; }
 html.dark #mobile-menu a:hover,
 html.dark #mobile-menu button:hover { background: rgba(255,255,255,0.07); color: #5eead4; }
 
-/* Hamburger icon */
-.hamburger { display: flex; flex-direction: column; gap: 5px; width: 22px; cursor: pointer; }
-.hamburger span {
-  display: block; height: 2px; border-radius: 2px;
-  background: #0f172a; transition: all .25s;
-}
-html.dark .hamburger span { background: #e2e8f0; }
-.hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
-.hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
-.hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }

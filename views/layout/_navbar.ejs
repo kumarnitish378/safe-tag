@@ -71,13 +71,11 @@
 </nav>
 
 <script>
-function toggleMobileMenu() {
-  var menu = document.getElementById('mobile-menu');
+function _setHamburger(open) {
   var h1 = document.getElementById('hb1');
   var h2 = document.getElementById('hb2');
   var h3 = document.getElementById('hb3');
-  var open = menu.classList.toggle('open');
-  menu.setAttribute('aria-hidden', !open);
+  if (!h1) return;
   if (open) {
     h1.style.transform = 'translateY(8px) rotate(45deg)';
     h2.style.opacity = '0';
@@ -88,4 +86,22 @@ function toggleMobileMenu() {
     h3.style.transform = '';
   }
 }
+function toggleMobileMenu() {
+  var menu = document.getElementById('mobile-menu');
+  var open = menu.classList.toggle('open');
+  menu.setAttribute('aria-hidden', String(!open));
+  _setHamburger(open);
+}
+// Auto-close menu when any link inside it is clicked
+document.addEventListener('DOMContentLoaded', function () {
+  var menu = document.getElementById('mobile-menu');
+  if (!menu) return;
+  menu.querySelectorAll('a').forEach(function (link) {
+    link.addEventListener('click', function () {
+      menu.classList.remove('open');
+      menu.setAttribute('aria-hidden', 'true');
+      _setHamburger(false);
+    });
+  });
+});
 </script>
