@@ -210,6 +210,27 @@ app.get('/', async (req, res) => {
 });
 
 // =============================================================================
+// QR code image — public, no auth, no CSRF (GET)
+// Encodes the tag's emergency URL into a 300×300 PNG
+// =============================================================================
+app.get('/qr/:tagId', async (req, res) => {
+  try {
+    const tagId = req.params.tagId.replace(/[^A-Za-z0-9-]/g, '').toUpperCase();
+    if (!tagId) return res.status(400).send('Invalid tag ID');
+    const url = `${BASE_URL}/t/${tagId}`;
+    const png = await QRCode.toBuffer(url, {
+      width: 300, margin: 1,
+      color: { dark: '#0A2342', light: '#FFFFFF' },
+    });
+    res.set('Content-Type', 'image/png');
+    res.set('Cache-Control', 'public, max-age=86400');
+    return res.send(png);
+  } catch (e) {
+    res.status(500).send('QR generation failed');
+  }
+});
+
+// =============================================================================
 // Demo emergency page (hardcoded — always works regardless of DB state)
 // =============================================================================
 app.get('/demo', (req, res) => {
@@ -1251,13 +1272,32 @@ app.get('/manufacturer/batch/:id/csv', requireManufacturer, async (req, res) => 
       req.flash('error', 'Complete payment before downloading the CSV.');
       return res.redirect(`/manufacturer/batch/${id}/pay`);
     }
-    const header = 'tag_id,security_key,full_url,qr_data,rfid_payload,batch_id,batch_name,created_at\n';
-    const body = tags.map(t => {
-      const url = `${BASE_URL}/t/${t.tagId}`;
-      return `${t.tagId},,${url},${url},${url},${batch.id},"${batch.batchName}",${t.createdAt?.toISOString() || ''}`;
-    }).join('\n');
+
+    const embedQr = tags.length <= 500;
+    const rows = await Promise.all(tags.map(async t => {
+      const url   = `${BASE_URL}/t/${t.tagId}`;
+      const qrUrl = `${BASE_URL}/qr/${t.tagId}`;
+      let qrB64 = '';
+      if (embedQr) {
+        const buf = await QRCode.toBuffer(url, { width: 200, margin: 1 });
+        qrB64 = buf.toString('base64');
+      }
+      return { tagId: t.tagId, url, qrUrl, qrB64,
+               batchId: batch.id, batchName: batch.batchName,
+               createdAt: t.createdAt?.toISOString() || '' };
+    }));
+
+    const fname = `safetag-batch-${id}-${batch.batchName.replace(/\s+/g, '_')}.csv`;
+    const header = embedQr
+      ? 'tag_id,full_url,qr_image_url,qr_png_base64,rfid_payload,batch_id,batch_name,created_at\n'
+      : 'tag_id,full_url,qr_image_url,rfid_payload,batch_id,batch_name,created_at\n';
+    const body = rows.map(r => embedQr
+      ? `${r.tagId},${r.url},${r.qrUrl},${r.qrB64},${r.url},${r.batchId},"${r.batchName}",${r.createdAt}`
+      : `${r.tagId},${r.url},${r.qrUrl},${r.url},${r.batchId},"${r.batchName}",${r.createdAt}`
+    ).join('\n');
+
     res.set('Content-Type', 'text/csv');
-    res.set('Content-Disposition', `attachment; filename="safetag-batch-${id}.csv"`);
+    res.set('Content-Disposition', `attachment; filename="${fname}"`);
     return res.send(header + body);
   } catch (e) {
     res.status(500).send('Error generating CSV');
