@@ -32,23 +32,37 @@
       </div>
     </div>
 
-    <!-- Hidden form to POST payment result for server-side verification -->
-    <form id="verifyForm" method="POST" action="/manufacturer/batch/<%= batch.id %>/pay-verify">
-      <%- include('../layout/_csrf') %>
-      <input type="hidden" name="razorpay_order_id" id="rzpOrderId" />
-      <input type="hidden" name="razorpay_payment_id" id="rzpPaymentId" />
-      <input type="hidden" name="razorpay_signature" id="rzpSignature" />
-    </form>
+    <% if (isDummy) { %>
+      <!-- Dev mode: no real Razorpay, just simulate -->
+      <div class="flash flash-info mb-4 text-sm">
+        ⚙️ <strong>Dev mode</strong> — DUMMY_PAYMENT=true. No real charge will be made.
+      </div>
+      <form method="POST" action="/manufacturer/batch/<%= batch.id %>/pay-verify">
+        <%- include('../layout/_csrf') %>
+        <button type="submit" class="btn-brand w-full justify-center text-lg py-3">
+          Simulate Payment →
+        </button>
+      </form>
+    <% } else { %>
+      <!-- Hidden form to POST payment result for server-side verification -->
+      <form id="verifyForm" method="POST" action="/manufacturer/batch/<%= batch.id %>/pay-verify">
+        <%- include('../layout/_csrf') %>
+        <input type="hidden" name="razorpay_order_id" id="rzpOrderId" />
+        <input type="hidden" name="razorpay_payment_id" id="rzpPaymentId" />
+        <input type="hidden" name="razorpay_signature" id="rzpSignature" />
+      </form>
 
-    <button id="payBtn" class="btn-brand w-full justify-center text-lg py-3">
-      Pay ₹<%= (batch.paid_amount / 100).toLocaleString('en-IN', { minimumFractionDigits: 2 }) %> →
-    </button>
-    <p class="text-xs text-slate-500 text-center mt-3">
-      Secured by Razorpay · UPI, cards, net banking accepted
-    </p>
+      <button id="payBtn" class="btn-brand w-full justify-center text-lg py-3">
+        Pay ₹<%= (batch.paid_amount / 100).toLocaleString('en-IN', { minimumFractionDigits: 2 }) %> →
+      </button>
+      <p class="text-xs text-slate-500 text-center mt-3">
+        Secured by Razorpay · UPI, cards, net banking accepted
+      </p>
+    <% } %>
   </div>
 </section>
 
+<% if (!isDummy) { %>
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
 document.getElementById('payBtn').addEventListener('click', function () {
@@ -87,5 +101,6 @@ document.getElementById('payBtn').addEventListener('click', function () {
   rzp.open();
 });
 </script>
+<% } %>
 
 <%- include('../layout/_foot') %>

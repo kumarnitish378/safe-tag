@@ -14,7 +14,7 @@
           <% } %>
         </div>
         <p class="text-sm text-slate-500 mt-0.5">
-          Batch #<%= batch.id %> · <%= batch.quantity %> tags
+          Batch #<%= batch.id %> · <%= batch.quantity.toLocaleString() %> tags
           <% if (batch.paid_amount) { %>
             · ₹<%= (batch.paid_amount / 100).toLocaleString('en-IN', { minimumFractionDigits: 2 }) %> charged
           <% } %>
@@ -35,12 +35,33 @@
     <% } %>
 
     <% if (tags.length > 0) { %>
+
+    <!-- Toolbar: filter + page size -->
+    <div class="mb-3 flex items-center justify-between flex-wrap gap-3">
+      <div class="flex items-center gap-2 flex-wrap">
+        <span class="text-sm text-slate-500 font-medium">Status:</span>
+        <button onclick="setFilter('all')"      id="filter-all"      class="pill pill-brand text-xs cursor-pointer border-0 bg-transparent">All (<%= tags.length %>)</button>
+        <button onclick="setFilter('active')"   id="filter-active"   class="pill pill-mono  text-xs cursor-pointer border-0 bg-transparent">Active (<%= tags.filter(function(t){return t.is_active}).length %>)</button>
+        <button onclick="setFilter('inactive')" id="filter-inactive" class="pill pill-mono  text-xs cursor-pointer border-0 bg-transparent">Inactive (<%= tags.filter(function(t){return !t.is_active}).length %>)</button>
+      </div>
+      <div class="flex items-center gap-2 text-sm">
+        <span class="text-slate-500">Show:</span>
+        <select id="pageSizeSelect" onchange="setPageSize(this.value)" class="input" style="width:auto;padding:.3rem .7rem;">
+          <option value="20">20</option>
+          <option value="50">50</option>
+          <option value="100">100</option>
+          <option value="all">All</option>
+        </select>
+        <span id="countDisplay" class="text-slate-500 text-xs whitespace-nowrap"></span>
+      </div>
+    </div>
+
     <div class="card overflow-hidden">
-      <table class="table">
+      <table class="table" id="tagTable">
         <thead><tr><th>Tag ID</th><th>Status</th><th>Scans</th><th>Activated</th></tr></thead>
         <tbody>
           <% tags.forEach(function(t){ %>
-            <tr>
+            <tr data-status="<%= t.is_active ? 'active' : 'inactive' %>">
               <td class="mono"><%= t.tag_id %></td>
               <td><% if (t.is_active) { %><span class="pill pill-success">Active</span><% } else { %><span class="pill pill-warning">Inactive</span><% } %></td>
               <td><%= t.scan_count %></td>
@@ -50,6 +71,42 @@
         </tbody>
       </table>
     </div>
+
+    <script>
+    (function () {
+      var allRows = Array.from(document.querySelectorAll('#tagTable tbody tr'));
+      var currentFilter = 'all';
+      var currentSize = 20;
+
+      function getFiltered() {
+        if (currentFilter === 'all') return allRows;
+        return allRows.filter(function (r) { return r.dataset.status === currentFilter; });
+      }
+
+      function render() {
+        var filtered = getFiltered();
+        var limit = currentSize === 'all' ? filtered.length : currentSize;
+        allRows.forEach(function (r) { r.style.display = 'none'; });
+        filtered.slice(0, limit).forEach(function (r) { r.style.display = ''; });
+        document.getElementById('countDisplay').textContent =
+          'Showing ' + Math.min(limit, filtered.length) + ' of ' + filtered.length;
+        ['all', 'active', 'inactive'].forEach(function (f) {
+          var btn = document.getElementById('filter-' + f);
+          if (btn) btn.className = 'pill text-xs cursor-pointer border-0 bg-transparent ' +
+            (f === currentFilter ? 'pill-brand' : 'pill-mono');
+        });
+      }
+
+      window.setFilter = function (f) { currentFilter = f; render(); };
+      window.setPageSize = function (v) {
+        currentSize = v === 'all' ? 'all' : parseInt(v, 10);
+        render();
+      };
+
+      render();
+    })();
+    </script>
+
     <% } %>
   </div>
 </section>

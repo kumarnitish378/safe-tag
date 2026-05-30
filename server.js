@@ -995,21 +995,17 @@ app.post('/manufacturer/batch/new', requireManufacturer, async (req, res) => {
   const amountPaise = calcBatchPrice(quantity);
 
   try {
-    if (DUMMY_PAYMENT) {
-      const batch = await prisma.tagBatch.create({
-        data: { manufacturerId: mfr.id, batchName, quantity,
-                paidAmount: amountPaise, paymentStatus: 'paid' },
-      });
-      const rows = await generateTagsForBatch(batch.id, mfr.id, quantity, batchName);
-      req.flash('success', `Batch created — ${quantity} tag IDs generated.`);
-      return res.redirect(`/manufacturer/batch/${batch.id}`);
-    }
-
-    // Real Razorpay: create pending batch, then create order
+    // Always create a pending batch first — tags are generated only after payment confirmed
     const batch = await prisma.tagBatch.create({
       data: { manufacturerId: mfr.id, batchName, quantity,
               paidAmount: amountPaise, paymentStatus: 'pending' },
     });
+
+    if (DUMMY_PAYMENT) {
+      return res.redirect(`/manufacturer/batch/${batch.id}/pay`);
+    }
+
+    // Real Razorpay: create order and attach to batch
 
     const Razorpay = require('razorpay');
     const rzp = new Razorpay({ key_id: RAZORPAY_KEY_ID, key_secret: RAZORPAY_KEY_SECRET });
@@ -1049,6 +1045,7 @@ app.get('/manufacturer/batch/:id/pay', requireManufacturer, async (req, res) => 
       razorpayKeyId: RAZORPAY_KEY_ID,
       mfrEmail: req.session.manufacturer.email,
       mfrName: req.session.manufacturer.business_name,
+      isDummy: DUMMY_PAYMENT,
     });
   } catch (e) {
     res.redirect('/manufacturer/dashboard');
@@ -1064,17 +1061,19 @@ app.post('/manufacturer/batch/:id/pay-verify', requireManufacturer, async (req, 
     });
     if (!batch) return res.redirect('/manufacturer/dashboard');
 
-    try {
-      const Razorpay = require('razorpay');
-      const rzp = new Razorpay({ key_id: RAZORPAY_KEY_ID, key_secret: RAZORPAY_KEY_SECRET });
-      rzp.utility.verifyPaymentSignature({
-        razorpay_order_id: req.body.razorpay_order_id,
-        razorpay_payment_id: req.body.razorpay_payment_id,
-        razorpay_signature: req.body.razorpay_signature,
-      });
-    } catch (e) {
-      req.flash('error', 'Payment verification failed. Contact support@safe-tag.in.');
-      return res.redirect(`/manufacturer/batch/${id}/pay`);
+    if (!DUMMY_PAYMENT) {
+      try {
+        const Razorpay = require('razorpay');
+        const rzp = new Razorpay({ key_id: RAZORPAY_KEY_ID, key_secret: RAZORPAY_KEY_SECRET });
+        rzp.utility.verifyPaymentSignature({
+          razorpay_order_id: req.body.razorpay_order_id,
+          razorpay_payment_id: req.body.razorpay_payment_id,
+          razorpay_signature: req.body.razorpay_signature,
+        });
+      } catch (e) {
+        req.flash('error', 'Payment verification failed. Contact support@safe-tag.in.');
+        return res.redirect(`/manufacturer/batch/${id}/pay`);
+      }
     }
 
     await prisma.tagBatch.update({
@@ -1082,8 +1081,9 @@ app.post('/manufacturer/batch/:id/pay-verify', requireManufacturer, async (req, 
       data: { paymentStatus: 'paid', razorpayPaymentId: req.body.razorpay_payment_id || null },
     });
 
-    const rows = await generateTagsForBatch(id, mfr.id, batch.quantity, batch.batchName);
-    return batchCsvResponse(res, id, batch.batchName, rows);
+    await generateTagsForBatch(id, mfr.id, batch.quantity, batch.batchName);
+    req.flash('success', `Payment confirmed — ${batch.quantity} tag IDs generated. Download the CSV below.`);
+    return res.redirect(`/manufacturer/batch/${id}`);
   } catch (e) {
     console.error(e);
     req.flash('error', 'Error generating tags. Contact support@safe-tag.in.');
