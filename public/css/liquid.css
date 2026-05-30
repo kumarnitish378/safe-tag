@@ -404,7 +404,7 @@ html.dark .flash-info    { background: rgba(30,58,95,0.5);   border-left: 3px so
   .lq-nav .navlink { font-size: 0.9rem; }
 }
 
-/* Mobile nav drawer */
+/* Mobile nav drawer — hidden by default, visible only on mobile when open */
 #mobile-menu {
   display: none;
   flex-direction: column;
@@ -412,10 +412,14 @@ html.dark .flash-info    { background: rgba(30,58,95,0.5);   border-left: 3px so
   padding: 12px 16px 16px;
   border-top: 1px solid rgba(226,232,240,0.6);
 }
-html.dark #mobile-menu {
-  border-color: rgba(51,65,85,0.5);
-}
+html.dark #mobile-menu { border-color: rgba(51,65,85,0.5); }
 #mobile-menu.open { display: flex; }
+
+/* Force hidden on desktop regardless of .open state */
+@media (min-width: 768px) {
+  #mobile-menu,
+  #mobile-menu.open { display: none !important; }
+}
 #mobile-menu a, #mobile-menu button {
   padding: .6rem .8rem;
   border-radius: 8px;
