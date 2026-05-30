@@ -14,9 +14,18 @@
     </div>
 
     <div class="grid sm:grid-cols-3 gap-3 mb-6">
-      <div class="card p-5"><div class="text-xs uppercase font-bold text-slate-500">Total tags</div><div class="text-3xl font-sora font-bold text-navy"><%= stats.total %></div></div>
-      <div class="card p-5"><div class="text-xs uppercase font-bold text-slate-500">Active</div><div class="text-3xl font-sora font-bold text-success"><%= stats.active %></div></div>
-      <div class="card p-5"><div class="text-xs uppercase font-bold text-slate-500">Pending Activation</div><div class="text-3xl font-sora font-bold text-warning"><%= stats.pending %></div></div>
+      <div class="glass-light p-5 rounded-2xl glow-on-hover reveal">
+        <div class="text-xs uppercase font-bold text-slate-500 mb-1">Total tags</div>
+        <div class="text-3xl font-sora font-bold text-navy stat-num" data-count="<%= stats.total %>">0</div>
+      </div>
+      <div class="glass-light p-5 rounded-2xl glow-on-hover reveal d2">
+        <div class="text-xs uppercase font-bold text-slate-500 mb-1">Active</div>
+        <div class="text-3xl font-sora font-bold text-success stat-num" data-count="<%= stats.active %>">0</div>
+      </div>
+      <div class="glass-light p-5 rounded-2xl glow-on-hover reveal d3">
+        <div class="text-xs uppercase font-bold text-slate-500 mb-1">Pending Activation</div>
+        <div class="text-3xl font-sora font-bold text-warning stat-num" data-count="<%= stats.pending %>">0</div>
+      </div>
     </div>
 
     <% if (!tags.length && orders && orders.length) { %>
