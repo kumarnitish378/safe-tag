@@ -314,7 +314,7 @@ html, body { background: #f1f5f9; margin: 0; padding: 0; }
   <div class="ep-body">
 
     <!-- Profile hero -->
-    <div class="ep-hero">
+    <div class="ep-hero glass-light">
       <% var _cat = (profile.category || '').toLowerCase(); %>
       <div class="ep-avatar">
         <% if (profile.photo_url) { %>
@@ -404,16 +404,16 @@ html, body { background: #f1f5f9; margin: 0; padding: 0; }
       </div>
 
       <div class="ep-btn-area">
-        <a href="tel:+91<%= profile.mobile_primary %>" class="ep-call-primary">
+        <a href="tel:+91<%= profile.mobile_primary %>" class="ep-call-primary btn-lq">
           📞 &nbsp;Call Emergency Contact
         </a>
         <% if (profile.mobile_secondary) { %>
-          <a href="tel:+91<%= profile.mobile_secondary %>" class="ep-call-alt">
+          <a href="tel:+91<%= profile.mobile_secondary %>" class="ep-call-alt btn-lq">
             📞 &nbsp;Call Emergency Contact 2
           </a>
         <% } %>
         <% if (profile.owner_whatsapp) { %>
-          <a href="https://wa.me/91<%= profile.owner_whatsapp %>?text=<%= encodeURIComponent('🚨 I found someone with a SafeTag ID: ' + tag_id + '. Person: ' + profile.name) %>" target="_blank" rel="noopener" class="ep-wa-btn">
+          <a href="https://wa.me/91<%= profile.owner_whatsapp %>?text=<%= encodeURIComponent('🚨 I found someone with a SafeTag ID: ' + tag_id + '. Person: ' + profile.name) %>" target="_blank" rel="noopener" class="ep-wa-btn btn-lq">
             💬 &nbsp;WhatsApp Emergency Contact
           </a>
         <% } %>
@@ -447,7 +447,7 @@ html, body { background: #f1f5f9; margin: 0; padding: 0; }
 
     <!-- Share location via WhatsApp (on-demand, not auto-triggered) -->
     <% if (profile.mobile_primary) { %>
-    <button id="epLocBtn" class="ep-loc-btn" onclick="shareLocation()">
+    <button id="epLocBtn" class="ep-loc-btn btn-lq" onclick="shareLocation()">
       🆘 &nbsp;Alert Emergency Contact via WhatsApp
     </button>
     <div id="epLocStatus" class="ep-loc-status"></div>

@@ -25,7 +25,7 @@
       <%- include('layout/_csrf') %>
 
     <!-- Personal -->
-    <div class="card p-5 space-y-4">
+    <div class="glass-light p-5 space-y-4 reveal">
       <h2 class="font-semibold">Personal Info</h2>
       <div>
         <label class="label">Full Name *</label>
@@ -64,7 +64,7 @@
     </div>
 
     <!-- Contact -->
-    <div class="card p-5 space-y-4">
+    <div class="glass-light p-5 space-y-4 reveal">
       <h2 class="font-semibold">Contact</h2>
       <div>
         <label class="label">Address</label>
@@ -80,7 +80,7 @@
           <input class="input mono text-sm" name="longitude" value="<%= (values.longitude||'') %>" placeholder="optional" />
         </div>
       </div>
-      <button type="button" id="pinBtn" class="btn-outline w-full justify-center">📍 Pin my current location</button>
+      <button type="button" id="pinBtn" class="btn-outline btn-lq w-full justify-center">📍 Pin my current location</button>
       <div>
         <label class="label">Primary Mobile *</label>
         <div class="flex">
@@ -104,7 +104,7 @@
     </div>
 
     <!-- Medical -->
-    <div class="card p-5 space-y-4">
+    <div class="glass-light p-5 space-y-4 reveal">
       <h2 class="font-semibold">Medical Info</h2>
       <div>
         <label class="label">Medical Conditions</label>
@@ -133,7 +133,7 @@
     </div>
 
     <!-- Emergency Page Theme -->
-    <div class="card p-5 space-y-4">
+    <div class="glass-light p-5 space-y-4 reveal">
       <h2 class="font-semibold">Emergency Page Theme</h2>
       <p class="text-xs text-slate-500">Choose how your emergency profile looks when someone scans your tag.</p>
       <input type="hidden" name="theme" id="themeInput" value="<%= (values.theme||'classic') %>" />
@@ -163,7 +163,7 @@
       </div>
     </div>
 
-    <button type="submit" class="btn-brand w-full justify-center text-base py-3">Activate My SafeTag ✓</button>
+    <button type="submit" class="btn-brand btn-lq w-full justify-center text-base py-3">Activate My SafeTag ✓</button>
     <p class="text-xs text-center text-slate-500">Your data is only shown when someone scans your physical tag.</p>
   </form>
 </div>

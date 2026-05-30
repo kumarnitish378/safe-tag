@@ -3,7 +3,7 @@
 <section class="section">
   <div class="section-inner">
     <a href="/admin" class="text-sm text-brand font-semibold">← Admin dashboard</a>
-    <div class="flex items-center justify-between mt-2 mb-6 flex-wrap gap-2">
+    <div class="flex items-center justify-between mt-2 mb-6 flex-wrap gap-2 reveal">
       <h1 class="text-3xl font-bold">Orders</h1>
       <div class="flex gap-2 items-center">
         <form method="GET" action="/admin/orders">
@@ -15,11 +15,11 @@
             <% }); %>
           </select>
         </form>
-        <a class="btn-outline text-sm" href="/admin/orders.csv">⬇ Export CSV</a>
+        <a class="btn-outline btn-lq text-sm" href="/admin/orders.csv">⬇ Export CSV</a>
       </div>
     </div>
 
-    <div class="card overflow-hidden">
+    <div class="glass-light overflow-hidden reveal">
       <table class="table">
         <thead><tr><th>#</th><th>Customer</th><th>Product</th><th>Qty</th><th>Amount</th><th>Status</th><th>Tracking</th><th>Date</th><th>Actions</th></tr></thead>
         <tbody>
@@ -40,13 +40,13 @@
                   <form method="POST" action="/admin/orders/<%= o.id %>/dispatch" class="flex gap-1">
       <%- include('../layout/_csrf') %>
                     <input class="input py-1 px-2 text-xs w-24 mono" name="tracking_id" placeholder="Tracking" />
-                    <button class="btn-brand text-xs py-1 px-2">Dispatch</button>
+                    <button class="btn-brand btn-lq text-xs py-1 px-2">Dispatch</button>
                   </form>
                 <% } else if (o.status === 'dispatched') { %>
                   <form method="POST" action="/admin/orders/<%= o.id %>/status">
       <%- include('../layout/_csrf') %>
                     <input type="hidden" name="status" value="delivered" />
-                    <button class="btn-outline text-xs py-1 px-2">Mark delivered</button>
+                    <button class="btn-outline btn-lq text-xs py-1 px-2">Mark delivered</button>
                   </form>
                 <% } %>
               </td>

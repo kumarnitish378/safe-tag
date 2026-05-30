@@ -2,26 +2,26 @@
 
 <section class="section">
   <div class="section-inner">
-    <div class="flex items-center justify-between mb-6 flex-wrap gap-2">
+    <div class="flex items-center justify-between mb-6 flex-wrap gap-2 reveal">
       <h1 class="text-3xl font-bold">Admin · Platform overview</h1>
       <div class="flex gap-2">
-        <a class="btn-outline text-sm" href="/admin/manufacturers">Manufacturers</a>
-        <a class="btn-outline text-sm" href="/admin/store">Store</a>
-        <a class="btn-outline text-sm" href="/admin/orders">Orders</a>
-        <a class="btn-outline text-sm" href="/admin/users">Users</a>
+        <a class="btn-outline btn-lq text-sm" href="/admin/manufacturers">Manufacturers</a>
+        <a class="btn-outline btn-lq text-sm" href="/admin/store">Store</a>
+        <a class="btn-outline btn-lq text-sm" href="/admin/orders">Orders</a>
+        <a class="btn-outline btn-lq text-sm" href="/admin/users">Users</a>
       </div>
     </div>
 
     <div class="grid sm:grid-cols-2 md:grid-cols-4 gap-3 mb-8">
-      <div class="card p-5"><div class="text-xs uppercase font-bold text-slate-500">Total tags</div><div class="text-3xl font-sora font-bold text-navy"><%= stats.total_tags||0 %></div><div class="text-xs">Activated: <%= stats.activated_tags||0 %></div></div>
-      <div class="card p-5"><div class="text-xs uppercase font-bold text-slate-500">Activation rate</div><div class="text-3xl font-sora font-bold text-success"><%= stats.activation_rate||0 %>%</div></div>
-      <div class="card p-5"><div class="text-xs uppercase font-bold text-slate-500">Customers</div><div class="text-3xl font-sora font-bold text-navy"><%= stats.total_users||0 %></div><div class="text-xs">New this week: <%= stats.new_users_week||0 %></div></div>
-      <div class="card p-5"><div class="text-xs uppercase font-bold text-slate-500">Manufacturers</div><div class="text-3xl font-sora font-bold text-navy"><%= stats.total_manufacturers||0 %></div><div class="text-xs">Pending: <%= stats.pending_manufacturers||0 %></div></div>
-      <div class="card p-5"><div class="text-xs uppercase font-bold text-slate-500">Orders</div><div class="text-3xl font-sora font-bold text-navy"><%= stats.total_orders||0 %></div><div class="text-xs">Pending dispatch: <%= stats.pending_orders||0 %></div></div>
-      <div class="card p-5 sm:col-span-2"><div class="text-xs uppercase font-bold text-slate-500">Revenue this week</div><div class="text-3xl font-sora font-bold text-warning">₹<%= stats.revenue_week_inr||0 %></div></div>
+      <div class="glass-light p-5 reveal d1"><div class="text-xs uppercase font-bold text-slate-500">Total tags</div><div class="text-3xl font-sora font-bold text-navy" data-count="<%= stats.total_tags||0 %>"><%= stats.total_tags||0 %></div><div class="text-xs">Activated: <%= stats.activated_tags||0 %></div></div>
+      <div class="glass-light p-5 reveal d2"><div class="text-xs uppercase font-bold text-slate-500">Activation rate</div><div class="text-3xl font-sora font-bold text-success" data-count="<%= stats.activation_rate||0 %>" data-suffix="%"><%= stats.activation_rate||0 %>%</div></div>
+      <div class="glass-light p-5 reveal d3"><div class="text-xs uppercase font-bold text-slate-500">Customers</div><div class="text-3xl font-sora font-bold text-navy" data-count="<%= stats.total_users||0 %>"><%= stats.total_users||0 %></div><div class="text-xs">New this week: <%= stats.new_users_week||0 %></div></div>
+      <div class="glass-light p-5 reveal d4"><div class="text-xs uppercase font-bold text-slate-500">Manufacturers</div><div class="text-3xl font-sora font-bold text-navy" data-count="<%= stats.total_manufacturers||0 %>"><%= stats.total_manufacturers||0 %></div><div class="text-xs">Pending: <%= stats.pending_manufacturers||0 %></div></div>
+      <div class="glass-light p-5 reveal d1"><div class="text-xs uppercase font-bold text-slate-500">Orders</div><div class="text-3xl font-sora font-bold text-navy" data-count="<%= stats.total_orders||0 %>"><%= stats.total_orders||0 %></div><div class="text-xs">Pending dispatch: <%= stats.pending_orders||0 %></div></div>
+      <div class="glass-light p-5 sm:col-span-2 reveal d2"><div class="text-xs uppercase font-bold text-slate-500">Revenue this week</div><div class="text-3xl font-sora font-bold text-warning">₹<%= stats.revenue_week_inr||0 %></div></div>
     </div>
 
-    <div class="card overflow-hidden">
+    <div class="glass-light overflow-hidden reveal">
       <div class="px-5 py-3 border-b font-semibold">Recent activity</div>
       <ul class="divide-y">
         <% if (!recent.length) { %>

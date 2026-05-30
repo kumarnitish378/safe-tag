@@ -3,9 +3,9 @@
 <section class="section">
   <div class="section-inner">
     <a href="/admin" class="text-sm text-brand font-semibold">← Admin dashboard</a>
-    <h1 class="text-3xl font-bold mt-2 mb-6">Manufacturers</h1>
+    <h1 class="text-3xl font-bold mt-2 mb-6 reveal">Manufacturers</h1>
 
-    <div class="card overflow-hidden">
+    <div class="glass-light overflow-hidden reveal">
       <table class="table">
         <thead><tr><th>#</th><th>Business</th><th>Email</th><th>Mobile</th><th>Status</th><th>Actions</th></tr></thead>
         <tbody>
@@ -25,11 +25,11 @@
               <td class="flex gap-2">
                 <% if (!m.is_approved) { %>
                   <form method="POST" action="/admin/manufacturers/<%= m.id %>/approve">
-      <%- include('../layout/_csrf') %><button class="btn-brand text-xs py-1 px-2">Approve</button></form>
+      <%- include('../layout/_csrf') %><button class="btn-brand btn-lq text-xs py-1 px-2">Approve</button></form>
                 <% } %>
                 <% if (!m.is_blocked) { %>
                   <form method="POST" action="/admin/manufacturers/<%= m.id %>/block">
-      <%- include('../layout/_csrf') %><button class="btn-outline text-xs py-1 px-2">Block</button></form>
+      <%- include('../layout/_csrf') %><button class="btn-outline btn-lq text-xs py-1 px-2">Block</button></form>
                 <% } %>
               </td>
             </tr>
