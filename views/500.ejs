@@ -1,0 +1,30 @@
+<%- include('layout/_head') %>
+
+<section class="relative overflow-hidden lq-mesh" style="background:linear-gradient(135deg,#0A2342 0%,#0B1E3D 60%,#091224 100%);min-height:80vh;display:flex;align-items:center;">
+  <div class="lq-blob" style="width:360px;height:360px;background:#ef4444;top:-80px;right:-60px;opacity:.12;"></div>
+  <div class="lq-blob lq-blob-c" style="width:240px;height:240px;background:#0D9488;bottom:-40px;left:-40px;opacity:.14;"></div>
+
+  <div class="relative z-10 max-w-lg mx-auto px-4 py-16 text-center w-full">
+    <div class="lq-float text-7xl mb-6">⚙️</div>
+    <h1 class="reveal text-5xl font-extrabold mb-3" style="color:#fff;">500</h1>
+    <h2 class="reveal d1 text-2xl font-bold mb-4" style="color:#e2e8f0;">Something went wrong</h2>
+    <p class="reveal d2 text-base mb-2" style="color:#94a3b8;">
+      The server ran into an unexpected error. This is on us — not you.
+    </p>
+    <p class="reveal d2 text-sm mb-8" style="color:#475569;">
+      Our team has been notified. Please try again in a moment.
+    </p>
+
+    <div class="reveal d3 flex flex-col sm:flex-row gap-3 justify-center">
+      <a href="/" class="btn-lq btn-brand px-7 py-3">Back to Home</a>
+      <button onclick="history.back()" class="btn-lq glass px-7 py-3 font-semibold" style="color:#fff;cursor:pointer;">← Go Back</button>
+    </div>
+
+    <p class="reveal d4 text-xs mt-8" style="color:#334155;">
+      If this keeps happening, contact us at
+      <a href="mailto:support@safe-tag.in" style="color:#5eead4;">support@safe-tag.in</a>
+    </p>
+  </div>
+</section>
+
+<%- include('layout/_foot') %>

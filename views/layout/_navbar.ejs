@@ -3,12 +3,15 @@
     <a href="/" class="flex items-center flex-shrink-0">
       <img src="/static/images/websiteLogo.png" alt="SafeTag" class="h-9 w-auto object-contain" onerror="this.style.display='none'" />
     </a>
+
+    <!-- Desktop nav links -->
     <div class="hidden md:flex items-center gap-0.5 ml-3">
-      <a class="navlink dark:text-slate-200 dark:hover:bg-slate-700" href="/store" data-i18n="nav.store">Store</a>
-      <a class="navlink dark:text-slate-200 dark:hover:bg-slate-700" href="/#how" data-i18n="nav.how">How it Works</a>
-      <a class="navlink dark:text-slate-200 dark:hover:bg-slate-700" href="/#faq" data-i18n="nav.faq">FAQ</a>
-      <% if (!manufacturer) { %><a class="navlink dark:text-slate-200 dark:hover:bg-slate-700" href="/manufacturer/login" data-i18n="nav.manufacturer">Manufacturer</a><% } %>
+      <a class="navlink" href="/store" data-i18n="nav.store">Store</a>
+      <a class="navlink" href="/#how" data-i18n="nav.how">How it Works</a>
+      <a class="navlink" href="/#faq" data-i18n="nav.faq">FAQ</a>
+      <% if (!manufacturer) { %><a class="navlink" href="/manufacturer/login" data-i18n="nav.manufacturer">Manufacturer</a><% } %>
     </div>
+
     <div class="ml-auto flex items-center gap-1.5">
       <!-- Language toggle -->
       <div class="flex items-center rounded-lg border border-slate-300 dark:border-slate-600 overflow-hidden text-xs font-bold select-none" style="box-shadow:0 1px 3px rgba(0,0,0,0.08);">
@@ -19,21 +22,70 @@
       <button onclick="toggleTheme()" id="themeBtn" class="w-8 h-8 flex items-center justify-center rounded-lg border border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700 transition text-base" style="box-shadow:0 1px 3px rgba(0,0,0,0.08);" title="Toggle dark/light mode">
         <span id="themeIcon">🌙</span>
       </button>
+
+      <!-- Desktop auth buttons -->
       <% if (user) { %>
-        <a class="navlink dark:text-slate-200 hidden sm:block" href="/dashboard" data-i18n="nav.dashboard">Dashboard</a>
-        <% if (user.is_admin) { %><a class="navlink dark:text-slate-200 hidden sm:block" href="/admin" data-i18n="nav.admin">Admin</a><% } %>
-        <form method="POST" action="/logout" class="inline">
-          <%- include('_csrf') %><button class="btn-outline dark:border-slate-600 dark:text-slate-200 text-sm" data-i18n="nav.signout">Sign out</button>
+        <a class="navlink hidden md:block" href="/dashboard" data-i18n="nav.dashboard">Dashboard</a>
+        <% if (user.is_admin) { %><a class="navlink hidden md:block" href="/admin" data-i18n="nav.admin">Admin</a><% } %>
+        <form method="POST" action="/logout" class="hidden md:inline">
+          <%- include('_csrf') %><button class="btn-outline text-sm" data-i18n="nav.signout">Sign out</button>
         </form>
       <% } else if (manufacturer) { %>
-        <a class="navlink dark:text-slate-200 hidden sm:block" href="/manufacturer/dashboard" data-i18n="nav.workshop">My Workshop</a>
-        <form method="POST" action="/manufacturer/logout" class="inline">
-          <%- include('_csrf') %><button class="btn-outline dark:border-slate-600 dark:text-slate-200 text-sm" data-i18n="nav.signout">Sign out</button>
+        <a class="navlink hidden md:block" href="/manufacturer/dashboard" data-i18n="nav.workshop">My Workshop</a>
+        <form method="POST" action="/manufacturer/logout" class="hidden md:inline">
+          <%- include('_csrf') %><button class="btn-outline text-sm" data-i18n="nav.signout">Sign out</button>
         </form>
       <% } else { %>
-        <a class="navlink font-semibold hidden sm:block" style="color:#0A2342;" href="/login" data-i18n="nav.login">Login</a>
-        <a class="btn-warn text-sm" href="/store" data-i18n="nav.gettag">Get Your Tag</a>
+        <a class="navlink font-semibold hidden md:block" style="color:#0A2342;" href="/login" data-i18n="nav.login">Login</a>
+        <a class="btn-warn text-sm hidden sm:inline-flex" href="/store" data-i18n="nav.gettag">Get Your Tag</a>
       <% } %>
+
+      <!-- Hamburger (mobile only) -->
+      <button id="hamburgerBtn" class="md:hidden w-8 h-8 flex flex-col items-center justify-center gap-1.5 ml-1" aria-label="Menu" onclick="toggleMobileMenu()">
+        <span class="block h-0.5 w-5 rounded bg-slate-700 dark:bg-slate-200 transition-all duration-200" id="hb1"></span>
+        <span class="block h-0.5 w-5 rounded bg-slate-700 dark:bg-slate-200 transition-all duration-200" id="hb2"></span>
+        <span class="block h-0.5 w-5 rounded bg-slate-700 dark:bg-slate-200 transition-all duration-200" id="hb3"></span>
+      </button>
     </div>
   </div>
+
+  <!-- Mobile menu drawer -->
+  <div id="mobile-menu" aria-hidden="true">
+    <a href="/store" data-i18n="nav.store">Store</a>
+    <a href="/#how" data-i18n="nav.how">How it Works</a>
+    <a href="/#faq" data-i18n="nav.faq">FAQ</a>
+    <% if (!manufacturer) { %><a href="/manufacturer/login" data-i18n="nav.manufacturer">Manufacturer</a><% } %>
+    <div style="height:1px;background:rgba(226,232,240,0.6);margin:4px 0;"></div>
+    <% if (user) { %>
+      <a href="/dashboard" data-i18n="nav.dashboard">Dashboard</a>
+      <% if (user.is_admin) { %><a href="/admin" data-i18n="nav.admin">Admin</a><% } %>
+      <form method="POST" action="/logout"><%- include('_csrf') %><button type="submit" data-i18n="nav.signout">Sign out</button></form>
+    <% } else if (manufacturer) { %>
+      <a href="/manufacturer/dashboard" data-i18n="nav.workshop">My Workshop</a>
+      <form method="POST" action="/manufacturer/logout"><%- include('_csrf') %><button type="submit" data-i18n="nav.signout">Sign out</button></form>
+    <% } else { %>
+      <a href="/login" data-i18n="nav.login">Login</a>
+      <a href="/store" data-i18n="nav.gettag" style="color:#0D9488;font-weight:700;">Get Your Tag →</a>
+    <% } %>
+  </div>
 </nav>
+
+<script>
+function toggleMobileMenu() {
+  var menu = document.getElementById('mobile-menu');
+  var h1 = document.getElementById('hb1');
+  var h2 = document.getElementById('hb2');
+  var h3 = document.getElementById('hb3');
+  var open = menu.classList.toggle('open');
+  menu.setAttribute('aria-hidden', !open);
+  if (open) {
+    h1.style.transform = 'translateY(8px) rotate(45deg)';
+    h2.style.opacity = '0';
+    h3.style.transform = 'translateY(-8px) rotate(-45deg)';
+  } else {
+    h1.style.transform = '';
+    h2.style.opacity = '';
+    h3.style.transform = '';
+  }
+}
+</script>

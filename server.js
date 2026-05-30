@@ -305,7 +305,7 @@ app.get('/store/:productId', async (req, res) => {
       product: p,
     });
   } catch (e) {
-    res.status(500).render('404');
+    res.status(500).render('500');
   }
 });
 
@@ -330,7 +330,7 @@ async function handleTagScan(req, res, tag_id, security_key) {
     req.session.lastScannedTag = { tag_id, security_key };
     return req.session.save(() => res.redirect(`/register/${tag_id}`));
   } catch (e) {
-    return res.status(500).render('404', { title: 'Unable to reach server' });
+    return res.status(500).render('500', { title: 'Unable to reach server' });
   }
 }
 
@@ -346,7 +346,7 @@ app.get('/t/:code([a-zA-Z0-9]{9})', async (req, res) => {
     req.session.lastScannedTag = { tag_id: code, security_key: null };
     return req.session.save(() => res.redirect(`/register/${code}`));
   } catch (e) {
-    return res.status(500).render('404', { title: 'Unable to reach server' });
+    return res.status(500).render('500', { title: 'Unable to reach server' });
   }
 });
 
@@ -373,7 +373,7 @@ app.get('/register/:tag_id', async (req, res) => {
       values: {},
     });
   } catch (e) {
-    res.status(500).render('404');
+    res.status(500).render('500');
   }
 });
 
@@ -489,7 +489,7 @@ app.get('/emergency/:tag_id', async (req, res) => {
       flaskApiUrl: BASE_URL,
     });
   } catch (e) {
-    res.status(500).render('404');
+    res.status(500).render('500');
   }
 });
 
@@ -572,10 +572,9 @@ app.post('/register', async (req, res) => {
     const passwordHash = await bcrypt.hash(password, 10);
     const user = await prisma.user.create({ data: { email, mobile, passwordHash, name } });
     req.session.user = formatUser(user);
-    req.flash('success', 'Welcome to SafeTag.');
     return req.session.save((err) => {
       if (err) console.error('[session.save /register]', err);
-      res.redirect('/dashboard');
+      res.redirect('/welcome');
     });
   } catch (e) {
     console.error('[POST /register]', e);
@@ -595,6 +594,13 @@ app.post('/logout', (req, res) => {
   req.session.manufacturer = null;
   req.flash('success', 'Signed out.');
   req.session.save(() => res.redirect(redirectTo));
+});
+
+// =============================================================================
+// Welcome / Onboarding (shown once after registration)
+// =============================================================================
+app.get('/welcome', requireUser, (req, res) => {
+  res.render('welcome', { title: 'Welcome to SafeTag' });
 });
 
 // =============================================================================
@@ -671,7 +677,7 @@ app.get('/profile/edit/:tag_id', requireUser, async (req, res) => {
       errors: {},
     });
   } catch (e) {
-    res.status(500).render('404');
+    res.status(500).render('500');
   }
 });
 
@@ -728,7 +734,7 @@ app.post('/profile/edit/:tag_id', requireUser, async (req, res) => {
     return res.redirect(`/emergency/${tagId}`);
   } catch (e) {
     console.error(e);
-    res.status(500).render('404');
+    res.status(500).render('500');
   }
 });
 
@@ -1255,7 +1261,7 @@ app.get('/manufacturer/batch/:id', requireManufacturer, async (req, res) => {
       tags: tagList,
     });
   } catch (e) {
-    res.status(500).render('404');
+    res.status(500).render('500');
   }
 });
 
@@ -1625,7 +1631,7 @@ app.get('/qr/:tag_id', async (req, res) => {
     res.set('Content-Disposition', `inline; filename="safetag-${tagId}.png"`);
     return res.send(buf);
   } catch (e) {
-    res.status(500).render('404');
+    res.status(500).render('500');
   }
 });
 
@@ -1956,7 +1962,7 @@ app.use((req, res) => res.status(404).render('404', { title: 'Not found' }));
 
 app.use((err, req, res, next) => {
   console.error(err);
-  res.status(500).render('404', { title: 'Server error' });
+  res.status(500).render('500', { title: 'Server error' });
 });
 
 // =============================================================================
