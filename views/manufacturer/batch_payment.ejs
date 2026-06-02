@@ -1,12 +1,11 @@
 <%- include('../layout/_head') %>
 
-<section class="section">
-  <div class="section-inner max-w-md">
+<section class="page-shell page-shell-compact">
     <a href="/manufacturer/dashboard" class="text-sm text-brand font-semibold">← Dashboard</a>
     <h1 class="text-3xl font-bold mt-2 mb-6">Complete payment</h1>
 
     <!-- Order summary -->
-    <div class="glass-light p-6 mb-5 space-y-3 reveal">
+    <div class="glass-light stable-panel p-6 mb-5 space-y-3 reveal">
       <div class="flex justify-between text-sm">
         <span class="text-slate-500">Batch</span>
         <span class="font-semibold"><%= batch.batch_name %></span>
@@ -59,7 +58,6 @@
         Secured by Razorpay · UPI, cards, net banking accepted
       </p>
     <% } %>
-  </div>
 </section>
 
 <% if (!isDummy) { %>

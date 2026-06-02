@@ -1,16 +1,19 @@
 <%- include('layout/_head') %>
 
-<section class="section">
-  <div class="section-inner">
-    <h1 class="text-3xl font-bold mb-6 reveal">My Orders</h1>
+<section class="page-shell">
+    <div class="page-hero reveal">
+      <div class="page-kicker">Order history</div>
+      <h1 class="page-title">My Orders</h1>
+      <p class="page-subtitle">Track SafeTag purchases, shipping progress and delivery status.</p>
+    </div>
 
     <% if (!orders.length) { %>
-      <div class="glass-light p-10 text-center reveal">
+      <div class="empty-state reveal">
         <div class="text-5xl mb-2">📦</div>
         <p>No orders yet. <a class="text-brand font-semibold" href="/store">Browse the store</a>.</p>
       </div>
     <% } else { %>
-      <div class="glass-light overflow-hidden reveal">
+      <div class="glass-light data-panel table-wrap reveal">
         <table class="table">
           <thead><tr><th>#</th><th>Product</th><th>Qty</th><th>Amount</th><th>Status</th><th>Tracking</th><th>Date</th></tr></thead>
           <tbody>
@@ -29,7 +32,6 @@
         </table>
       </div>
     <% } %>
-  </div>
 </section>
 
 <%- include('layout/_foot') %>

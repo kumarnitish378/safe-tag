@@ -1,12 +1,15 @@
 <%- include('layout/_head') %>
 
-<section class="section">
-  <div class="section-inner max-w-md">
-    <h1 class="text-3xl font-bold mb-6 reveal">Account settings</h1>
+<section class="page-shell page-shell-compact">
+    <div class="page-hero reveal">
+      <div class="page-kicker">Account</div>
+      <h1 class="page-title">Settings</h1>
+      <p class="page-subtitle">Keep your contact details current so SafeTag can reach you when it matters.</p>
+    </div>
 
     <% if (errors._form) { %><div class="flash flash-error">⚠️ <%= errors._form %></div><% } %>
 
-    <form method="POST" action="/account/settings" class="glass-light p-6 space-y-4 reveal">
+    <form method="POST" action="/account/settings" class="glass-light form-panel p-6 space-y-4 reveal">
       <%- include('layout/_csrf') %>
       <div><label class="label">Email</label><input class="input" disabled value="<%= values.email %>" /></div>
       <div><label class="label">Display name</label><input class="input" name="name" value="<%= values.name||'' %>" /></div>
@@ -21,7 +24,6 @@
       <% if (errors.new_password) { %><div class="field-error"><%= errors.new_password %></div><% } %>
       <button class="btn-brand btn-lq w-full justify-center">Save</button>
     </form>
-  </div>
 </section>
 
 <%- include('layout/_foot') %>

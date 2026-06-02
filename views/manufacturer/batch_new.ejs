@@ -1,14 +1,13 @@
 <%- include('../layout/_head') %>
 
-<section class="section">
-  <div class="section-inner max-w-lg">
+<section class="page-shell page-shell-narrow">
     <a href="/manufacturer/dashboard" class="text-sm text-brand font-semibold">← Dashboard</a>
     <h1 class="text-3xl font-bold mt-2 mb-6">Create new tag batch</h1>
 
     <% if (errors._form) { %><div class="flash flash-error">⚠️ <%= errors._form %></div><% } %>
 
     <!-- Pricing tiers -->
-    <div class="glass-light p-5 mb-5 reveal">
+    <div class="glass-light data-panel p-5 mb-5 reveal">
       <p class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3">Tag ID generation fee</p>
       <table class="w-full text-sm">
         <thead>
@@ -38,7 +37,7 @@
       </table>
     </div>
 
-    <form method="POST" action="/manufacturer/batch/new" class="glass-light p-6 space-y-5 reveal">
+    <form method="POST" action="/manufacturer/batch/new" class="glass-light form-panel p-6 space-y-5 reveal">
       <%- include('../layout/_csrf') %>
       <div>
         <label class="label">Quantity</label>
@@ -64,7 +63,6 @@
       <button class="btn-brand btn-lq w-full justify-center">Proceed to Payment →</button>
       <p class="text-xs text-slate-500 text-center">Secure payment via Razorpay. Tags are generated immediately after payment.</p>
     </form>
-  </div>
 </section>
 
 <script>

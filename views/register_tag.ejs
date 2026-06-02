@@ -1,6 +1,6 @@
 <%- include('layout/_head', { hideNav: true }) %>
 
-<div class="max-w-md mx-auto px-4 py-6">
+<div class="page-shell page-shell-compact">
   <!-- Brand header -->
   <div class="bg-brand text-white rounded-cardLg p-4 flex items-center gap-3">
     <img src="/static/images/websiteLogo.png" alt="SafeTag" class="h-10 object-contain bg-white rounded-full p-1" style="max-width:40px;" onerror="this.outerHTML='<span class=\'w-10 h-10 rounded-full bg-white text-brand font-bold flex items-center justify-center\'>ST</span>'" />
@@ -25,7 +25,7 @@
       <%- include('layout/_csrf') %>
 
     <!-- Personal -->
-    <div class="glass-light p-5 space-y-4 reveal">
+    <div class="glass-light form-panel p-5 space-y-4 reveal">
       <h2 class="font-semibold">Personal Info</h2>
       <div>
         <label class="label">Full Name *</label>
@@ -64,7 +64,7 @@
     </div>
 
     <!-- Contact -->
-    <div class="glass-light p-5 space-y-4 reveal">
+    <div class="glass-light form-panel p-5 space-y-4 reveal">
       <h2 class="font-semibold">Contact</h2>
       <div>
         <label class="label">Address</label>
@@ -104,7 +104,7 @@
     </div>
 
     <!-- Medical -->
-    <div class="glass-light p-5 space-y-4 reveal">
+    <div class="glass-light form-panel p-5 space-y-4 reveal">
       <h2 class="font-semibold">Medical Info</h2>
       <div>
         <label class="label">Medical Conditions</label>
@@ -133,7 +133,7 @@
     </div>
 
     <!-- Emergency Page Theme -->
-    <div class="glass-light p-5 space-y-4 reveal">
+    <div class="glass-light form-panel p-5 space-y-4 reveal">
       <h2 class="font-semibold">Emergency Page Theme</h2>
       <p class="text-xs text-slate-500">Choose how your emergency profile looks when someone scans your tag.</p>
       <input type="hidden" name="theme" id="themeInput" value="<%= (values.theme||'classic') %>" />

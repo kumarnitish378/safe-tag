@@ -1,8 +1,8 @@
 <%- include('layout/_head') %>
 
 <!-- Breadcrumb -->
-<div class="max-w-5xl mx-auto px-4 pt-5 pb-0">
-  <nav class="text-sm text-slate-500 flex items-center gap-1">
+<div class="page-shell pb-0">
+  <nav class="breadcrumb">
     <a href="/store" class="text-brand font-semibold hover:underline">Store</a>
     <span>›</span>
     <span class="capitalize"><%= product.category %></span>
@@ -12,8 +12,8 @@
 </div>
 
 <!-- Hero: image + buy panel -->
-<section class="section">
-  <div class="section-inner grid md:grid-cols-2 gap-10 items-start">
+<section class="page-shell pt-0">
+  <div class="grid md:grid-cols-2 gap-10 items-start">
 
     <!-- Left: Image + badges -->
     <div class="reveal-left">
@@ -50,7 +50,7 @@
       </div>
 
       <!-- What's in the box -->
-      <div class="glass-light p-4">
+      <div class="glass-light stable-panel p-4">
         <p class="text-xs uppercase font-bold text-slate-500 mb-3">What's in the box</p>
         <ul class="text-sm space-y-1.5">
           <li class="flex gap-2"><span class="text-brand font-bold">✓</span>1× SafeTag (<span class="capitalize"><%= product.category %></span>)</li>
@@ -62,7 +62,7 @@
 
       <!-- Buy / OOS -->
       <% if (product.quantity_available > 0) { %>
-        <div class="glass-light p-5 space-y-4">
+        <div class="glass-light stable-panel p-5 space-y-4">
           <div class="flex items-center gap-3">
             <label class="label mb-0">Quantity</label>
             <div class="flex items-center gap-2">
@@ -85,7 +85,7 @@
           }
         </script>
       <% } else { %>
-        <div class="glass-light p-5 text-center">
+        <div class="glass-light stable-panel p-5 text-center">
           <span class="pill pill-danger text-base">Out of Stock</span>
           <p class="text-sm text-slate-500 mt-3">Check back soon or <a href="/store" class="text-brand font-semibold">browse other products</a>.</p>
         </div>
@@ -98,12 +98,11 @@
         <div class="glass-light p-3">↩️<br/><span class="font-semibold">7-day</span><br/>returns</div>
       </div>
     </div>
-  </div>
 </section>
 
 <!-- About -->
 <section class="bg-white border-t border-slate-100">
-  <div class="section-inner section max-w-3xl">
+  <div class="page-shell page-shell-narrow">
     <h2 class="text-xl font-bold mb-4 reveal">About this product</h2>
     <div class="text-base leading-relaxed whitespace-pre-line text-slate-600 reveal"><%= product.description %></div>
   </div>
@@ -111,7 +110,7 @@
 
 <!-- How it works -->
 <section class="section bg-slate-50 border-t border-slate-100">
-  <div class="section-inner max-w-3xl">
+  <div class="page-shell page-shell-narrow">
     <h2 class="text-xl font-bold mb-5 reveal">How it works</h2>
     <div class="grid sm:grid-cols-3 gap-4">
       <div class="glass-light p-4 text-center tilt-card glow-on-hover d1 reveal">

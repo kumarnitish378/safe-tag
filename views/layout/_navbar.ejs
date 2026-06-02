@@ -1,11 +1,11 @@
 <nav class="lq-nav sticky top-0 z-30">
-  <div class="max-w-5xl mx-auto px-4 py-3 flex items-center gap-2">
-    <a href="/" class="flex items-center flex-shrink-0">
+  <div class="max-w-6xl mx-auto px-4 py-3 flex items-center gap-3">
+    <a href="/" class="flex items-center gap-2 flex-shrink-0" aria-label="SafeTag home">
       <img src="/static/images/websiteLogo.png" alt="SafeTag" class="h-9 w-auto object-contain" onerror="this.style.display='none'" />
     </a>
 
     <!-- Desktop nav links -->
-    <div class="hidden md:flex items-center gap-0.5 ml-3">
+    <div class="hidden md:flex items-center gap-1 ml-3">
       <a class="navlink" href="/store" data-i18n="nav.store">Store</a>
       <a class="navlink" href="/#how" data-i18n="nav.how">How it Works</a>
       <a class="navlink" href="/#faq" data-i18n="nav.faq">FAQ</a>
@@ -14,7 +14,7 @@
 
     <div class="ml-auto flex items-center gap-1.5">
       <!-- Language toggle -->
-      <div class="flex items-center rounded-lg border border-slate-300 dark:border-slate-600 overflow-hidden text-xs font-bold select-none" style="box-shadow:0 1px 3px rgba(0,0,0,0.08);">
+      <div class="hidden sm:flex items-center rounded-lg border border-slate-300 dark:border-slate-600 overflow-hidden text-xs font-bold select-none" style="box-shadow:0 1px 3px rgba(0,0,0,0.08);">
         <button onclick="setLang('en')" id="langEn" class="px-2.5 py-1.5 transition bg-brand text-white" title="English">EN</button>
         <button onclick="setLang('hi')" id="langHi" class="px-2.5 py-1.5 transition text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700" title="हिन्दी">हिं</button>
       </div>
@@ -36,7 +36,7 @@
           <%- include('_csrf') %><button class="btn-outline text-sm" data-i18n="nav.signout">Sign out</button>
         </form>
       <% } else { %>
-        <a class="navlink font-semibold hidden md:block" style="color:#0A2342;" href="/login" data-i18n="nav.login">Login</a>
+        <a class="navlink font-semibold hidden md:block" href="/login" data-i18n="nav.login">Login</a>
         <a class="btn-warn text-sm hidden sm:inline-flex" href="/store" data-i18n="nav.gettag">Get Your Tag</a>
       <% } %>
 
