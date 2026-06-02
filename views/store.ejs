@@ -1,9 +1,13 @@
 <%- include('layout/_head') %>
 
-<section class="section">
-  <div class="section-inner">
-    <div class="flex items-center justify-between mb-6 flex-wrap gap-3 reveal">
-      <h1 class="text-3xl font-bold">SafeTag Store</h1>
+<section class="page-shell">
+    <div class="page-hero reveal">
+      <div class="flex items-start justify-between gap-4 flex-wrap">
+        <div>
+          <div class="page-kicker">SafeTag Store</div>
+          <h1 class="page-title">Emergency ID tags for everyday India</h1>
+          <p class="page-subtitle">Choose QR + NFC keychains, cards, stickers and wristbands that open a medical profile in seconds. No app needed.</p>
+        </div>
       <form method="GET" action="/store" class="flex items-center gap-2">
         <select name="category" class="input py-2" onchange="this.form.submit()">
           <option value="">All categories</option>
@@ -12,16 +16,17 @@
           <% }) %>
         </select>
       </form>
+      </div>
     </div>
 
     <% if (!products.length) { %>
-      <div class="glass-light p-10 text-center reveal">
+      <div class="empty-state reveal">
         <div class="text-4xl mb-2">🏷️</div>
         <h3 class="text-xl font-semibold mb-1">No products yet</h3>
         <p>Check back soon — manufacturers are listing new SafeTags every week.</p>
       </div>
     <% } else { %>
-      <div class="grid md:grid-cols-3 sm:grid-cols-2 gap-4">
+      <div class="product-grid">
         <% products.forEach(function(p, i){ %>
           <a href="/store/<%= p.id %>" class="glass-light p-5 tilt-card glow-on-hover d<%= (i%5)+1 %> reveal">
             <div class="w-full h-44 bg-slate-100 rounded-card mb-4 flex items-center justify-center text-5xl">
@@ -41,7 +46,6 @@
         <% }) %>
       </div>
     <% } %>
-  </div>
 </section>
 
 <%- include('layout/_foot') %>

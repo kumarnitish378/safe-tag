@@ -62,6 +62,18 @@
   box-shadow: 0 12px 48px rgba(13,148,136,0.16), 0 2px 8px rgba(0,0,0,0.07);
   transform: translateY(-5px);
 }
+.data-panel,
+.form-panel,
+.stable-panel {
+  transform: none !important;
+}
+.data-panel:hover,
+.form-panel:hover,
+.stable-panel:hover {
+  border-color: rgba(13,148,136,0.16);
+  box-shadow: 0 2px 24px rgba(13,148,136,0.08), 0 1px 4px rgba(0,0,0,0.05);
+  transform: none !important;
+}
 
 html.dark .glass-light {
   background: rgba(15,23,42,0.75);
@@ -331,6 +343,13 @@ html.dark .glass-light:hover {
   background: rgba(15,23,42,0.92);
   border-color: rgba(13,148,136,0.32);
   box-shadow: 0 12px 48px rgba(0,0,0,0.5), 0 0 0 1px rgba(13,148,136,0.2);
+}
+html.dark .data-panel:hover,
+html.dark .form-panel:hover,
+html.dark .stable-panel:hover {
+  background: rgba(15,23,42,0.82);
+  border-color: rgba(13,148,136,0.18);
+  box-shadow: 0 2px 24px rgba(0,0,0,0.4), 0 1px 4px rgba(0,0,0,0.3);
 }
 
 /* Glass on dark bg — slightly brighter in dark mode so it stands out */

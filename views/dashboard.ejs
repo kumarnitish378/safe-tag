@@ -1,29 +1,29 @@
 <%- include('layout/_head') %>
 
-<section class="section">
-  <div class="section-inner">
-    <div class="flex items-center justify-between flex-wrap gap-3 mb-6">
+<section class="page-shell">
+    <div class="page-hero">
       <div>
-        <h1 class="text-3xl font-bold">My SafeTags</h1>
-        <p class="text-sm text-slate-500">Welcome, <%= user.name || user.email %>.</p>
+        <div class="page-kicker">Family safety dashboard</div>
+        <h1 class="page-title">My SafeTags</h1>
+        <p class="page-subtitle">Welcome, <%= user.name || user.email %>. Manage activated tags, orders, QR codes and emergency profiles from one place.</p>
       </div>
-      <div class="flex gap-2">
+      <div class="page-actions">
         <button onclick="document.getElementById('claimModal').classList.remove('hidden')" class="btn-outline text-sm">+ Activate a Tag</button>
         <a class="btn-warn text-sm" href="/store">Buy More Tags</a>
       </div>
     </div>
 
     <div class="grid sm:grid-cols-3 gap-3 mb-6">
-      <div class="glass-light p-5 rounded-2xl glow-on-hover reveal">
-        <div class="text-xs uppercase font-bold text-slate-500 mb-1">Total tags</div>
+      <div class="glass-light metric-card reveal">
+        <div class="metric-label mb-1">Total tags</div>
         <div class="text-3xl font-sora font-bold text-navy stat-num" data-count="<%= stats.total %>">0</div>
       </div>
-      <div class="glass-light p-5 rounded-2xl glow-on-hover reveal d2">
-        <div class="text-xs uppercase font-bold text-slate-500 mb-1">Active</div>
+      <div class="glass-light metric-card reveal d2">
+        <div class="metric-label mb-1">Active</div>
         <div class="text-3xl font-sora font-bold text-success stat-num" data-count="<%= stats.active %>">0</div>
       </div>
-      <div class="glass-light p-5 rounded-2xl glow-on-hover reveal d3">
-        <div class="text-xs uppercase font-bold text-slate-500 mb-1">Pending Activation</div>
+      <div class="glass-light metric-card reveal d3">
+        <div class="metric-label mb-1">Pending Activation</div>
         <div class="text-3xl font-sora font-bold text-warning stat-num" data-count="<%= stats.pending %>">0</div>
       </div>
     </div>
@@ -42,7 +42,7 @@
     <% } %>
 
     <% if (!tags.length && (!orders || !orders.length)) { %>
-      <div class="card p-10 text-center">
+      <div class="empty-state">
         <div class="text-5xl mb-2">🏷️</div>
         <h3 class="text-xl font-semibold mb-1">No tags yet</h3>
         <p class="mb-5">Order a SafeTag and scan it once you receive it — you'll be brought right back here.</p>
@@ -54,10 +54,10 @@
     <% } %>
 
     <% if (tags.length) { %>
-      <h2 class="text-lg font-bold text-navy mb-3">My Tags</h2>
+      <div class="section-heading"><h2>My Tags</h2></div>
       <div class="grid md:grid-cols-2 gap-4 mb-8">
         <% tags.forEach(function(t){ %>
-          <div class="card p-5">
+          <div class="card p-5 stable-panel">
             <div class="flex items-center justify-between mb-2">
               <span class="pill pill-mono"><%= t.tag_id %></span>
               <% if (t.is_active) { %><span class="pill pill-success">Active</span><% } else { %><span class="pill pill-warning">Pending</span><% } %>
@@ -83,7 +83,7 @@
     <% } %>
 
     <% if (orders && orders.length) { %>
-      <h2 class="text-lg font-bold text-navy mb-3">My Orders</h2>
+      <div class="section-heading"><h2>My Orders</h2><a class="text-brand text-sm font-semibold" href="/orders">View all</a></div>
       <div class="space-y-3">
         <% orders.forEach(function(o){ %>
           <%
@@ -99,7 +99,7 @@
             var shippingAddr = '';
             try { var addr = JSON.parse(o.shipping_address || '{}'); shippingAddr = [addr.address_line1, addr.city, addr.state, addr.pincode].filter(Boolean).join(', '); } catch(e) {}
           %>
-          <div class="card p-5 flex gap-4 items-start">
+          <div class="card p-5 flex gap-4 items-start stable-panel">
             <div class="w-14 h-14 bg-slate-100 rounded-xl flex items-center justify-center flex-shrink-0 overflow-hidden">
               <% if (o.product && o.product.photo_url) { %>
                 <img src="<%= o.product.photo_url %>" class="w-14 h-14 object-cover" alt="<%= o.product.name %>" />
@@ -126,7 +126,6 @@
       </div>
     <% } %>
 
-  </div>
 </section>
 
 <!-- Claim tag modal -->

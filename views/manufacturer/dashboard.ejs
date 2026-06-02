@@ -1,7 +1,6 @@
 <%- include('../layout/_head') %>
 
-<section class="section">
-  <div class="section-inner">
+<section class="page-shell">
     <div class="flex items-center justify-between flex-wrap gap-2 mb-6 reveal">
       <div>
         <h1 class="text-3xl font-bold"><%= manufacturer.business_name %></h1>
@@ -32,16 +31,16 @@
     %>
 
     <div class="grid sm:grid-cols-3 gap-3 mb-6">
-      <div class="glass-light p-5 reveal d1"><div class="text-xs uppercase font-bold text-slate-500">Total tags produced</div><div class="text-3xl font-sora font-bold text-navy" data-count="<%= totalTags %>"><%= totalTags %></div></div>
-      <div class="glass-light p-5 reveal d2"><div class="text-xs uppercase font-bold text-slate-500">Activated</div><div class="text-3xl font-sora font-bold text-success" data-count="<%= totalActive %>"><%= totalActive %></div><div class="text-xs"><%= rate %>%</div></div>
-      <div class="glass-light p-5 reveal d3"><div class="text-xs uppercase font-bold text-slate-500">Listings</div><div class="text-3xl font-sora font-bold text-navy" data-count="<%= listings.length %>"><%= listings.length %></div></div>
+      <div class="glass-light metric-card reveal d1"><div class="metric-label">Total tags produced</div><div class="text-3xl font-sora font-bold text-navy" data-count="<%= totalTags %>"><%= totalTags %></div></div>
+      <div class="glass-light metric-card reveal d2"><div class="metric-label">Activated</div><div class="text-3xl font-sora font-bold text-success" data-count="<%= totalActive %>"><%= totalActive %></div><div class="text-xs"><%= rate %>%</div></div>
+      <div class="glass-light metric-card reveal d3"><div class="metric-label">Listings</div><div class="text-3xl font-sora font-bold text-navy" data-count="<%= listings.length %>"><%= listings.length %></div></div>
     </div>
 
     <h2 class="text-xl font-bold mb-3">Batches</h2>
     <% if (!batches.length) { %>
-      <div class="glass-light p-6 text-center reveal">No batches yet. <a class="text-brand font-semibold" href="/manufacturer/batch/new">Create your first batch</a>.</div>
+      <div class="empty-state reveal">No batches yet. <a class="text-brand font-semibold" href="/manufacturer/batch/new">Create your first batch</a>.</div>
     <% } else { %>
-      <div class="glass-light overflow-hidden mb-8 reveal">
+      <div class="glass-light data-panel table-wrap mb-8 reveal">
         <table class="table">
           <thead><tr><th>#</th><th>Batch name</th><th>Quantity</th><th>Activated</th><th>Rate</th><th></th></tr></thead>
           <tbody>
@@ -62,9 +61,9 @@
 
     <h2 class="text-xl font-bold mb-3">My listings</h2>
     <% if (!listings.length) { %>
-      <div class="glass-light p-6 text-center reveal">No listings yet. <a class="text-brand font-semibold" href="/manufacturer/listings/new">List a product</a>.</div>
+      <div class="empty-state reveal">No listings yet. <a class="text-brand font-semibold" href="/manufacturer/listings/new">List a product</a>.</div>
     <% } else { %>
-      <div class="glass-light overflow-hidden reveal">
+      <div class="glass-light data-panel table-wrap reveal">
         <table class="table">
           <thead><tr><th>Name</th><th>Category</th><th>Price</th><th>Stock</th><th>Status</th></tr></thead>
           <tbody>
@@ -85,7 +84,6 @@
         </table>
       </div>
     <% } %>
-  </div>
 </section>
 
 <%- include('../layout/_foot') %>

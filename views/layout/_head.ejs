@@ -17,14 +17,16 @@
   </script>
 
   <%
-    var _title = (typeof title !== 'undefined' && title) ? title : 'SafeTag — Scan. Know. Save a Life.';
+    var _title = (typeof title !== 'undefined' && title) ? title : 'SafeTag Emergency ID Tags India | QR + NFC Medical ID';
     var _desc  = (typeof seoDesc !== 'undefined' && seoDesc) ? seoDesc
-               : 'India\'s QR + NFC emergency ID tag. One scan shows blood group, contacts & medical info in 3 seconds. No app needed. Ships across India from ₹149.';
-    var _image = (typeof seoImage !== 'undefined' && seoImage) ? seoImage : '/static/images/websiteLogo.png';
+               : 'Buy QR + NFC emergency ID tags in India. One scan shows blood group, allergies and contacts in seconds. No app needed for families or first responders.';
+    var _image = (typeof seoImage !== 'undefined' && seoImage) ? seoImage : '/static/images/og-homepage.jpg';
   %>
 
   <title><%= _title %></title>
   <meta name="description" content="<%= _desc %>" />
+  <meta name="author" content="SafeTag" />
+  <meta name="format-detection" content="telephone=no" />
   <meta name="keywords" content="SafeTag, emergency ID tag India, QR code emergency tag, NFC emergency ID, RFID tag India, child safety tag, lost child identification, elderly ID tag, medical alert tag, emergency contact tag, QR sticker India, NFC wristband India, buy emergency tag India, child safety ID card, dementia patient ID tag, pet safety tag India, solo traveler ID tag, school safety tag India" />
   <meta name="robots" content="<%= (typeof noIndex !== 'undefined' && noIndex) ? 'noindex, nofollow' : 'index, follow' %>" />
   <link rel="canonical" href="<%= baseUrl + path %>" />

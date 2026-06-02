@@ -1,7 +1,6 @@
 <%- include('../layout/_head') %>
 
-<section class="section">
-  <div class="section-inner">
+<section class="page-shell">
     <div class="flex items-center justify-between mb-6 flex-wrap gap-2 reveal">
       <h1 class="text-3xl font-bold">Admin · Platform overview</h1>
       <div class="flex gap-2">
@@ -21,7 +20,7 @@
       <div class="glass-light p-5 sm:col-span-2 reveal d2"><div class="text-xs uppercase font-bold text-slate-500">Revenue this week</div><div class="text-3xl font-sora font-bold text-warning">₹<%= stats.revenue_week_inr||0 %></div></div>
     </div>
 
-    <div class="glass-light overflow-hidden reveal">
+    <div class="glass-light data-panel overflow-hidden reveal">
       <div class="px-5 py-3 border-b font-semibold">Recent activity</div>
       <ul class="divide-y">
         <% if (!recent.length) { %>
@@ -39,7 +38,6 @@
         <% } %>
       </ul>
     </div>
-  </div>
 </section>
 
 <%- include('../layout/_foot') %>
