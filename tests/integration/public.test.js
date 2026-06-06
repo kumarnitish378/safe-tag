@@ -125,9 +125,23 @@ describe('Unknown routes', () => {
 // ---------------------------------------------------------------------------
 
 describe('GET /qr/:tagId', () => {
-  it('returns a PNG image for any tag ID string', async () => {
+  it('returns a PNG image for an existing tag', async () => {
+    prisma.tag.findUnique.mockResolvedValue({ tagId: 'TESTACT1', securityKey: null });
     const res = await request(app).get('/qr/TESTACT1');
     expect(res.status).toBe(200);
     expect(res.headers['content-type']).toMatch(/image\/png/);
+  });
+
+  it('preserves the tag id case in the lookup (no upper-casing)', async () => {
+    prisma.tag.findUnique.mockResolvedValue({ tagId: '60trEmaF9', securityKey: null });
+    const res = await request(app).get('/qr/60trEmaF9');
+    expect(res.status).toBe(200);
+    expect(prisma.tag.findUnique).toHaveBeenCalledWith({ where: { tagId: '60trEmaF9' } });
+  });
+
+  it('returns 404 for an unknown tag', async () => {
+    prisma.tag.findUnique.mockResolvedValue(null);
+    const res = await request(app).get('/qr/NOPE12345');
+    expect(res.status).toBe(404);
   });
 });

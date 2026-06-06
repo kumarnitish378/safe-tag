@@ -216,9 +216,16 @@ app.get('/', async (req, res) => {
 // =============================================================================
 app.get('/qr/:tagId', async (req, res) => {
   try {
-    const tagId = req.params.tagId.replace(/[^A-Za-z0-9-]/g, '').toUpperCase();
+    // Tag ids are case-sensitive base62 — never upper/lower-case them.
+    const tagId = (req.params.tagId || '').replace(/[^A-Za-z0-9_-]/g, '');
     if (!tagId) return res.status(400).send('Invalid tag ID');
-    const url = `${BASE_URL}/t/${tagId}`;
+    const tag = await prisma.tag.findUnique({ where: { tagId } });
+    if (!tag) return res.status(404).send('Tag not found');
+    // New-style tags (securityKey null) use the short /t/<code> URL;
+    // legacy tags keep the /<tagId>/<securityKey> URL.
+    const url = tag.securityKey
+      ? `${BASE_URL}/${tag.tagId}/${tag.securityKey}`
+      : `${BASE_URL}/t/${tag.tagId}`;
     const png = await QRCode.toBuffer(url, {
       width: 300, margin: 1,
       color: { dark: '#0A2342', light: '#FFFFFF' },
@@ -340,12 +347,22 @@ async function handleTagScan(req, res, tag_id, security_key) {
 app.get('/t/:code([a-zA-Z0-9]{9})', async (req, res) => {
   const code = req.params.code;
   try {
-    const tag = await prisma.tag.findUnique({ where: { tagId: code } });
+    let tag = await prisma.tag.findUnique({ where: { tagId: code } });
+    // Rescue for early-printed tags: a former bug in the /qr endpoint
+    // upper-cased the encoded URL, so some physical tags carry /t/<UPPERCASED>.
+    // base62 ids are case-sensitive, so fall back to a case-insensitive match
+    // (Postgres only) and then ALWAYS use the tag's canonical id afterwards.
+    if (!tag && (process.env.DATABASE_URL || '').includes('postgres')) {
+      tag = await prisma.tag.findFirst({
+        where: { tagId: { equals: code, mode: 'insensitive' } },
+      });
+    }
     if (!tag) return res.status(404).render('404', { title: 'Tag not found' });
-    await prisma.tag.update({ where: { tagId: code }, data: { scanCount: { increment: 1 } } });
-    if (tag.isActive) return res.redirect(`/emergency/${code}`);
-    req.session.lastScannedTag = { tag_id: code, security_key: null };
-    return req.session.save(() => res.redirect(`/register/${code}`));
+    const canonical = tag.tagId;
+    await prisma.tag.update({ where: { tagId: canonical }, data: { scanCount: { increment: 1 } } });
+    if (tag.isActive) return res.redirect(`/emergency/${canonical}`);
+    req.session.lastScannedTag = { tag_id: canonical, security_key: null };
+    return req.session.save(() => res.redirect(`/register/${canonical}`));
   } catch (e) {
     return res.status(500).render('500', { title: 'Unable to reach server' });
   }
@@ -642,15 +659,18 @@ app.get('/dashboard', requireUser, async (req, res) => {
 
 app.post('/dashboard/claim', requireUser, async (req, res) => {
   try {
-    const tagId = (req.body.tag_id || '').trim().toUpperCase();
+    // base62 ids are case-sensitive — try as typed first, then fall back to
+    // upper-case for legacy (all-caps) tags.
+    const raw = (req.body.tag_id || '').trim();
     const securityKey = (req.body.security_key || '').trim();
-    const tag = await prisma.tag.findUnique({ where: { tagId } });
+    let tag = await prisma.tag.findUnique({ where: { tagId: raw } });
+    if (!tag && raw) tag = await prisma.tag.findUnique({ where: { tagId: raw.toUpperCase() } });
     if (!tag || tag.securityKey !== securityKey) {
       req.flash('error', 'Tag not found or invalid security key.');
     } else if (tag.ownerId && tag.ownerId !== req.session.user.id) {
       req.flash('error', 'Tag already claimed by another user.');
     } else {
-      await prisma.tag.update({ where: { tagId }, data: { ownerId: req.session.user.id } });
+      await prisma.tag.update({ where: { tagId: tag.tagId }, data: { ownerId: req.session.user.id } });
       req.flash('success', 'Tag added to your account.');
     }
   } catch (e) {
@@ -1610,30 +1630,6 @@ app.post('/admin/users/:id/activate', requireAdmin, async (req, res) => {
     req.flash('success', 'Activated.');
   } catch (e) { req.flash('error', 'Failed.'); }
   res.redirect('/admin/users');
-});
-
-// =============================================================================
-// P25 — QR code generation
-// =============================================================================
-app.get('/qr/:tag_id', async (req, res) => {
-  try {
-    const tagId = req.params.tag_id;
-    const tag = await prisma.tag.findUnique({ where: { tagId } });
-    if (!tag) return res.status(404).render('404');
-    // New-style tags (securityKey null): short /t/code URL
-    // Old-style tags: keep legacy /tagId/securityKey URL
-    const url = tag.securityKey
-      ? `${BASE_URL}/${tag.tagId}/${tag.securityKey}`
-      : `${BASE_URL}/t/${tag.tagId}`;
-    // errorCorrectionLevel L = fewest modules for same data → smaller QR → fits 18mm tags
-    // margin 1 = minimum quiet zone (saves space on small tags)
-    const buf = await QRCode.toBuffer(url, { type: 'png', width: 600, margin: 1, errorCorrectionLevel: 'L' });
-    res.set('Content-Type', 'image/png');
-    res.set('Content-Disposition', `inline; filename="safetag-${tagId}.png"`);
-    return res.send(buf);
-  } catch (e) {
-    res.status(500).render('500');
-  }
 });
 
 // =============================================================================
