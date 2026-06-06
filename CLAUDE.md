@@ -18,10 +18,35 @@ SafeTag is a Node.js/Express + EJS SSR app for emergency QR+NFC identity tags so
 SafeTag is evolving from emergency-only into a **multi-type smart-tag platform**: one tag + portal, many record types (medical, digital visiting card, car-owner, catalog, pet, lost-&-found, etc.).
 - **Tag type is set at manufacture (batch level)** — different manufacturers/batches produce tags for different purposes, not only emergency.
 - Flow: scan → register page renders the form for the tag's type → activate → scan lands on that type's template page.
-- Each type defines: form fields, display template, and a **privacy rule** (`reveal-on-scan` / `contact-relay` / `public`).
+- Each type defines: form fields, a template, and a **privacy/interaction rule**.
 - Medical/safety remains a first-party, locked type.
 - **No uploadable/third-party templates** — all templates are first-party only (security: avoids RCE/XSS on a life-safety domain).
 - **Custom templates = manual service**: a manufacturer who wants a custom template contacts SafeTag → we build the new type/template → we add it to the site and provision their tag type. No self-serve template creation.
+- **Activation manual**: manufacturers ship a printed user manual with each keytag (scan → register → activate). Manual content is per tag type; keep the activation flow dead-simple.
+
+### Interaction classes (every template is one of these)
+| Class | Behaviour | Privacy |
+|---|---|---|
+| **Display** | scan shows the owner's info | `reveal-on-scan` |
+| **Collect** | scanner submits data to the owner | `public-submit` |
+| **Redirect** | scan sends you to a URL / action | `public-redirect` |
+| **Access** | identity / entry / attendance | `restricted` |
+
+> `contact-relay` is a Display variant that lets a scanner notify the owner **without revealing their number** (e.g. car-owner).
+
+### Template catalog
+**Phase-1 (build first):**
+1. Medical Emergency *(Display / reveal-on-scan)* — existing
+2. Digital Visiting Card *(Display / public)*
+3. Car / Vehicle Owner *(Display / contact-relay)*
+4. Pet ID *(Display / reveal-on-scan)*
+5. Lost & Found *(Display / contact-relay)*
+6. Product Catalog / Business *(Display / public)*
+7. **URL placeholder** *(Redirect)* — base type; Google-review, UPI, WhatsApp, app-download, social-share are presets of it
+8. Survey / Feedback *(Collect)*
+
+**Backlog (enable on demand / via custom service):**
+Student ID *(Display)* · Google Business Review *(Redirect preset)* · Social Share / Social Hub *(Redirect preset)* · UPI / Tip / Donation *(Redirect preset)* · WhatsApp Chat *(Redirect preset)* · Wi-Fi Connect *(Redirect)* · Resume / Portfolio *(Display)* · Restaurant Menu *(Display)* · Real-estate Listing *(Display)* · Wedding Invite *(Display)* · Warranty & Manual *(Display)* · Memorial / Tribute *(Display)* · Employee / Staff ID *(Access)* · Gym / Club Membership *(Access)* · Visitor / Gate Pass *(Access)* · Event Ticket / Badge *(Access)* · RSVP *(Collect)* · Complaint / Issue *(Collect)* · Lead Capture *(Collect)*
 
 ---
 
