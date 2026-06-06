@@ -229,12 +229,12 @@ describe('GET /register/:tag_id', () => {
     expect(res.status).toBe(200);
   });
 
-  it('redirects to /emergency if tag is already active', async () => {
+  it('redirects an already-active tag to its scan URL (/t/:code)', async () => {
     prisma.tag.findUnique.mockResolvedValue(activeTag);
 
     const res = await request(app).get('/register/abc123xyz');
     expect(res.status).toBe(302);
-    expect(res.headers.location).toMatch(/emergency/);
+    expect(res.headers.location).toBe('/t/abc123xyz');
   });
 
   it('returns 404 for an unknown tag ID', async () => {

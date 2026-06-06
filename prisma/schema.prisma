@@ -10,6 +10,7 @@ datasource db {
 model Tag {
   tagId          String    @id @map("tag_id")
   securityKey    String?   @map("security_key")
+  tagType        String    @default("medical") @map("tag_type")
   isActive       Boolean   @default(false) @map("is_active")
   manufacturerId Int?      @map("manufacturer_id")
   batchId        Int?      @map("batch_id")
@@ -18,12 +19,41 @@ model Tag {
   activatedAt    DateTime? @map("activated_at")
   scanCount      Int       @default(0) @map("scan_count")
 
-  profile      MedicalProfile?
-  owner        User?           @relation(fields: [ownerId], references: [id])
-  manufacturer Manufacturer?   @relation(fields: [manufacturerId], references: [id])
-  batch        TagBatch?       @relation(fields: [batchId], references: [id])
+  profile        MedicalProfile?
+  genericProfile TagProfile?
+  submissions    Submission[]
+  owner          User?           @relation(fields: [ownerId], references: [id])
+  manufacturer   Manufacturer?   @relation(fields: [manufacturerId], references: [id])
+  batch          TagBatch?       @relation(fields: [batchId], references: [id])
 
   @@map("tags")
+}
+
+// Generic profile for all NON-medical tag types. Medical stays on
+// MedicalProfile (untouched) so the life-safety path carries no regression risk.
+model TagProfile {
+  id        Int      @id @default(autoincrement())
+  tagId     String   @unique @map("tag_id")
+  type      String
+  data      String   // JSON string (portable across SQLite + PostgreSQL)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  tag Tag @relation(fields: [tagId], references: [tagId])
+
+  @@map("tag_profiles")
+}
+
+// Inbound data captured by Collect-class tags (survey, feedback, RSVP, lead, ...)
+model Submission {
+  id        Int      @id @default(autoincrement())
+  tagId     String   @map("tag_id")
+  data      String   // JSON string
+  createdAt DateTime @default(now()) @map("created_at")
+
+  tag Tag @relation(fields: [tagId], references: [tagId])
+
+  @@map("submissions")
 }
 
 model MedicalProfile {
@@ -94,6 +124,7 @@ model TagBatch {
   id                Int      @id @default(autoincrement())
   manufacturerId    Int      @map("manufacturer_id")
   batchName         String   @map("batch_name")
+  tagType           String   @default("medical") @map("tag_type")
   quantity          Int
   paidAmount        Int?     @map("paid_amount")
   paymentStatus     String   @default("pending") @map("payment_status")

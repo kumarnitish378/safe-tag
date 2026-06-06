@@ -1,0 +1,35 @@
+<%- include('layout/_head') %>
+
+<section class="page-shell page-shell-narrow">
+  <a href="/dashboard" class="text-sm text-brand font-semibold">← Dashboard</a>
+  <div class="page-hero mt-3">
+    <div class="page-kicker">📝 Responses</div>
+    <h1 class="page-title"><%= cfg.title || 'Survey responses' %></h1>
+    <p class="page-subtitle"><%= submissions.length %> response<%= submissions.length === 1 ? '' : 's' %> · Tag <span class="mono"><%= tag_id %></span></p>
+  </div>
+
+  <% if (!submissions.length) { %>
+    <div class="empty-state">No responses yet. Share your tag to start collecting.</div>
+  <% } else { %>
+    <div class="space-y-3">
+      <% submissions.forEach(function(s){ var a = s.answers || {}; %>
+        <div class="card p-4">
+          <div class="text-xs text-slate-400 mb-2"><%= new Date(s.created_at).toLocaleString('en-IN') %></div>
+          <% if (a.kind === 'contact') { %>
+            <div class="text-sm text-slate-700 dark:text-slate-200 whitespace-pre-line"><%= a.message || '' %></div>
+            <% if (a.reply) { %><div class="text-xs text-slate-500 mt-2">↩ Reply to: <%= a.reply %></div><% } %>
+          <% } else { %>
+            <% Object.keys(a).forEach(function(q){ %>
+              <div class="mb-2">
+                <div class="label"><%= q %></div>
+                <div class="text-sm text-slate-700 dark:text-slate-200"><%= a[q] %></div>
+              </div>
+            <% }); %>
+          <% } %>
+        </div>
+      <% }); %>
+    </div>
+  <% } %>
+</section>
+
+<%- include('layout/_foot') %>

@@ -1,0 +1,45 @@
+<%- include('../layout/_head', { hideNav: true, hideFooter: true }) %>
+
+<div class="page-shell page-shell-compact">
+  <div class="card overflow-hidden p-0 reveal">
+    <div class="bg-brand text-white p-6 text-center">
+      <div class="w-20 h-20 mx-auto rounded-full bg-white/20 flex items-center justify-center text-3xl">🔑</div>
+      <h1 class="text-xl font-bold mt-3">Lost &amp; Found</h1>
+      <p class="opacity-90 text-sm mt-1"><%= p.itemName %></p>
+    </div>
+
+    <div class="p-6 space-y-4">
+      <div class="flash flash-info">Thanks for finding this! You can return it to the owner.</div>
+      <% if (p.note) { %><p class="text-slate-600 text-sm italic text-center">"<%= p.note %>"</p><% } %>
+      <% if (p.reward) { %><p class="text-sm text-center"><span class="badge">🎁 Reward: <%= p.reward %></span></p><% } %>
+
+      <% if (notified) { %>
+        <div class="text-center space-y-2 py-4">
+          <div class="text-4xl">✅</div>
+          <h2 class="font-semibold">Message sent</h2>
+          <p class="text-sm text-slate-500">The owner has been notified. Thank you!</p>
+        </div>
+      <% } else { %>
+        <!-- contact-relay: owner's number is never exposed -->
+        <form method="POST" action="/t/<%= tag_id %>/notify" class="space-y-3">
+          <%- include('../layout/_csrf') %>
+          <input type="text" name="website" class="hidden" tabindex="-1" autocomplete="off" aria-hidden="true" />
+          <div>
+            <label class="label">Message to the owner</label>
+            <textarea class="input" name="message" rows="3" required maxlength="1000"
+              placeholder="e.g. I found your item at ..."></textarea>
+          </div>
+          <div>
+            <label class="label">How can they reach you? (optional)</label>
+            <input class="input" name="reply" maxlength="120" placeholder="Phone or email (optional)" />
+          </div>
+          <button type="submit" class="btn-brand btn-lq w-full justify-center">📨 Notify the owner</button>
+          <p class="text-xs text-slate-400 text-center">The owner's number stays private.</p>
+        </form>
+      <% } %>
+    </div>
+  </div>
+  <p class="text-center text-xs text-slate-400 mt-4">Powered by SafeTag</p>
+</div>
+
+<%- include('../layout/_foot', { hideFooter: true }) %>

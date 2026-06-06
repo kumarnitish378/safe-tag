@@ -45,18 +45,18 @@ model TagProfile {
   id        Int      @id @default(autoincrement())
   tagId     String   @unique @map("tag_id")
   type      String                                        // mirrors Tag.tagType
-  data      Json                                          // type-specific fields
+  data      String                                        // JSON string (type-specific fields)
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
   tag       Tag      @relation(fields: [tagId], references: [tagId])
   @@map("tag_profiles")
 }
 
-// Inbound data for Collect-class types (survey, feedback, RSVP, lead, complaint)
+// Inbound data for Collect-class + contact-relay types (survey, feedback, lead, notify)
 model Submission {
   id        Int      @id @default(autoincrement())
   tagId     String   @map("tag_id")
-  data      Json
+  data      String   // JSON string
   createdAt DateTime @default(now()) @map("created_at")
   tag       Tag      @relation(fields: [tagId], references: [tagId])
   @@map("submissions")
@@ -66,10 +66,12 @@ model Submission {
 **Why dual profile tables (MedicalProfile + TagProfile):** the medical render,
 validation, and emergency page are mature and life-critical. Re-homing them onto a
 JSON blob risks regressions on the page that matters most. New types use the
-generic JSON table; medical is left exactly as-is. Unifying later is optional cleanup.
+generic table; medical is left exactly as-is. Unifying later is optional cleanup.
 
-`Json` works on both SQLite (local) and PostgreSQL (Render) via Prisma, so the
-`patch-schema-for-prod.js` dual-DB strategy is unaffected.
+**`data` is a `String` (JSON-encoded), not Prisma `Json`** — the SQLite connector
+doesn't support the `Json` type, and the dual-DB strategy (SQLite local ↔ Postgres
+prod) requires a column type valid on both. Code does `JSON.parse` / `JSON.stringify`
+at the boundary. `patch-schema-for-prod.js` is unaffected.
 
 **Migration safety:** `tagType` defaults to `"medical"`, so every existing tag and
 batch becomes `medical` automatically → existing scans behave identically.

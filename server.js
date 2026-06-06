@@ -37,6 +37,8 @@ const {
   ALLOWED_ORDER_STATUS,
 } = require('./lib/helpers');
 
+const tagTypes = require('./lib/tagTypes');
+
 const app = express();
 
 // CRITICAL: case-sensitive routing so /:tag_id([A-Z0-9]) does NOT match /emergency etc.
@@ -360,11 +362,81 @@ app.get('/t/:code([a-zA-Z0-9]{9})', async (req, res) => {
     if (!tag) return res.status(404).render('404', { title: 'Tag not found' });
     const canonical = tag.tagId;
     await prisma.tag.update({ where: { tagId: canonical }, data: { scanCount: { increment: 1 } } });
-    if (tag.isActive) return res.redirect(`/emergency/${canonical}`);
-    req.session.lastScannedTag = { tag_id: canonical, security_key: null };
-    return req.session.save(() => res.redirect(`/register/${canonical}`));
+
+    // Not yet activated → registration form for this tag's type
+    if (!tag.isActive) {
+      req.session.lastScannedTag = { tag_id: canonical, security_key: null };
+      return req.session.save(() => res.redirect(`/register/${canonical}`));
+    }
+
+    // Medical keeps its dedicated, mature emergency page (unchanged)
+    if (tagTypes.isMedical(tag.tagType)) return res.redirect(`/emergency/${canonical}`);
+
+    // Non-medical types are served from the generic profile + type registry
+    const def = tagTypes.getType(tag.tagType);
+    if (!def) return res.status(404).render('404', { title: 'Tag not found' });
+    const gp = await prisma.tagProfile.findUnique({ where: { tagId: canonical } });
+    if (!gp) return res.status(404).render('404', { title: 'Tag not found' });
+    const p = JSON.parse(gp.data || '{}');
+
+    if (def.interaction === 'redirect') return res.redirect(p.url);
+    return res.render(def.pageView, {
+      title: def.label, noIndex: true, tag_id: canonical, p, typeDef: def,
+      submitted: req.query.done === '1',
+      notified: req.query.notified === '1',
+    });
   } catch (e) {
     return res.status(500).render('500', { title: 'Unable to reach server' });
+  }
+});
+
+// Contact-relay: a finder notifies the owner WITHOUT ever seeing their number.
+// The message is stored (and best-effort emailed) — the owner reads it in their
+// dashboard. Public, no auth.
+app.post('/t/:code([a-zA-Z0-9]{9})/notify', async (req, res) => {
+  const code = req.params.code;
+  try {
+    const tag = await prisma.tag.findUnique({ where: { tagId: code } });
+    if (!tag || !tag.isActive) return res.status(404).render('404', { title: 'Tag not found' });
+    const def = tagTypes.getType(tag.tagType);
+    if (!def || def.privacy !== 'contact-relay') return res.status(404).render('404');
+    if (req.body.website) return res.redirect(`/t/${code}?notified=1`); // honeypot
+
+    const message = (req.body.message || '').toString().trim().slice(0, 1000);
+    const reply   = (req.body.reply || '').toString().trim().slice(0, 120);
+    if (message || reply) {
+      await prisma.submission.create({
+        data: { tagId: code, data: JSON.stringify({ kind: 'contact', message, reply, at: new Date().toISOString() }) },
+      });
+    }
+    return res.redirect(`/t/${code}?notified=1`);
+  } catch (e) {
+    return res.status(500).render('500');
+  }
+});
+
+// Collect-class public submission (survey/feedback/lead). Public, no auth.
+app.post('/t/:code([a-zA-Z0-9]{9})/submit', async (req, res) => {
+  const code = req.params.code;
+  try {
+    const tag = await prisma.tag.findUnique({ where: { tagId: code } });
+    if (!tag || !tag.isActive) return res.status(404).render('404', { title: 'Tag not found' });
+    const def = tagTypes.getType(tag.tagType);
+    if (!def || def.interaction !== 'collect') return res.status(404).render('404');
+    // Honeypot: bots fill the hidden "website" field → silently accept, store nothing
+    if (req.body.website) return res.redirect(`/t/${code}?done=1`);
+
+    const gp = await prisma.tagProfile.findUnique({ where: { tagId: code } });
+    const cfg = gp ? JSON.parse(gp.data || '{}') : {};
+    const answers = {};
+    (cfg.questions || []).forEach((q, i) => {
+      const v = (req.body['q' + i] || '').toString().trim().slice(0, 500);
+      if (v) answers[q] = v;
+    });
+    await prisma.submission.create({ data: { tagId: code, data: JSON.stringify(answers) } });
+    return res.redirect(`/t/${code}?done=1`);
+  } catch (e) {
+    return res.status(500).render('500');
   }
 });
 
@@ -381,7 +453,22 @@ app.get('/register/:tag_id', async (req, res) => {
   try {
     const tag = await prisma.tag.findUnique({ where: { tagId } });
     if (!tag) return res.status(404).render('404');
-    if (tag.isActive) return res.redirect(`/emergency/${tagId}`);
+    if (tag.isActive) return res.redirect(`/t/${tagId}`);
+
+    // Non-medical types use the generic, registry-driven form
+    if (!tagTypes.isMedical(tag.tagType)) {
+      const def = tagTypes.getType(tag.tagType);
+      if (!def) return res.status(404).render('404');
+      return res.render('types/register_generic', {
+        title: `Set up your ${def.label}`,
+        noIndex: true,
+        tag_id: tagId,
+        typeDef: def,
+        errors: {},
+        values: {},
+      });
+    }
+
     res.render('register_tag', {
       title: 'Register Your SafeTag — Activate Emergency Profile',
       seoDesc: 'Activate your SafeTag emergency profile. Add blood group, emergency contacts, medical conditions, and allergies. Your profile is shown only when your tag is scanned in an emergency.',
@@ -408,6 +495,29 @@ app.post('/register/:tag_id', async (req, res) => {
     const tag = await prisma.tag.findUnique({ where: { tagId } });
     if (!tag) return res.status(404).render('404');
     if (tag.isActive) return renderErr({ _form: 'Tag already activated' });
+
+    // Non-medical types: validate against the registry and store a generic profile
+    if (!tagTypes.isMedical(tag.tagType)) {
+      const def = tagTypes.getType(tag.tagType);
+      if (!def) return res.status(404).render('404');
+      const { errors, data: clean, values } = tagTypes.validateProfile(tag.tagType, req.body);
+      if (Object.keys(errors).length > 0) {
+        return res.render('types/register_generic', {
+          title: `Set up your ${def.label}`, noIndex: true,
+          tag_id: tagId, typeDef: def, errors, values,
+        });
+      }
+      await prisma.tagProfile.create({
+        data: { tagId: tag.tagId, type: tag.tagType, data: JSON.stringify(clean) },
+      });
+      const ownerId = req.session.user ? req.session.user.id : null;
+      await prisma.tag.update({
+        where: { tagId: tag.tagId },
+        data: { isActive: true, activatedAt: new Date(), ...(ownerId ? { ownerId } : {}) },
+      });
+      req.flash('success', 'Your tag is active.');
+      return res.redirect(`/t/${tag.tagId}`);
+    }
 
     const data = req.body;
     const name = (data.name || '').trim();
@@ -645,6 +755,7 @@ app.get('/dashboard', requireUser, async (req, res) => {
       title: 'My SafeTags',
       tags: formatted,
       orders: formattedOrders,
+      typeMap: Object.fromEntries(tagTypes.listTypes().map(t => [t.id, t])),
       stats: {
         total: formatted.length,
         active: formatted.filter(t => t.is_active).length,
@@ -653,7 +764,33 @@ app.get('/dashboard', requireUser, async (req, res) => {
     });
   } catch (e) {
     console.error(e);
-    res.render('dashboard', { title: 'My SafeTags', tags: [], orders: [], stats: { total: 0, active: 0, pending: 0 } });
+    res.render('dashboard', { title: 'My SafeTags', tags: [], orders: [], typeMap: {}, stats: { total: 0, active: 0, pending: 0 } });
+  }
+});
+
+// Owner view of Collect-class responses (survey/feedback)
+app.get('/dashboard/tag/:tagId/submissions', requireUser, async (req, res) => {
+  const tagId = req.params.tagId;
+  try {
+    const tag = await prisma.tag.findUnique({ where: { tagId } });
+    if (!tag || tag.ownerId !== req.session.user.id) return res.status(404).render('404');
+    if (!tagTypes.hasInbox(tag.tagType)) return res.status(404).render('404');
+    const def = tagTypes.getType(tag.tagType);
+    const gp = await prisma.tagProfile.findUnique({ where: { tagId } });
+    const cfg = gp ? JSON.parse(gp.data || '{}') : {};
+    const rows = await prisma.submission.findMany({
+      where: { tagId }, orderBy: { createdAt: 'desc' }, take: 500,
+    });
+    const submissions = rows.map(r => ({
+      created_at: r.createdAt.toISOString(),
+      answers: JSON.parse(r.data || '{}'),
+    }));
+    res.render('dashboard_submissions', {
+      title: cfg.title || 'Responses', tag_id: tagId, cfg, submissions,
+    });
+  } catch (e) {
+    console.error(e);
+    res.status(500).render('500');
   }
 });
 
@@ -1103,7 +1240,7 @@ app.get('/manufacturer/dashboard', requireManufacturer, async (req, res) => {
 });
 
 // Shared helper: generate tag rows for a paid batch (does NOT create the batch record)
-async function generateTagsForBatch(batchId, manufacturerId, quantity, batchName) {
+async function generateTagsForBatch(batchId, manufacturerId, quantity, batchName, tagType = 'medical') {
   const existingIds = new Set(
     (await prisma.tag.findMany({ select: { tagId: true } })).map(t => t.tagId)
   );
@@ -1114,7 +1251,7 @@ async function generateTagsForBatch(batchId, manufacturerId, quantity, batchName
     do { code = generateTagCode(); } while (existingIds.has(code));
     existingIds.add(code);
     const url = `${BASE_URL}/t/${code}`;
-    tagsData.push({ tagId: code, securityKey: null, manufacturerId, batchId });
+    tagsData.push({ tagId: code, securityKey: null, manufacturerId, batchId, tagType });
     rows.push({ tag_id: code, full_url: url, qr_data: url, rfid_payload: url,
                 batch_id: batchId, batch_name: batchName,
                 created_at: new Date().toISOString() });
@@ -1135,30 +1272,31 @@ function batchCsvResponse(res, batchId, batchName, rows) {
 }
 
 app.get('/manufacturer/batch/new', requireManufacturer, (req, res) => {
-  res.render('manufacturer/batch_new', { title: 'New batch', errors: {}, values: {} });
+  res.render('manufacturer/batch_new', {
+    title: 'New batch', errors: {}, values: {}, tagTypes: tagTypes.listTypes(),
+  });
 });
 
 app.post('/manufacturer/batch/new', requireManufacturer, async (req, res) => {
   const mfr = req.session.manufacturer;
+  const renderForm = (errors) => res.render('manufacturer/batch_new', {
+    title: 'New batch', errors, values: req.body, tagTypes: tagTypes.listTypes(),
+  });
 
   if (!mfr.is_approved) {
-    return res.render('manufacturer/batch_new', {
-      title: 'New batch',
-      errors: { _form: 'Your account is pending admin approval.' },
-      values: req.body,
-    });
+    return renderForm({ _form: 'Your account is pending admin approval.' });
   }
 
   const quantity = parseInt(req.body.quantity, 10) || 0;
   const batchName = (req.body.batch_name || '').trim() ||
     `Batch-${new Date().toISOString().slice(0, 10)}`;
+  const tagType = (req.body.tag_type || 'medical').trim();
 
   if (quantity < 1 || quantity > 10000) {
-    return res.render('manufacturer/batch_new', {
-      title: 'New batch',
-      errors: { _form: 'Quantity must be between 1 and 10,000' },
-      values: req.body,
-    });
+    return renderForm({ _form: 'Quantity must be between 1 and 10,000' });
+  }
+  if (!tagTypes.isValidType(tagType)) {
+    return renderForm({ _form: 'Please choose a valid tag type' });
   }
 
   const amountPaise = calcBatchPrice(quantity);
@@ -1166,7 +1304,7 @@ app.post('/manufacturer/batch/new', requireManufacturer, async (req, res) => {
   try {
     // Always create a pending batch first — tags are generated only after payment confirmed
     const batch = await prisma.tagBatch.create({
-      data: { manufacturerId: mfr.id, batchName, quantity,
+      data: { manufacturerId: mfr.id, batchName, tagType, quantity,
               paidAmount: amountPaise, paymentStatus: 'pending' },
     });
 
@@ -1192,11 +1330,7 @@ app.post('/manufacturer/batch/new', requireManufacturer, async (req, res) => {
     return res.redirect(`/manufacturer/batch/${batch.id}/pay`);
   } catch (e) {
     console.error(e);
-    res.render('manufacturer/batch_new', {
-      title: 'New batch',
-      errors: { _form: 'Server error. Please try again.' },
-      values: req.body,
-    });
+    renderForm({ _form: 'Server error. Please try again.' });
   }
 });
 
@@ -1250,7 +1384,7 @@ app.post('/manufacturer/batch/:id/pay-verify', requireManufacturer, async (req, 
       data: { paymentStatus: 'paid', razorpayPaymentId: req.body.razorpay_payment_id || null },
     });
 
-    await generateTagsForBatch(id, mfr.id, batch.quantity, batch.batchName);
+    await generateTagsForBatch(id, mfr.id, batch.quantity, batch.batchName, batch.tagType);
     req.flash('success', `Payment confirmed — ${batch.quantity} tag IDs generated. Download the CSV below.`);
     return res.redirect(`/manufacturer/batch/${id}`);
   } catch (e) {

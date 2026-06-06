@@ -56,24 +56,37 @@
     <% if (tags.length) { %>
       <div class="section-heading"><h2>My Tags</h2></div>
       <div class="grid md:grid-cols-2 gap-4 mb-8">
-        <% tags.forEach(function(t){ %>
+        <% tags.forEach(function(t){
+             var meta = (typeMap && typeMap[t.tag_type]) || { label: 'Tag', icon: '🏷️', interaction: 'display' };
+             var isMedical = (t.tag_type || 'medical') === 'medical';
+        %>
           <div class="card p-5 stable-panel">
             <div class="flex items-center justify-between mb-2">
               <span class="pill pill-mono"><%= t.tag_id %></span>
               <% if (t.is_active) { %><span class="pill pill-success">Active</span><% } else { %><span class="pill pill-warning">Pending</span><% } %>
             </div>
-            <% if (t.profile) { %>
+            <div class="text-xs text-slate-400 mb-1"><%= meta.icon %> <%= meta.label %></div>
+            <% if (isMedical && t.profile) { %>
               <h3 class="text-lg font-semibold"><%= t.profile.name %></h3>
               <p class="text-sm text-slate-500"><%= t.profile.mobile_primary ? '+91 ' + t.profile.mobile_primary : '' %></p>
+            <% } else if (t.is_active) { %>
+              <h3 class="text-lg font-semibold"><%= meta.label %></h3>
+              <p class="text-sm text-slate-500">Active</p>
             <% } else { %>
               <h3 class="text-lg font-semibold text-slate-400">No profile yet</h3>
               <p class="text-sm text-slate-500">Scan your tag to activate.</p>
             <% } %>
-            <div class="text-xs text-slate-500 mt-2 break-all"><a class="text-brand" href="<%= baseUrl %>/<%= t.tag_id %>" id="url-<%= t.tag_id %>"><%= baseUrl %>/<%= t.tag_id %>/…</a></div>
             <div class="mt-4 flex flex-wrap gap-2">
               <% if (t.is_active) { %>
-                <a class="btn-brand text-sm" href="/profile/edit/<%= t.tag_id %>">Edit Profile</a>
-                <a class="btn-outline text-sm" href="/emergency/<%= t.tag_id %>" target="_blank">Preview</a>
+                <% if (isMedical) { %>
+                  <a class="btn-brand text-sm" href="/profile/edit/<%= t.tag_id %>">Edit Profile</a>
+                  <a class="btn-outline text-sm" href="/emergency/<%= t.tag_id %>" target="_blank">Preview</a>
+                <% } else { %>
+                  <a class="btn-outline text-sm" href="/t/<%= t.tag_id %>" target="_blank">Preview</a>
+                  <% if (meta.interaction === 'collect' || meta.privacy === 'contact-relay') { %>
+                    <a class="btn-brand text-sm" href="/dashboard/tag/<%= t.tag_id %>/submissions"><%= meta.interaction === 'collect' ? 'View Responses' : 'Messages' %></a>
+                  <% } %>
+                <% } %>
               <% } %>
               <a class="btn-outline text-sm" href="/qr/<%= t.tag_id %>" target="_blank">QR PNG</a>
             </div>
