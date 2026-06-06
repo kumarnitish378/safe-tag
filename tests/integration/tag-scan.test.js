@@ -65,6 +65,88 @@ describe('GET /t/:code — short-format tag scan', () => {
 });
 
 // ---------------------------------------------------------------------------
+// Case-sensitivity rescue for already-printed tags
+// Early QR codes encoded an UPPER-CASED url (/t/ABC123XYZ) because the /qr
+// endpoint upper-cased the id. base62 ids are case-sensitive, so the scan
+// route falls back to a case-insensitive lookup (Postgres only) and then
+// always redirects using the tag's canonical id.
+// ---------------------------------------------------------------------------
+
+describe('GET /t/:code — case-insensitive rescue', () => {
+  const ORIGINAL_DB_URL = process.env.DATABASE_URL;
+
+  beforeEach(() => {
+    prisma.tag.update.mockResolvedValue({});
+    prisma.tag.findFirst.mockReset();
+  });
+
+  afterEach(() => {
+    process.env.DATABASE_URL = ORIGINAL_DB_URL;
+  });
+
+  it('resolves an upper-cased url to the canonical tag (Postgres)', async () => {
+    process.env.DATABASE_URL = 'postgresql://user:pass@host:5432/db';
+    prisma.tag.findUnique.mockResolvedValue(null);          // exact (upper) miss
+    prisma.tag.findFirst.mockResolvedValue(activeTag);       // canonical: abc123xyz
+
+    const res = await request(app).get('/t/ABC123XYZ');
+
+    expect(res.status).toBe(302);
+    // redirect must use the canonical (mixed-case) id, NOT the scanned upper-case
+    expect(res.headers.location).toBe('/emergency/abc123xyz');
+    expect(prisma.tag.findFirst).toHaveBeenCalledWith({
+      where: { tagId: { equals: 'ABC123XYZ', mode: 'insensitive' } },
+    });
+  });
+
+  it('increments scan count on the canonical id, not the scanned code', async () => {
+    process.env.DATABASE_URL = 'postgresql://user:pass@host:5432/db';
+    prisma.tag.findUnique.mockResolvedValue(null);
+    prisma.tag.findFirst.mockResolvedValue(activeTag);
+
+    await request(app).get('/t/ABC123XYZ');
+
+    expect(prisma.tag.update).toHaveBeenCalledWith(
+      expect.objectContaining({ where: { tagId: 'abc123xyz' } })
+    );
+  });
+
+  it('sends an inactive upper-cased tag to /register with the canonical id', async () => {
+    process.env.DATABASE_URL = 'postgresql://user:pass@host:5432/db';
+    prisma.tag.findUnique.mockResolvedValue(null);
+    prisma.tag.findFirst.mockResolvedValue(inactiveTag);     // canonical: xyz999abc
+
+    const res = await request(app).get('/t/XYZ999ABC');
+
+    expect(res.status).toBe(302);
+    expect(res.headers.location).toMatch(/register\/xyz999abc/);
+  });
+
+  it('prefers an exact match and never calls the fallback when one exists', async () => {
+    process.env.DATABASE_URL = 'postgresql://user:pass@host:5432/db';
+    prisma.tag.findUnique.mockResolvedValue(activeTag);
+
+    const res = await request(app).get('/t/abc123xyz');
+
+    expect(res.status).toBe(302);
+    expect(res.headers.location).toBe('/emergency/abc123xyz');
+    expect(prisma.tag.findFirst).not.toHaveBeenCalled();
+  });
+
+  it('does NOT fall back on SQLite (mode:insensitive unsupported) → 404', async () => {
+    process.env.DATABASE_URL = 'file:./prisma/test.db';
+    prisma.tag.findUnique.mockResolvedValue(null);
+    prisma.tag.findFirst.mockResolvedValue(activeTag);       // would match if called
+
+    const res = await request(app).get('/t/ABC123XYZ');
+
+    expect(res.status).toBe(404);
+    expect(prisma.tag.findFirst).not.toHaveBeenCalled();
+    expect(prisma.tag.update).not.toHaveBeenCalled();
+  });
+});
+
+// ---------------------------------------------------------------------------
 // Legacy long-format scan  GET /:tag_id/:security_key
 // ---------------------------------------------------------------------------
 
