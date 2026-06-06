@@ -14,6 +14,17 @@ SafeTag is a Node.js/Express + EJS SSR app for emergency QR+NFC identity tags so
 
 ---
 
+## Product Direction — Multi-Type Tags (v2, planned)
+SafeTag is evolving from emergency-only into a **multi-type smart-tag platform**: one tag + portal, many record types (medical, digital visiting card, car-owner, catalog, pet, lost-&-found, etc.).
+- **Tag type is set at manufacture (batch level)** — different manufacturers/batches produce tags for different purposes, not only emergency.
+- Flow: scan → register page renders the form for the tag's type → activate → scan lands on that type's template page.
+- Each type defines: form fields, display template, and a **privacy rule** (`reveal-on-scan` / `contact-relay` / `public`).
+- Medical/safety remains a first-party, locked type.
+- **No uploadable/third-party templates** — all templates are first-party only (security: avoids RCE/XSS on a life-safety domain).
+- **Custom templates = manual service**: a manufacturer who wants a custom template contacts SafeTag → we build the new type/template → we add it to the site and provision their tag type. No self-serve template creation.
+
+---
+
 ## Tech Stack
 | Layer | Tech |
 |---|---|
