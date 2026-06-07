@@ -1,37 +1,38 @@
 <%- include('../layout/_head', { hideNav: true, hideFooter: true }) %>
 
-<div class="page-shell page-shell-compact">
-  <div class="card overflow-hidden p-0 reveal">
-    <div class="bg-brand text-white p-6 text-center">
-      <div class="w-16 h-16 mx-auto rounded-full bg-white/20 flex items-center justify-center text-2xl">📝</div>
-      <h1 class="text-xl font-bold mt-3"><%= p.title %></h1>
-    </div>
+<div class="id-shell">
+  <div class="w-full" style="max-width:26rem;">
+    <div class="id-card reveal">
+      <div class="id-head">
+        <div class="id-avatar">📝</div>
+        <h1 class="id-name"><%= p.title %></h1>
+      </div>
 
-    <div class="p-6">
-      <% if (typeof submitted !== 'undefined' && submitted) { %>
-        <div class="text-center space-y-2 py-6">
-          <div class="text-4xl">✅</div>
-          <h2 class="font-semibold">Thank you!</h2>
-          <p class="text-sm text-slate-500">Your response has been recorded.</p>
-        </div>
-      <% } else { %>
-        <% if (p.intro) { %><p class="text-slate-600 text-sm mb-4"><%= p.intro %></p><% } %>
-        <form method="POST" action="/t/<%= tag_id %>/submit" class="space-y-4">
-          <%- include('../layout/_csrf') %>
-          <!-- public submit: honeypot anti-spam (must stay empty) -->
-          <input type="text" name="website" class="hidden" tabindex="-1" autocomplete="off" aria-hidden="true" />
-          <% (p.questions || []).forEach(function(q, i){ %>
-            <div>
-              <label class="label"><%= q %></label>
-              <input class="input" name="q<%= i %>" maxlength="500" />
-            </div>
-          <% }); %>
-          <button type="submit" class="btn-brand btn-lq w-full justify-center">Submit</button>
-        </form>
-      <% } %>
+      <div class="id-body">
+        <% if (typeof submitted !== 'undefined' && submitted) { %>
+          <div class="text-center py-8">
+            <div class="text-5xl">✅</div>
+            <h2 class="font-semibold mt-3">Thank you!</h2>
+            <p class="text-sm text-slate-500 mt-1">Your response has been recorded.</p>
+          </div>
+        <% } else { %>
+          <% if (p.intro) { %><p class="id-note mb-4"><%= p.intro %></p><% } %>
+          <form method="POST" action="/t/<%= tag_id %>/submit" class="space-y-4">
+            <%- include('../layout/_csrf') %>
+            <input type="text" name="website" class="hidden" tabindex="-1" autocomplete="off" aria-hidden="true" />
+            <% (p.questions || []).forEach(function(q, i){ %>
+              <div>
+                <label class="label"><%= q %></label>
+                <input class="input" name="q<%= i %>" maxlength="500" />
+              </div>
+            <% }); %>
+            <button type="submit" class="btn-brand btn-lq btn-pill">Submit</button>
+          </form>
+        <% } %>
+      </div>
     </div>
+    <p class="id-foot">Powered by SafeTag</p>
   </div>
-  <p class="text-center text-xs text-slate-400 mt-4">Powered by SafeTag</p>
 </div>
 
 <%- include('../layout/_foot', { hideFooter: true }) %>

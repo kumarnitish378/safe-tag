@@ -1,35 +1,38 @@
 <%- include('../layout/_head', { hideNav: true, hideFooter: true }) %>
 
-<div class="page-shell page-shell-compact">
-  <div class="card overflow-hidden p-0 reveal">
-    <div class="bg-brand text-white p-6 text-center">
-      <div class="w-20 h-20 mx-auto rounded-full bg-white/20 flex items-center justify-center text-3xl">📱</div>
-      <h1 class="text-2xl font-bold mt-3"><%= p.name %></h1>
-      <% if (p.bio) { %><p class="opacity-90 text-sm mt-1"><%= p.bio %></p><% } %>
-    </div>
+<div class="id-shell">
+  <div class="w-full" style="max-width:26rem;">
+    <div class="id-card reveal">
+      <div class="id-head">
+        <div class="id-avatar">📱</div>
+        <h1 class="id-name"><%= p.name %></h1>
+        <% if (p.bio) { %><p class="id-sub"><%= p.bio %></p><% } %>
+      </div>
 
-    <div class="p-6 space-y-2">
-      <%
-        var links = [
-          { url: p.instagram, label: 'Instagram', icon: '📷' },
-          { url: p.youtube,   label: 'YouTube',   icon: '▶️' },
-          { url: p.facebook,  label: 'Facebook',  icon: '👍' },
-          { url: p.twitter,   label: 'X / Twitter', icon: '𝕏' },
-          { url: p.linkedin,  label: 'LinkedIn',  icon: '💼' },
-          { url: p.whatsapp ? ('https://wa.me/91' + p.whatsapp) : null, label: 'WhatsApp', icon: '💬' },
-          { url: p.website,   label: 'Website',   icon: '🌐' }
-        ].filter(function(l){ return l.url; });
-      %>
-      <% if (!links.length) { %>
-        <p class="text-center text-sm text-slate-400">No links added yet.</p>
-      <% } %>
-      <% links.forEach(function(l){ %>
-        <a href="<%= l.url %>" target="_blank" rel="noopener"
-           class="btn-outline w-full justify-center"><%= l.icon %> <%= l.label %></a>
-      <% }); %>
+      <div class="id-body">
+        <%
+          var links = [
+            { url: p.instagram, label: 'Instagram', icon: '📷' },
+            { url: p.youtube,   label: 'YouTube',   icon: '▶️' },
+            { url: p.facebook,  label: 'Facebook',  icon: '👍' },
+            { url: p.twitter,   label: 'X / Twitter', icon: '𝕏' },
+            { url: p.linkedin,  label: 'LinkedIn',  icon: '💼' },
+            { url: p.whatsapp ? ('https://wa.me/91' + p.whatsapp) : null, label: 'WhatsApp', icon: '💬' },
+            { url: p.website,   label: 'Website',   icon: '🌐' }
+          ].filter(function(l){ return l.url; });
+        %>
+        <% if (!links.length) { %>
+          <p class="id-note">No links added yet.</p>
+        <% } %>
+        <div class="id-actions" style="margin-top:.25rem;">
+          <% links.forEach(function(l){ %>
+            <a href="<%= l.url %>" target="_blank" rel="noopener" class="btn-outline btn-pill"><%= l.icon %> <%= l.label %></a>
+          <% }); %>
+        </div>
+      </div>
     </div>
+    <p class="id-foot">Powered by SafeTag</p>
   </div>
-  <p class="text-center text-xs text-slate-400 mt-4">Powered by SafeTag</p>
 </div>
 
 <%- include('../layout/_foot', { hideFooter: true }) %>

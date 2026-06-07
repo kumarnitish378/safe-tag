@@ -1,66 +1,64 @@
 <%- include('../layout/_head', { hideNav: true }) %>
 
-<div class="page-shell page-shell-compact">
-  <!-- Brand header -->
-  <div class="bg-brand text-white rounded-cardLg p-4 flex items-center gap-3">
-    <span class="w-10 h-10 rounded-full bg-white text-brand text-xl flex items-center justify-center"><%= typeDef.icon || '🏷️' %></span>
-    <div>
-      <div class="font-semibold leading-none">Set up your <%= typeDef.label %></div>
-      <div class="text-xs opacity-90">Tag ID <span class="mono"><%= tag_id %></span></div>
+<div class="id-shell" style="align-items:flex-start; padding-top:2rem; padding-bottom:3rem;">
+  <div class="w-full" style="max-width:28rem;">
+    <div class="id-card reveal">
+      <div class="id-head">
+        <div class="id-avatar"><%= typeDef.icon || '🏷️' %></div>
+        <h1 class="id-name" style="font-size:1.3rem;"><%= typeof submitLabel !== 'undefined' && submitLabel.indexOf('Save') === 0 ? 'Edit your ' : 'Set up your ' %><%= typeDef.label %></h1>
+        <p class="id-sub">Tag <span class="mono"><%= tag_id %></span></p>
+      </div>
+
+      <div class="id-body">
+        <% if (typeDef.tagline) { %><p class="id-note mb-4"><%= typeDef.tagline %></p><% } %>
+        <% if (errors._form) { %><div class="flash flash-error mb-3">⚠️ <%= errors._form %></div><% } %>
+
+        <form method="POST" action="<%= typeof formAction !== 'undefined' ? formAction : ('/register/' + tag_id) %>" class="space-y-4">
+          <%- include('../layout/_csrf') %>
+
+          <% typeDef.fields.forEach(function(f){
+               var v = values[f.name];
+               if (Array.isArray(v)) v = v.join('\n');
+               v = (v == null) ? '' : v;
+          %>
+            <div>
+              <label class="label"><%= f.label %><%= f.required ? ' *' : '' %></label>
+
+              <% if (f.type === 'textarea' || f.type === 'list') { %>
+                <textarea class="input" name="<%= f.name %>" rows="<%= f.type === 'list' ? 5 : 3 %>"
+                  <%= f.required ? 'required' : '' %>
+                  <% if (f.max && f.type==='textarea') { %>maxlength="<%= f.max %>"<% } %>
+                  placeholder="<%= f.type === 'list' ? 'One per line' : '' %>"><%= v %></textarea>
+
+              <% } else if (f.type === 'select') { %>
+                <select class="input" name="<%= f.name %>" <%= f.required ? 'required' : '' %>>
+                  <option value="">—</option>
+                  <% (f.options || []).forEach(function(o){ %>
+                    <option <%= v === o ? 'selected' : '' %>><%= o %></option>
+                  <% }); %>
+                </select>
+
+              <% } else { %>
+                <input class="input"
+                  type="<%= f.type === 'number' ? 'number' : (f.type === 'email' ? 'email' : (f.type === 'url' ? 'url' : 'text')) %>"
+                  name="<%= f.name %>"
+                  <%= f.required ? 'required' : '' %>
+                  <% if (f.max && (f.type==='text')) { %>maxlength="<%= f.max %>"<% } %>
+                  <% if (f.type==='number' && f.min!=null) { %>min="<%= f.min %>"<% } %>
+                  <% if (f.type==='number' && f.max!=null) { %>max="<%= f.max %>"<% } %>
+                  value="<%= v %>" />
+              <% } %>
+
+              <% if (errors[f.name]) { %><div class="field-error"><%= errors[f.name] %></div><% } %>
+            </div>
+          <% }); %>
+
+          <button type="submit" class="btn-brand btn-lq btn-pill text-base"><%= typeof submitLabel !== 'undefined' ? submitLabel : 'Activate Tag ✓' %></button>
+          <p class="text-xs text-center text-slate-500">You can edit these details anytime from your dashboard.</p>
+        </form>
+      </div>
     </div>
   </div>
-
-  <% if (typeDef.tagline) { %>
-    <p class="text-sm text-slate-500 mt-3 px-1"><%= typeDef.tagline %></p>
-  <% } %>
-
-  <% if (errors._form) { %><div class="flash flash-error mt-3">⚠️ <%= errors._form %></div><% } %>
-
-  <form method="POST" action="<%= typeof formAction !== 'undefined' ? formAction : ('/register/' + tag_id) %>" class="space-y-5 mt-4">
-    <%- include('../layout/_csrf') %>
-
-    <div class="glass-light form-panel p-5 space-y-4 reveal">
-      <% typeDef.fields.forEach(function(f){
-           var v = values[f.name];
-           if (Array.isArray(v)) v = v.join('\n');
-           v = (v == null) ? '' : v;
-      %>
-        <div>
-          <label class="label"><%= f.label %><%= f.required ? ' *' : '' %></label>
-
-          <% if (f.type === 'textarea' || f.type === 'list') { %>
-            <textarea class="input" name="<%= f.name %>" rows="<%= f.type === 'list' ? 5 : 3 %>"
-              <%= f.required ? 'required' : '' %>
-              <% if (f.max && f.type==='textarea') { %>maxlength="<%= f.max %>"<% } %>
-              placeholder="<%= f.type === 'list' ? 'One per line' : '' %>"><%= v %></textarea>
-
-          <% } else if (f.type === 'select') { %>
-            <select class="input" name="<%= f.name %>" <%= f.required ? 'required' : '' %>>
-              <option value="">—</option>
-              <% (f.options || []).forEach(function(o){ %>
-                <option <%= v === o ? 'selected' : '' %>><%= o %></option>
-              <% }); %>
-            </select>
-
-          <% } else { %>
-            <input class="input"
-              type="<%= f.type === 'number' ? 'number' : (f.type === 'email' ? 'email' : (f.type === 'url' ? 'url' : 'text')) %>"
-              name="<%= f.name %>"
-              <%= f.required ? 'required' : '' %>
-              <% if (f.max && (f.type==='text')) { %>maxlength="<%= f.max %>"<% } %>
-              <% if (f.type==='number' && f.min!=null) { %>min="<%= f.min %>"<% } %>
-              <% if (f.type==='number' && f.max!=null) { %>max="<%= f.max %>"<% } %>
-              value="<%= v %>" />
-          <% } %>
-
-          <% if (errors[f.name]) { %><div class="field-error"><%= errors[f.name] %></div><% } %>
-        </div>
-      <% }); %>
-    </div>
-
-    <button type="submit" class="btn-brand btn-lq w-full justify-center text-base py-3"><%= typeof submitLabel !== 'undefined' ? submitLabel : 'Activate Tag ✓' %></button>
-    <p class="text-xs text-center text-slate-500">You can edit these details anytime from your dashboard.</p>
-  </form>
 </div>
 
 <%- include('../layout/_foot') %>

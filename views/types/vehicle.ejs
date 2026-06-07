@@ -1,44 +1,46 @@
 <%- include('../layout/_head', { hideNav: true, hideFooter: true }) %>
 
-<div class="page-shell page-shell-compact">
-  <div class="card overflow-hidden p-0 reveal">
-    <div class="bg-brand text-white p-6 text-center">
-      <div class="w-20 h-20 mx-auto rounded-full bg-white/20 flex items-center justify-center text-3xl">🚗</div>
-      <h1 class="text-xl font-bold mt-3">Vehicle Owner</h1>
-      <p class="font-mono text-lg tracking-wider mt-1"><%= p.vehicleNo %></p>
-    </div>
+<div class="id-shell">
+  <div class="w-full" style="max-width:26rem;">
+    <div class="id-card reveal">
+      <div class="id-head">
+        <div class="id-avatar">🚗</div>
+        <h1 class="id-name">Vehicle Owner</h1>
+        <span class="id-chip"><%= p.vehicleNo %></span>
+      </div>
 
-    <div class="p-6 space-y-4">
-      <p class="text-slate-600 text-sm text-center">This vehicle belongs to <strong><%= p.name %></strong>.</p>
-      <% if (p.note) { %><p class="text-slate-500 text-sm italic text-center">"<%= p.note %>"</p><% } %>
+      <div class="id-body">
+        <p class="id-note">This vehicle belongs to <strong><%= p.name %></strong>.</p>
+        <% if (p.note) { %><p class="id-note mt-1" style="font-style:italic;">"<%= p.note %>"</p><% } %>
 
-      <% if (notified) { %>
-        <div class="text-center space-y-2 py-4">
-          <div class="text-4xl">✅</div>
-          <h2 class="font-semibold">Message sent</h2>
-          <p class="text-sm text-slate-500">The owner has been notified. Thank you!</p>
-        </div>
-      <% } else { %>
-        <!-- contact-relay: the owner's number is NEVER sent to this page -->
-        <form method="POST" action="/t/<%= tag_id %>/notify" class="space-y-3">
-          <%- include('../layout/_csrf') %>
-          <input type="text" name="website" class="hidden" tabindex="-1" autocomplete="off" aria-hidden="true" />
-          <div>
-            <label class="label">Message to the owner</label>
-            <textarea class="input" name="message" rows="3" required maxlength="1000"
-              placeholder="e.g. Your car lights are on / you're blocking the exit"></textarea>
+        <% if (notified) { %>
+          <div class="text-center py-6">
+            <div class="text-4xl">✅</div>
+            <h2 class="font-semibold mt-2">Message sent</h2>
+            <p class="text-sm text-slate-500 mt-1">The owner has been notified. Thank you!</p>
           </div>
-          <div>
-            <label class="label">How can they reach you? (optional)</label>
-            <input class="input" name="reply" maxlength="120" placeholder="Phone or email (optional)" />
-          </div>
-          <button type="submit" class="btn-brand btn-lq w-full justify-center">📨 Notify the owner</button>
-          <p class="text-xs text-slate-400 text-center">The owner's number stays private — your message reaches them directly.</p>
-        </form>
-      <% } %>
+        <% } else { %>
+          <!-- contact-relay: the owner's number is NEVER sent to this page -->
+          <form method="POST" action="/t/<%= tag_id %>/notify" class="space-y-3 mt-4">
+            <%- include('../layout/_csrf') %>
+            <input type="text" name="website" class="hidden" tabindex="-1" autocomplete="off" aria-hidden="true" />
+            <div>
+              <label class="label">Message to the owner</label>
+              <textarea class="input" name="message" rows="3" required maxlength="1000"
+                placeholder="e.g. Your car lights are on / you're blocking the exit"></textarea>
+            </div>
+            <div>
+              <label class="label">How can they reach you? (optional)</label>
+              <input class="input" name="reply" maxlength="120" placeholder="Phone or email" />
+            </div>
+            <button type="submit" class="btn-brand btn-lq btn-pill">📨 Notify the owner</button>
+            <p class="text-xs text-slate-400 text-center">The owner's number stays private — your message reaches them directly.</p>
+          </form>
+        <% } %>
+      </div>
     </div>
+    <p class="id-foot">Powered by SafeTag</p>
   </div>
-  <p class="text-center text-xs text-slate-400 mt-4">Powered by SafeTag</p>
 </div>
 
 <%- include('../layout/_foot', { hideFooter: true }) %>

@@ -1,37 +1,30 @@
 <%- include('../layout/_head', { hideNav: true, hideFooter: true }) %>
 
-<div class="page-shell page-shell-compact">
-  <div class="card overflow-hidden p-0 reveal">
-    <div class="bg-brand text-white p-6 text-center">
-      <div class="w-20 h-20 mx-auto rounded-full bg-white/20 flex items-center justify-center text-3xl">💼</div>
-      <h1 class="text-2xl font-bold mt-3"><%= p.name %></h1>
-      <% if (p.title || p.company) { %>
-        <p class="opacity-90 text-sm mt-1"><%= [p.title, p.company].filter(Boolean).join(' · ') %></p>
-      <% } %>
-    </div>
-
-    <div class="p-6 space-y-3">
-      <% if (p.about) { %><p class="text-slate-600 text-sm leading-relaxed"><%= p.about %></p><% } %>
-
-      <div class="space-y-2">
-        <% if (p.phone) { %>
-          <a href="tel:<%= p.phone %>" class="btn-brand btn-lq w-full justify-center">📞 Call</a>
-        <% } %>
-        <% if (p.phone) { %>
-          <a href="https://wa.me/91<%= p.phone %>" class="btn-outline w-full justify-center">💬 WhatsApp</a>
-        <% } %>
-        <% if (p.email) { %>
-          <a href="mailto:<%= p.email %>" class="btn-outline w-full justify-center">✉️ Email</a>
-        <% } %>
-        <% if (p.website) { %>
-          <a href="<%= p.website %>" target="_blank" rel="noopener" class="btn-outline w-full justify-center">🌐 Website</a>
+<div class="id-shell">
+  <div class="w-full" style="max-width:26rem;">
+    <div class="id-card reveal">
+      <div class="id-head">
+        <div class="id-avatar">💼</div>
+        <h1 class="id-name"><%= p.name %></h1>
+        <% if (p.title || p.company) { %>
+          <p class="id-sub"><%= [p.title, p.company].filter(Boolean).join(' · ') %></p>
         <% } %>
       </div>
 
-      <button onclick="saveContact()" class="btn-brand btn-lq w-full justify-center mt-2">⬇️ Save Contact</button>
+      <div class="id-body">
+        <% if (p.about) { %><p class="id-note mb-4"><%= p.about %></p><% } %>
+
+        <div class="id-actions">
+          <% if (p.phone) { %><a href="tel:<%= p.phone %>" class="btn-brand btn-lq btn-pill">📞 Call</a><% } %>
+          <% if (p.phone) { %><a href="https://wa.me/91<%= p.phone %>" class="btn-outline btn-pill">💬 WhatsApp</a><% } %>
+          <% if (p.email) { %><a href="mailto:<%= p.email %>" class="btn-outline btn-pill">✉️ Email</a><% } %>
+          <% if (p.website) { %><a href="<%= p.website %>" target="_blank" rel="noopener" class="btn-outline btn-pill">🌐 Website</a><% } %>
+          <button onclick="saveContact()" class="btn-brand btn-lq btn-pill">⬇️ Save Contact</button>
+        </div>
+      </div>
     </div>
+    <p class="id-foot">Powered by SafeTag</p>
   </div>
-  <p class="text-center text-xs text-slate-400 mt-4">Powered by SafeTag</p>
 </div>
 
 <script>
