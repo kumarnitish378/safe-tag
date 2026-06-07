@@ -16,7 +16,7 @@
 
   <% if (errors._form) { %><div class="flash flash-error mt-3">⚠️ <%= errors._form %></div><% } %>
 
-  <form method="POST" action="/register/<%= tag_id %>" class="space-y-5 mt-4">
+  <form method="POST" action="<%= typeof formAction !== 'undefined' ? formAction : ('/register/' + tag_id) %>" class="space-y-5 mt-4">
     <%- include('../layout/_csrf') %>
 
     <div class="glass-light form-panel p-5 space-y-4 reveal">
@@ -58,7 +58,7 @@
       <% }); %>
     </div>
 
-    <button type="submit" class="btn-brand btn-lq w-full justify-center text-base py-3">Activate Tag ✓</button>
+    <button type="submit" class="btn-brand btn-lq w-full justify-center text-base py-3"><%= typeof submitLabel !== 'undefined' ? submitLabel : 'Activate Tag ✓' %></button>
     <p class="text-xs text-center text-slate-500">You can edit these details anytime from your dashboard.</p>
   </form>
 </div>

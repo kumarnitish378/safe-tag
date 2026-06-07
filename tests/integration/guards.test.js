@@ -18,6 +18,7 @@ describe('Customer auth guard', () => {
     '/orders',
     '/account/settings',
     '/profile/edit/someTagId',
+    '/dashboard/tag/someTagId/submissions',
     '/checkout/1',
   ];
 

@@ -40,6 +40,13 @@ describe('Multi-type scan dispatch — GET /t/:code', () => {
     expect(res.headers.location).toMatch(/register\/petAA1234/);
   });
 
+  it('404s a redirect tag whose destination URL is missing', async () => {
+    prisma.tag.findUnique.mockResolvedValue({ tagId: 'link99999', tagType: 'url', isActive: true });
+    prisma.tagProfile.findUnique.mockResolvedValue({ data: JSON.stringify({}) }); // no url
+    const res = await request(app).get('/t/link99999');
+    expect(res.status).toBe(404);
+  });
+
   it('does not leak the vehicle owner number in the page text', async () => {
     prisma.tag.findUnique.mockResolvedValue({ tagId: 'carAA1234', tagType: 'vehicle', isActive: true });
     prisma.tagProfile.findUnique.mockResolvedValue({

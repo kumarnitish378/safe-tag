@@ -82,9 +82,10 @@
                   <a class="btn-brand text-sm" href="/profile/edit/<%= t.tag_id %>">Edit Profile</a>
                   <a class="btn-outline text-sm" href="/emergency/<%= t.tag_id %>" target="_blank">Preview</a>
                 <% } else { %>
+                  <a class="btn-brand text-sm" href="/profile/edit/<%= t.tag_id %>">Edit</a>
                   <a class="btn-outline text-sm" href="/t/<%= t.tag_id %>" target="_blank">Preview</a>
                   <% if (meta.interaction === 'collect' || meta.privacy === 'contact-relay') { %>
-                    <a class="btn-brand text-sm" href="/dashboard/tag/<%= t.tag_id %>/submissions"><%= meta.interaction === 'collect' ? 'View Responses' : 'Messages' %></a>
+                    <a class="btn-outline text-sm" href="/dashboard/tag/<%= t.tag_id %>/submissions"><%= meta.interaction === 'collect' ? 'View Responses' : 'Messages' %></a>
                   <% } %>
                 <% } %>
               <% } %>

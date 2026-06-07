@@ -379,7 +379,10 @@ app.get('/t/:code([a-zA-Z0-9]{9})', async (req, res) => {
     if (!gp) return res.status(404).render('404', { title: 'Tag not found' });
     const p = JSON.parse(gp.data || '{}');
 
-    if (def.interaction === 'redirect') return res.redirect(p.url);
+    if (def.interaction === 'redirect') {
+      if (!p.url) return res.status(404).render('404', { title: 'Tag not found' });
+      return res.redirect(p.url);
+    }
     return res.render(def.pageView, {
       title: def.label, noIndex: true, tag_id: canonical, p, typeDef: def,
       submitted: req.query.done === '1',
@@ -823,11 +826,26 @@ app.get('/profile/edit/:tag_id', requireUser, async (req, res) => {
   const tagId = req.params.tag_id;
   try {
     const tag = await prisma.tag.findUnique({ where: { tagId }, include: { profile: true } });
-    if (!tag || !tag.profile) return res.status(404).render('404');
+    if (!tag) return res.status(404).render('404');
     if (tag.ownerId !== req.session.user.id && !req.session.user.is_admin) {
       req.flash('error', 'You do not own this tag.');
       return res.redirect('/dashboard');
     }
+
+    // Non-medical types: edit the generic profile with the registry-driven form
+    if (!tagTypes.isMedical(tag.tagType)) {
+      const def = tagTypes.getType(tag.tagType);
+      const gp = await prisma.tagProfile.findUnique({ where: { tagId } });
+      if (!def || !gp) return res.status(404).render('404');
+      return res.render('types/register_generic', {
+        title: `Edit your ${def.label}`, noIndex: true,
+        tag_id: tagId, typeDef: def, errors: {},
+        values: JSON.parse(gp.data || '{}'),
+        formAction: `/profile/edit/${tagId}`, submitLabel: 'Save changes ✓',
+      });
+    }
+
+    if (!tag.profile) return res.status(404).render('404');
     res.render('profile_edit', {
       title: 'Edit Emergency Profile',
       tag_id: tagId,
@@ -843,12 +861,32 @@ app.post('/profile/edit/:tag_id', requireUser, async (req, res) => {
   const tagId = req.params.tag_id;
   try {
     const tag = await prisma.tag.findUnique({ where: { tagId }, include: { profile: true } });
-    if (!tag || !tag.profile) return res.status(404).render('404');
+    if (!tag) return res.status(404).render('404');
     if (tag.ownerId !== req.session.user.id && !req.session.user.is_admin) {
       req.flash('error', 'You do not own this tag.');
       return res.redirect('/dashboard');
     }
 
+    // Non-medical types: validate against the registry and update the generic profile
+    if (!tagTypes.isMedical(tag.tagType)) {
+      const def = tagTypes.getType(tag.tagType);
+      if (!def) return res.status(404).render('404');
+      const { errors, data: clean, values } = tagTypes.validateProfile(tag.tagType, req.body);
+      if (Object.keys(errors).length > 0) {
+        return res.render('types/register_generic', {
+          title: `Edit your ${def.label}`, noIndex: true,
+          tag_id: tagId, typeDef: def, errors, values,
+          formAction: `/profile/edit/${tagId}`, submitLabel: 'Save changes ✓',
+        });
+      }
+      await prisma.tagProfile.update({
+        where: { tagId }, data: { data: JSON.stringify(clean) },
+      });
+      req.flash('success', 'Profile updated.');
+      return res.redirect('/dashboard');
+    }
+
+    if (!tag.profile) return res.status(404).render('404');
     const data = req.body;
     const update = {};
 
