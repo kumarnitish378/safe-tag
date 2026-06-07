@@ -1,29 +1,29 @@
 <%- include('../layout/_head', { hideNav: true, hideFooter: true }) %>
 
-<div class="id-shell">
-  <div class="w-full" style="max-width:26rem;">
+<div class="id-shell" style="--acc:#ea580c; --head-bg:linear-gradient(135deg,#fb923c 0%,#ea580c 55%,#9a3412 130%);">
+  <div class="w-full" style="max-width:25rem;">
     <div class="id-card reveal">
       <div class="id-head">
-        <div class="id-avatar">🐾</div>
-        <h1 class="id-name"><%= p.petName %></h1>
+        <div class="id-avatar" style="font-size:2.6rem;">🐶</div>
+        <div style="font-size:.72rem;font-weight:800;letter-spacing:.2em;opacity:.9;margin-top:.6rem;">🐾 I'M LOST · PLEASE HELP 🐾</div>
+        <h1 class="id-name" style="font-size:1.9rem;margin-top:.25rem;"><%= p.petName %></h1>
         <% if (p.species) { %><p class="id-sub"><%= p.species %></p><% } %>
-        <span class="id-chip">LOST PET</span>
       </div>
 
       <div class="id-body">
-        <div class="id-banner mb-3">👋 I'm lost! Please help me get home.</div>
+        <p class="id-note mb-3">Hi! I'm a little lost. If you found me, please call my family — they miss me! 🧡</p>
 
         <% if (p.medical) { %>
-          <div class="id-field"><div class="id-label">Medical notes</div><div class="id-value"><%= p.medical %></div></div>
+          <div class="id-field"><div class="id-label">⚕️ Medical notes</div><div class="id-value"><%= p.medical %></div></div>
         <% } %>
-        <div class="id-field"><div class="id-label">Owner</div><div class="id-value"><%= p.ownerName %></div></div>
+        <div class="id-field"><div class="id-label">👤 My human</div><div class="id-value"><%= p.ownerName %></div></div>
         <% if (p.address) { %>
-          <div class="id-field"><div class="id-label">Home address</div><div class="id-value"><%= p.address %></div></div>
+          <div class="id-field"><div class="id-label">🏠 Home</div><div class="id-value"><%= p.address %></div></div>
         <% } %>
 
         <div class="id-actions">
-          <a href="tel:<%= p.contact %>" class="btn-brand btn-lq btn-pill">📞 Call the owner</a>
-          <a href="https://wa.me/91<%= p.contact %>?text=<%= encodeURIComponent('Hi, I found your pet ' + (p.petName||'')) %>" class="btn-outline btn-pill">💬 WhatsApp the owner</a>
+          <a href="tel:<%= p.contact %>" class="btn-acc" style="font-size:1.05rem;padding:.95rem;">📞 Call my family</a>
+          <a href="https://wa.me/91<%= p.contact %>?text=<%= encodeURIComponent('Hi! I found your pet ' + (p.petName||'')) %>" class="btn-outline btn-pill">💬 Message on WhatsApp</a>
         </div>
       </div>
     </div>

@@ -1,37 +1,36 @@
 <%- include('../layout/_head', { hideNav: true, hideFooter: true }) %>
 
-<div class="id-shell">
-  <div class="w-full" style="max-width:26rem;">
-    <div class="id-card reveal">
-      <div class="id-head">
-        <div class="id-avatar">📱</div>
-        <h1 class="id-name"><%= p.name %></h1>
-        <% if (p.bio) { %><p class="id-sub"><%= p.bio %></p><% } %>
-      </div>
+<div class="id-shell" style="background:linear-gradient(160deg,#ec4899 0%,#8b5cf6 50%,#6366f1 100%);min-height:100dvh;">
+  <div class="w-full reveal" style="max-width:24rem;text-align:center;">
+    <div style="width:96px;height:96px;margin:0 auto;border-radius:9999px;background:rgba(255,255,255,.18);
+                box-shadow:0 0 0 6px rgba(255,255,255,.14);display:flex;align-items:center;justify-content:center;font-size:2.4rem;">📱</div>
+    <h1 style="color:#fff;font-family:'Sora',system-ui,sans-serif;font-weight:800;font-size:1.6rem;margin-top:1rem;"><%= p.name %></h1>
+    <% if (p.bio) { %><p style="color:rgba(255,255,255,.9);font-size:.92rem;margin-top:.35rem;"><%= p.bio %></p><% } %>
 
-      <div class="id-body">
-        <%
-          var links = [
-            { url: p.instagram, label: 'Instagram', icon: '📷' },
-            { url: p.youtube,   label: 'YouTube',   icon: '▶️' },
-            { url: p.facebook,  label: 'Facebook',  icon: '👍' },
-            { url: p.twitter,   label: 'X / Twitter', icon: '𝕏' },
-            { url: p.linkedin,  label: 'LinkedIn',  icon: '💼' },
-            { url: p.whatsapp ? ('https://wa.me/91' + p.whatsapp) : null, label: 'WhatsApp', icon: '💬' },
-            { url: p.website,   label: 'Website',   icon: '🌐' }
-          ].filter(function(l){ return l.url; });
-        %>
-        <% if (!links.length) { %>
-          <p class="id-note">No links added yet.</p>
-        <% } %>
-        <div class="id-actions" style="margin-top:.25rem;">
-          <% links.forEach(function(l){ %>
-            <a href="<%= l.url %>" target="_blank" rel="noopener" class="btn-outline btn-pill"><%= l.icon %> <%= l.label %></a>
-          <% }); %>
-        </div>
-      </div>
+    <div style="display:flex;flex-direction:column;gap:.7rem;margin-top:1.75rem;">
+      <%
+        var links = [
+          { url: p.instagram, label: 'Instagram', icon: '📷' },
+          { url: p.youtube,   label: 'YouTube',   icon: '▶️' },
+          { url: p.facebook,  label: 'Facebook',  icon: '👍' },
+          { url: p.twitter,   label: 'X / Twitter', icon: '𝕏' },
+          { url: p.linkedin,  label: 'LinkedIn',  icon: '💼' },
+          { url: p.whatsapp ? ('https://wa.me/91' + p.whatsapp) : null, label: 'WhatsApp', icon: '💬' },
+          { url: p.website,   label: 'Website',   icon: '🌐' }
+        ].filter(function(l){ return l.url; });
+      %>
+      <% if (!links.length) { %><p style="color:rgba(255,255,255,.85);">No links added yet.</p><% } %>
+      <% links.forEach(function(l){ %>
+        <a href="<%= l.url %>" target="_blank" rel="noopener"
+           style="display:flex;align-items:center;justify-content:center;gap:.5rem;background:rgba(255,255,255,.95);
+                  color:#1e293b;font-weight:700;padding:.85rem 1rem;border-radius:9999px;
+                  box-shadow:0 6px 18px rgba(0,0,0,.12);transition:transform .12s;"
+           onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='scale(1)'">
+          <span><%= l.icon %></span><span><%= l.label %></span>
+        </a>
+      <% }); %>
     </div>
-    <p class="id-foot">Powered by SafeTag</p>
+    <p style="color:rgba(255,255,255,.7);font-size:.72rem;margin-top:1.5rem;">Powered by SafeTag</p>
   </div>
 </div>
 

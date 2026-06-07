@@ -109,7 +109,13 @@
               box-shadow:0 24px 70px rgba(2,6,23,.14); border:1px solid rgba(15,23,42,.06); }
     html.dark .id-card{ background:#0f172a; border-color:rgba(148,163,184,.14); box-shadow:0 24px 70px rgba(0,0,0,.55); }
     .id-head{ padding:2rem 1.5rem 1.75rem; text-align:center; color:#fff;
-              background:linear-gradient(150deg,#0D9488 0%,#0f766e 55%,#0A2342 130%); }
+              background:var(--head-bg, linear-gradient(150deg,#0D9488 0%,#0f766e 55%,#0A2342 130%)); }
+    /* per-type accent button (primary action coloured by --acc) */
+    .btn-acc{ width:100%; justify-content:center; display:inline-flex; align-items:center; gap:.5rem;
+              border-radius:9999px; padding:.8rem 1.2rem; font-weight:700; color:#fff;
+              background:var(--acc,#0D9488); border:none; cursor:pointer; transition:.15s; }
+    .btn-acc:hover{ filter:brightness(1.08); }
+    .id-chip.acc{ background:rgba(255,255,255,.18); }
     .id-avatar{ width:88px; height:88px; margin:0 auto; border-radius:9999px; display:flex;
               align-items:center; justify-content:center; font-size:2.1rem;
               background:rgba(255,255,255,.18); box-shadow:0 0 0 6px rgba(255,255,255,.12); backdrop-filter:blur(4px); }

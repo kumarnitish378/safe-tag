@@ -1,18 +1,22 @@
 <%- include('../layout/_head', { hideNav: true, hideFooter: true }) %>
 
-<div class="id-shell">
-  <div class="w-full" style="max-width:26rem;">
+<div class="id-shell" style="--acc:#0284c7; --head-bg:linear-gradient(135deg,#38bdf8 0%,#0284c7 55%,#075985 130%);">
+  <div class="w-full" style="max-width:25rem;">
     <div class="id-card reveal">
       <div class="id-head">
-        <div class="id-avatar">🔑</div>
-        <h1 class="id-name">Lost &amp; Found</h1>
-        <p class="id-sub"><%= p.itemName %></p>
+        <div class="id-avatar">🔎</div>
+        <h1 class="id-name" style="font-size:1.4rem;">You found it! 🙌</h1>
+        <p class="id-sub">Help return this to its owner</p>
       </div>
 
       <div class="id-body">
-        <div class="id-banner mb-3">Thanks for finding this! You can return it to the owner.</div>
+        <!-- the item, highlighted -->
+        <div style="text-align:center;border:2px dashed rgba(2,132,199,.4);border-radius:14px;padding:1rem;margin-bottom:1rem;">
+          <div class="id-label" style="color:#0284c7;">Lost item</div>
+          <div style="font-size:1.15rem;font-weight:800;color:#0f172a;margin-top:.2rem;"><%= p.itemName %></div>
+          <% if (p.reward) { %><div style="margin-top:.5rem;"><span class="id-chip" style="background:#fef3c7;color:#92400e;">🎁 Reward: <%= p.reward %></span></div><% } %>
+        </div>
         <% if (p.note) { %><p class="id-note" style="font-style:italic;">"<%= p.note %>"</p><% } %>
-        <% if (p.reward) { %><p class="text-center mt-2"><span class="id-chip" style="background:rgba(13,148,136,.12);color:#0f766e;">🎁 Reward: <%= p.reward %></span></p><% } %>
 
         <% if (notified) { %>
           <div class="text-center py-6">
@@ -21,21 +25,20 @@
             <p class="text-sm text-slate-500 mt-1">The owner has been notified. Thank you!</p>
           </div>
         <% } else { %>
-          <!-- contact-relay: owner's number is never exposed -->
           <form method="POST" action="/t/<%= tag_id %>/notify" class="space-y-3 mt-4">
             <%- include('../layout/_csrf') %>
             <input type="text" name="website" class="hidden" tabindex="-1" autocomplete="off" aria-hidden="true" />
             <div>
               <label class="label">Message to the owner</label>
               <textarea class="input" name="message" rows="3" required maxlength="1000"
-                placeholder="e.g. I found your item at ..."></textarea>
+                placeholder="e.g. I found this near ..."></textarea>
             </div>
             <div>
               <label class="label">How can they reach you? (optional)</label>
               <input class="input" name="reply" maxlength="120" placeholder="Phone or email" />
             </div>
-            <button type="submit" class="btn-brand btn-lq btn-pill">📨 Notify the owner</button>
-            <p class="text-xs text-slate-400 text-center">The owner's number stays private.</p>
+            <button type="submit" class="btn-acc">📨 Notify the owner</button>
+            <p class="text-xs text-slate-400 text-center">🔒 The owner's number stays private.</p>
           </form>
         <% } %>
       </div>

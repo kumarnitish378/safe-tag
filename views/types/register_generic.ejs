@@ -1,6 +1,6 @@
 <%- include('../layout/_head', { hideNav: true }) %>
 
-<div class="id-shell" style="align-items:flex-start; padding-top:2rem; padding-bottom:3rem;">
+<div class="id-shell" style="align-items:flex-start; padding-top:2rem; padding-bottom:3rem; --acc:<%= typeDef.accent || '#0D9488' %>; --head-bg:<%= typeDef.headBg || 'linear-gradient(150deg,#0D9488 0%,#0f766e 55%,#0A2342 130%)' %>;">
   <div class="w-full" style="max-width:28rem;">
     <div class="id-card reveal">
       <div class="id-head">
@@ -53,7 +53,7 @@
             </div>
           <% }); %>
 
-          <button type="submit" class="btn-brand btn-lq btn-pill text-base"><%= typeof submitLabel !== 'undefined' ? submitLabel : 'Activate Tag ✓' %></button>
+          <button type="submit" class="btn-acc text-base"><%= typeof submitLabel !== 'undefined' ? submitLabel : 'Activate Tag ✓' %></button>
           <p class="text-xs text-center text-slate-500">You can edit these details anytime from your dashboard.</p>
         </form>
       </div>
