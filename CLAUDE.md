@@ -42,11 +42,12 @@ SafeTag is evolving from emergency-only into a **multi-type smart-tag platform**
 4. Pet ID *(Display / reveal-on-scan)*
 5. Lost & Found *(Display / contact-relay)*
 6. Product Catalog / Business *(Display / public)*
-7. **URL placeholder** *(Redirect)* — base type; Google-review, UPI, WhatsApp, app-download, social-share are presets of it
+7. **URL placeholder** *(Redirect)* — base type; Google-review, UPI, WhatsApp, app-download are presets of it
 8. Survey / Feedback *(Collect)*
+9. Social Media Hub *(Display / public)* — all social profiles on one page
 
 **Backlog (enable on demand / via custom service):**
-Student ID *(Display)* · Google Business Review *(Redirect preset)* · Social Share / Social Hub *(Redirect preset)* · UPI / Tip / Donation *(Redirect preset)* · WhatsApp Chat *(Redirect preset)* · Wi-Fi Connect *(Redirect)* · Resume / Portfolio *(Display)* · Restaurant Menu *(Display)* · Real-estate Listing *(Display)* · Wedding Invite *(Display)* · Warranty & Manual *(Display)* · Memorial / Tribute *(Display)* · Employee / Staff ID *(Access)* · Gym / Club Membership *(Access)* · Visitor / Gate Pass *(Access)* · Event Ticket / Badge *(Access)* · RSVP *(Collect)* · Complaint / Issue *(Collect)* · Lead Capture *(Collect)*
+Student ID *(Display)* · Google Business Review *(Redirect preset)* · UPI / Tip / Donation *(Redirect preset)* · WhatsApp Chat *(Redirect preset)* · Wi-Fi Connect *(Redirect)* · Resume / Portfolio *(Display)* · Restaurant Menu *(Display)* · Real-estate Listing *(Display)* · Wedding Invite *(Display)* · Warranty & Manual *(Display)* · Memorial / Tribute *(Display)* · Employee / Staff ID *(Access)* · Gym / Club Membership *(Access)* · Visitor / Gate Pass *(Access)* · Event Ticket / Badge *(Access)* · RSVP *(Collect)* · Complaint / Issue *(Collect)* · Lead Capture *(Collect)*
 
 ---
 
