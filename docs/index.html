@@ -1,0 +1,557 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+
+  <!--
+    ═══════════════════════════════════════════════════════════════════
+    SafeTag — landing page (static, GitHub Pages ready)
+    ▸ Replace https://sftg.in below with your live URL if different
+      (e.g. https://<username>.github.io/safe-tag).
+    ▸ "Get your SafeTag" buttons point to the live store.
+    ═══════════════════════════════════════════════════════════════════
+  -->
+
+  <title>SafeTag — QR + NFC Emergency ID Tag for India | Scan. Know. Save a Life.</title>
+  <meta name="description" content="SafeTag is India's QR + NFC emergency identity tag. One scan shows your blood group, allergies and emergency contacts in 3 seconds — no app needed. Protect your family today." />
+  <meta name="keywords" content="emergency ID tag, QR medical tag India, NFC emergency tag, medical ID bracelet, blood group tag, elderly safety, child safety tag, emergency contact tag" />
+  <meta name="author" content="SafeTag" />
+  <meta name="robots" content="index, follow" />
+  <meta name="theme-color" content="#0D9488" />
+  <link rel="canonical" href="https://sftg.in/" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="SafeTag" />
+  <meta property="og:title" content="SafeTag — When you can't speak, your tag will." />
+  <meta property="og:description" content="One scan shows your blood group, allergies and emergency contacts in 3 seconds — no app needed. India's QR + NFC emergency identity tag." />
+  <meta property="og:image" content="https://sftg.in/images/og-homepage.jpg" />
+  <meta property="og:url" content="https://sftg.in/" />
+  <meta property="og:locale" content="en_IN" />
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="SafeTag — When you can't speak, your tag will." />
+  <meta name="twitter:description" content="India's QR + NFC emergency identity tag. One scan → blood group, allergies, contacts in 3 seconds. No app needed." />
+  <meta name="twitter:image" content="https://sftg.in/images/og-homepage.jpg" />
+
+  <link rel="icon" type="image/png" href="images/faviconIcon.png" />
+  <link rel="apple-touch-icon" href="images/faviconIcon.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Structured data: Organization + Product + FAQ -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "name": "SafeTag",
+        "url": "https://sftg.in/",
+        "logo": "https://sftg.in/images/websiteLogo.png",
+        "description": "India's QR + NFC emergency identity tag.",
+        "email": "support@safe-tag.in",
+        "areaServed": "IN"
+      },
+      {
+        "@type": "Product",
+        "name": "SafeTag Emergency Identity Tag",
+        "image": "https://sftg.in/images/product-card.jpg",
+        "description": "QR + NFC emergency ID tag. One scan reveals blood group, allergies and emergency contacts in seconds — no app required.",
+        "brand": { "@type": "Brand", "name": "SafeTag" },
+        "offers": { "@type": "Offer", "priceCurrency": "INR", "price": "199", "availability": "https://schema.org/InStock", "url": "https://safe-tag.onrender.com/store" }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          { "@type": "Question", "name": "Does the person scanning need an app?", "acceptedAnswer": { "@type": "Answer", "text": "No. Any phone camera or NFC tap opens your emergency profile in a web browser. No app or account is needed to help you." } },
+          { "@type": "Question", "name": "Is my personal data safe and private?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. Nothing is public. Your profile only appears when your physical tag is scanned, and you choose exactly what information to show. You can update or hide it anytime." } },
+          { "@type": "Question", "name": "What happens if I lose my tag?", "acceptedAnswer": { "@type": "Answer", "text": "You can deactivate a lost tag from your dashboard and activate a new one. Your information is tied to your account, not the physical tag." } },
+          { "@type": "Question", "name": "Does it work on all phones?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. The QR code works on any smartphone camera. NFC works on most modern phones with a simple tap." } }
+        ]
+      }
+    ]
+  }
+  </script>
+
+  <style>
+    :root{
+      --navy:#0A2342; --teal:#0D9488; --teal-d:#0f766e; --amber:#f59e0b;
+      --ink:#0f172a; --muted:#5b6b7f; --line:#e8edf3; --cream:#fbfaf7; --white:#ffffff;
+      --shadow:0 24px 60px rgba(10,35,66,.10); --shadow-sm:0 8px 24px rgba(10,35,66,.08);
+      --r:20px;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{font-family:'Inter',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;color:var(--ink);
+      background:var(--white);line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+    h1,h2,h3{font-family:'Sora',system-ui,sans-serif;line-height:1.12;letter-spacing:-.02em;color:var(--navy)}
+    a{color:inherit;text-decoration:none}
+    img{max-width:100%;display:block}
+    .wrap{max-width:1120px;margin:0 auto;padding:0 20px}
+    .eyebrow{display:inline-flex;align-items:center;gap:.5rem;font-size:.8rem;font-weight:700;letter-spacing:.08em;
+      text-transform:uppercase;color:var(--teal-d);background:#e6fbf7;padding:.4rem .85rem;border-radius:999px}
+    .section{padding:5.5rem 0}
+    .section h2{font-size:clamp(1.9rem,4vw,2.9rem);font-weight:800}
+    .lead{font-size:1.1rem;color:var(--muted);max-width:44rem}
+    .center{text-align:center}
+    .center .lead{margin-left:auto;margin-right:auto}
+    /* buttons */
+    .btn{display:inline-flex;align-items:center;gap:.55rem;background:var(--teal);color:#fff;font-weight:700;
+      padding:.95rem 1.7rem;border-radius:999px;box-shadow:0 12px 26px rgba(13,148,136,.32);transition:.18s;font-size:1rem;border:none;cursor:pointer}
+    .btn:hover{background:var(--teal-d);transform:translateY(-2px)}
+    .btn-ghost{display:inline-flex;align-items:center;gap:.5rem;background:transparent;color:var(--navy);font-weight:700;
+      padding:.9rem 1.5rem;border-radius:999px;border:1.5px solid #cdd7e2;transition:.18s}
+    .btn-ghost:hover{border-color:var(--teal);color:var(--teal-d)}
+    .btn-light{background:#fff;color:var(--navy);box-shadow:0 12px 26px rgba(0,0,0,.18)}
+    .btn-light:hover{background:#f1f5f9}
+    /* header */
+    header{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.82);backdrop-filter:blur(14px);
+      border-bottom:1px solid var(--line)}
+    .nav{display:flex;align-items:center;justify-content:space-between;height:66px}
+    .brand{display:flex;align-items:center;gap:.6rem;font-family:'Sora';font-weight:800;font-size:1.25rem;color:var(--navy)}
+    .brand svg{flex:0 0 auto}
+    .nav-links{display:flex;align-items:center;gap:1.6rem;font-weight:600;font-size:.94rem;color:#334155}
+    .nav-links a:hover{color:var(--teal-d)}
+    .nav .btn{padding:.6rem 1.15rem;font-size:.9rem;box-shadow:none}
+    @media(max-width:820px){.nav-links{display:none}}
+    /* hero */
+    .hero{position:relative;padding:3.5rem 0 4rem;background:
+      radial-gradient(60% 60% at 85% 10%,rgba(13,148,136,.10),transparent 60%),
+      linear-gradient(180deg,#f4faf9 0%,#ffffff 100%)}
+    .hero-grid{display:grid;grid-template-columns:1.05fr 1fr;gap:3rem;align-items:center}
+    .hero h1{font-size:clamp(2.3rem,5.2vw,3.7rem);font-weight:800}
+    .hero h1 .hl{color:var(--teal-d)}
+    .hero .lead{margin-top:1.2rem;font-size:1.18rem}
+    .hero-cta{display:flex;flex-wrap:wrap;gap:.8rem;margin-top:1.8rem}
+    .hero-trust{display:flex;flex-wrap:wrap;gap:1.1rem;margin-top:1.6rem;color:var(--muted);font-size:.92rem;font-weight:600}
+    .hero-trust span{display:inline-flex;align-items:center;gap:.4rem}
+    .hero-media{position:relative}
+    .hero-media img{border-radius:26px;box-shadow:var(--shadow);width:100%;object-fit:cover;aspect-ratio:4/3}
+    .hero-badge{position:absolute;left:-14px;bottom:22px;background:#fff;border-radius:16px;box-shadow:var(--shadow);
+      padding:.8rem 1rem;display:flex;align-items:center;gap:.7rem;max-width:240px}
+    .hero-badge .dot{width:38px;height:38px;border-radius:999px;background:#e6fbf7;display:flex;align-items:center;justify-content:center;font-size:1.2rem}
+    .hero-badge b{font-family:'Sora';color:var(--navy);font-size:.95rem}
+    .hero-badge small{color:var(--muted);font-size:.78rem}
+    @media(max-width:900px){.hero-grid{grid-template-columns:1fr;gap:2rem}.hero-media{order:-1}}
+    /* stat bar */
+    .stats{background:var(--navy);color:#fff}
+    .stats .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;padding:2.2rem 0}
+    .stat b{display:block;font-family:'Sora';font-size:2rem;font-weight:800;color:#fff}
+    .stat span{color:#9fb3c8;font-size:.9rem;font-weight:500}
+    @media(max-width:720px){.stats .grid{grid-template-columns:repeat(2,1fr);gap:1.6rem}}
+    /* story */
+    .story{background:var(--cream)}
+    .story-grid{display:grid;grid-template-columns:1fr 1.05fr;gap:3rem;align-items:center}
+    .story img{border-radius:22px;box-shadow:var(--shadow)}
+    .story p{color:#3f5164;font-size:1.08rem;margin-top:1.1rem}
+    .story .big{font-size:1.25rem;color:var(--ink);font-weight:600}
+    @media(max-width:900px){.story-grid{grid-template-columns:1fr;gap:1.8rem}}
+    /* steps */
+    .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:1.4rem;margin-top:3rem}
+    .step{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:2rem 1.6rem;box-shadow:var(--shadow-sm);position:relative}
+    .step .n{width:44px;height:44px;border-radius:999px;background:var(--teal);color:#fff;font-family:'Sora';font-weight:800;
+      display:flex;align-items:center;justify-content:center;font-size:1.15rem;margin-bottom:1rem}
+    .step h3{font-size:1.2rem;margin-bottom:.4rem}
+    .step p{color:var(--muted);font-size:.98rem}
+    @media(max-width:820px){.steps{grid-template-columns:1fr}}
+    /* rescuer preview */
+    .preview{background:linear-gradient(180deg,#fff,#f4faf9)}
+    .preview-grid{display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:center}
+    .idcard{max-width:340px;margin:0 auto;border-radius:24px;overflow:hidden;box-shadow:var(--shadow);border:1px solid var(--line);background:#fff}
+    .idcard .top{background:var(--teal);color:#fff;padding:1.4rem 1.3rem;display:flex;align-items:center;gap:.7rem}
+    .idcard .top .av{width:52px;height:52px;border-radius:999px;background:rgba(255,255,255,.22);display:flex;align-items:center;justify-content:center;font-size:1.5rem}
+    .idcard .top b{font-family:'Sora';font-size:1.15rem;display:block}
+    .idcard .top small{opacity:.9}
+    .idcard .body{padding:1.2rem 1.3rem}
+    .idrow{display:flex;justify-content:space-between;padding:.6rem 0;border-bottom:1px solid var(--line);font-size:.95rem}
+    .idrow:last-child{border-bottom:none}
+    .idrow .k{color:var(--muted);font-weight:600}
+    .idrow .v{color:var(--navy);font-weight:700}
+    .idrow .v.red{color:#dc2626}
+    .idcard .call{margin:1rem 1.3rem 1.4rem;display:flex;align-items:center;justify-content:center;gap:.5rem;background:#22c55e;color:#fff;
+      font-weight:700;padding:.8rem;border-radius:12px}
+    @media(max-width:900px){.preview-grid{grid-template-columns:1fr;gap:2rem}}
+    /* use cases */
+    .uses{display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem;margin-top:3rem}
+    .use{position:relative;border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow-sm);aspect-ratio:1/1}
+    .use img{width:100%;height:100%;object-fit:cover;transition:.4s}
+    .use:hover img{transform:scale(1.06)}
+    .use .cap{position:absolute;left:0;right:0;bottom:0;padding:1.5rem 1.1rem .95rem;color:#fff;
+      background:linear-gradient(to top,rgba(4,17,33,.85),transparent)}
+    .use .cap b{font-family:'Sora';font-size:1.1rem;display:block}
+    .use .cap span{font-size:.85rem;opacity:.9}
+    @media(max-width:820px){.uses{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:520px){.uses{grid-template-columns:1fr}}
+    /* many uses */
+    .many{background:var(--navy);color:#fff}
+    .many h2{color:#fff}
+    .many .lead{color:#a7bcd0}
+    .chips{display:flex;flex-wrap:wrap;gap:.7rem;margin-top:2rem;justify-content:center}
+    .chip{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);border-radius:999px;padding:.7rem 1.1rem;
+      font-weight:600;font-size:.95rem;display:inline-flex;align-items:center;gap:.5rem}
+    /* features */
+    .feat{display:grid;grid-template-columns:repeat(3,1fr);gap:1.3rem;margin-top:3rem}
+    .fcard{border:1px solid var(--line);border-radius:var(--r);padding:1.7rem;background:#fff;box-shadow:var(--shadow-sm)}
+    .fcard .ic{font-size:1.7rem}
+    .fcard h3{font-size:1.12rem;margin:.7rem 0 .35rem}
+    .fcard p{color:var(--muted);font-size:.95rem}
+    @media(max-width:820px){.feat{grid-template-columns:1fr}}
+    /* testimonials */
+    .tgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.3rem;margin-top:3rem}
+    .quote{background:var(--cream);border-radius:var(--r);padding:1.7rem;border:1px solid var(--line)}
+    .quote p{font-size:1rem;color:#334155;font-style:italic}
+    .quote .who{display:flex;align-items:center;gap:.7rem;margin-top:1.1rem}
+    .quote .who img{width:46px;height:46px;border-radius:999px;object-fit:cover}
+    .quote .who b{font-family:'Sora';font-size:.95rem;color:var(--navy)}
+    .quote .who span{color:var(--muted);font-size:.82rem}
+    .stars{color:#f59e0b;font-size:.95rem;letter-spacing:2px}
+    @media(max-width:820px){.tgrid{grid-template-columns:1fr}}
+    /* products */
+    .prods{display:grid;grid-template-columns:repeat(4,1fr);gap:1.2rem;margin-top:3rem}
+    .prod{border:1px solid var(--line);border-radius:var(--r);overflow:hidden;background:#fff;box-shadow:var(--shadow-sm);transition:.2s}
+    .prod:hover{transform:translateY(-4px);box-shadow:var(--shadow)}
+    .prod img{aspect-ratio:1/1;object-fit:cover;width:100%}
+    .prod .pb{padding:1rem 1.1rem 1.2rem}
+    .prod b{font-family:'Sora';color:var(--navy);font-size:1rem}
+    .prod span{display:block;color:var(--muted);font-size:.85rem;margin:.15rem 0 .5rem}
+    .prod .price{color:var(--teal-d);font-weight:800}
+    @media(max-width:820px){.prods{grid-template-columns:repeat(2,1fr)}}
+    /* privacy */
+    .privacy{background:#f4faf9}
+    .privacy-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;margin-top:2.2rem}
+    .pitem{display:flex;gap:.8rem;background:#fff;border:1px solid var(--line);border-radius:16px;padding:1.1rem 1.2rem}
+    .pitem .ic{font-size:1.3rem}
+    .pitem b{font-family:'Sora';color:var(--navy);display:block;margin-bottom:.15rem}
+    .pitem p{color:var(--muted);font-size:.92rem}
+    @media(max-width:720px){.privacy-grid{grid-template-columns:1fr}}
+    /* faq */
+    details{border:1px solid var(--line);border-radius:14px;padding:0 1.2rem;margin-bottom:.75rem;background:#fff}
+    summary{cursor:pointer;font-weight:700;font-family:'Sora';color:var(--navy);padding:1.1rem 0;list-style:none;
+      display:flex;justify-content:space-between;align-items:center;font-size:1.02rem}
+    summary::-webkit-details-marker{display:none}
+    summary::after{content:"+";font-size:1.4rem;color:var(--teal);font-weight:400}
+    details[open] summary::after{content:"–"}
+    details p{color:var(--muted);padding:0 0 1.1rem;font-size:.98rem}
+    /* final cta */
+    .cta{background:linear-gradient(135deg,var(--teal) 0%,var(--teal-d) 55%,var(--navy) 130%);color:#fff;text-align:center}
+    .cta h2{color:#fff;font-size:clamp(2rem,4.5vw,3rem)}
+    .cta p{color:#d7f2ee;font-size:1.15rem;max-width:38rem;margin:1rem auto 2rem}
+    /* footer */
+    footer{background:var(--navy);color:#c3d2e2;padding:3rem 0 2rem;font-size:.92rem}
+    .fgrid{display:flex;flex-wrap:wrap;justify-content:space-between;gap:2rem}
+    .fgrid a{color:#c3d2e2}.fgrid a:hover{color:#fff}
+    .fbrand{font-family:'Sora';font-weight:800;font-size:1.2rem;color:#fff;display:flex;align-items:center;gap:.5rem}
+    .fcol h4{color:#fff;font-size:.85rem;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.8rem}
+    .fcol a{display:block;margin-bottom:.45rem}
+    .fbottom{border-top:1px solid rgba(255,255,255,.1);margin-top:2rem;padding-top:1.3rem;display:flex;
+      flex-wrap:wrap;justify-content:space-between;gap:.6rem;color:#8ba3bd;font-size:.85rem}
+    /* reveal */
+    .rv{opacity:0;transform:translateY(24px);transition:opacity .7s ease,transform .7s ease}
+    .rv.in{opacity:1;transform:none}
+    @media (prefers-reduced-motion:reduce){.rv{opacity:1;transform:none;transition:none}}
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="wrap nav">
+      <a class="brand" href="#top" aria-label="SafeTag home">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#0D9488" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
+        SafeTag
+      </a>
+      <nav class="nav-links" aria-label="Primary">
+        <a href="#story">Why SafeTag</a>
+        <a href="#how">How it works</a>
+        <a href="#uses">Who it's for</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+      <a class="btn" href="https://safe-tag.onrender.com/store" target="_blank" rel="noopener">Get your SafeTag</a>
+    </div>
+  </header>
+
+  <a id="top"></a>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div class="rv in">
+        <span class="eyebrow">🇮🇳 India's QR + NFC Emergency ID</span>
+        <h1 style="margin-top:1rem">When you can't speak,<br><span class="hl">your SafeTag will.</span></h1>
+        <p class="lead">In an emergency, a stranger has seconds to help — but no way to know your blood group, allergies or who to call. One scan of your SafeTag shows it all in <strong>3 seconds</strong>. No app. No delay.</p>
+        <div class="hero-cta">
+          <a class="btn" href="https://safe-tag.onrender.com/store" target="_blank" rel="noopener">Get your SafeTag →</a>
+          <a class="btn-ghost" href="https://safe-tag.onrender.com/demo" target="_blank" rel="noopener">▶ See a live demo</a>
+        </div>
+        <div class="hero-trust">
+          <span>✅ No app needed</span>
+          <span>📱 Works on any phone</span>
+          <span>🔒 You control what's shown</span>
+        </div>
+      </div>
+      <div class="hero-media rv in">
+        <img src="images/hero-crowd-scan.jpg" alt="A mother holding her child in a large festival crowd in India; the child wears a teal SafeTag QR wristband" width="720" height="540" fetchpriority="high" />
+        <div class="hero-badge">
+          <div class="dot">🆘</div>
+          <div><b>Found in seconds</b><small>Blood group · allergies · contacts</small></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <section class="stats">
+    <div class="wrap">
+      <div class="grid">
+        <div class="stat"><b>3 sec</b><span>to your emergency info</span></div>
+        <div class="stat"><b>0 apps</b><span>for the rescuer to install</span></div>
+        <div class="stat"><b>24×7</b><span>accessible, anywhere</span></div>
+        <div class="stat"><b>100%</b><span>you choose what shows</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STORY -->
+  <section class="section story" id="story">
+    <div class="wrap story-grid">
+      <div class="rv">
+        <img src="images/hero-relief.jpg" alt="A paramedic shows a phone reading ‘Emergency Profile Loaded’ to a relieved mother, her son and a nurse in a hospital" loading="lazy" width="720" height="405" />
+      </div>
+      <div class="rv">
+        <span class="eyebrow">The first 10 minutes</span>
+        <h2 style="margin-top:1rem">The minutes after an emergency decide everything.</h2>
+        <p class="big">Every day, people are rushed to hospitals in India as “unknown.”</p>
+        <p>A commuter faints on a platform. A grandfather forgets the way home. A child is separated in a festival crowd. The people who <em>want</em> to help — bystanders, police, paramedics — have no way to know who they are, what they're allergic to, or who to call.</p>
+        <p>Those lost minutes cost lives. <strong style="color:var(--navy)">SafeTag gives everyone who finds you a way to help — instantly.</strong></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="section" id="how">
+    <div class="wrap center">
+      <span class="eyebrow">Simple by design</span>
+      <h2 style="margin-top:1rem">Help, in three seconds.</h2>
+      <p class="lead">No apps to download. No accounts for the rescuer. It just works.</p>
+    </div>
+    <div class="wrap">
+      <div class="steps">
+        <div class="step rv"><div class="n">1</div><h3>Wear it</h3><p>Clip on a keychain, wristband, sticker or card. Your SafeTag goes wherever you do.</p></div>
+        <div class="step rv"><div class="n">2</div><h3>Someone scans</h3><p>Any phone camera or NFC tap opens your emergency profile in a browser — no app, no login.</p></div>
+        <div class="step rv"><div class="n">3</div><h3>Help arrives faster</h3><p>Blood group, allergies, conditions and emergency contacts appear instantly, with one-tap calling.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHAT A RESCUER SEES -->
+  <section class="section preview">
+    <div class="wrap preview-grid">
+      <div class="rv">
+        <span class="eyebrow">What a rescuer sees</span>
+        <h2 style="margin-top:1rem">Clear, calm, and life-saving.</h2>
+        <p class="lead" style="margin-top:1rem">The moment your tag is scanned, the exact information a first responder needs appears — nothing more, nothing less. No scrolling, no clutter, no confusion.</p>
+        <div style="margin-top:1.6rem">
+          <a class="btn" href="https://safe-tag.onrender.com/demo" target="_blank" rel="noopener">Try the live demo →</a>
+        </div>
+      </div>
+      <div class="rv">
+        <div class="idcard" role="img" aria-label="Example SafeTag emergency profile">
+          <div class="top">
+            <div class="av">🧑</div>
+            <div><b>Ravi Kumar</b><small>Age 34 · Bengaluru</small></div>
+          </div>
+          <div class="body">
+            <div class="idrow"><span class="k">Blood group</span><span class="v">O+</span></div>
+            <div class="idrow"><span class="k">Allergies</span><span class="v red">Penicillin</span></div>
+            <div class="idrow"><span class="k">Condition</span><span class="v">Diabetic (Type 1)</span></div>
+            <div class="idrow"><span class="k">Emergency contact</span><span class="v">Priya · Wife</span></div>
+          </div>
+          <div class="call">📞 Call emergency contact</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHO IT'S FOR -->
+  <section class="section" id="uses">
+    <div class="wrap center">
+      <span class="eyebrow">Peace of mind for everyone you love</span>
+      <h2 style="margin-top:1rem">Made for the people who matter most.</h2>
+      <p class="lead">If they could be somewhere without you, they should have a SafeTag.</p>
+    </div>
+    <div class="wrap">
+      <div class="uses">
+        <div class="use rv"><img src="images/usecase-elderly.jpg" alt="Elderly man walking outdoors" loading="lazy"><div class="cap"><b>Elderly parents</b><span>For memory loss & sudden illness</span></div></div>
+        <div class="use rv"><img src="images/usecase-child.jpg" alt="Young child playing" loading="lazy"><div class="cap"><b>Children</b><span>If they ever get separated</span></div></div>
+        <div class="use rv"><img src="images/usecase-traveler.jpg" alt="Traveler with a backpack" loading="lazy"><div class="cap"><b>Travellers & pilgrims</b><span>Safe in any crowd or city</span></div></div>
+        <div class="use rv"><img src="images/usecase-athlete.jpg" alt="Runner training outdoors" loading="lazy"><div class="cap"><b>Riders & athletes</b><span>For solo runs and long rides</span></div></div>
+        <div class="use rv"><img src="images/usecase-school.jpg" alt="School children with bags" loading="lazy"><div class="cap"><b>School kids</b><span>On the bag, every school day</span></div></div>
+        <div class="use rv"><img src="images/usecase-pet.jpg" alt="Pet dog wearing a tag" loading="lazy"><div class="cap"><b>Pets</b><span>Bring them home faster</span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MANY USES -->
+  <section class="section many">
+    <div class="wrap center">
+      <span class="eyebrow" style="background:rgba(255,255,255,.1);color:#8fe9dc">One tag, many lives</span>
+      <h2 style="margin-top:1rem">More than an emergency tag.</h2>
+      <p class="lead" style="margin-left:auto;margin-right:auto">The same SafeTag can become whatever you need — a digital visiting card, a pet ID, a car-owner contact, a lost-&-found tag and more. One scan, endless possibilities.</p>
+      <div class="chips">
+        <span class="chip">🚑 Medical Emergency</span>
+        <span class="chip">💼 Digital Visiting Card</span>
+        <span class="chip">🐾 Pet ID</span>
+        <span class="chip">🚗 Car Owner</span>
+        <span class="chip">🔑 Lost &amp; Found</span>
+        <span class="chip">🛍️ Business Catalog</span>
+        <span class="chip">📱 Social Hub</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="section">
+    <div class="wrap center">
+      <span class="eyebrow">Why families trust SafeTag</span>
+      <h2 style="margin-top:1rem">Thoughtful where it counts.</h2>
+    </div>
+    <div class="wrap">
+      <div class="feat">
+        <div class="fcard rv"><div class="ic">📵</div><h3>No app required</h3><p>The rescuer just points their camera. Anyone can help you — instantly.</p></div>
+        <div class="fcard rv"><div class="ic">🔒</div><h3>Private by default</h3><p>Nothing is public. Your details only appear when your physical tag is scanned.</p></div>
+        <div class="fcard rv"><div class="ic">✍️</div><h3>You're in control</h3><p>Choose exactly what to show, and update or hide it anytime from your dashboard.</p></div>
+        <div class="fcard rv"><div class="ic">📡</div><h3>QR + NFC</h3><p>Scan the code or tap the chip — whichever is faster in the moment.</p></div>
+        <div class="fcard rv"><div class="ic">💧</div><h3>Built to last</h3><p>Rugged, water-resistant tags that survive daily life, travel and play.</p></div>
+        <div class="fcard rv"><div class="ic">🇮🇳</div><h3>Made in India</h3><p>Designed for Indian emergencies, hospitals and languages. Support you can reach.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section class="section" style="background:var(--cream)">
+    <div class="wrap center">
+      <span class="eyebrow">Real families, real relief</span>
+      <h2 style="margin-top:1rem">Stories that keep us going.</h2>
+    </div>
+    <div class="wrap">
+      <div class="tgrid">
+        <div class="quote rv">
+          <div class="stars">★★★★★</div>
+          <p>“My father has dementia. He wandered off once and a kind auto driver scanned his SafeTag and called me. I can't describe that relief.”</p>
+          <div class="who"><img src="images/review-rekha.jpg" alt="Rekha"><div><b>Rekha M.</b><span>Daughter · Pune</span></div></div>
+        </div>
+        <div class="quote rv">
+          <div class="stars">★★★★★</div>
+          <p>“I ride 60 km every weekend. Knowing paramedics can see my blood group and call my wife instantly — that peace of mind is worth everything.”</p>
+          <div class="who"><img src="images/review-suresh.jpg" alt="Suresh"><div><b>Suresh R.</b><span>Cyclist · Bengaluru</span></div></div>
+        </div>
+        <div class="quote rv">
+          <div class="stars">★★★★★</div>
+          <p>“I put one on my daughter's school bag. At a crowded fair she got lost for ten minutes — a shopkeeper scanned it and brought her right back.”</p>
+          <div class="who"><img src="images/review-ananya.jpg" alt="Ananya"><div><b>Ananya S.</b><span>Mother · Hyderabad</span></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRODUCTS -->
+  <section class="section" id="products">
+    <div class="wrap center">
+      <span class="eyebrow">Pick your SafeTag</span>
+      <h2 style="margin-top:1rem">One for every pocket, wrist and bag.</h2>
+      <p class="lead">Durable tags starting under ₹200. Set up in minutes.</p>
+    </div>
+    <div class="wrap">
+      <div class="prods">
+        <div class="prod rv"><img src="images/product-keychain.jpg" alt="SafeTag keychain"><div class="pb"><b>Keychain</b><span>For keys & bags</span><div class="price">from ₹199</div></div></div>
+        <div class="prod rv"><img src="images/product-wristband.jpg" alt="SafeTag wristband"><div class="pb"><b>Wristband</b><span>For kids & athletes</span><div class="price">from ₹249</div></div></div>
+        <div class="prod rv"><img src="images/product-stickers.jpg" alt="SafeTag stickers"><div class="pb"><b>Stickers</b><span>Phone, helmet, bottle</span><div class="price">from ₹149</div></div></div>
+        <div class="prod rv"><img src="images/product-family-pack.jpg" alt="SafeTag family pack"><div class="pb"><b>Family Pack</b><span>Protect everyone</span><div class="price">Best value</div></div></div>
+      </div>
+      <div class="center" style="margin-top:2.4rem">
+        <a class="btn" href="https://safe-tag.onrender.com/store" target="_blank" rel="noopener">Shop all SafeTags →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRIVACY -->
+  <section class="section privacy">
+    <div class="wrap">
+      <div class="center">
+        <span class="eyebrow">Your data, your rules</span>
+        <h2 style="margin-top:1rem">Private by design. Always.</h2>
+        <p class="lead center">A life-safety product must earn your trust. Here's exactly how we protect you.</p>
+      </div>
+      <div class="privacy-grid">
+        <div class="pitem"><div class="ic">🙈</div><div><b>Nothing is public</b><p>Your profile can't be searched or found online. It only opens when your physical tag is scanned.</p></div></div>
+        <div class="pitem"><div class="ic">🎚️</div><div><b>You choose the fields</b><p>Show only what you're comfortable with — and change your mind anytime.</p></div></div>
+        <div class="pitem"><div class="ic">🔁</div><div><b>Update or hide instantly</b><p>Edit your details or switch a tag off from your dashboard in seconds.</p></div></div>
+        <div class="pitem"><div class="ic">🛡️</div><div><b>Secure & encrypted</b><p>Your account is protected, and sensitive contact actions never expose raw numbers.</p></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="section" id="faq">
+    <div class="wrap" style="max-width:800px">
+      <div class="center"><span class="eyebrow">Good questions</span><h2 style="margin-top:1rem">Everything you're wondering.</h2></div>
+      <div style="margin-top:2.2rem">
+        <details open><summary>Does the person scanning need an app?</summary><p>No. Any phone camera or NFC tap opens your emergency profile in a normal web browser. No app and no account are needed to help you — that's the whole point.</p></details>
+        <details><summary>Is my personal data safe and private?</summary><p>Yes. Nothing is public or searchable. Your profile only appears when someone scans your physical tag, and you decide exactly what information is shown. You can update or hide it whenever you like.</p></details>
+        <details><summary>What if there's no internet where it's scanned?</summary><p>The tag opens a web page, so a basic internet connection is needed to load your profile — the same connection used to make a call or open a map. In most public places in India that's readily available.</p></details>
+        <details><summary>What happens if I lose my tag?</summary><p>Your information lives in your account, not the tag itself. Deactivate the lost tag from your dashboard and activate a new one — your details carry over.</p></details>
+        <details><summary>Does it work on all phones?</summary><p>Yes. The QR code works on any smartphone camera, and NFC works on most modern phones with a simple tap.</p></details>
+        <details><summary>How do I set it up?</summary><p>Scan your new tag, create your profile in a couple of minutes, and activate. A printed guide comes with every tag. That's it — you're protected.</p></details>
+      </div>
+    </div>
+  </section>
+
+  <!-- FINAL CTA -->
+  <section class="section cta">
+    <div class="wrap">
+      <h2 class="rv">Give your family one less thing to fear.</h2>
+      <p class="rv">You can't always be there. Your SafeTag can. Set one up today — it takes minutes, and it could change everything.</p>
+      <a class="btn btn-light rv" href="https://safe-tag.onrender.com/store" target="_blank" rel="noopener">Get your SafeTag now →</a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="wrap">
+      <div class="fgrid">
+        <div style="max-width:280px">
+          <div class="fbrand">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#5eead4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
+            SafeTag
+          </div>
+          <p style="margin-top:.8rem;color:#9fb3c8">Scan. Know. Save a Life.<br>India's QR + NFC emergency identity tag.</p>
+        </div>
+        <div class="fcol"><h4>Product</h4><a href="https://safe-tag.onrender.com/store" target="_blank" rel="noopener">Shop tags</a><a href="https://safe-tag.onrender.com/demo" target="_blank" rel="noopener">Live demo</a><a href="#how">How it works</a><a href="#faq">FAQ</a></div>
+        <div class="fcol"><h4>Company</h4><a href="#story">Our mission</a><a href="#uses">Who it's for</a><a href="https://safe-tag.onrender.com" target="_blank" rel="noopener">Sign in</a></div>
+        <div class="fcol"><h4>Contact</h4><a href="mailto:support@safe-tag.in">support@safe-tag.in</a><a href="https://safe-tag.onrender.com" target="_blank" rel="noopener">safe-tag.onrender.com</a></div>
+      </div>
+      <div class="fbottom">
+        <span>© <span id="yr">2026</span> SafeTag. All rights reserved.</span>
+        <span>Made with ❤️ in India 🇮🇳</span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Scroll reveal
+    (function(){
+      var els = document.querySelectorAll('.rv');
+      if(!('IntersectionObserver' in window)){els.forEach(function(e){e.classList.add('in')});return;}
+      var io = new IntersectionObserver(function(entries){
+        entries.forEach(function(en){ if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); } });
+      }, {threshold:.12, rootMargin:'0px 0px -40px 0px'});
+      els.forEach(function(e){io.observe(e)});
+    })();
+    document.getElementById('yr').textContent = new Date().getFullYear();
+  </script>
+
+</body>
+</html>
