@@ -40,6 +40,17 @@
     <form method="POST" action="/manufacturer/batch/new" class="glass-light form-panel p-6 space-y-5 reveal">
       <%- include('../layout/_csrf') %>
       <div>
+        <label class="label">Tag type</label>
+        <select class="input" name="tag_type" required>
+          <% (typeof tagTypes !== 'undefined' ? tagTypes : []).forEach(function(t){ %>
+            <option value="<%= t.id %>" <%= (values.tag_type || 'medical') === t.id ? 'selected' : '' %>>
+              <%= t.icon %> <%= t.label %>
+            </option>
+          <% }); %>
+        </select>
+        <p class="text-xs text-slate-500 mt-1">All tags in this batch will be of this type. This cannot be changed later.</p>
+      </div>
+      <div>
         <label class="label">Quantity</label>
         <input id="qty" class="input" type="number" name="quantity" min="1" max="10000" required value="<%= values.quantity || 100 %>" />
         <p class="text-xs text-slate-500 mt-1">Up to 10,000 tags per batch.</p>

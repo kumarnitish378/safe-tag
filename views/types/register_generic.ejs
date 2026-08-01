@@ -1,0 +1,64 @@
+<%- include('../layout/_head', { hideNav: true }) %>
+
+<div class="id-shell" style="align-items:flex-start; padding-top:2rem; padding-bottom:3rem; --acc:<%= typeDef.accent || '#0D9488' %>; --head-bg:<%= typeDef.headBg || 'linear-gradient(150deg,#0D9488 0%,#0f766e 55%,#0A2342 130%)' %>;">
+  <div class="w-full" style="max-width:28rem;">
+    <div class="id-card reveal">
+      <div class="id-head">
+        <div class="id-avatar"><%= typeDef.icon || '🏷️' %></div>
+        <h1 class="id-name" style="font-size:1.3rem;"><%= typeof submitLabel !== 'undefined' && submitLabel.indexOf('Save') === 0 ? 'Edit your ' : 'Set up your ' %><%= typeDef.label %></h1>
+        <p class="id-sub">Tag <span class="mono"><%= tag_id %></span></p>
+      </div>
+
+      <div class="id-body">
+        <% if (typeDef.tagline) { %><p class="id-note mb-4"><%= typeDef.tagline %></p><% } %>
+        <% if (errors._form) { %><div class="flash flash-error mb-3">⚠️ <%= errors._form %></div><% } %>
+
+        <form method="POST" action="<%= typeof formAction !== 'undefined' ? formAction : ('/register/' + tag_id) %>" class="space-y-4">
+          <%- include('../layout/_csrf') %>
+
+          <% typeDef.fields.forEach(function(f){
+               var v = values[f.name];
+               if (Array.isArray(v)) v = v.join('\n');
+               v = (v == null) ? '' : v;
+          %>
+            <div>
+              <label class="label"><%= f.label %><%= f.required ? ' *' : '' %></label>
+
+              <% if (f.type === 'textarea' || f.type === 'list') { %>
+                <textarea class="input" name="<%= f.name %>" rows="<%= f.type === 'list' ? 5 : 3 %>"
+                  <%= f.required ? 'required' : '' %>
+                  <% if (f.max && f.type==='textarea') { %>maxlength="<%= f.max %>"<% } %>
+                  placeholder="<%= f.type === 'list' ? 'One per line' : '' %>"><%= v %></textarea>
+
+              <% } else if (f.type === 'select') { %>
+                <select class="input" name="<%= f.name %>" <%= f.required ? 'required' : '' %>>
+                  <option value="">—</option>
+                  <% (f.options || []).forEach(function(o){ %>
+                    <option <%= v === o ? 'selected' : '' %>><%= o %></option>
+                  <% }); %>
+                </select>
+
+              <% } else { %>
+                <input class="input"
+                  type="<%= f.type === 'number' ? 'number' : (f.type === 'email' ? 'email' : (f.type === 'url' ? 'url' : 'text')) %>"
+                  name="<%= f.name %>"
+                  <%= f.required ? 'required' : '' %>
+                  <% if (f.max && (f.type==='text')) { %>maxlength="<%= f.max %>"<% } %>
+                  <% if (f.type==='number' && f.min!=null) { %>min="<%= f.min %>"<% } %>
+                  <% if (f.type==='number' && f.max!=null) { %>max="<%= f.max %>"<% } %>
+                  value="<%= v %>" />
+              <% } %>
+
+              <% if (errors[f.name]) { %><div class="field-error"><%= errors[f.name] %></div><% } %>
+            </div>
+          <% }); %>
+
+          <button type="submit" class="btn-acc text-base"><%= typeof submitLabel !== 'undefined' ? submitLabel : 'Activate Tag ✓' %></button>
+          <p class="text-xs text-center text-slate-500">You can edit these details anytime from your dashboard.</p>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('../layout/_foot') %>

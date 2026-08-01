@@ -1,0 +1,49 @@
+<%- include('../layout/_head', { hideNav: true, hideFooter: true }) %>
+
+<div class="id-shell" style="--acc:#4f46e5; --head-bg:linear-gradient(135deg,#6366f1 0%,#4338ca 60%,#312e81 130%);">
+  <div class="w-full" style="max-width:25rem;">
+    <div class="id-card reveal">
+      <div class="id-head">
+        <div class="id-avatar" style="font-weight:800;letter-spacing:.02em;"><%= (p.name||'?').trim().charAt(0).toUpperCase() %></div>
+        <h1 class="id-name"><%= p.name %></h1>
+        <% if (p.title || p.company) { %><p class="id-sub"><%= [p.title, p.company].filter(Boolean).join(' · ') %></p><% } %>
+        <span class="id-chip acc">DIGITAL CARD</span>
+      </div>
+
+      <div class="id-body">
+        <% if (p.about) { %><p class="id-note mb-3"><%= p.about %></p><% } %>
+
+        <% if (p.phone) { %><div class="id-field"><div class="id-label">Phone</div><div class="id-value">+91 <%= p.phone %></div></div><% } %>
+        <% if (p.email) { %><div class="id-field"><div class="id-label">Email</div><div class="id-value"><%= p.email %></div></div><% } %>
+        <% if (p.website) { %><div class="id-field"><div class="id-label">Website</div><div class="id-value" style="word-break:break-all;"><%= p.website %></div></div><% } %>
+
+        <div class="id-actions">
+          <button onclick="saveContact()" class="btn-acc">⬇️ Save to Contacts</button>
+          <% if (p.phone) { %><a href="tel:<%= p.phone %>" class="btn-outline btn-pill">📞 Call</a><% } %>
+          <% if (p.phone) { %><a href="https://wa.me/91<%= p.phone %>" class="btn-outline btn-pill">💬 WhatsApp</a><% } %>
+          <% if (p.email) { %><a href="mailto:<%= p.email %>" class="btn-outline btn-pill">✉️ Email</a><% } %>
+        </div>
+      </div>
+    </div>
+    <p class="id-foot">Powered by SafeTag</p>
+  </div>
+</div>
+
+<script>
+  function saveContact() {
+    var lines = ['BEGIN:VCARD','VERSION:3.0','FN:<%= (p.name||"").replace(/[\r\n]/g," ") %>',
+      <% if (p.company) { %>'ORG:<%= (p.company||"").replace(/[\r\n]/g," ") %>',<% } %>
+      <% if (p.title) { %>'TITLE:<%= (p.title||"").replace(/[\r\n]/g," ") %>',<% } %>
+      <% if (p.phone) { %>'TEL;TYPE=CELL:<%= p.phone %>',<% } %>
+      <% if (p.email) { %>'EMAIL:<%= p.email %>',<% } %>
+      <% if (p.website) { %>'URL:<%= p.website %>',<% } %>
+      'END:VCARD'];
+    var blob = new Blob([lines.join('\n')], { type: 'text/vcard' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = '<%= (p.name||"contact").replace(/[^a-zA-Z0-9]/g,"_") %>.vcf';
+    a.click();
+  }
+</script>
+
+<%- include('../layout/_foot', { hideFooter: true }) %>

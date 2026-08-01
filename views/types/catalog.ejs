@@ -1,0 +1,38 @@
+<%- include('../layout/_head', { hideNav: true, hideFooter: true }) %>
+
+<div class="id-shell" style="--acc:#7c3aed; --head-bg:linear-gradient(135deg,#a78bfa 0%,#7c3aed 55%,#4c1d95 130%);">
+  <div class="w-full" style="max-width:25rem;">
+    <div class="id-card reveal">
+      <div class="id-head">
+        <div class="id-avatar">🛍️</div>
+        <h1 class="id-name"><%= p.business %></h1>
+        <span class="id-chip acc">OPEN FOR ORDERS</span>
+      </div>
+
+      <div class="id-body">
+        <% if (p.about) { %><p class="id-note mb-4"><%= p.about %></p><% } %>
+
+        <% if (Array.isArray(p.products) && p.products.length) { %>
+          <div class="id-label" style="color:#7c3aed;margin-bottom:.5rem;">Our products</div>
+          <div class="space-y-2 mb-1">
+            <% p.products.forEach(function(item){ %>
+              <div style="display:flex;align-items:center;gap:.6rem;background:rgba(124,58,237,.06);border:1px solid rgba(124,58,237,.14);border-radius:12px;padding:.6rem .8rem;">
+                <span style="font-size:1.1rem;">🏷️</span>
+                <span class="id-value" style="margin:0;"><%= item %></span>
+              </div>
+            <% }); %>
+          </div>
+        <% } %>
+
+        <div class="id-actions">
+          <% if (p.whatsapp) { %><a href="https://wa.me/91<%= p.whatsapp %>?text=<%= encodeURIComponent('Hi, I saw your catalog on SafeTag') %>" class="btn-acc">💬 Order on WhatsApp</a><% } %>
+          <% if (p.phone) { %><a href="tel:<%= p.phone %>" class="btn-outline btn-pill">📞 Call</a><% } %>
+          <% if (p.website) { %><a href="<%= p.website %>" target="_blank" rel="noopener" class="btn-outline btn-pill">🌐 Visit Website</a><% } %>
+        </div>
+      </div>
+    </div>
+    <p class="id-foot">Powered by SafeTag</p>
+  </div>
+</div>
+
+<%- include('../layout/_foot', { hideFooter: true }) %>
