@@ -65,6 +65,38 @@ describe('GET /t/:code — short-format tag scan', () => {
 });
 
 // ---------------------------------------------------------------------------
+// Legacy 8-char id length. Early batches used 8-char base62 ids; the current
+// generateTagCode() emits 9. The scan route must accept BOTH — a hardcoded
+// {9} pattern 404'd real, already-printed 8-char tags before they reached the
+// DB lookup.
+// ---------------------------------------------------------------------------
+
+describe('GET /t/:code — legacy 8-char id length', () => {
+  const legacy8 = { ...activeTag, tagId: '6B02ICMH' }; // 8 chars
+
+  beforeEach(() => {
+    prisma.tag.update.mockResolvedValue({});
+  });
+
+  it('routes an 8-char tag to the handler (does not 404 on length)', async () => {
+    prisma.tag.findUnique.mockResolvedValue(legacy8);
+
+    const res = await request(app).get('/t/6B02ICMH');
+
+    expect(res.status).toBe(302);
+    expect(res.headers.location).toBe('/emergency/6B02ICMH');
+  });
+
+  it('still 404s a 7-char code (below the accepted length)', async () => {
+    prisma.tag.findUnique.mockResolvedValue(null);
+
+    const res = await request(app).get('/t/ABC1234');
+
+    expect(res.status).toBe(404);
+  });
+});
+
+// ---------------------------------------------------------------------------
 // Case-sensitivity rescue for already-printed tags
 // Early QR codes encoded an UPPER-CASED url (/t/ABC123XYZ) because the /qr
 // endpoint upper-cased the id. base62 ids are case-sensitive, so the scan
