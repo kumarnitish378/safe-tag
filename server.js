@@ -346,7 +346,9 @@ async function handleTagScan(req, res, tag_id, security_key) {
 
 // New short URL: /t/ABcd3fg7k  (9-char base62, no split — code IS both ID and security)
 // 62^9 = 13.5 quadrillion → 0.00018% guess probability → covers 3× world population
-app.get('/t/:code([a-zA-Z0-9]{9})', async (req, res) => {
+// Accepts both the current 9-char generateTagCode() tokens and legacy 8-char
+// base62 ids from early batches — a hardcoded {9} 404'd real printed tags.
+app.get('/t/:code([a-zA-Z0-9]{8,9})', async (req, res) => {
   const code = req.params.code;
   try {
     let tag = await prisma.tag.findUnique({ where: { tagId: code } });
@@ -396,7 +398,7 @@ app.get('/t/:code([a-zA-Z0-9]{9})', async (req, res) => {
 // Contact-relay: a finder notifies the owner WITHOUT ever seeing their number.
 // The message is stored (and best-effort emailed) — the owner reads it in their
 // dashboard. Public, no auth.
-app.post('/t/:code([a-zA-Z0-9]{9})/notify', async (req, res) => {
+app.post('/t/:code([a-zA-Z0-9]{8,9})/notify', async (req, res) => {
   const code = req.params.code;
   try {
     const tag = await prisma.tag.findUnique({ where: { tagId: code } });
@@ -419,7 +421,7 @@ app.post('/t/:code([a-zA-Z0-9]{9})/notify', async (req, res) => {
 });
 
 // Collect-class public submission (survey/feedback/lead). Public, no auth.
-app.post('/t/:code([a-zA-Z0-9]{9})/submit', async (req, res) => {
+app.post('/t/:code([a-zA-Z0-9]{8,9})/submit', async (req, res) => {
   const code = req.params.code;
   try {
     const tag = await prisma.tag.findUnique({ where: { tagId: code } });
