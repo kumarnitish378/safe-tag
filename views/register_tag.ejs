@@ -23,6 +23,7 @@
 
   <form method="POST" action="/register/<%= tag_id %>" class="space-y-5">
       <%- include('layout/_csrf') %>
+      <% if (typeof chosenType !== 'undefined' && chosenType) { %><input type="hidden" name="chosen_type" value="<%= chosenType %>"><% } %>
 
     <!-- Personal -->
     <div class="glass-light form-panel p-5 space-y-4 reveal">

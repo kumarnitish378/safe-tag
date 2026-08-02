@@ -20,6 +20,46 @@ describe('tagTypes registry', () => {
   });
 });
 
+describe('universal tag type', () => {
+  it('recognises universal and accepts it as a valid batch type', () => {
+    expect(tt.isUniversal('universal')).toBe(true);
+    expect(tt.isUniversal('vcard')).toBe(false);
+    expect(tt.isValidType('universal')).toBe(true);
+  });
+
+  it('offers universal in the manufacturer list but NOT as a user choice', () => {
+    expect(tt.listTypes().map(t => t.id)).toContain('universal');
+    expect(tt.choosableTypes().map(t => t.id)).not.toContain('universal');
+  });
+
+  it('lets a user choose any concrete type incl. medical, but not universal', () => {
+    expect(tt.isChoosable('medical')).toBe(true);
+    expect(tt.isChoosable('vcard')).toBe(true);
+    expect(tt.isChoosable('universal')).toBe(false);
+    expect(tt.isChoosable('nope')).toBe(false);
+  });
+
+  it('choosableTypes includes medical first and carries a theme for each', () => {
+    const choices = tt.choosableTypes();
+    expect(choices[0].id).toBe('medical');
+    expect(choices.every(c => c.accent)).toBe(true);
+  });
+
+  describe('effectiveType', () => {
+    it('returns the manufactured type for a normal tag', () => {
+      expect(tt.effectiveType({ tagType: 'vcard', resolvedType: null })).toBe('vcard');
+      expect(tt.effectiveType({ tagType: 'medical' })).toBe('medical');
+    });
+    it('returns resolvedType for an activated universal tag', () => {
+      expect(tt.effectiveType({ tagType: 'universal', resolvedType: 'pet' })).toBe('pet');
+    });
+    it('falls back to universal (unresolved) then medical', () => {
+      expect(tt.effectiveType({ tagType: 'universal', resolvedType: null })).toBe('universal');
+      expect(tt.effectiveType(null)).toBe('medical');
+    });
+  });
+});
+
 describe('validateProfile', () => {
   it('accepts a valid vcard and normalises the mobile', () => {
     const { errors, data } = tt.validateProfile('vcard', {
