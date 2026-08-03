@@ -371,11 +371,14 @@ app.get('/t/:code([a-zA-Z0-9]{8,9})', async (req, res) => {
       return req.session.save(() => res.redirect(`/register/${canonical}`));
     }
 
+    // Universal tags resolve to the concrete type the owner chose at activation.
+    const type = tagTypes.effectiveType(tag);
+
     // Medical keeps its dedicated, mature emergency page (unchanged)
-    if (tagTypes.isMedical(tag.tagType)) return res.redirect(`/emergency/${canonical}`);
+    if (tagTypes.isMedical(type)) return res.redirect(`/emergency/${canonical}`);
 
     // Non-medical types are served from the generic profile + type registry
-    const def = tagTypes.getType(tag.tagType);
+    const def = tagTypes.getType(type);
     if (!def) return res.status(404).render('404', { title: 'Tag not found' });
     const gp = await prisma.tagProfile.findUnique({ where: { tagId: canonical } });
     if (!gp) return res.status(404).render('404', { title: 'Tag not found' });
@@ -460,15 +463,33 @@ app.get('/register/:tag_id', async (req, res) => {
     if (!tag) return res.status(404).render('404');
     if (tag.isActive) return res.redirect(`/t/${tagId}`);
 
+    // Universal tag, not yet resolved → the buyer picks the template first.
+    let chosenType = null;
+    if (tagTypes.isUniversal(tag.tagType) && !tag.resolvedType) {
+      const pick = (req.query.type || '').trim();
+      if (!pick) {
+        return res.render('types/register_choose', {
+          title: 'What should this tag do?', noIndex: true,
+          tag_id: tagId, choices: tagTypes.choosableTypes(),
+        });
+      }
+      if (!tagTypes.isChoosable(pick)) return res.status(404).render('404');
+      chosenType = pick; // carried into the form as a hidden field
+    }
+
+    // Concrete type to render the form for (chosen, resolved, or manufactured).
+    const type = chosenType || tagTypes.effectiveType(tag);
+
     // Non-medical types use the generic, registry-driven form
-    if (!tagTypes.isMedical(tag.tagType)) {
-      const def = tagTypes.getType(tag.tagType);
+    if (!tagTypes.isMedical(type)) {
+      const def = tagTypes.getType(type);
       if (!def) return res.status(404).render('404');
       return res.render('types/register_generic', {
         title: `Set up your ${def.label}`,
         noIndex: true,
         tag_id: tagId,
         typeDef: def,
+        chosenType,
         errors: {},
         values: {},
       });
@@ -479,6 +500,7 @@ app.get('/register/:tag_id', async (req, res) => {
       seoDesc: 'Activate your SafeTag emergency profile. Add blood group, emergency contacts, medical conditions, and allergies. Your profile is shown only when your tag is scanned in an emergency.',
       noIndex: true,
       tag_id: tagId,
+      chosenType,
       errors: {},
       values: {},
     });
@@ -489,9 +511,11 @@ app.get('/register/:tag_id', async (req, res) => {
 
 app.post('/register/:tag_id', async (req, res) => {
   const tagId = req.params.tag_id;
+  const chosenType = (req.body.chosen_type || '').trim() || null;
   const renderErr = (errors) => res.render('register_tag', {
     title: 'Register your SafeTag',
     tag_id: tagId,
+    chosenType,
     errors,
     values: req.body,
   });
@@ -501,24 +525,43 @@ app.post('/register/:tag_id', async (req, res) => {
     if (!tag) return res.status(404).render('404');
     if (tag.isActive) return renderErr({ _form: 'Tag already activated' });
 
+    // Resolve the concrete type this activation targets. For a universal tag the
+    // buyer's pick arrives as chosen_type; everything else uses the tag's own type.
+    const universalActivation = tagTypes.isUniversal(tag.tagType) && !tag.resolvedType;
+    let type;
+    if (universalActivation) {
+      if (!chosenType || !tagTypes.isChoosable(chosenType)) {
+        return res.render('types/register_choose', {
+          title: 'What should this tag do?', noIndex: true,
+          tag_id: tagId, choices: tagTypes.choosableTypes(),
+        });
+      }
+      type = chosenType;
+    } else {
+      type = tagTypes.effectiveType(tag);
+    }
+    // When a universal tag activates, lock in the chosen type via resolvedType
+    // (tagType stays 'universal' as the immutable manufactured origin).
+    const resolveData = universalActivation ? { resolvedType: type } : {};
+
     // Non-medical types: validate against the registry and store a generic profile
-    if (!tagTypes.isMedical(tag.tagType)) {
-      const def = tagTypes.getType(tag.tagType);
+    if (!tagTypes.isMedical(type)) {
+      const def = tagTypes.getType(type);
       if (!def) return res.status(404).render('404');
-      const { errors, data: clean, values } = tagTypes.validateProfile(tag.tagType, req.body);
+      const { errors, data: clean, values } = tagTypes.validateProfile(type, req.body);
       if (Object.keys(errors).length > 0) {
         return res.render('types/register_generic', {
           title: `Set up your ${def.label}`, noIndex: true,
-          tag_id: tagId, typeDef: def, errors, values,
+          tag_id: tagId, typeDef: def, chosenType, errors, values,
         });
       }
       await prisma.tagProfile.create({
-        data: { tagId: tag.tagId, type: tag.tagType, data: JSON.stringify(clean) },
+        data: { tagId: tag.tagId, type, data: JSON.stringify(clean) },
       });
       const ownerId = req.session.user ? req.session.user.id : null;
       await prisma.tag.update({
         where: { tagId: tag.tagId },
-        data: { isActive: true, activatedAt: new Date(), ...(ownerId ? { ownerId } : {}) },
+        data: { isActive: true, activatedAt: new Date(), ...resolveData, ...(ownerId ? { ownerId } : {}) },
       });
       req.flash('success', 'Your tag is active.');
       return res.redirect(`/t/${tag.tagId}`);
@@ -588,6 +631,7 @@ app.post('/register/:tag_id', async (req, res) => {
       data: {
         isActive: true,
         activatedAt: new Date(),
+        ...resolveData,
         ...(ownerId ? { ownerId } : {}),
       },
     });
@@ -835,8 +879,8 @@ app.get('/profile/edit/:tag_id', requireUser, async (req, res) => {
     }
 
     // Non-medical types: edit the generic profile with the registry-driven form
-    if (!tagTypes.isMedical(tag.tagType)) {
-      const def = tagTypes.getType(tag.tagType);
+    if (!tagTypes.isMedical(tagTypes.effectiveType(tag))) {
+      const def = tagTypes.getType(tagTypes.effectiveType(tag));
       const gp = await prisma.tagProfile.findUnique({ where: { tagId } });
       if (!def || !gp) return res.status(404).render('404');
       return res.render('types/register_generic', {
@@ -870,10 +914,11 @@ app.post('/profile/edit/:tag_id', requireUser, async (req, res) => {
     }
 
     // Non-medical types: validate against the registry and update the generic profile
-    if (!tagTypes.isMedical(tag.tagType)) {
-      const def = tagTypes.getType(tag.tagType);
+    if (!tagTypes.isMedical(tagTypes.effectiveType(tag))) {
+      const type = tagTypes.effectiveType(tag);
+      const def = tagTypes.getType(type);
       if (!def) return res.status(404).render('404');
-      const { errors, data: clean, values } = tagTypes.validateProfile(tag.tagType, req.body);
+      const { errors, data: clean, values } = tagTypes.validateProfile(type, req.body);
       if (Object.keys(errors).length > 0) {
         return res.render('types/register_generic', {
           title: `Edit your ${def.label}`, noIndex: true,

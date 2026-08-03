@@ -17,12 +17,21 @@ SafeTag is a Node.js/Express + EJS SSR app for emergency QR+NFC identity tags so
 ## Product Direction — Multi-Type Tags (v2, planned)
 SafeTag is evolving from emergency-only into a **multi-type smart-tag platform**: one tag + portal, many record types (medical, digital visiting card, car-owner, catalog, pet, lost-&-found, etc.).
 - **Tag type is set at manufacture (batch level)** — different manufacturers/batches produce tags for different purposes, not only emergency.
+- **Exception — the `universal` type**: a manufacturer can create a batch as *Universal*; the **buyer chooses the concrete type at activation** (any first-party type, including medical). See "Universal tag type" below.
 - Flow: scan → register page renders the form for the tag's type → activate → scan lands on that type's template page.
 - Each type defines: form fields, a template, and a **privacy/interaction rule**.
 - Medical/safety remains a first-party, locked type.
 - **No uploadable/third-party templates** — all templates are first-party only (security: avoids RCE/XSS on a life-safety domain).
 - **Custom templates = manual service**: a manufacturer who wants a custom template contacts SafeTag → we build the new type/template → we add it to the site and provision their tag type. No self-serve template creation.
 - **Activation manual**: manufacturers ship a printed user manual with each keytag (scan → register → activate). Manual content is per tag type; keep the activation flow dead-simple.
+
+### Universal tag type (`universal`) — buyer chooses at activation
+A manufacturer can pick **Universal** as a batch type. Those tags ship with **no fixed purpose**; the person who activates one is shown a **template chooser** and picks any first-party type (incl. medical). Implementation is deliberately modular so a future business decision to allow re-choosing is a **one-line flip**, not a migration:
+- **Schema**: `Tag.tagType` stays `"universal"` forever (immutable manufactured origin). The user's pick is stored in the **new nullable `Tag.resolvedType`** column. Non-universal tags leave `resolvedType` null.
+- **`lib/tagTypes.js`**: `UNIVERSAL`, `isUniversal()`, `isChoosable()`, `choosableTypes()`, and `effectiveType(tag)` = `resolvedType || tagType`. **Every consumer (scan dispatch, register, profile edit) uses `effectiveType()`** — never `tag.tagType` directly — so a resolved universal tag behaves exactly like a native tag of that type.
+- **Lock rule**: `LOCK_AFTER_ACTIVATION = true` in `lib/tagTypes.js`. Once activated, the chooser is unreachable (an active tag's `/register` redirects to `/t/:code`). Flip to `false` to enable reconfiguration — the schema already supports it.
+- **Routes**: `GET /register/:code` shows `views/types/register_choose.ejs` for an unresolved universal tag; `?type=<id>` renders that type's form with a hidden `chosen_type`; POST validates the pick, writes `resolvedType`, and activates.
+- **Choosable ≠ universal**: a user can pick medical or any registry type, but never `universal` itself.
 
 ### Interaction classes (every template is one of these)
 | Class | Behaviour | Privacy |

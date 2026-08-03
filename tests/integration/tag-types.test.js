@@ -95,6 +95,110 @@ describe('Generic registration — /register/:code', () => {
   });
 });
 
+describe('Universal tag — buyer chooses the type at activation', () => {
+  const universalInactive = { tagId: 'uni123456', tagType: 'universal', resolvedType: null, isActive: false };
+
+  it('shows the template chooser when activating an unresolved universal tag', async () => {
+    prisma.tag.findUnique.mockResolvedValue(universalInactive);
+
+    const res = await request(app).get('/register/uni123456');
+    expect(res.status).toBe(200);
+    expect(res.text).toMatch(/What should this tag do/i);
+    expect(res.text).toMatch(/Digital Visiting Card/); // a choice is listed
+    expect(res.text).toMatch(/Medical Emergency/);      // medical is choosable too
+  });
+
+  it('renders the chosen type\'s form once ?type= is picked', async () => {
+    prisma.tag.findUnique.mockResolvedValue(universalInactive);
+
+    const res = await request(app).get('/register/uni123456?type=vcard');
+    expect(res.status).toBe(200);
+    expect(res.text).toMatch(/Digital Visiting Card/);
+    expect(res.text).toMatch(/name="chosen_type" value="vcard"/); // carried into POST
+  });
+
+  it('renders the medical form when the buyer chooses medical', async () => {
+    prisma.tag.findUnique.mockResolvedValue(universalInactive);
+
+    const res = await request(app).get('/register/uni123456?type=medical');
+    expect(res.status).toBe(200);
+    expect(res.text).toMatch(/name="chosen_type" value="medical"/);
+  });
+
+  it('404s an invalid ?type= pick', async () => {
+    prisma.tag.findUnique.mockResolvedValue(universalInactive);
+    const res = await request(app).get('/register/uni123456?type=universal');
+    expect(res.status).toBe(404);
+  });
+
+  it('activates as vcard and locks the choice via resolvedType', async () => {
+    prisma.tag.findUnique.mockResolvedValue(universalInactive);
+    prisma.tagProfile.create.mockResolvedValue({});
+
+    const res = await request(app).post('/register/uni123456').type('form')
+      .send({ chosen_type: 'vcard', name: 'Ravi Traders', phone: '9876543210' });
+
+    expect(res.status).toBe(302);
+    expect(res.headers.location).toBe('/t/uni123456');
+    expect(prisma.tagProfile.create).toHaveBeenCalledWith(
+      expect.objectContaining({ data: expect.objectContaining({ type: 'vcard' }) })
+    );
+    expect(prisma.tag.update).toHaveBeenCalledWith(
+      expect.objectContaining({ data: expect.objectContaining({ isActive: true, resolvedType: 'vcard' }) })
+    );
+  });
+
+  it('activates as medical and stores resolvedType=medical', async () => {
+    prisma.tag.findUnique.mockResolvedValue(universalInactive);
+    prisma.medicalProfile.create.mockResolvedValue({});
+
+    const res = await request(app).post('/register/uni123456').type('form')
+      .send({ chosen_type: 'medical', name: 'Asha', age: '30', mobile_primary: '9876543210' });
+
+    expect(res.status).toBe(302);
+    expect(res.headers.location).toMatch(/\/emergency\/uni123456/);
+    expect(prisma.medicalProfile.create).toHaveBeenCalled();
+    expect(prisma.tag.update).toHaveBeenCalledWith(
+      expect.objectContaining({ data: expect.objectContaining({ resolvedType: 'medical' }) })
+    );
+  });
+
+  it('re-shows the chooser and saves nothing when chosen_type is missing', async () => {
+    prisma.tag.findUnique.mockResolvedValue(universalInactive);
+    prisma.tagProfile.create.mockClear();
+    prisma.medicalProfile.create.mockClear();
+
+    const res = await request(app).post('/register/uni123456').type('form').send({ name: 'x' });
+    expect(res.status).toBe(200);
+    expect(res.text).toMatch(/What should this tag do/i);
+    expect(prisma.tagProfile.create).not.toHaveBeenCalled();
+    expect(prisma.medicalProfile.create).not.toHaveBeenCalled();
+  });
+
+  it('scans an activated universal tag as its resolved type', async () => {
+    prisma.tag.findUnique.mockResolvedValue({
+      tagId: 'uni123456', tagType: 'universal', resolvedType: 'pet', isActive: true,
+    });
+    prisma.tagProfile.findUnique.mockResolvedValue({
+      type: 'pet', data: JSON.stringify({ petName: 'Bruno', ownerName: 'Ravi', contact: '9876543210' }),
+    });
+
+    const res = await request(app).get('/t/uni123456');
+    expect(res.status).toBe(200);
+    expect(res.text).toMatch(/Bruno/);
+  });
+
+  it('a resolved universal tag activated as medical redirects scans to /emergency', async () => {
+    prisma.tag.findUnique.mockResolvedValue({
+      tagId: 'uni123456', tagType: 'universal', resolvedType: 'medical', isActive: true,
+    });
+
+    const res = await request(app).get('/t/uni123456');
+    expect(res.status).toBe(302);
+    expect(res.headers.location).toBe('/emergency/uni123456');
+  });
+});
+
 describe('Collect submissions — POST /t/:code/submit', () => {
   it('stores a submission for an active survey tag', async () => {
     prisma.tag.findUnique.mockResolvedValue({ tagId: 'survey123', tagType: 'survey', isActive: true });

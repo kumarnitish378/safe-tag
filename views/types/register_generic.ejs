@@ -15,6 +15,7 @@
 
         <form method="POST" action="<%= typeof formAction !== 'undefined' ? formAction : ('/register/' + tag_id) %>" class="space-y-4">
           <%- include('../layout/_csrf') %>
+          <% if (typeof chosenType !== 'undefined' && chosenType) { %><input type="hidden" name="chosen_type" value="<%= chosenType %>"><% } %>
 
           <% typeDef.fields.forEach(function(f){
                var v = values[f.name];

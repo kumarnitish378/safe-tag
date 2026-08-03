@@ -1,0 +1,65 @@
+<%- include('../layout/_head', { hideNav: true }) %>
+
+<div class="id-shell" style="align-items:flex-start; padding-top:2rem; padding-bottom:3rem; --acc:#0D9488; --head-bg:linear-gradient(150deg,#0D9488 0%,#0f766e 55%,#0A2342 130%);">
+  <div class="w-full" style="max-width:44rem;">
+    <div class="text-center mb-6 reveal">
+      <div class="text-4xl mb-2">✨</div>
+      <h1 class="text-2xl font-bold text-navy">What should this tag do?</h1>
+      <p class="text-sm text-slate-500 mt-1">
+        Tag <span class="mono"><%= tag_id %></span> is a Universal SafeTag — you choose its purpose.
+      </p>
+      <p class="text-xs text-slate-400 mt-1">Pick one to continue. This choice is locked in once you activate.</p>
+    </div>
+
+    <div class="choose-grid">
+      <% choices.forEach(function(c){ %>
+        <a href="/register/<%= tag_id %>?type=<%= c.id %>" class="choose-card reveal"
+           style="--acc:<%= c.accent || '#0D9488' %>; --head-bg:<%= c.headBg || 'linear-gradient(135deg,#0D9488,#0A2342)' %>;">
+          <span class="choose-icon"><%= c.icon %></span>
+          <span class="choose-body">
+            <span class="choose-label"><%= c.label %></span>
+            <% if (c.tagline) { %><span class="choose-tagline"><%= c.tagline %></span><% } %>
+          </span>
+          <span class="choose-arrow">→</span>
+        </a>
+      <% }); %>
+    </div>
+  </div>
+</div>
+
+<style>
+  .choose-grid { display:grid; grid-template-columns:1fr; gap:.75rem; }
+  @media (min-width:560px){ .choose-grid { grid-template-columns:1fr 1fr; } }
+  .choose-card {
+    display:flex; align-items:center; gap:.9rem;
+    background:#fff; border:1px solid #e2e8f0; border-radius:1rem;
+    padding:1rem 1.1rem; text-decoration:none; color:inherit;
+    box-shadow:0 1px 2px rgba(2,6,23,.04);
+    transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+    position:relative; overflow:hidden;
+  }
+  .choose-card::before {
+    content:""; position:absolute; left:0; top:0; bottom:0; width:5px; background:var(--head-bg);
+  }
+  .choose-card:hover {
+    transform:translateY(-2px); border-color:var(--acc);
+    box-shadow:0 10px 24px -12px color-mix(in srgb, var(--acc) 60%, transparent);
+  }
+  .choose-icon {
+    flex:0 0 auto; width:2.9rem; height:2.9rem; border-radius:.8rem;
+    display:grid; place-items:center; font-size:1.5rem;
+    background:var(--head-bg); color:#fff;
+  }
+  .choose-body { display:flex; flex-direction:column; min-width:0; flex:1; }
+  .choose-label { font-weight:700; color:#0A2342; line-height:1.2; }
+  .choose-tagline { font-size:.75rem; color:#64748b; margin-top:.15rem; }
+  .choose-arrow { color:var(--acc); font-weight:700; flex:0 0 auto; opacity:.5; transition:opacity .15s, transform .15s; }
+  .choose-card:hover .choose-arrow { opacity:1; transform:translateX(3px); }
+  @media (prefers-color-scheme: dark) {
+    .choose-card { background:#0f172a; border-color:#1e293b; }
+    .choose-label { color:#e2e8f0; }
+    .choose-tagline { color:#94a3b8; }
+  }
+</style>
+
+<%- include('../layout/_foot') %>

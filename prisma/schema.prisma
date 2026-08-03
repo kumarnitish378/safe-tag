@@ -11,6 +11,12 @@ model Tag {
   tagId          String    @id @map("tag_id")
   securityKey    String?   @map("security_key")
   tagType        String    @default("medical") @map("tag_type")
+  // For `universal` tags the manufactured type stays `universal` (immutable
+  // origin) and the concrete type the USER chose at activation is stored here.
+  // Null for every non-universal tag and for un-activated universal tags.
+  // Kept separate from tagType so a future "reconfigurable" business decision
+  // is a code flip, not a data migration. See lib/tagTypes.js effectiveType().
+  resolvedType   String?   @map("resolved_type")
   isActive       Boolean   @default(false) @map("is_active")
   manufacturerId Int?      @map("manufacturer_id")
   batchId        Int?      @map("batch_id")
