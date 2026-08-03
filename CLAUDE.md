@@ -148,6 +148,7 @@ Clean single-page medical ID card layout. Key rules:
 - Location/alert button label: **"🆘 Alert Emergency Contact via WhatsApp"** — not "Share My Location" (sounds like surveillance)
 - Logo in header: **inline SVG price-tag icon** (`stroke="white"`) — NOT `<img>` (causes white box on teal)
 - No multi-theme swipe cards; no red alert bars
+- **Contact number = tap-to-reveal (privacy)**: the page shows a **"📞 Show Emergency Contact"** button, NOT the number or `tel:` links. Numbers (primary/secondary/WhatsApp) are **base64-encoded in the page JS** (`var C = {p,s,w}`) and decoded on tap via `revealContact()`. This keeps plain digits out of the HTML source so naive scrapers/bots get nothing. **Do NOT revert to always-visible `tel:` buttons.** (Encoding is not real encryption — a determined attacker can decode; the goal is stopping casual/bulk harvesting.) The WhatsApp live-location alert also decodes from `C.p`.
 
 ### Auth Pages (`/login` and `/register`)
 Split-screen layout:
