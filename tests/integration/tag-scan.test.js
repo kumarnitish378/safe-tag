@@ -241,6 +241,31 @@ describe('GET /emergency/:tag_id', () => {
     expect(res.text).toMatch(/Ravi Kumar/);
   });
 
+  it('does NOT expose the contact number in the page source (tap-to-reveal)', async () => {
+    prisma.tag.findUnique.mockResolvedValue({
+      ...activeTag,
+      profile: {
+        id: 1, tagId: 'abc123xyz', name: 'Ravi Kumar', age: 30,
+        mobilePrimary: '9876543210', mobileSecondary: '9998887776',
+        ownerWhatsapp: '9876543210', parentName: null, bloodGroup: 'O+',
+        address: 'Bengaluru', latitude: null, longitude: null,
+        email: null, medicalConditions: null, allergies: null, medications: null,
+        customMessage: null, photoUrl: null, category: 'ADULT', theme: 'classic',
+        createdAt: new Date(), updatedAt: new Date(),
+      },
+    });
+
+    const res = await request(app).get('/emergency/abc123xyz');
+    expect(res.status).toBe(200);
+    // Raw digits and tel: links must be absent — only revealed client-side on tap.
+    expect(res.text).not.toMatch(/9876543210/);
+    expect(res.text).not.toMatch(/9998887776/);
+    expect(res.text).not.toMatch(/tel:\+91\d/);
+    expect(res.text).toMatch(/Show Emergency Contact/);
+    // The number is present only base64-encoded (defeats naive scrapers).
+    expect(res.text).toContain(Buffer.from('9876543210', 'utf8').toString('base64'));
+  });
+
   it('returns 404 when tag does not exist', async () => {
     prisma.tag.findUnique.mockResolvedValue(null);
 

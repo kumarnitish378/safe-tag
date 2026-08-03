@@ -403,19 +403,17 @@ html, body { background: #f1f5f9; margin: 0; padding: 0; }
         <div class="ep-val">Tap below to call</div>
       </div>
 
-      <div class="ep-btn-area">
-        <a href="tel:+91<%= profile.mobile_primary %>" class="ep-call-primary btn-lq">
-          📞 &nbsp;Call Emergency Contact
-        </a>
-        <% if (profile.mobile_secondary) { %>
-          <a href="tel:+91<%= profile.mobile_secondary %>" class="ep-call-alt btn-lq">
-            📞 &nbsp;Call Emergency Contact 2
-          </a>
-        <% } %>
-        <% if (profile.owner_whatsapp) { %>
-          <a href="https://wa.me/91<%= profile.owner_whatsapp %>?text=<%= encodeURIComponent('🚨 I found someone with a SafeTag ID: ' + tag_id + '. Person: ' + profile.name) %>" target="_blank" rel="noopener" class="ep-wa-btn btn-lq">
-            💬 &nbsp;WhatsApp Emergency Contact
-          </a>
+      <!-- Contact numbers are revealed on tap (see script below): they are NOT
+           emitted as plain digits or tel: links in the page source, so casual
+           scrapers/bots that harvest the raw HTML get nothing. -->
+      <div class="ep-btn-area" id="epBtnArea">
+        <% if (profile.mobile_primary) { %>
+        <button id="epRevealBtn" type="button" class="ep-call-primary btn-lq" onclick="revealContact()">
+          📞 &nbsp;Show Emergency Contact
+        </button>
+        <noscript>
+          <div class="ep-loc-status" style="display:block;">Enable JavaScript to view the emergency contact number.</div>
+        </noscript>
         <% } %>
       </div>
     </div>
@@ -464,13 +462,36 @@ html, body { background: #f1f5f9; margin: 0; padding: 0; }
 
 <script>
 (function () {
-  var primary = <%- JSON.stringify(profile.mobile_primary || '') %>;
+  // Contact numbers are base64-encoded so they are NOT present as plain digits
+  // (or tel: links) in the page source — this defeats naive scrapers/bots.
+  // A responder taps "Show Emergency Contact" to decode and reveal the actions.
+  var C = {
+    p: <%- JSON.stringify(Buffer.from(String(profile.mobile_primary   || ''), 'utf8').toString('base64')) %>,
+    s: <%- JSON.stringify(Buffer.from(String(profile.mobile_secondary || ''), 'utf8').toString('base64')) %>,
+    w: <%- JSON.stringify(Buffer.from(String(profile.owner_whatsapp    || ''), 'utf8').toString('base64')) %>
+  };
   var tagId   = <%- JSON.stringify(tag_id) %>;
   var name    = <%- JSON.stringify(profile.name || '') %>;
+  function dec(b) { try { return b ? atob(b) : ''; } catch (e) { return ''; } }
+
+  window.revealContact = function () {
+    var p = dec(C.p), s = dec(C.s), w = dec(C.w);
+    var waMsg = encodeURIComponent('🚨 I found someone with a SafeTag ID: ' + tagId + '. Person: ' + name);
+    var html = '';
+    if (p) html += '<a href="tel:+91' + p + '" class="ep-call-primary btn-lq">📞 &nbsp;Call Emergency Contact</a>';
+    if (s) html += '<a href="tel:+91' + s + '" class="ep-call-alt btn-lq">📞 &nbsp;Call Emergency Contact 2</a>';
+    if (w) html += '<a href="https://wa.me/91' + w + '?text=' + waMsg + '" target="_blank" rel="noopener" class="ep-wa-btn btn-lq">💬 &nbsp;WhatsApp Emergency Contact</a>';
+    var btn = document.getElementById('epRevealBtn');
+    if (!btn) return;
+    btn.insertAdjacentHTML('afterend', html);
+    btn.remove();
+  };
 
   window.shareLocation = function () {
     var btn    = document.getElementById('epLocBtn');
     var status = document.getElementById('epLocStatus');
+    var primary = dec(C.p);
+    if (!primary) return;
     if (!navigator.geolocation) {
       status.textContent = 'Location not supported on this device.';
       status.style.display = 'block';
