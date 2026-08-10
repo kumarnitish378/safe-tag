@@ -1011,6 +1011,93 @@ app.get('/orders', requireUser, async (req, res) => {
   }
 });
 
+// Customer order detail + tracking — scoped to the logged-in buyer.
+app.get('/orders/:id', requireUser, async (req, res) => {
+  const id = parseInt(req.params.id, 10);
+  try {
+    const order = await prisma.order.findFirst({
+      where: { id, userId: req.session.user.id },
+      include: { productListing: true },
+    });
+    if (!order) return res.status(404).render('404', { title: 'Order not found' });
+    let addr = {};
+    try { addr = JSON.parse(order.shippingAddress || '{}'); } catch (e) {}
+    res.render('order_detail', {
+      title: `Order #${order.id}`,
+      order: formatOrder(order, false, true),
+      addr,
+    });
+  } catch (e) {
+    res.redirect('/orders');
+  }
+});
+
+// ---------------------------------------------------------------------------
+// Manufacturer order management — a manufacturer sees & fulfils orders for
+// THEIR OWN product listings only. Admin keeps global oversight (/admin/orders).
+// ---------------------------------------------------------------------------
+
+// Returns the order iff it belongs to one of this manufacturer's listings.
+async function manufacturerOwnsOrder(orderId, mfrId) {
+  if (isNaN(orderId)) return null;
+  return prisma.order.findFirst({
+    where: { id: orderId, productListing: { manufacturerId: mfrId } },
+  });
+}
+
+app.get('/manufacturer/orders', requireManufacturer, async (req, res) => {
+  const mfrId = req.session.manufacturer.id;
+  const statusFilter = (req.query.status || '').trim();
+  const where = { productListing: { manufacturerId: mfrId } };
+  if (ALLOWED_ORDER_STATUS.has(statusFilter)) where.status = statusFilter;
+  try {
+    const orders = await prisma.order.findMany({
+      where,
+      include: { productListing: true, user: true },
+      orderBy: { createdAt: 'desc' },
+    });
+    res.render('manufacturer/orders', {
+      title: 'Orders',
+      statusFilter,
+      orders: orders.map(o => {
+        const f = formatOrder(o, true, true);
+        try { f.addr = JSON.parse(o.shippingAddress || '{}'); } catch (e) { f.addr = {}; }
+        return f;
+      }),
+    });
+  } catch (e) {
+    res.render('manufacturer/orders', { title: 'Orders', statusFilter: '', orders: [] });
+  }
+});
+
+app.post('/manufacturer/orders/:id/dispatch', requireManufacturer, async (req, res) => {
+  const id = parseInt(req.params.id, 10);
+  try {
+    const order = await manufacturerOwnsOrder(id, req.session.manufacturer.id);
+    if (!order) { req.flash('error', 'Order not found.'); return res.redirect('/manufacturer/orders'); }
+    const update = { status: 'dispatched' };
+    if (req.body.tracking_id) update.trackingId = req.body.tracking_id.trim();
+    await prisma.order.update({ where: { id }, data: update });
+    req.flash('success', 'Order dispatched.');
+  } catch (e) { req.flash('error', 'Failed.'); }
+  res.redirect('/manufacturer/orders');
+});
+
+app.post('/manufacturer/orders/:id/status', requireManufacturer, async (req, res) => {
+  const id = parseInt(req.params.id, 10);
+  try {
+    const status = (req.body.status || '').trim();
+    if (!ALLOWED_ORDER_STATUS.has(status)) throw new Error('Invalid status');
+    const order = await manufacturerOwnsOrder(id, req.session.manufacturer.id);
+    if (!order) { req.flash('error', 'Order not found.'); return res.redirect('/manufacturer/orders'); }
+    const update = { status };
+    if ('tracking_id' in req.body) update.trackingId = (req.body.tracking_id || '').trim() || null;
+    await prisma.order.update({ where: { id }, data: update });
+    req.flash('success', 'Status updated.');
+  } catch (e) { req.flash('error', 'Failed.'); }
+  res.redirect('/manufacturer/orders');
+});
+
 app.get('/account/settings', requireUser, (req, res) => {
   res.render('account_settings', { title: 'Account settings', errors: {}, values: req.session.user });
 });

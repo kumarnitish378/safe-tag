@@ -15,17 +15,18 @@
     <% } else { %>
       <div class="glass-light data-panel table-wrap reveal">
         <table class="table">
-          <thead><tr><th>#</th><th>Product</th><th>Qty</th><th>Amount</th><th>Status</th><th>Tracking</th><th>Date</th></tr></thead>
+          <thead><tr><th>#</th><th>Product</th><th>Qty</th><th>Amount</th><th>Status</th><th>Tracking</th><th>Date</th><th></th></tr></thead>
           <tbody>
             <% orders.forEach(function(o){ %>
               <tr>
-                <td class="mono">#<%= o.id %></td>
-                <td><%= o.product ? o.product.name : '—' %></td>
+                <td class="mono"><a class="text-brand font-semibold" href="/orders/<%= o.id %>">#<%= o.id %></a></td>
+                <td><a class="hover:underline" href="/orders/<%= o.id %>"><%= o.product ? o.product.name : '—' %></a></td>
                 <td><%= o.quantity %></td>
                 <td>₹<%= o.amount_inr %></td>
                 <td><span class="pill <%= o.status==='delivered'?'pill-success':(o.status==='dispatched'?'pill-brand':(o.status==='cancelled'?'pill-danger':'pill-warning')) %>"><%= o.status %></span></td>
                 <td><%= o.tracking_id || '—' %></td>
                 <td class="text-xs text-slate-500"><%= o.created_at ? o.created_at.split('T')[0] : '' %></td>
+                <td><a class="text-brand font-semibold text-sm" href="/orders/<%= o.id %>">Details →</a></td>
               </tr>
             <% }); %>
           </tbody>
