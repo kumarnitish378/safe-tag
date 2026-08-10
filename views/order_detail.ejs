@@ -1,0 +1,118 @@
+<%- include('layout/_head', { noIndex: true }) %>
+
+<%
+  var steps = [
+    { key: 'pending',    label: 'Order Placed', icon: '🧾' },
+    { key: 'dispatched', label: 'Dispatched',   icon: '🚚' },
+    { key: 'delivered',  label: 'Delivered',    icon: '📦' },
+  ];
+  var cancelled = order.status === 'cancelled';
+  var curIdx = ['pending','dispatched','delivered'].indexOf(order.status);
+  var pm = (addr.payment_method || '').toLowerCase();
+  var paidLabel = pm === 'cod' ? 'Cash on Delivery' : 'Paid online';
+%>
+
+<section class="page-shell">
+  <nav class="breadcrumb">
+    <a href="/dashboard" class="text-brand font-semibold hover:underline">Dashboard</a>
+    <span>›</span>
+    <a href="/orders" class="hover:underline">My Orders</a>
+    <span>›</span>
+    <span class="text-navy font-medium">Order #<%= order.id %></span>
+  </nav>
+
+  <div class="page-hero reveal">
+    <div class="page-kicker">Order #<%= order.id %> · <%= order.created_at ? order.created_at.split('T')[0] : '' %></div>
+    <h1 class="page-title"><%= order.product ? order.product.name : 'SafeTag order' %></h1>
+    <p class="page-subtitle">Qty <%= order.quantity %> · ₹<%= order.amount_inr %> · <%= paidLabel %></p>
+  </div>
+
+  <!-- Status timeline -->
+  <div class="glass-light data-panel p-6 mb-5 reveal">
+    <% if (cancelled) { %>
+      <div class="flash flash-error">This order was cancelled.</div>
+    <% } else { %>
+      <div class="flex items-center justify-between">
+        <% steps.forEach(function(s, i){
+             var done = i <= curIdx;
+             var active = i === curIdx;
+        %>
+          <div class="flex-1 flex flex-col items-center text-center relative">
+            <% if (i > 0) { %>
+              <div style="position:absolute; top:22px; left:-50%; width:100%; height:3px; background:<%= i <= curIdx ? '#0D9488' : '#e2e8f0' %>; z-index:0;"></div>
+            <% } %>
+            <div style="position:relative; z-index:1; width:46px; height:46px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1.2rem;
+                        background:<%= done ? '#0D9488' : '#e2e8f0' %>; color:<%= done ? '#fff' : '#94a3b8' %>;
+                        box-shadow:<%= active ? '0 0 0 4px rgba(13,148,136,.2)' : 'none' %>;">
+              <%= s.icon %>
+            </div>
+            <div class="text-xs mt-2 font-semibold <%= done ? 'text-navy' : 'text-slate-400' %>"><%= s.label %></div>
+          </div>
+        <% }); %>
+      </div>
+    <% } %>
+  </div>
+
+  <div class="grid lg:grid-cols-3 gap-5 items-start">
+    <!-- Left: shipping + tracking -->
+    <div class="lg:col-span-2 space-y-5">
+      <div class="glass-light form-panel p-6 reveal">
+        <h2 class="font-semibold text-navy mb-3">Shipping details</h2>
+        <div class="text-sm text-slate-600 space-y-1">
+          <div class="font-semibold text-navy"><%= addr.recipient_name || '—' %><%= addr.recipient_phone ? ' · +91 ' + addr.recipient_phone : '' %></div>
+          <div><%= addr.address_line1 || '' %><%= addr.address_line2 ? ', ' + addr.address_line2 : '' %></div>
+          <div><%= [addr.city, addr.state, addr.pincode].filter(Boolean).join(', ') %></div>
+        </div>
+      </div>
+
+      <div class="glass-light form-panel p-6 reveal">
+        <h2 class="font-semibold text-navy mb-3">Tracking</h2>
+        <% if (order.tracking_id) { %>
+          <div class="flex items-center justify-between gap-3 flex-wrap">
+            <div>
+              <div class="text-xs text-slate-500 uppercase tracking-wide">Tracking ID</div>
+              <div class="mono text-navy font-semibold text-lg"><%= order.tracking_id %></div>
+            </div>
+            <a class="btn-outline btn-lq text-sm" target="_blank" rel="noopener"
+               href="https://www.google.com/search?q=<%= encodeURIComponent('track parcel ' + order.tracking_id) %>">
+              Track parcel →
+            </a>
+          </div>
+        <% } else { %>
+          <p class="text-sm text-slate-500">No tracking yet. You'll see the tracking ID here once your order is dispatched.</p>
+        <% } %>
+      </div>
+    </div>
+
+    <!-- Right: summary -->
+    <div>
+      <div class="glass-light stable-panel p-5 sticky top-20 reveal">
+        <h3 class="font-semibold text-navy mb-4">Summary</h3>
+        <div class="flex gap-3 pb-4 border-b border-slate-100">
+          <div class="w-16 h-16 bg-slate-100 rounded-card flex items-center justify-center flex-shrink-0 overflow-hidden">
+            <% if (order.product && order.product.photo_url) { %>
+              <img src="<%= order.product.photo_url %>" class="w-16 h-16 object-cover" alt="<%= order.product.name %>" />
+            <% } else { %><span class="text-3xl">🏷️</span><% } %>
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="font-semibold text-navy text-sm leading-snug"><%= order.product ? order.product.name : 'SafeTag' %></div>
+            <div class="text-xs text-slate-400 mt-1">Qty: <%= order.quantity %></div>
+          </div>
+        </div>
+        <div class="pt-4 space-y-2.5 text-sm">
+          <div class="flex justify-between"><span class="text-slate-500">Amount</span><span class="font-semibold">₹<%= order.amount_inr %></span></div>
+          <div class="flex justify-between"><span class="text-slate-500">Payment</span><span class="font-medium"><%= (addr.payment_method || '—').toUpperCase() %></span></div>
+          <div class="flex justify-between"><span class="text-slate-500">Status</span>
+            <span class="pill <%= order.status==='delivered'?'pill-success':(order.status==='dispatched'?'pill-brand':(order.status==='cancelled'?'pill-danger':'pill-warning')) %>"><%= order.status %></span>
+          </div>
+          <% if (order.razorpay_payment_id && pm !== 'cod') { %>
+            <div class="flex justify-between"><span class="text-slate-500">Payment ID</span><span class="mono text-xs"><%= order.razorpay_payment_id %></span></div>
+          <% } %>
+        </div>
+        <a href="/orders" class="btn-outline btn-lq w-full justify-center mt-5 text-sm">← All orders</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<%- include('layout/_foot') %>

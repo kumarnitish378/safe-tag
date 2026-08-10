@@ -16,6 +16,7 @@ describe('Customer auth guard', () => {
   const protectedRoutes = [
     '/dashboard',
     '/orders',
+    '/orders/1',
     '/account/settings',
     '/profile/edit/someTagId',
     '/dashboard/tag/someTagId/submissions',
@@ -65,6 +66,7 @@ describe('Manufacturer auth guard', () => {
     '/manufacturer/batch/new',
     '/manufacturer/listings',
     '/manufacturer/listings/new',
+    '/manufacturer/orders',
   ];
 
   it.each(mfrRoutes)(
