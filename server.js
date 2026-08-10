@@ -2010,6 +2010,36 @@ app.get('/checkout/:productId', requireUser, async (req, res) => {
       return res.redirect(`/store/${productId}`);
     }
     const p = formatProduct(product);
+
+    // Pre-fill the delivery form from the user's most recent order so repeat
+    // buyers don't retype their address (fully editable before payment).
+    let values = {};
+    let prefilled = false;
+    try {
+      const last = await prisma.order.findFirst({
+        where: { userId: req.session.user.id, shippingAddress: { not: null } },
+        orderBy: { createdAt: 'desc' },
+      });
+      if (last) {
+        const a = JSON.parse(last.shippingAddress || '{}');
+        values = {
+          recipient_name: a.recipient_name || '',
+          recipient_phone: a.recipient_phone || '',
+          address_line1: a.address_line1 || '',
+          address_line2: a.address_line2 || '',
+          city: a.city || '',
+          state: a.state || '',
+          pincode: a.pincode || '',
+        };
+        prefilled = !!(values.address_line1 && values.city && values.pincode);
+      }
+    } catch (e) { /* fall back to a blank form */ }
+    // First-time buyer: seed name/phone from their account for convenience.
+    if (!prefilled) {
+      values.recipient_name = values.recipient_name || req.session.user.name || '';
+      values.recipient_phone = values.recipient_phone || req.session.user.mobile || '';
+    }
+
     res.render('checkout', {
       title: `Checkout — ${product.name}`,
       noIndex: true,
@@ -2017,7 +2047,8 @@ app.get('/checkout/:productId', requireUser, async (req, res) => {
       quantity,
       totalInr: p.price_inr * quantity,
       errors: {},
-      values: {},
+      values,
+      prefilled,
     });
   } catch (e) {
     req.flash('error', 'Server error.');
