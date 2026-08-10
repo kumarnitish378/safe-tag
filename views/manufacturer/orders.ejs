@@ -1,0 +1,65 @@
+<%- include('../layout/_head') %>
+
+<section class="page-shell">
+    <a href="/manufacturer/dashboard" class="text-sm text-brand font-semibold">← Dashboard</a>
+    <div class="flex items-center justify-between mt-2 mb-6 flex-wrap gap-2 reveal">
+      <div>
+        <h1 class="text-3xl font-bold">Orders</h1>
+        <p class="text-sm text-slate-500 mt-1">Orders for your product listings. Dispatch and add tracking here.</p>
+      </div>
+      <form method="GET" action="/manufacturer/orders">
+        <select name="status" class="input py-2" onchange="this.form.submit()">
+          <option value="">All statuses</option>
+          <% ['pending','dispatched','delivered','cancelled'].forEach(function(s){ %>
+            <option value="<%= s %>" <%= statusFilter===s?'selected':'' %>><%= s %></option>
+          <% }); %>
+        </select>
+      </form>
+    </div>
+
+    <div class="glass-light data-panel table-wrap reveal">
+      <table class="table">
+        <thead><tr><th>#</th><th>Customer</th><th>Ship to</th><th>Product</th><th>Qty</th><th>Amount</th><th>Status</th><th>Tracking</th><th>Actions</th></tr></thead>
+        <tbody>
+          <% if (!orders.length) { %>
+            <tr><td colspan="9" class="text-center py-6 text-slate-500">No orders yet.</td></tr>
+          <% } else { orders.forEach(function(o){ %>
+            <tr>
+              <td class="mono">#<%= o.id %></td>
+              <td>
+                <div><%= o.user ? o.user.email : '—' %></div>
+                <div class="text-xs text-slate-500"><%= o.addr && o.addr.recipient_phone ? '+91 ' + o.addr.recipient_phone : (o.user ? o.user.mobile : '') %></div>
+              </td>
+              <td class="text-xs text-slate-500 max-w-[14rem]">
+                <%= o.addr ? [o.addr.recipient_name, o.addr.address_line1, o.addr.city, o.addr.state, o.addr.pincode].filter(Boolean).join(', ') : '—' %>
+              </td>
+              <td><%= o.product ? o.product.name : '—' %></td>
+              <td><%= o.quantity %></td>
+              <td>₹<%= o.amount_inr %></td>
+              <td><span class="pill <%= o.status==='delivered'?'pill-success':(o.status==='dispatched'?'pill-brand':(o.status==='cancelled'?'pill-danger':'pill-warning')) %>"><%= o.status %></span></td>
+              <td class="mono text-xs"><%= o.tracking_id || '—' %></td>
+              <td>
+                <% if (o.status === 'pending') { %>
+                  <form method="POST" action="/manufacturer/orders/<%= o.id %>/dispatch" class="flex gap-1">
+                    <%- include('../layout/_csrf') %>
+                    <input class="input py-1 px-2 text-xs w-24 mono" name="tracking_id" placeholder="Tracking" />
+                    <button class="btn-brand btn-lq text-xs py-1 px-2">Dispatch</button>
+                  </form>
+                <% } else if (o.status === 'dispatched') { %>
+                  <form method="POST" action="/manufacturer/orders/<%= o.id %>/status">
+                    <%- include('../layout/_csrf') %>
+                    <input type="hidden" name="status" value="delivered" />
+                    <button class="btn-outline btn-lq text-xs py-1 px-2">Mark delivered</button>
+                  </form>
+                <% } else { %>
+                  <span class="text-xs text-slate-400">—</span>
+                <% } %>
+              </td>
+            </tr>
+          <% }); } %>
+        </tbody>
+      </table>
+    </div>
+</section>
+
+<%- include('../layout/_foot') %>

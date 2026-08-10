@@ -60,6 +60,8 @@ const GOOGLE_MAPS_API_KEY = process.env.GOOGLE_MAPS_API_KEY || '';
 const DUMMY_PAYMENT = process.env.DUMMY_PAYMENT !== 'false';
 const RAZORPAY_KEY_ID = process.env.RAZORPAY_KEY_ID || '';
 const RAZORPAY_KEY_SECRET = process.env.RAZORPAY_KEY_SECRET || '';
+// Separate secret you set when creating the webhook in the Razorpay dashboard.
+const RAZORPAY_WEBHOOK_SECRET = process.env.RAZORPAY_WEBHOOK_SECRET || '';
 
 // Verify a Razorpay payment signature: HMAC-SHA256(order_id|payment_id, secret)
 // compared to the signature Razorpay returned. Done manually (not via the SDK)
@@ -88,6 +90,35 @@ app.set('views', path.join(__dirname, 'views'));
 // Middleware
 // -----------------------------------------------------------------------------
 app.use(compression());
+
+// Razorpay webhook — registered BEFORE the body parsers so the signature can be
+// verified against the RAW request body. Machine-to-machine: it runs before the
+// session/CSRF middleware, so no token is needed (and none is expected).
+app.post('/webhooks/razorpay', express.raw({ type: '*/*' }), async (req, res) => {
+  try {
+    if (!RAZORPAY_WEBHOOK_SECRET) return res.status(503).send('webhook not configured');
+    const raw = Buffer.isBuffer(req.body) ? req.body : Buffer.from('');
+    const expected = crypto.createHmac('sha256', RAZORPAY_WEBHOOK_SECRET).update(raw).digest('hex');
+    const a = Buffer.from(expected, 'utf8');
+    const b = Buffer.from(String(req.headers['x-razorpay-signature'] || ''), 'utf8');
+    if (a.length !== b.length || !crypto.timingSafeEqual(a, b)) {
+      return res.status(400).send('invalid signature');
+    }
+    const event = JSON.parse(raw.toString('utf8'));
+    if (event && event.event === 'payment.captured') {
+      const entity = event.payload && event.payload.payment && event.payload.payment.entity;
+      if (entity && entity.order_id) {
+        await handleCapturedPayment(entity.order_id, entity.id, entity.notes || {});
+      }
+    }
+    return res.json({ ok: true });
+  } catch (e) {
+    console.error('Razorpay webhook error:', e.message);
+    // 500 → Razorpay retries (our handler is idempotent, so retries are safe).
+    return res.status(500).json({ ok: false });
+  }
+});
+
 app.use(express.urlencoded({ extended: true, limit: '5mb' }));
 app.use(express.json({ limit: '5mb' }));
 app.use('/static', express.static(path.join(__dirname, 'public'), {
@@ -127,6 +158,7 @@ function ensureCsrfToken(req) {
 const CSRF_SKIP_PATHS = [
   /^\/qr\//,
   /^\/api\//,
+  /^\/webhooks\//, // machine-to-machine (Razorpay); verified by signature
 ];
 
 app.use((req, res, next) => {
@@ -1009,6 +1041,93 @@ app.get('/orders', requireUser, async (req, res) => {
   } catch (e) {
     res.render('orders', { title: 'My Orders', orders: [] });
   }
+});
+
+// Customer order detail + tracking — scoped to the logged-in buyer.
+app.get('/orders/:id', requireUser, async (req, res) => {
+  const id = parseInt(req.params.id, 10);
+  try {
+    const order = await prisma.order.findFirst({
+      where: { id, userId: req.session.user.id },
+      include: { productListing: true },
+    });
+    if (!order) return res.status(404).render('404', { title: 'Order not found' });
+    let addr = {};
+    try { addr = JSON.parse(order.shippingAddress || '{}'); } catch (e) {}
+    res.render('order_detail', {
+      title: `Order #${order.id}`,
+      order: formatOrder(order, false, true),
+      addr,
+    });
+  } catch (e) {
+    res.redirect('/orders');
+  }
+});
+
+// ---------------------------------------------------------------------------
+// Manufacturer order management — a manufacturer sees & fulfils orders for
+// THEIR OWN product listings only. Admin keeps global oversight (/admin/orders).
+// ---------------------------------------------------------------------------
+
+// Returns the order iff it belongs to one of this manufacturer's listings.
+async function manufacturerOwnsOrder(orderId, mfrId) {
+  if (isNaN(orderId)) return null;
+  return prisma.order.findFirst({
+    where: { id: orderId, productListing: { manufacturerId: mfrId } },
+  });
+}
+
+app.get('/manufacturer/orders', requireManufacturer, async (req, res) => {
+  const mfrId = req.session.manufacturer.id;
+  const statusFilter = (req.query.status || '').trim();
+  const where = { productListing: { manufacturerId: mfrId } };
+  if (ALLOWED_ORDER_STATUS.has(statusFilter)) where.status = statusFilter;
+  try {
+    const orders = await prisma.order.findMany({
+      where,
+      include: { productListing: true, user: true },
+      orderBy: { createdAt: 'desc' },
+    });
+    res.render('manufacturer/orders', {
+      title: 'Orders',
+      statusFilter,
+      orders: orders.map(o => {
+        const f = formatOrder(o, true, true);
+        try { f.addr = JSON.parse(o.shippingAddress || '{}'); } catch (e) { f.addr = {}; }
+        return f;
+      }),
+    });
+  } catch (e) {
+    res.render('manufacturer/orders', { title: 'Orders', statusFilter: '', orders: [] });
+  }
+});
+
+app.post('/manufacturer/orders/:id/dispatch', requireManufacturer, async (req, res) => {
+  const id = parseInt(req.params.id, 10);
+  try {
+    const order = await manufacturerOwnsOrder(id, req.session.manufacturer.id);
+    if (!order) { req.flash('error', 'Order not found.'); return res.redirect('/manufacturer/orders'); }
+    const update = { status: 'dispatched' };
+    if (req.body.tracking_id) update.trackingId = req.body.tracking_id.trim();
+    await prisma.order.update({ where: { id }, data: update });
+    req.flash('success', 'Order dispatched.');
+  } catch (e) { req.flash('error', 'Failed.'); }
+  res.redirect('/manufacturer/orders');
+});
+
+app.post('/manufacturer/orders/:id/status', requireManufacturer, async (req, res) => {
+  const id = parseInt(req.params.id, 10);
+  try {
+    const status = (req.body.status || '').trim();
+    if (!ALLOWED_ORDER_STATUS.has(status)) throw new Error('Invalid status');
+    const order = await manufacturerOwnsOrder(id, req.session.manufacturer.id);
+    if (!order) { req.flash('error', 'Order not found.'); return res.redirect('/manufacturer/orders'); }
+    const update = { status };
+    if ('tracking_id' in req.body) update.trackingId = (req.body.tracking_id || '').trim() || null;
+    await prisma.order.update({ where: { id }, data: update });
+    req.flash('success', 'Status updated.');
+  } catch (e) { req.flash('error', 'Failed.'); }
+  res.redirect('/manufacturer/orders');
 });
 
 app.get('/account/settings', requireUser, (req, res) => {
@@ -1923,6 +2042,36 @@ app.get('/checkout/:productId', requireUser, async (req, res) => {
       return res.redirect(`/store/${productId}`);
     }
     const p = formatProduct(product);
+
+    // Pre-fill the delivery form from the user's most recent order so repeat
+    // buyers don't retype their address (fully editable before payment).
+    let values = {};
+    let prefilled = false;
+    try {
+      const last = await prisma.order.findFirst({
+        where: { userId: req.session.user.id, shippingAddress: { not: null } },
+        orderBy: { createdAt: 'desc' },
+      });
+      if (last) {
+        const a = JSON.parse(last.shippingAddress || '{}');
+        values = {
+          recipient_name: a.recipient_name || '',
+          recipient_phone: a.recipient_phone || '',
+          address_line1: a.address_line1 || '',
+          address_line2: a.address_line2 || '',
+          city: a.city || '',
+          state: a.state || '',
+          pincode: a.pincode || '',
+        };
+        prefilled = !!(values.address_line1 && values.city && values.pincode);
+      }
+    } catch (e) { /* fall back to a blank form */ }
+    // First-time buyer: seed name/phone from their account for convenience.
+    if (!prefilled) {
+      values.recipient_name = values.recipient_name || req.session.user.name || '';
+      values.recipient_phone = values.recipient_phone || req.session.user.mobile || '';
+    }
+
     res.render('checkout', {
       title: `Checkout — ${product.name}`,
       noIndex: true,
@@ -1930,7 +2079,8 @@ app.get('/checkout/:productId', requireUser, async (req, res) => {
       quantity,
       totalInr: p.price_inr * quantity,
       errors: {},
-      values: {},
+      values,
+      prefilled,
     });
   } catch (e) {
     req.flash('error', 'Server error.');
@@ -1989,19 +2139,24 @@ function buildShippingAddress(body, paymentMethod) {
   };
 }
 
-// Finalize a store order (shared by the direct/COD/dummy path and the verified
-// Razorpay path): best-effort confirmation email, persist the order with the
-// shipping address, decrement stock, then redirect to the confirmation page.
-async function finalizeStoreOrder(req, res, { product, quantity, paymentMethod, razorpayOrderId, razorpayPaymentId }) {
+// Create (idempotently) a store order: best-effort confirmation email, persist
+// the order + shipping address, decrement stock. Takes plain data (no req/res)
+// so it is shared by the verify redirect AND the payment.captured webhook.
+async function createStoreOrder({ userId, userEmail, product, quantity, paymentMethod, addr, razorpayOrderId, razorpayPaymentId }) {
+  // Idempotency: at most one order per Razorpay order id — the verify redirect
+  // and the webhook can both fire for the same successful payment.
+  if (razorpayOrderId) {
+    const existing = await prisma.order.findFirst({ where: { razorpayOrderId } });
+    if (existing) return existing;
+  }
+
   const cod = paymentMethod === 'cod';
   const finalAmount = product.price * quantity + (cod ? 3000 : 0); // +30 INR = 3000 paise for COD
-  const addrMeta = buildShippingAddress(req.body, paymentMethod);
+  const meta = { ...addr, payment_method: paymentMethod, email_sent: false };
 
-  // Send order confirmation email (best-effort — never blocks the order)
+  // Order confirmation email (best-effort — never blocks the order)
   const SMTP_USER = process.env.SMTP_USER || '';
   const SMTP_PASS = process.env.SMTP_PASS || '';
-  let emailSent = false;
-  const userEmail = req.session.user.email || '';
   if (SMTP_USER && SMTP_PASS && userEmail) {
     try {
       const nodemailer = require('nodemailer');
@@ -2017,7 +2172,7 @@ async function finalizeStoreOrder(req, res, { product, quantity, paymentMethod, 
         to: userEmail,
         subject: `Order Confirmed — SafeTag ${product.name}`,
         text: [
-          `Hi ${addrMeta.recipient_name},`,
+          `Hi ${meta.recipient_name},`,
           ``,
           `Your SafeTag order has been confirmed!`,
           ``,
@@ -2028,8 +2183,8 @@ async function finalizeStoreOrder(req, res, { product, quantity, paymentMethod, 
           `Tracking  : ${trackingId}`,
           ``,
           `Delivery address:`,
-          `${addrMeta.address_line1}${addrMeta.address_line2 ? ', ' + addrMeta.address_line2 : ''}`,
-          `${addrMeta.city}, ${addrMeta.state} — ${addrMeta.pincode}`,
+          `${meta.address_line1}${meta.address_line2 ? ', ' + meta.address_line2 : ''}`,
+          `${meta.city}, ${meta.state} — ${meta.pincode}`,
           ``,
           `Expected delivery: 5–7 business days.`,
           ``,
@@ -2039,30 +2194,90 @@ async function finalizeStoreOrder(req, res, { product, quantity, paymentMethod, 
           `— SafeTag Team`,
         ].join('\n'),
       });
-      emailSent = true;
+      meta.email_sent = true;
     } catch (e) {
       console.error('Order email error:', e.message);
     }
   }
-  addrMeta.email_sent = emailSent;
 
-  const newOrder = await prisma.order.create({
+  const order = await prisma.order.create({
     data: {
-      userId: req.session.user.id,
+      userId,
       productListingId: product.id,
       quantity,
       amount: finalAmount,
       status: 'pending',
-      razorpayOrderId,
-      razorpayPaymentId,
-      shippingAddress: JSON.stringify(addrMeta),
+      razorpayOrderId: razorpayOrderId || null,
+      razorpayPaymentId: razorpayPaymentId || null,
+      shippingAddress: JSON.stringify(meta),
     },
   });
   await prisma.productListing.update({
     where: { id: product.id },
     data: { quantityAvailable: Math.max(0, product.quantityAvailable - quantity) },
   });
-  return res.redirect(`/order-confirmation/${newOrder.id}`);
+  return order;
+}
+
+// Route wrapper: build the order from the request, then redirect to confirmation.
+async function finalizeStoreOrder(req, res, { product, quantity, paymentMethod, razorpayOrderId, razorpayPaymentId }) {
+  const order = await createStoreOrder({
+    userId: req.session.user.id,
+    userEmail: req.session.user.email || '',
+    product,
+    quantity,
+    paymentMethod,
+    addr: buildShippingAddress(req.body, paymentMethod),
+    razorpayOrderId,
+    razorpayPaymentId,
+  });
+  return res.redirect(`/order-confirmation/${order.id}`);
+}
+
+// Handle a captured Razorpay payment (from the webhook). Idempotent: reliably
+// finalizes the purchase even if the buyer closed the browser before the
+// verify redirect ran.
+async function handleCapturedPayment(razorpayOrderId, razorpayPaymentId, notes) {
+  // Manufacturer batch — the batch row already exists (created before payment).
+  const batch = await prisma.tagBatch.findFirst({ where: { razorpayOrderId } });
+  if (batch) {
+    if (batch.paymentStatus !== 'paid') {
+      await prisma.tagBatch.update({
+        where: { id: batch.id },
+        data: { paymentStatus: 'paid', razorpayPaymentId },
+      });
+      await generateTagsForBatch(batch.id, batch.manufacturerId, batch.quantity, batch.batchName, batch.tagType);
+    }
+    return;
+  }
+
+  // Store order — normally created on the verify redirect. If the buyer never
+  // reached it, reconstruct the order from the Razorpay order notes.
+  const existing = await prisma.order.findFirst({ where: { razorpayOrderId } });
+  if (existing) return;
+  if (!notes || !notes.user_id || !notes.product_id) return;
+  const product = await prisma.productListing.findUnique({ where: { id: parseInt(notes.product_id, 10) } });
+  if (!product) return;
+  const user = await prisma.user.findUnique({ where: { id: parseInt(notes.user_id, 10) } });
+  await createStoreOrder({
+    userId: parseInt(notes.user_id, 10),
+    userEmail: user ? user.email : '',
+    product,
+    quantity: parseInt(notes.quantity || '1', 10) || 1,
+    paymentMethod: notes.payment_method || 'upi',
+    addr: {
+      recipient_name: notes.recipient_name || '',
+      recipient_phone: notes.recipient_phone || '',
+      address_line1: notes.address_line1 || '',
+      address_line2: notes.address_line2 || '',
+      city: notes.city || '',
+      state: notes.state || '',
+      pincode: notes.pincode || '',
+      payment_method: notes.payment_method || 'upi',
+    },
+    razorpayOrderId,
+    razorpayPaymentId,
+  });
 }
 
 app.post('/checkout/:productId', requireUser, async (req, res) => {
@@ -2131,6 +2346,21 @@ app.post('/checkout/:productId', requireUser, async (req, res) => {
         currency: 'INR',
         payment_capture: 1,
         receipt: `store_${productId}_${Date.now()}`,
+        // Carried into the payment.captured webhook so the order can be created
+        // even if the buyer closes the browser before the verify redirect.
+        notes: {
+          user_id: String(req.session.user.id),
+          product_id: String(productId),
+          quantity: String(quantity),
+          payment_method: paymentMethod,
+          recipient_name: addrMeta.recipient_name,
+          recipient_phone: addrMeta.recipient_phone,
+          address_line1: addrMeta.address_line1,
+          address_line2: addrMeta.address_line2,
+          city: addrMeta.city,
+          state: addrMeta.state,
+          pincode: addrMeta.pincode,
+        },
       });
       const p = formatProduct(product);
       return res.render('checkout_pay', {

@@ -134,6 +134,7 @@
               <% if (o.status !== 'delivered' && o.status !== 'cancelled') { %>
                 <p class="text-xs text-slate-500 mt-2">Once delivered, scan the QR code on your tag to activate it and it will appear in <strong>My Tags</strong> above.</p>
               <% } %>
+              <a class="text-brand font-semibold text-xs mt-2 inline-block" href="/orders/<%= o.id %>">View details &amp; tracking →</a>
             </div>
           </div>
         <% }); %>
