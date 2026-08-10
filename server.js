@@ -1970,6 +1970,96 @@ app.get('/order-confirmation/:orderId', requireUser, async (req, res) => {
   }
 });
 
+// Build the structured shipping address (persisted as a JSON string on the order).
+function buildShippingAddress(body, paymentMethod) {
+  return {
+    recipient_name: (body.recipient_name || '').trim(),
+    recipient_phone: (body.recipient_phone || '').trim(),
+    address_line1: (body.address_line1 || '').trim(),
+    address_line2: (body.address_line2 || '').trim(),
+    city: (body.city || '').trim(),
+    state: (body.state || '').trim(),
+    pincode: (body.pincode || '').trim(),
+    payment_method: paymentMethod,
+  };
+}
+
+// Finalize a store order (shared by the direct/COD/dummy path and the verified
+// Razorpay path): best-effort confirmation email, persist the order with the
+// shipping address, decrement stock, then redirect to the confirmation page.
+async function finalizeStoreOrder(req, res, { product, quantity, paymentMethod, razorpayOrderId, razorpayPaymentId }) {
+  const cod = paymentMethod === 'cod';
+  const finalAmount = product.price * quantity + (cod ? 3000 : 0); // +30 INR = 3000 paise for COD
+  const addrMeta = buildShippingAddress(req.body, paymentMethod);
+
+  // Send order confirmation email (best-effort — never blocks the order)
+  const SMTP_USER = process.env.SMTP_USER || '';
+  const SMTP_PASS = process.env.SMTP_PASS || '';
+  let emailSent = false;
+  const userEmail = req.session.user.email || '';
+  if (SMTP_USER && SMTP_PASS && userEmail) {
+    try {
+      const nodemailer = require('nodemailer');
+      const transporter = nodemailer.createTransport({
+        host: process.env.SMTP_HOST || 'smtp.gmail.com',
+        port: parseInt(process.env.SMTP_PORT || '587', 10),
+        secure: false,
+        auth: { user: SMTP_USER, pass: SMTP_PASS },
+      });
+      const trackingId = `ST${Date.now().toString().slice(-6)}IN`;
+      await transporter.sendMail({
+        from: `"SafeTag Orders" <${SMTP_USER}>`,
+        to: userEmail,
+        subject: `Order Confirmed — SafeTag ${product.name}`,
+        text: [
+          `Hi ${addrMeta.recipient_name},`,
+          ``,
+          `Your SafeTag order has been confirmed!`,
+          ``,
+          `Product   : ${product.name}`,
+          `Quantity  : ${quantity}`,
+          `Amount    : ₹${(finalAmount / 100).toFixed(0)}`,
+          `Payment   : ${paymentMethod.toUpperCase()}`,
+          `Tracking  : ${trackingId}`,
+          ``,
+          `Delivery address:`,
+          `${addrMeta.address_line1}${addrMeta.address_line2 ? ', ' + addrMeta.address_line2 : ''}`,
+          `${addrMeta.city}, ${addrMeta.state} — ${addrMeta.pincode}`,
+          ``,
+          `Expected delivery: 5–7 business days.`,
+          ``,
+          `Activate your tag at: ${BASE_URL}`,
+          `Support: support@safe-tag.in`,
+          ``,
+          `— SafeTag Team`,
+        ].join('\n'),
+      });
+      emailSent = true;
+    } catch (e) {
+      console.error('Order email error:', e.message);
+    }
+  }
+  addrMeta.email_sent = emailSent;
+
+  const newOrder = await prisma.order.create({
+    data: {
+      userId: req.session.user.id,
+      productListingId: product.id,
+      quantity,
+      amount: finalAmount,
+      status: 'pending',
+      razorpayOrderId,
+      razorpayPaymentId,
+      shippingAddress: JSON.stringify(addrMeta),
+    },
+  });
+  await prisma.productListing.update({
+    where: { id: product.id },
+    data: { quantityAvailable: Math.max(0, product.quantityAvailable - quantity) },
+  });
+  return res.redirect(`/order-confirmation/${newOrder.id}`);
+}
+
 app.post('/checkout/:productId', requireUser, async (req, res) => {
   const productId = parseInt(req.params.productId, 10);
   const quantity = parseInt(req.body.quantity || '1', 10) || 1;
@@ -1992,126 +2082,69 @@ app.post('/checkout/:productId', requireUser, async (req, res) => {
     }
 
     const amount = product.price * quantity;
+    const paymentMethod = (req.body.payment_method || 'upi').trim();
+    const cod = paymentMethod === 'cod';
 
-    if (DUMMY_PAYMENT) {
-      const orderId = `order_dummy_${crypto.randomBytes(12).toString('hex')}`;
-      const paymentMethod = (req.body.payment_method || 'upi').trim();
-      const cod = paymentMethod === 'cod';
-      const finalAmount = amount + (cod ? 3000 : 0); // +30 INR = 3000 paise for COD
-
-      // Build structured shipping address (stored as JSON string)
-      const addrMeta = {
-        recipient_name: (req.body.recipient_name || '').trim(),
-        recipient_phone: (req.body.recipient_phone || '').trim(),
-        address_line1: (req.body.address_line1 || '').trim(),
-        address_line2: (req.body.address_line2 || '').trim(),
-        city: (req.body.city || '').trim(),
-        state: (req.body.state || '').trim(),
-        pincode: (req.body.pincode || '').trim(),
-        payment_method: paymentMethod,
-      };
-
-      // Validate required address fields
-      if (!addrMeta.recipient_name || !addrMeta.address_line1 || !addrMeta.city || !addrMeta.pincode) {
-        const p = formatProduct(product);
-        return res.render('checkout', {
-          title: `Checkout — ${product.name}`,
-          noIndex: true,
-          product: p,
-          quantity,
-          totalInr: p.price_inr * quantity,
-          errors: { _form: 'Please fill in all required delivery fields.' },
-          values: req.body,
-        });
-      }
-
-      // Send order confirmation email
-      const SMTP_USER = process.env.SMTP_USER || '';
-      const SMTP_PASS = process.env.SMTP_PASS || '';
-      let emailSent = false;
-      const userEmail = req.session.user.email || '';
-      if (SMTP_USER && SMTP_PASS && userEmail) {
-        try {
-          const nodemailer = require('nodemailer');
-          const transporter = nodemailer.createTransport({
-            host: process.env.SMTP_HOST || 'smtp.gmail.com',
-            port: parseInt(process.env.SMTP_PORT || '587', 10),
-            secure: false,
-            auth: { user: SMTP_USER, pass: SMTP_PASS },
-          });
-          const trackingId = `ST${Date.now().toString().slice(-6)}IN`;
-          await transporter.sendMail({
-            from: `"SafeTag Orders" <${SMTP_USER}>`,
-            to: userEmail,
-            subject: `Order Confirmed — SafeTag ${product.name}`,
-            text: [
-              `Hi ${addrMeta.recipient_name},`,
-              ``,
-              `Your SafeTag order has been confirmed!`,
-              ``,
-              `Product   : ${product.name}`,
-              `Quantity  : ${quantity}`,
-              `Amount    : ₹${(finalAmount / 100).toFixed(0)}`,
-              `Payment   : ${paymentMethod.toUpperCase()}`,
-              `Tracking  : ${trackingId}`,
-              ``,
-              `Delivery address:`,
-              `${addrMeta.address_line1}${addrMeta.address_line2 ? ', ' + addrMeta.address_line2 : ''}`,
-              `${addrMeta.city}, ${addrMeta.state} — ${addrMeta.pincode}`,
-              ``,
-              `Expected delivery: 5–7 business days.`,
-              ``,
-              `Activate your tag at: ${BASE_URL}`,
-              `Support: support@safe-tag.in`,
-              ``,
-              `— SafeTag Team`,
-            ].join('\n'),
-          });
-          emailSent = true;
-        } catch (e) {
-          console.error('Order email error:', e.message);
-        }
-      }
-      addrMeta.email_sent = emailSent;
-
-      const newOrder = await prisma.order.create({
-        data: {
-          userId: req.session.user.id,
-          productListingId: product.id,
-          quantity,
-          amount: finalAmount,
-          status: 'pending',
-          razorpayOrderId: orderId,
-          razorpayPaymentId: `pay_dummy_${paymentMethod}_${Date.now()}`,
-          shippingAddress: JSON.stringify(addrMeta),
-        },
+    // Required delivery fields are validated for every payment path.
+    const addrMeta = buildShippingAddress(req.body, paymentMethod);
+    if (!addrMeta.recipient_name || !addrMeta.address_line1 || !addrMeta.city || !addrMeta.pincode) {
+      const p = formatProduct(product);
+      return res.render('checkout', {
+        title: `Checkout — ${product.name}`,
+        noIndex: true,
+        product: p,
+        quantity,
+        totalInr: p.price_inr * quantity,
+        errors: { _form: 'Please fill in all required delivery fields.' },
+        values: req.body,
       });
-      await prisma.productListing.update({
-        where: { id: product.id },
-        data: { quantityAvailable: Math.max(0, product.quantityAvailable - quantity) },
-      });
-      return res.redirect(`/order-confirmation/${newOrder.id}`);
     }
 
-    // Real Razorpay flow
+    // COD and dev/dummy mode never open Razorpay — place the order directly.
+    if (DUMMY_PAYMENT || cod) {
+      const kind = cod ? 'cod' : 'dummy';
+      return finalizeStoreOrder(req, res, {
+        product,
+        quantity,
+        paymentMethod,
+        razorpayOrderId: `order_${kind}_${crypto.randomBytes(12).toString('hex')}`,
+        razorpayPaymentId: `pay_${kind}_${paymentMethod}_${Date.now()}`,
+      });
+    }
+
+    // Real Razorpay (non-COD): create the order, then render the checkout modal
+    // page. The order is persisted only after signature verification.
+    if (amount < 100) {
+      req.flash('error', 'Order amount is below the minimum payable value.');
+      return res.redirect(`/store/${productId}`);
+    }
     try {
       const Razorpay = require('razorpay');
       const client = new Razorpay({ key_id: RAZORPAY_KEY_ID, key_secret: RAZORPAY_KEY_SECRET });
-      const rzpOrder = await client.orders.create({ amount, currency: 'INR', payment_capture: 1 });
-      res.render('checkout', {
-        title: 'Checkout',
-        order_id: rzpOrder.id,
+      const rzpOrder = await client.orders.create({
+        amount,
+        currency: 'INR',
+        payment_capture: 1,
+        receipt: `store_${productId}_${Date.now()}`,
+      });
+      const p = formatProduct(product);
+      return res.render('checkout_pay', {
+        title: `Payment — ${product.name}`,
+        noIndex: true,
+        product: p,
+        quantity,
         amount,
         currency: 'INR',
         key_id: RAZORPAY_KEY_ID,
-        product_id: productId,
-        quantity,
-        shipping_address: req.body.shipping_address || '',
+        order_id: rzpOrder.id,
+        addr: addrMeta,
+        userName: req.session.user.name || addrMeta.recipient_name || '',
+        userEmail: req.session.user.email || '',
       });
     } catch (e) {
       console.error('Razorpay error:', e);
       req.flash('error', 'Payment provider error.');
-      res.redirect(`/store/${productId}`);
+      return res.redirect(`/store/${productId}`);
     }
   } catch (e) {
     console.error(e);
@@ -2130,40 +2163,39 @@ app.post('/checkout/:productId/verify', requireUser, async (req, res) => {
       return res.redirect('/store');
     }
 
+    const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
+
+    // Missing signature fields → reject (never place the order).
+    if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
+      req.flash('error', 'Missing payment details.');
+      return res.redirect(`/checkout/${productId}`);
+    }
+
+    // Verify the HMAC-SHA256 signature. On mismatch, do NOT mark as paid.
     if (!DUMMY_PAYMENT) {
       try {
         const Razorpay = require('razorpay');
         const client = new Razorpay({ key_id: RAZORPAY_KEY_ID, key_secret: RAZORPAY_KEY_SECRET });
         client.utility.verifyPaymentSignature({
-          razorpay_order_id: req.body.razorpay_order_id,
-          razorpay_payment_id: req.body.razorpay_payment_id,
-          razorpay_signature: req.body.razorpay_signature,
+          razorpay_order_id,
+          razorpay_payment_id,
+          razorpay_signature,
         });
       } catch (e) {
         req.flash('error', 'Payment verification failed.');
-        return res.redirect(`/store/${productId}`);
+        return res.redirect(`/checkout/${productId}`);
       }
     }
 
-    const amount = product.price * quantity;
-    await prisma.order.create({
-      data: {
-        userId: req.session.user.id,
-        productListingId: product.id,
-        quantity,
-        amount,
-        status: 'pending',
-        razorpayOrderId: req.body.razorpay_order_id || null,
-        razorpayPaymentId: req.body.razorpay_payment_id || null,
-        shippingAddress: (req.body.shipping_address || '').trim() || null,
-      },
+    // Verified → persist the order with the shipping address carried through the
+    // modal's hidden fields, send the email, and confirm.
+    return finalizeStoreOrder(req, res, {
+      product,
+      quantity,
+      paymentMethod: (req.body.payment_method || 'upi').trim(),
+      razorpayOrderId: razorpay_order_id,
+      razorpayPaymentId: razorpay_payment_id,
     });
-    await prisma.productListing.update({
-      where: { id: product.id },
-      data: { quantityAvailable: Math.max(0, product.quantityAvailable - quantity) },
-    });
-    req.flash('success', 'Payment received. Order placed.');
-    return res.redirect('/orders');
   } catch (e) {
     console.error(e);
     req.flash('error', 'Server error.');
