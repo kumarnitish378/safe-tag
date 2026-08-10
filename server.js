@@ -60,6 +60,20 @@ const GOOGLE_MAPS_API_KEY = process.env.GOOGLE_MAPS_API_KEY || '';
 const DUMMY_PAYMENT = process.env.DUMMY_PAYMENT !== 'false';
 const RAZORPAY_KEY_ID = process.env.RAZORPAY_KEY_ID || '';
 const RAZORPAY_KEY_SECRET = process.env.RAZORPAY_KEY_SECRET || '';
+
+// Verify a Razorpay payment signature: HMAC-SHA256(order_id|payment_id, secret)
+// compared to the signature Razorpay returned. Done manually (not via the SDK)
+// because razorpay@2.9.x does not expose `client.utility.verifyPaymentSignature`.
+function verifyRazorpaySignature(orderId, paymentId, signature) {
+  if (!orderId || !paymentId || !signature || !RAZORPAY_KEY_SECRET) return false;
+  const expected = crypto
+    .createHmac('sha256', RAZORPAY_KEY_SECRET)
+    .update(`${orderId}|${paymentId}`)
+    .digest('hex');
+  const a = Buffer.from(expected, 'utf8');
+  const b = Buffer.from(String(signature), 'utf8');
+  return a.length === b.length && crypto.timingSafeEqual(a, b);
+}
 const TWILIO_ACCOUNT_SID = process.env.TWILIO_ACCOUNT_SID || '';
 const TWILIO_AUTH_TOKEN_ENV = process.env.TWILIO_AUTH_TOKEN || '';
 const TWILIO_WHATSAPP_FROM = process.env.TWILIO_WHATSAPP_FROM || 'whatsapp:+14155238886';
@@ -1449,19 +1463,10 @@ app.post('/manufacturer/batch/:id/pay-verify', requireManufacturer, async (req, 
     });
     if (!batch) return res.redirect('/manufacturer/dashboard');
 
-    if (!DUMMY_PAYMENT) {
-      try {
-        const Razorpay = require('razorpay');
-        const rzp = new Razorpay({ key_id: RAZORPAY_KEY_ID, key_secret: RAZORPAY_KEY_SECRET });
-        rzp.utility.verifyPaymentSignature({
-          razorpay_order_id: req.body.razorpay_order_id,
-          razorpay_payment_id: req.body.razorpay_payment_id,
-          razorpay_signature: req.body.razorpay_signature,
-        });
-      } catch (e) {
-        req.flash('error', 'Payment verification failed. Contact support@safe-tag.in.');
-        return res.redirect(`/manufacturer/batch/${id}/pay`);
-      }
+    if (!DUMMY_PAYMENT && !verifyRazorpaySignature(
+      req.body.razorpay_order_id, req.body.razorpay_payment_id, req.body.razorpay_signature)) {
+      req.flash('error', 'Payment verification failed. Contact support@safe-tag.in.');
+      return res.redirect(`/manufacturer/batch/${id}/pay`);
     }
 
     await prisma.tagBatch.update({
@@ -2172,19 +2177,10 @@ app.post('/checkout/:productId/verify', requireUser, async (req, res) => {
     }
 
     // Verify the HMAC-SHA256 signature. On mismatch, do NOT mark as paid.
-    if (!DUMMY_PAYMENT) {
-      try {
-        const Razorpay = require('razorpay');
-        const client = new Razorpay({ key_id: RAZORPAY_KEY_ID, key_secret: RAZORPAY_KEY_SECRET });
-        client.utility.verifyPaymentSignature({
-          razorpay_order_id,
-          razorpay_payment_id,
-          razorpay_signature,
-        });
-      } catch (e) {
-        req.flash('error', 'Payment verification failed.');
-        return res.redirect(`/checkout/${productId}`);
-      }
+    if (!DUMMY_PAYMENT && !verifyRazorpaySignature(
+      razorpay_order_id, razorpay_payment_id, razorpay_signature)) {
+      req.flash('error', 'Payment verification failed.');
+      return res.redirect(`/checkout/${productId}`);
     }
 
     // Verified → persist the order with the shipping address carried through the
