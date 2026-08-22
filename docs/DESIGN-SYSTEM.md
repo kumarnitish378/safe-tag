@@ -43,6 +43,11 @@ Other recurring values: pills use `border-radius:999px`; a lighter teal tint
 - **`.section`** — vertical rhythm block: `padding:5.5rem 0`.
 - **`.center`** — centers text (and centers `.lead`).
 - **`.eyebrow`** — small uppercase pill label above a heading (teal on `#e6fbf7`).
+- **Images** — the global rule is `img{max-width:100%;display:block;height:auto}`.
+  Always keep `height:auto` (never lock height) so images scale in aspect ratio
+  and never squish. Add `width`/`height` **attributes matching the file's real
+  ratio** to reserve space (avoids layout shift). For fixed-shape media, use
+  `aspect-ratio` + `object-fit:cover` instead (see hero slides, `.use`, `.prod`).
 
 ## 4. Buttons
 | Class | Look |
@@ -56,11 +61,19 @@ Other recurring values: pills use `border-radius:999px`; a lighter teal tint
 **Header** — `header` sticky glass bar (`blur(14px)`), `.nav` flex row, `.brand`
 (logo + Sora wordmark), `.nav-links` (hidden < 820px), a `.btn` CTA.
 
-**Hero** — `.hero` (soft teal→white radial+linear gradient), `.hero-grid`
-(1.05fr / 1fr, stacks < 900px), `.hero h1 .hl` (teal highlight word),
-`.hero-cta`, `.hero-trust` (inline trust points). Media: `.hero-slider`
-carousel (`.hero-track`, `.hero-slide`, `.hero-nav`, `.hero-dots`, `.single`).
-Optional floating `.hero-badge`.
+**Hero** — `.hero` (soft teal→white radial+linear gradient). `.hero-grid` holds
+**three** items — `.hero-head` (eyebrow + `h1`), `.hero-media` (image), and
+`.hero-body` (lead + `.hero-cta` + `.hero-trust`) — placed with CSS
+`grid-template-areas`:
+- **Desktop (>900px):** `"head media" / "body media"` → text column left
+  (head+body meet at centre via `align-self:end`/`start`), image right spanning.
+- **Mobile (≤900px):** `"head" / "media" / "body"` → **headline → image → lead
+  & CTAs**. This ordering (heading above the image, supporting copy below it) is
+  the pattern to reuse for any hero.
+
+`.hero h1 .hl` = teal highlight word. Media is the `.hero-slider` carousel
+(`.hero-track`, `.hero-slide`, `.hero-nav`, `.hero-dots`, `.single`). Optional
+floating `.hero-badge`.
 
 **Stat bar** — `.stats` (navy band), `.stats .grid` (4 → 2 cols), `.stat b` big
 Sora number + `.stat span` muted label.

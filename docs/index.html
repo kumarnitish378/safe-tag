@@ -91,7 +91,7 @@
       background:var(--white);line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
     h1,h2,h3{font-family:'Sora',system-ui,sans-serif;line-height:1.12;letter-spacing:-.02em;color:var(--navy)}
     a{color:inherit;text-decoration:none}
-    img{max-width:100%;display:block}
+    img{max-width:100%;display:block;height:auto}
     .wrap{max-width:1120px;margin:0 auto;padding:0 20px}
     .eyebrow{display:inline-flex;align-items:center;gap:.5rem;font-size:.8rem;font-weight:700;letter-spacing:.08em;
       text-transform:uppercase;color:var(--teal-d);background:#e6fbf7;padding:.4rem .85rem;border-radius:999px}
@@ -123,14 +123,16 @@
     .hero{position:relative;padding:3.5rem 0 4rem;background:
       radial-gradient(60% 60% at 85% 10%,rgba(13,148,136,.10),transparent 60%),
       linear-gradient(180deg,#f4faf9 0%,#ffffff 100%)}
-    .hero-grid{display:grid;grid-template-columns:1.05fr 1fr;gap:3rem;align-items:center}
+    .hero-grid{display:grid;grid-template-columns:1.05fr 1fr;column-gap:3rem;row-gap:0;grid-template-areas:"head media" "body media"}
+    .hero-head{grid-area:head;align-self:end}
+    .hero-body{grid-area:body;align-self:start}
     .hero h1{font-size:clamp(2.3rem,5.2vw,3.7rem);font-weight:800}
     .hero h1 .hl{color:var(--teal-d)}
     .hero .lead{margin-top:1.2rem;font-size:1.18rem}
     .hero-cta{display:flex;flex-wrap:wrap;gap:.8rem;margin-top:1.8rem}
     .hero-trust{display:flex;flex-wrap:wrap;gap:1.1rem;margin-top:1.6rem;color:var(--muted);font-size:.92rem;font-weight:600}
     .hero-trust span{display:inline-flex;align-items:center;gap:.4rem}
-    .hero-media{position:relative}
+    .hero-media{position:relative;grid-area:media;align-self:center}
     .hero-media img{border-radius:26px;box-shadow:var(--shadow);width:100%;object-fit:cover;aspect-ratio:4/3}
     /* Hero image slider */
     .hero-slider{position:relative;border-radius:26px;overflow:hidden;box-shadow:var(--shadow)}
@@ -150,7 +152,8 @@
     .hero-badge .dot{width:38px;height:38px;border-radius:999px;background:#e6fbf7;display:flex;align-items:center;justify-content:center;font-size:1.2rem}
     .hero-badge b{font-family:'Sora';color:var(--navy);font-size:.95rem}
     .hero-badge small{color:var(--muted);font-size:.78rem}
-    @media(max-width:900px){.hero-grid{grid-template-columns:1fr;gap:2rem}.hero-media{order:-1}}
+    @media(max-width:900px){.hero-grid{grid-template-columns:1fr;grid-template-areas:"head" "media" "body";row-gap:1.4rem}
+      .hero-head,.hero-body,.hero-media{align-self:auto}}
     /* stat bar */
     .stats{background:var(--navy);color:#fff}
     .stats .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;padding:2.2rem 0}
@@ -296,19 +299,9 @@
   <!-- HERO -->
   <section class="hero">
     <div class="wrap hero-grid">
-      <div class="rv in">
+      <div class="hero-head rv in">
         <span class="eyebrow"><span class="material-symbols-outlined">verified</span>India's QR + NFC Emergency ID</span>
         <h1 style="margin-top:1rem">When you can't speak,<br><span class="hl">your SafeTag will.</span></h1>
-        <p class="lead">In an emergency, a stranger has seconds to help — but no way to know your blood group, allergies or who to call. One scan of your SafeTag shows it all in <strong>3 seconds</strong>. No app. No delay.</p>
-        <div class="hero-cta">
-          <a class="btn" href="https://safe-tag.onrender.com/store" target="_blank" rel="noopener">Get your SafeTag →</a>
-          <a class="btn-ghost" href="https://safe-tag.onrender.com/demo" target="_blank" rel="noopener">▶ See a live demo</a>
-        </div>
-        <div class="hero-trust">
-          <span><span class="material-symbols-outlined">check_circle</span>No app needed</span>
-          <span><span class="material-symbols-outlined">smartphone</span>Works on any phone</span>
-          <span><span class="material-symbols-outlined">lock</span>You control what's shown</span>
-        </div>
       </div>
       <div class="hero-media rv in">
         <div class="hero-slider" id="heroSlider" aria-roledescription="carousel" aria-label="SafeTag in real life">
@@ -324,6 +317,38 @@
           <button class="hero-nav next" type="button" aria-label="Next image">&#8250;</button>
           <div class="hero-dots" role="tablist" aria-label="Choose image"></div>
         </div>
+      </div>
+      <div class="hero-body rv in">
+        <p class="lead">In an emergency, a stranger has seconds to help — but no way to know your blood group, allergies or who to call. One scan of your SafeTag shows it all in <strong>3 seconds</strong>. No app. No delay.</p>
+        <div class="hero-cta">
+          <a class="btn" href="https://safe-tag.onrender.com/store" target="_blank" rel="noopener">Get your SafeTag →</a>
+          <a class="btn-ghost" href="https://safe-tag.onrender.com/demo" target="_blank" rel="noopener">▶ See a live demo</a>
+        </div>
+        <div class="hero-trust">
+          <span><span class="material-symbols-outlined">check_circle</span>No app needed</span>
+          <span><span class="material-symbols-outlined">smartphone</span>Works on any phone</span>
+          <span><span class="material-symbols-outlined">lock</span>You control what's shown</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRODUCTS -->
+  <section class="section" id="products">
+    <div class="wrap center">
+      <span class="eyebrow">Pick your SafeTag</span>
+      <h2 style="margin-top:1rem">One for every pocket, wrist and bag.</h2>
+      <p class="lead">Durable tags starting under ₹200. Set up in minutes.</p>
+    </div>
+    <div class="wrap">
+      <div class="prods">
+        <div class="prod rv"><img src="images/product-keychain.jpg" alt="SafeTag keychain"><div class="pb"><b>Keychain</b><span>For keys & bags</span><div class="price">from ₹199</div></div></div>
+        <div class="prod rv"><img src="images/product-wristband.jpg" alt="SafeTag wristband"><div class="pb"><b>Wristband</b><span>For kids & athletes</span><div class="price">from ₹249</div></div></div>
+        <div class="prod rv"><img src="images/product-stickers.jpg" alt="SafeTag stickers"><div class="pb"><b>Stickers</b><span>Phone, helmet, bottle</span><div class="price">from ₹149</div></div></div>
+        <div class="prod rv"><img src="images/product-family-pack.jpg" alt="SafeTag family pack"><div class="pb"><b>Family Pack</b><span>Protect everyone</span><div class="price">Best value</div></div></div>
+      </div>
+      <div class="center" style="margin-top:2.4rem">
+        <a class="btn" href="https://safe-tag.onrender.com/store" target="_blank" rel="noopener">Shop all SafeTags →</a>
       </div>
     </div>
   </section>
@@ -479,26 +504,6 @@
           <p>“I put one on my daughter's school bag. At a crowded fair she got lost for ten minutes — a shopkeeper scanned it and brought her right back.”</p>
           <div class="who"><img src="images/review-ananya.jpg" alt="Ananya"><div><b>Ananya S.</b><span>Mother · Hyderabad</span></div></div>
         </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- PRODUCTS -->
-  <section class="section" id="products">
-    <div class="wrap center">
-      <span class="eyebrow">Pick your SafeTag</span>
-      <h2 style="margin-top:1rem">One for every pocket, wrist and bag.</h2>
-      <p class="lead">Durable tags starting under ₹200. Set up in minutes.</p>
-    </div>
-    <div class="wrap">
-      <div class="prods">
-        <div class="prod rv"><img src="images/product-keychain.jpg" alt="SafeTag keychain"><div class="pb"><b>Keychain</b><span>For keys & bags</span><div class="price">from ₹199</div></div></div>
-        <div class="prod rv"><img src="images/product-wristband.jpg" alt="SafeTag wristband"><div class="pb"><b>Wristband</b><span>For kids & athletes</span><div class="price">from ₹249</div></div></div>
-        <div class="prod rv"><img src="images/product-stickers.jpg" alt="SafeTag stickers"><div class="pb"><b>Stickers</b><span>Phone, helmet, bottle</span><div class="price">from ₹149</div></div></div>
-        <div class="prod rv"><img src="images/product-family-pack.jpg" alt="SafeTag family pack"><div class="pb"><b>Family Pack</b><span>Protect everyone</span><div class="price">Best value</div></div></div>
-      </div>
-      <div class="center" style="margin-top:2.4rem">
-        <a class="btn" href="https://safe-tag.onrender.com/store" target="_blank" rel="noopener">Shop all SafeTags →</a>
       </div>
     </div>
   </section>
