@@ -41,6 +41,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet" />
 
   <!-- Structured data: Organization + Product + FAQ -->
   <script type="application/ld+json">
@@ -266,6 +267,10 @@
     .rv{opacity:0;transform:translateY(24px);transition:opacity .7s ease,transform .7s ease}
     .rv.in{opacity:1;transform:none}
     @media (prefers-reduced-motion:reduce){.rv{opacity:1;transform:none;transition:none}}
+    /* Material Symbols — icons replace emoji (no emoji in UI) */
+    .material-symbols-outlined{color:var(--teal);vertical-align:middle;line-height:1;font-size:1.2em;font-variation-settings:'FILL' 0,'wght' 500,'opsz' 24}
+    .chip .material-symbols-outlined,.call .material-symbols-outlined,.idcard .av .material-symbols-outlined{color:currentColor}
+    .fbottom .material-symbols-outlined{color:#ef4444}
   </style>
 </head>
 <body>
@@ -292,7 +297,7 @@
   <section class="hero">
     <div class="wrap hero-grid">
       <div class="rv in">
-        <span class="eyebrow">🇮🇳 India's QR + NFC Emergency ID</span>
+        <span class="eyebrow"><span class="material-symbols-outlined">verified</span>India's QR + NFC Emergency ID</span>
         <h1 style="margin-top:1rem">When you can't speak,<br><span class="hl">your SafeTag will.</span></h1>
         <p class="lead">In an emergency, a stranger has seconds to help — but no way to know your blood group, allergies or who to call. One scan of your SafeTag shows it all in <strong>3 seconds</strong>. No app. No delay.</p>
         <div class="hero-cta">
@@ -300,9 +305,9 @@
           <a class="btn-ghost" href="https://safe-tag.onrender.com/demo" target="_blank" rel="noopener">▶ See a live demo</a>
         </div>
         <div class="hero-trust">
-          <span>✅ No app needed</span>
-          <span>📱 Works on any phone</span>
-          <span>🔒 You control what's shown</span>
+          <span><span class="material-symbols-outlined">check_circle</span>No app needed</span>
+          <span><span class="material-symbols-outlined">smartphone</span>Works on any phone</span>
+          <span><span class="material-symbols-outlined">lock</span>You control what's shown</span>
         </div>
       </div>
       <div class="hero-media rv in">
@@ -381,7 +386,7 @@
       <div class="rv">
         <div class="idcard" role="img" aria-label="Example SafeTag emergency profile">
           <div class="top">
-            <div class="av">🧑</div>
+            <div class="av"><span class="material-symbols-outlined">person</span></div>
             <div><b>Ravi Kumar</b><small>Age 34 · Bengaluru</small></div>
           </div>
           <div class="body">
@@ -390,7 +395,7 @@
             <div class="idrow"><span class="k">Condition</span><span class="v">Diabetic (Type 1)</span></div>
             <div class="idrow"><span class="k">Emergency contact</span><span class="v">Priya · Wife</span></div>
           </div>
-          <div class="call">📞 Call emergency contact</div>
+          <div class="call"><span class="material-symbols-outlined">call</span>Call emergency contact</div>
         </div>
       </div>
     </div>
@@ -422,13 +427,13 @@
       <h2 style="margin-top:1rem">More than an emergency tag.</h2>
       <p class="lead" style="margin-left:auto;margin-right:auto">The same SafeTag can become whatever you need — a digital visiting card, a pet ID, a car-owner contact, a lost-&-found tag and more. One scan, endless possibilities.</p>
       <div class="chips">
-        <span class="chip">🚑 Medical Emergency</span>
-        <span class="chip">💼 Digital Visiting Card</span>
-        <span class="chip">🐾 Pet ID</span>
-        <span class="chip">🚗 Car Owner</span>
-        <span class="chip">🔑 Lost &amp; Found</span>
-        <span class="chip">🛍️ Business Catalog</span>
-        <span class="chip">📱 Social Hub</span>
+        <span class="chip"><span class="material-symbols-outlined">medical_services</span>Medical Emergency</span>
+        <span class="chip"><span class="material-symbols-outlined">badge</span>Digital Visiting Card</span>
+        <span class="chip"><span class="material-symbols-outlined">pets</span>Pet ID</span>
+        <span class="chip"><span class="material-symbols-outlined">directions_car</span>Car Owner</span>
+        <span class="chip"><span class="material-symbols-outlined">key</span>Lost &amp; Found</span>
+        <span class="chip"><span class="material-symbols-outlined">storefront</span>Business Catalog</span>
+        <span class="chip"><span class="material-symbols-outlined">hub</span>Social Hub</span>
       </div>
     </div>
   </section>
@@ -441,12 +446,12 @@
     </div>
     <div class="wrap">
       <div class="feat">
-        <div class="fcard rv"><div class="ic">📵</div><h3>No app required</h3><p>The rescuer just points their camera. Anyone can help you — instantly.</p></div>
-        <div class="fcard rv"><div class="ic">🔒</div><h3>Private by default</h3><p>Nothing is public. Your details only appear when your physical tag is scanned.</p></div>
-        <div class="fcard rv"><div class="ic">✍️</div><h3>You're in control</h3><p>Choose exactly what to show, and update or hide it anytime from your dashboard.</p></div>
-        <div class="fcard rv"><div class="ic">📡</div><h3>QR + NFC</h3><p>Scan the code or tap the chip — whichever is faster in the moment.</p></div>
-        <div class="fcard rv"><div class="ic">💧</div><h3>Built to last</h3><p>Rugged, water-resistant tags that survive daily life, travel and play.</p></div>
-        <div class="fcard rv"><div class="ic">🇮🇳</div><h3>Made in India</h3><p>Designed for Indian emergencies, hospitals and languages. Support you can reach.</p></div>
+        <div class="fcard rv"><div class="ic"><span class="material-symbols-outlined">photo_camera</span></div><h3>No app required</h3><p>The rescuer just points their camera. Anyone can help you — instantly.</p></div>
+        <div class="fcard rv"><div class="ic"><span class="material-symbols-outlined">lock</span></div><h3>Private by default</h3><p>Nothing is public. Your details only appear when your physical tag is scanned.</p></div>
+        <div class="fcard rv"><div class="ic"><span class="material-symbols-outlined">tune</span></div><h3>You're in control</h3><p>Choose exactly what to show, and update or hide it anytime from your dashboard.</p></div>
+        <div class="fcard rv"><div class="ic"><span class="material-symbols-outlined">qr_code_scanner</span></div><h3>QR + NFC</h3><p>Scan the code or tap the chip — whichever is faster in the moment.</p></div>
+        <div class="fcard rv"><div class="ic"><span class="material-symbols-outlined">water_drop</span></div><h3>Built to last</h3><p>Rugged, water-resistant tags that survive daily life, travel and play.</p></div>
+        <div class="fcard rv"><div class="ic"><span class="material-symbols-outlined">flag</span></div><h3>Made in India</h3><p>Designed for Indian emergencies, hospitals and languages. Support you can reach.</p></div>
       </div>
     </div>
   </section>
@@ -507,10 +512,10 @@
         <p class="lead center">A life-safety product must earn your trust. Here's exactly how we protect you.</p>
       </div>
       <div class="privacy-grid">
-        <div class="pitem"><div class="ic">🙈</div><div><b>Nothing is public</b><p>Your profile can't be searched or found online. It only opens when your physical tag is scanned.</p></div></div>
-        <div class="pitem"><div class="ic">🎚️</div><div><b>You choose the fields</b><p>Show only what you're comfortable with — and change your mind anytime.</p></div></div>
-        <div class="pitem"><div class="ic">🔁</div><div><b>Update or hide instantly</b><p>Edit your details or switch a tag off from your dashboard in seconds.</p></div></div>
-        <div class="pitem"><div class="ic">🛡️</div><div><b>Secure & encrypted</b><p>Your account is protected, and sensitive contact actions never expose raw numbers.</p></div></div>
+        <div class="pitem"><div class="ic"><span class="material-symbols-outlined">visibility_off</span></div><div><b>Nothing is public</b><p>Your profile can't be searched or found online. It only opens when your physical tag is scanned.</p></div></div>
+        <div class="pitem"><div class="ic"><span class="material-symbols-outlined">checklist</span></div><div><b>You choose the fields</b><p>Show only what you're comfortable with — and change your mind anytime.</p></div></div>
+        <div class="pitem"><div class="ic"><span class="material-symbols-outlined">sync</span></div><div><b>Update or hide instantly</b><p>Edit your details or switch a tag off from your dashboard in seconds.</p></div></div>
+        <div class="pitem"><div class="ic"><span class="material-symbols-outlined">verified_user</span></div><div><b>Secure & encrypted</b><p>Your account is protected, and sensitive contact actions never expose raw numbers.</p></div></div>
       </div>
     </div>
   </section>
@@ -556,7 +561,7 @@
       </div>
       <div class="fbottom">
         <span>© <span id="yr">2026</span> SafeTag. All rights reserved.</span>
-        <span>Made with ❤️ in India 🇮🇳</span>
+        <span>Made with <span class="material-symbols-outlined">favorite</span> in India</span>
       </div>
     </div>
   </footer>
