@@ -131,6 +131,19 @@
     .hero-trust span{display:inline-flex;align-items:center;gap:.4rem}
     .hero-media{position:relative}
     .hero-media img{border-radius:26px;box-shadow:var(--shadow);width:100%;object-fit:cover;aspect-ratio:4/3}
+    /* Hero image slider */
+    .hero-slider{position:relative;border-radius:26px;overflow:hidden;box-shadow:var(--shadow)}
+    .hero-track{display:flex;transition:transform .6s cubic-bezier(.4,0,.2,1);will-change:transform}
+    .hero-media .hero-slide{flex:0 0 100%;width:100%;object-fit:cover;aspect-ratio:4/3;display:block;border-radius:0;box-shadow:none}
+    .hero-nav{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;border:0;border-radius:50%;background:rgba(10,35,66,.5);color:#fff;font-size:1.7rem;line-height:1;cursor:pointer;display:grid;place-items:center;opacity:0;transition:opacity .25s,background .2s;-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);z-index:2}
+    .hero-slider:hover .hero-nav,.hero-slider:focus-within .hero-nav{opacity:1}
+    .hero-nav:hover{background:rgba(10,35,66,.85)}
+    .hero-nav.prev{left:14px}.hero-nav.next{right:14px}
+    .hero-dots{position:absolute;left:0;right:0;bottom:16px;display:flex;gap:8px;justify-content:center;z-index:2}
+    .hero-dots button{width:9px;height:9px;padding:0;border:0;border-radius:50%;background:rgba(255,255,255,.55);cursor:pointer;transition:background .25s,width .25s}
+    .hero-dots button.active{background:#fff;width:24px;border-radius:5px}
+    .hero-slider.single .hero-nav,.hero-slider.single .hero-dots{display:none}
+    @media(max-width:640px){.hero-nav{opacity:1;width:40px;height:40px}}
     .hero-badge{position:absolute;left:-14px;bottom:22px;background:#fff;border-radius:16px;box-shadow:var(--shadow);
       padding:.8rem 1rem;display:flex;align-items:center;gap:.7rem;max-width:240px}
     .hero-badge .dot{width:38px;height:38px;border-radius:999px;background:#e6fbf7;display:flex;align-items:center;justify-content:center;font-size:1.2rem}
@@ -293,10 +306,18 @@
         </div>
       </div>
       <div class="hero-media rv in">
-        <img src="images/hero-crowd-scan.jpg" alt="A mother holding her child in a large festival crowd in India; the child wears a teal SafeTag QR wristband" width="720" height="540" fetchpriority="high" />
-        <div class="hero-badge">
-          <div class="dot">🆘</div>
-          <div><b>Found in seconds</b><small>Blood group · allergies · contacts</small></div>
+        <div class="hero-slider" id="heroSlider" aria-roledescription="carousel" aria-label="SafeTag in real life">
+          <!-- Fallback slides (shown if the dynamic fetch is unavailable).
+               The carousel auto-loads every image from the docs/hero/ folder. -->
+          <div class="hero-track">
+            <img class="hero-slide" src="hero/1-crowd-scan.jpg" alt="SafeTag in real life — a child wears a teal SafeTag QR wristband in a festival crowd" width="720" height="540" fetchpriority="high" />
+            <img class="hero-slide" src="hero/2-phone-scan.jpg" alt="SafeTag in real life — a bystander scans a SafeTag QR tag to see an emergency profile" width="720" height="540" loading="lazy" />
+            <img class="hero-slide" src="hero/3-relief.jpg" alt="SafeTag in real life — a family reached in an emergency" width="720" height="540" loading="lazy" />
+            <img class="hero-slide" src="hero/4-elderly.jpg" alt="SafeTag in real life — an elderly person wearing a SafeTag wristband" width="720" height="540" loading="lazy" />
+          </div>
+          <button class="hero-nav prev" type="button" aria-label="Previous image">&#8249;</button>
+          <button class="hero-nav next" type="button" aria-label="Next image">&#8250;</button>
+          <div class="hero-dots" role="tablist" aria-label="Choose image"></div>
         </div>
       </div>
     </div>
@@ -551,6 +572,97 @@
       els.forEach(function(e){io.observe(e)});
     })();
     document.getElementById('yr').textContent = new Date().getFullYear();
+
+    // Hero image slider — auto-advance + arrows + dots + swipe, pauses on hover.
+    // Slides are auto-discovered from the docs/hero/ folder via the GitHub
+    // Contents API (drop an image in that folder → it appears here). Falls back
+    // to the slides hard-coded in the HTML if the API is unavailable.
+    (function(){
+      var slider = document.getElementById('heroSlider');
+      if(!slider) return;
+      var track = slider.querySelector('.hero-track');
+      var dotsWrap = slider.querySelector('.hero-dots');
+      var reduce = window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+      var slides = [], dots = [], n = 0, i = 0, timer = null;
+
+      function go(idx){
+        if(!n) return;
+        i = (idx + n) % n;
+        track.style.transform = 'translateX(-' + (i * 100) + '%)';
+        dots.forEach(function(d, k){ d.classList.toggle('active', k === i); });
+      }
+      function next(){ go(i + 1); }
+      function prev(){ go(i - 1); }
+      function start(){ if(!reduce && !timer && n > 1){ timer = setInterval(next, 4500); } }
+      function stop(){ if(timer){ clearInterval(timer); timer = null; } }
+      function restart(){ stop(); start(); }
+
+      // (Re)build dots + reset whenever the slide set changes.
+      function setup(){
+        slides = [].slice.call(track.querySelectorAll('.hero-slide'));
+        n = slides.length;
+        slider.classList.toggle('single', n < 2);
+        dotsWrap.innerHTML = '';
+        slides.forEach(function(_, idx){
+          var b = document.createElement('button');
+          b.type = 'button';
+          b.setAttribute('aria-label', 'Go to image ' + (idx + 1));
+          b.addEventListener('click', function(){ go(idx); restart(); });
+          dotsWrap.appendChild(b);
+        });
+        dots = [].slice.call(dotsWrap.children);
+        i = 0; go(0); restart();
+      }
+
+      // Static controls — bound once; they read the current slide set.
+      slider.querySelector('.next').addEventListener('click', function(){ next(); restart(); });
+      slider.querySelector('.prev').addEventListener('click', function(){ prev(); restart(); });
+      slider.addEventListener('mouseenter', stop);
+      slider.addEventListener('mouseleave', start);
+      slider.addEventListener('focusin', stop);
+      slider.addEventListener('focusout', start);
+      var x0 = null;
+      slider.addEventListener('touchstart', function(e){ x0 = e.touches[0].clientX; stop(); }, {passive:true});
+      slider.addEventListener('touchend', function(e){
+        if(x0 === null) return;
+        var dx = e.changedTouches[0].clientX - x0;
+        if(Math.abs(dx) > 40){ dx < 0 ? next() : prev(); }
+        x0 = null; start();
+      }, {passive:true});
+
+      function render(names){
+        track.innerHTML = names.map(function(name, idx){
+          return '<img class="hero-slide" src="hero/' + encodeURIComponent(name) +
+                 '" alt="SafeTag in real life" width="720" height="540" ' +
+                 (idx ? 'loading="lazy"' : 'fetchpriority="high"') + '>';
+        }).join('');
+        setup();
+      }
+
+      // --- discover images in docs/hero/ ---
+      var GH = { owner: 'kumarnitish378', repo: 'safe-tag', path: 'docs/hero' };
+      var EXT = /\.(jpe?g|png|webp|gif|avif)$/i;
+      function natSort(a, b){ return a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' }); }
+      function useNames(names){
+        names = (names || []).filter(function(nm){ return typeof nm === 'string' && EXT.test(nm); }).sort(natSort);
+        if(names.length) render(names);
+      }
+
+      setup(); // show the HTML fallback slides immediately
+
+      // 1) manifest.json — generated by `npm run hero`; mirrors the folder exactly
+      //    and works locally AND live (no API, no rate limits). Cache-busted = always fresh.
+      fetch('hero/manifest.json?t=' + Date.now())
+        .then(function(r){ return r.ok ? r.json() : Promise.reject(); })
+        .then(function(data){ useNames(Array.isArray(data) ? data : (data && data.images)); })
+        .catch(function(){
+          // 2) fallback for the live site: list committed files via the GitHub API.
+          fetch('https://api.github.com/repos/' + GH.owner + '/' + GH.repo + '/contents/' + GH.path, { headers:{ 'Accept':'application/vnd.github+json' } })
+            .then(function(r){ return r.ok ? r.json() : Promise.reject(); })
+            .then(function(list){ if(Array.isArray(list)) useNames(list.filter(function(f){ return f && f.type === 'file'; }).map(function(f){ return f.name; })); })
+            .catch(function(){ /* keep the HTML fallback slides */ });
+        });
+    })();
   </script>
 
 </body>
