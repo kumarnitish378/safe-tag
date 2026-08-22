@@ -1,9 +1,9 @@
 /*
  * SafeTag Design System — extracted from docs/index.html
- * Fonts (add to <head>): Sora 600/700/800 + Inter 400/500/600/700
+ * Fonts (add to <head>): Sora 600/700/800 + Inter 400/500/600/700 + Material Symbols
  *   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
- * Usage: <link rel="stylesheet" href="theme.css"> then use the classes
- *   documented in DESIGN-SYSTEM.md (.wrap, .section, .btn, .step, .fcard, …).
+ *   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+ * Usage: <link rel="stylesheet" href="theme.css"> then use the classes in DESIGN-SYSTEM.md.
  */
 
     :root{
@@ -18,7 +18,7 @@
       background:var(--white);line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
     h1,h2,h3{font-family:'Sora',system-ui,sans-serif;line-height:1.12;letter-spacing:-.02em;color:var(--navy)}
     a{color:inherit;text-decoration:none}
-    img{max-width:100%;display:block}
+    img{max-width:100%;display:block;height:auto}
     .wrap{max-width:1120px;margin:0 auto;padding:0 20px}
     .eyebrow{display:inline-flex;align-items:center;gap:.5rem;font-size:.8rem;font-weight:700;letter-spacing:.08em;
       text-transform:uppercase;color:var(--teal-d);background:#e6fbf7;padding:.4rem .85rem;border-radius:999px}
@@ -50,14 +50,16 @@
     .hero{position:relative;padding:3.5rem 0 4rem;background:
       radial-gradient(60% 60% at 85% 10%,rgba(13,148,136,.10),transparent 60%),
       linear-gradient(180deg,#f4faf9 0%,#ffffff 100%)}
-    .hero-grid{display:grid;grid-template-columns:1.05fr 1fr;gap:3rem;align-items:center}
+    .hero-grid{display:grid;grid-template-columns:1.05fr 1fr;column-gap:3rem;row-gap:0;grid-template-areas:"head media" "body media"}
+    .hero-head{grid-area:head;align-self:end}
+    .hero-body{grid-area:body;align-self:start}
     .hero h1{font-size:clamp(2.3rem,5.2vw,3.7rem);font-weight:800}
     .hero h1 .hl{color:var(--teal-d)}
     .hero .lead{margin-top:1.2rem;font-size:1.18rem}
     .hero-cta{display:flex;flex-wrap:wrap;gap:.8rem;margin-top:1.8rem}
     .hero-trust{display:flex;flex-wrap:wrap;gap:1.1rem;margin-top:1.6rem;color:var(--muted);font-size:.92rem;font-weight:600}
     .hero-trust span{display:inline-flex;align-items:center;gap:.4rem}
-    .hero-media{position:relative}
+    .hero-media{position:relative;grid-area:media;align-self:center}
     .hero-media img{border-radius:26px;box-shadow:var(--shadow);width:100%;object-fit:cover;aspect-ratio:4/3}
     /* Hero image slider */
     .hero-slider{position:relative;border-radius:26px;overflow:hidden;box-shadow:var(--shadow)}
@@ -77,7 +79,8 @@
     .hero-badge .dot{width:38px;height:38px;border-radius:999px;background:#e6fbf7;display:flex;align-items:center;justify-content:center;font-size:1.2rem}
     .hero-badge b{font-family:'Sora';color:var(--navy);font-size:.95rem}
     .hero-badge small{color:var(--muted);font-size:.78rem}
-    @media(max-width:900px){.hero-grid{grid-template-columns:1fr;gap:2rem}.hero-media{order:-1}}
+    @media(max-width:900px){.hero-grid{grid-template-columns:1fr;grid-template-areas:"head" "media" "body";row-gap:1.4rem}
+      .hero-head,.hero-body,.hero-media{align-self:auto}}
     /* stat bar */
     .stats{background:var(--navy);color:#fff}
     .stats .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;padding:2.2rem 0}
@@ -194,3 +197,7 @@
     .rv{opacity:0;transform:translateY(24px);transition:opacity .7s ease,transform .7s ease}
     .rv.in{opacity:1;transform:none}
     @media (prefers-reduced-motion:reduce){.rv{opacity:1;transform:none;transition:none}}
+    /* Material Symbols — icons replace emoji (no emoji in UI) */
+    .material-symbols-outlined{color:var(--teal);vertical-align:middle;line-height:1;font-size:1.2em;font-variation-settings:'FILL' 0,'wght' 500,'opsz' 24}
+    .chip .material-symbols-outlined,.call .material-symbols-outlined,.idcard .av .material-symbols-outlined{color:currentColor}
+    .fbottom .material-symbols-outlined{color:#ef4444}
