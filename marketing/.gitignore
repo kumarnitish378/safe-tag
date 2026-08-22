@@ -1,0 +1,7 @@
+# Generated posters + captions
+out/
+daily/
+# Local secrets
+.env
+# node
+node_modules/

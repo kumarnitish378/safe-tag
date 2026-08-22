@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node server.js",
     "dev": "node server.js",
+    "hero": "node docs/build-hero-manifest.js",
     "build": "npx prisma generate && npx tailwindcss -i ./public/css/input.css -o ./public/css/safetag.build.css --minify",
     "build:css": "npx tailwindcss -i ./public/css/input.css -o ./public/css/safetag.build.css --minify",
     "dev:css": "npx tailwindcss -i ./public/css/input.css -o ./public/css/safetag.build.css --watch",

@@ -1,0 +1,56 @@
+name: Instagram daily poster
+
+# Posts one SafeTag poster to Instagram every day, fully automatically.
+# Rotates through the 30 designs in marketing/instagram-poster-prompts.md.
+
+on:
+  schedule:
+    - cron: '0 4 * * *'   # 04:00 UTC daily = 09:30 IST
+  workflow_dispatch: {}    # manual "Run workflow" button for testing
+
+concurrency:
+  group: ig-daily
+  cancel-in-progress: false
+
+jobs:
+  post:
+    runs-on: ubuntu-latest
+    steps:
+      # Skip (pass) until the secrets are configured — avoids daily failures.
+      - name: Check configuration
+        id: cfg
+        run: |
+          if [ -z "${{ secrets.OPENAI_API_KEY }}" ] || [ -z "${{ secrets.IG_USER_ID }}" ] || [ -z "${{ secrets.IG_ACCESS_TOKEN }}" ]; then
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::Secrets not set yet — skipping. Add OPENAI_API_KEY, IG_USER_ID, IG_ACCESS_TOKEN, IMGBB_API_KEY to enable."
+          else
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - if: steps.cfg.outputs.ready == 'true'
+        uses: actions/checkout@v4
+
+      - if: steps.cfg.outputs.ready == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install deps
+        if: steps.cfg.outputs.ready == 'true'
+        run: npm ci
+
+      - name: Generate today's poster
+        if: steps.cfg.outputs.ready == 'true'
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          IMG_QUALITY: ${{ vars.IMG_QUALITY || 'medium' }}
+        run: node marketing/generate.js --today
+
+      - name: Publish to Instagram
+        if: steps.cfg.outputs.ready == 'true'
+        env:
+          IG_USER_ID: ${{ secrets.IG_USER_ID }}
+          IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
+          IMGBB_API_KEY: ${{ secrets.IMGBB_API_KEY }}
+        run: node marketing/post.js
