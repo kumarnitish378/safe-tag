@@ -96,9 +96,9 @@
   }
 
   function highlightTier(qty) {
-    tiers.forEach(t => t.classList.remove('bg-teal-50', 'dark:bg-teal-900/20', 'font-semibold'));
+    tiers.forEach(t => t.classList.remove('bg-teal-50', 'font-semibold'));
     const idx = qty <= 100 ? 0 : qty <= 1000 ? 1 : 2;
-    tiers[idx].classList.add('bg-teal-50', 'dark:bg-teal-900/20', 'font-semibold');
+    tiers[idx].classList.add('bg-teal-50', 'font-semibold');
   }
 
   function update() {

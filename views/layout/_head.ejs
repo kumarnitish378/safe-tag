@@ -284,14 +284,6 @@
 
   <!-- Theme + Language runtime (called by navbar buttons; also on DOMContentLoaded) -->
   <script>
-  // ---- Dark mode ----
-  function toggleTheme(){
-    var dark = document.documentElement.classList.toggle('dark');
-    try { localStorage.safetagTheme = dark ? 'dark' : 'light'; } catch(e) {}
-    var ic = document.getElementById('themeIcon');
-    if(ic) ic.textContent = dark ? '☀️' : '🌙';
-  }
-
   // ---- i18n dictionary ----
   var _I18N = {
     en:{
@@ -299,9 +291,9 @@
       'nav.manufacturer':'Manufacturer','nav.dashboard':'Dashboard',
       'nav.admin':'Admin','nav.login':'Login','nav.signout':'Sign out',
       'nav.gettag':'Get Your Tag','nav.workshop':'My Workshop',
-      'hero.badge':'⚠️ 12,000+ children go missing in India every month',
+      'hero.badge':'12,000+ children go missing in India every month',
       'hero.tagline':'SafeTag exists so this never happens again.',
-      'hero.cta1':'🛒 Protect My Family — from ₹149','hero.cta2':'See Live Demo',
+      'hero.cta1':'Protect My Family — from ₹149','hero.cta2':'See Live Demo',
       'section.shop':'Buy Emergency QR + NFC ID Tags','section.shop.sub':'Keychains, stickers, wristbands — from ₹149. Ships across India.',
       'section.how':'How Our Emergency QR + NFC ID Tag Works',
       'section.how.sub':'From order to life-saving — 4 steps. No app on either side. Works on any Android or iPhone camera.',
@@ -319,9 +311,9 @@
       'nav.manufacturer':'निर्माता','nav.dashboard':'डैशबोर्ड',
       'nav.admin':'एडमिन','nav.login':'लॉगिन','nav.signout':'साइन आउट',
       'nav.gettag':'टैग पाएं','nav.workshop':'मेरी वर्कशॉप',
-      'hero.badge':'⚠️ भारत में हर महीने 12,000+ बच्चे गुम हो जाते हैं',
+      'hero.badge':'भारत में हर महीने 12,000+ बच्चे गुम हो जाते हैं',
       'hero.tagline':'SafeTag इसीलिए बना — ताकि यह दोबारा न हो।',
-      'hero.cta1':'🛒 परिवार को सुरक्षित करें — ₹149 से','hero.cta2':'लाइव डेमो देखें',
+      'hero.cta1':'परिवार को सुरक्षित करें — ₹149 से','hero.cta2':'लाइव डेमो देखें',
       'section.shop':'इमरजेंसी QR + NFC ID टैग खरीदें','section.shop.sub':'कीचेन, स्टिकर, कलाई पट्टी — ₹149 से। पूरे भारत में डिलीवरी।',
       'section.how':'हमारा इमरजेंसी QR + NFC ID टैग कैसे काम करता है',
       'section.how.sub':'ऑर्डर से लेकर जीवन बचाने तक — 4 आसान कदम। किसी भी फ़ोन कैमरे से स्कैन करें।',
@@ -362,8 +354,6 @@
     document.documentElement.setAttribute('lang', lang==='hi'?'hi':'en');
   }
   document.addEventListener('DOMContentLoaded',function(){
-    var dark=document.documentElement.classList.contains('dark');
-    var ic=document.getElementById('themeIcon'); if(ic) ic.textContent=dark?'☀️':'🌙';
     var lang='en'; try { lang=localStorage.safetagLang||'en'; } catch(e) {}
     _updateLangBtns(lang);
     _applyLang(lang);
@@ -485,19 +475,19 @@
 <div id="toast-container" class="fixed top-4 right-4 z-50 flex flex-col gap-2" style="max-width:360px; pointer-events:none;">
   <% flash.success.forEach(function(m){ %>
     <div class="toast toast-success">
-      <span>✅</span><span class="flex-1"><%= m %></span>
+      <span class="material-symbols-outlined">check_circle</span><span class="flex-1"><%= m %></span>
       <button onclick="this.parentElement.remove()" title="Dismiss">&times;</button>
     </div>
   <% }); %>
   <% flash.error.forEach(function(m){ %>
     <div class="toast toast-error">
-      <span>⚠️</span><span class="flex-1"><%= m %></span>
+      <span class="material-symbols-outlined">error</span><span class="flex-1"><%= m %></span>
       <button onclick="this.parentElement.remove()" title="Dismiss">&times;</button>
     </div>
   <% }); %>
   <% flash.info.forEach(function(m){ %>
     <div class="toast toast-info">
-      <span>ℹ️</span><span class="flex-1"><%= m %></span>
+      <span class="material-symbols-outlined">info</span><span class="flex-1"><%= m %></span>
       <button onclick="this.parentElement.remove()" title="Dismiss">&times;</button>
     </div>
   <% }); %>

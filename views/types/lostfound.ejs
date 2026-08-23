@@ -1,49 +1,81 @@
 <%- include('../layout/_head', { hideNav: true, hideFooter: true }) %>
 
-<div class="id-shell" style="--acc:#0284c7; --head-bg:linear-gradient(135deg,#38bdf8 0%,#0284c7 55%,#075985 130%);">
-  <div class="w-full" style="max-width:25rem;">
-    <div class="id-card reveal">
-      <div class="id-head">
-        <div class="id-avatar">🔎</div>
-        <h1 class="id-name" style="font-size:1.4rem;">You found it! 🙌</h1>
-        <p class="id-sub">Help return this to its owner</p>
-      </div>
+<div class="scan-wrap" style="--acc:#0284c7;">
+  <style>
+    .scan-wrap{min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:1.75rem 1.15rem;background:var(--cream);font-family:'Inter',system-ui,sans-serif}
+    .scan-card{width:100%;max-width:28rem;background:var(--white);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden}
+    .scan-head{text-align:center;padding:2.25rem 1.5rem 1.75rem;color:#fff;background:linear-gradient(135deg,#38bdf8 0%,#0284c7 55%,#075985 130%)}
+    .scan-avatar{width:84px;height:84px;margin:0 auto 1rem;border-radius:9999px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.18);box-shadow:0 0 0 6px rgba(255,255,255,.12)}
+    .scan-avatar .material-symbols-outlined{color:#fff;font-size:2.3rem}
+    .scan-name{font-family:'Sora',system-ui,sans-serif;font-weight:800;font-size:1.5rem;line-height:1.15;letter-spacing:-.02em;color:#fff}
+    .scan-sub{margin-top:.4rem;font-size:.92rem;color:rgba(255,255,255,.9)}
+    .scan-body{padding:1.5rem}
+    .found-item{text-align:center;border:2px dashed rgba(2,132,199,.4);border-radius:14px;padding:1.1rem;margin-bottom:1rem}
+    .scan-label{display:block;font-size:.7rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+    .found-item .scan-label{color:var(--acc)}
+    .item-name{font-family:'Sora',system-ui,sans-serif;font-size:1.2rem;font-weight:800;color:var(--ink);margin-top:.3rem}
+    .reward-chip{display:inline-flex;align-items:center;gap:.35rem;margin-top:.65rem;padding:.3rem .8rem;border-radius:9999px;background:#fef3c7;color:#92400e;font-size:.8rem;font-weight:700}
+    .reward-chip .material-symbols-outlined{color:#92400e;font-size:1.05rem}
+    .scan-note{font-size:.92rem;line-height:1.6;color:var(--muted);text-align:center;font-style:italic;margin-bottom:1rem}
+    .form-group{margin-bottom:.9rem}
+    .scan-label.field{margin-bottom:.4rem;letter-spacing:.04em}
+    .scan-input{width:100%;padding:.75rem .9rem;border:1.5px solid var(--line);border-radius:12px;background:#fff;color:var(--ink);font-family:inherit;font-size:.95rem}
+    .scan-input:focus{outline:none;border-color:var(--acc);box-shadow:0 0 0 3px rgba(2,132,199,.15)}
+    .scan-btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;width:100%;min-height:48px;margin-top:.5rem;padding:.85rem 1.2rem;border-radius:9999px;font-weight:700;font-size:1rem;color:#fff;background:var(--acc);border:none;cursor:pointer;transition:filter .15s,transform .15s}
+    .scan-btn:hover{filter:brightness(1.08);transform:translateY(-1px)}
+    .scan-btn .material-symbols-outlined{color:#fff;font-size:1.3rem}
+    .privacy-note{display:flex;align-items:center;justify-content:center;gap:.35rem;margin-top:.8rem;font-size:.78rem;color:var(--muted)}
+    .privacy-note .material-symbols-outlined{font-size:1rem;color:var(--muted)}
+    .success-state{text-align:center;padding:1.5rem 0}
+    .success-state .material-symbols-outlined{font-size:3rem;color:#22c55e}
+    .success-state h2{font-family:'Sora',system-ui,sans-serif;font-weight:700;font-size:1.2rem;color:var(--navy);margin-top:.5rem}
+    .success-state p{color:var(--muted);font-size:.9rem;margin-top:.35rem}
+    .scan-foot{text-align:center;font-size:.72rem;color:var(--muted);letter-spacing:.02em;margin-top:1.35rem}
+    .hidden{display:none}
+  </style>
 
-      <div class="id-body">
-        <!-- the item, highlighted -->
-        <div style="text-align:center;border:2px dashed rgba(2,132,199,.4);border-radius:14px;padding:1rem;margin-bottom:1rem;">
-          <div class="id-label" style="color:#0284c7;">Lost item</div>
-          <div style="font-size:1.15rem;font-weight:800;color:#0f172a;margin-top:.2rem;"><%= p.itemName %></div>
-          <% if (p.reward) { %><div style="margin-top:.5rem;"><span class="id-chip" style="background:#fef3c7;color:#92400e;">🎁 Reward: <%= p.reward %></span></div><% } %>
-        </div>
-        <% if (p.note) { %><p class="id-note" style="font-style:italic;">"<%= p.note %>"</p><% } %>
-
-        <% if (notified) { %>
-          <div class="text-center py-6">
-            <div class="text-4xl">✅</div>
-            <h2 class="font-semibold mt-2">Message sent</h2>
-            <p class="text-sm text-slate-500 mt-1">The owner has been notified. Thank you!</p>
-          </div>
-        <% } else { %>
-          <form method="POST" action="/t/<%= tag_id %>/notify" class="space-y-3 mt-4">
-            <%- include('../layout/_csrf') %>
-            <input type="text" name="website" class="hidden" tabindex="-1" autocomplete="off" aria-hidden="true" />
-            <div>
-              <label class="label">Message to the owner</label>
-              <textarea class="input" name="message" rows="3" required maxlength="1000"
-                placeholder="e.g. I found this near ..."></textarea>
-            </div>
-            <div>
-              <label class="label">How can they reach you? (optional)</label>
-              <input class="input" name="reply" maxlength="120" placeholder="Phone or email" />
-            </div>
-            <button type="submit" class="btn-acc">📨 Notify the owner</button>
-            <p class="text-xs text-slate-400 text-center">🔒 The owner's number stays private.</p>
-          </form>
-        <% } %>
-      </div>
+  <div class="scan-card reveal">
+    <div class="scan-head">
+      <div class="scan-avatar"><span class="material-symbols-outlined">travel_explore</span></div>
+      <h1 class="scan-name">You found it!</h1>
+      <p class="scan-sub">Help return this to its owner</p>
     </div>
-    <p class="id-foot">Powered by SafeTag</p>
+
+    <div class="scan-body">
+      <!-- the item, highlighted -->
+      <div class="found-item">
+        <div class="scan-label">Lost item</div>
+        <div class="item-name"><%= p.itemName %></div>
+        <% if (p.reward) { %><div><span class="reward-chip"><span class="material-symbols-outlined">redeem</span>Reward: <%= p.reward %></span></div><% } %>
+      </div>
+      <% if (p.note) { %><p class="scan-note">"<%= p.note %>"</p><% } %>
+
+      <% if (notified) { %>
+        <div class="success-state">
+          <span class="material-symbols-outlined">check_circle</span>
+          <h2>Message sent</h2>
+          <p>The owner has been notified. Thank you!</p>
+        </div>
+      <% } else { %>
+        <form method="POST" action="/t/<%= tag_id %>/notify">
+          <%- include('../layout/_csrf') %>
+          <input type="text" name="website" class="hidden" tabindex="-1" autocomplete="off" aria-hidden="true" />
+          <div class="form-group">
+            <label class="scan-label field">Message to the owner</label>
+            <textarea class="scan-input" name="message" rows="3" required maxlength="1000"
+              placeholder="e.g. I found this near ..."></textarea>
+          </div>
+          <div class="form-group">
+            <label class="scan-label field">How can they reach you? (optional)</label>
+            <input class="scan-input" name="reply" maxlength="120" placeholder="Phone or email" />
+          </div>
+          <button type="submit" class="scan-btn"><span class="material-symbols-outlined">send</span>Notify the owner</button>
+          <p class="privacy-note"><span class="material-symbols-outlined">lock</span>The owner's number stays private.</p>
+        </form>
+      <% } %>
+
+      <p class="scan-foot">Powered by SafeTag</p>
+    </div>
   </div>
 </div>
 

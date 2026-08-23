@@ -1,50 +1,72 @@
 <%- include('../layout/_head', { hideNav: true, hideFooter: true }) %>
 
-<div class="id-shell" style="--acc:#f59e0b; --head-bg:linear-gradient(135deg,#334155 0%,#1e293b 60%,#0f172a 130%);">
-  <div class="w-full" style="max-width:25rem;">
-    <div class="id-card reveal">
-      <div class="id-head">
-        <div class="id-avatar">🚗</div>
-        <h1 class="id-name" style="font-size:1.25rem;">Vehicle Owner</h1>
-        <!-- license-plate motif -->
-        <div style="display:inline-block;margin-top:.85rem;background:#facc15;color:#111827;font-family:ui-monospace,monospace;
-                    font-weight:800;font-size:1.35rem;letter-spacing:.12em;padding:.45rem 1rem;border-radius:8px;
-                    border:3px solid #111827;box-shadow:0 4px 0 rgba(0,0,0,.25);">
-          <%= p.vehicleNo %>
-        </div>
-      </div>
+<style>
+  .st-wrap{--acc:#f59e0b;min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:1.5rem;background:var(--cream)}
+  .st-card{width:100%;max-width:28rem;background:var(--white);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow);border:1px solid var(--line)}
+  .st-head{position:relative;text-align:center;color:#fff;padding:2.25rem 1.5rem 1.75rem;background:var(--acc);
+    background-image:linear-gradient(150deg,color-mix(in srgb,var(--acc) 82%,#0a2342) 0%,color-mix(in srgb,var(--acc) 44%,#0a2342) 130%)}
+  .st-avatar{width:86px;height:86px;margin:0 auto;border-radius:999px;display:flex;align-items:center;justify-content:center;
+    background:rgba(255,255,255,.2);box-shadow:0 0 0 6px rgba(255,255,255,.12)}
+  .st-avatar .material-symbols-outlined{font-size:2.4rem;color:#fff}
+  .st-name{font-family:'Sora',sans-serif;font-weight:800;color:#fff;font-size:1.35rem;line-height:1.15;letter-spacing:-.02em;margin-top:.9rem}
+  .st-plate{display:inline-block;margin-top:.85rem;background:#facc15;color:#111827;font-family:ui-monospace,'JetBrains Mono',monospace;
+    font-weight:800;font-size:1.35rem;letter-spacing:.12em;padding:.45rem 1rem;border-radius:8px;
+    border:3px solid #111827;box-shadow:0 4px 0 rgba(0,0,0,.25)}
+  .st-body{padding:1.5rem}
+  .st-note{font-size:.95rem;line-height:1.6;color:var(--muted);text-align:center}
+  .st-sent{text-align:center;padding:1.5rem 0}
+  .st-sent .material-symbols-outlined{font-size:3rem;color:#22c55e}
+  .st-sent h2{font-family:'Sora',sans-serif;font-weight:700;color:var(--navy);margin-top:.5rem;font-size:1.15rem}
+  .st-sent p{font-size:.9rem;color:var(--muted);margin-top:.35rem}
+  .st-btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;width:100%;padding:.85rem 1.2rem;border-radius:999px;
+    font-family:inherit;font-weight:700;font-size:1rem;border:none;cursor:pointer;transition:.15s;min-height:44px}
+  .st-btn .material-symbols-outlined{font-size:1.2rem;color:currentColor}
+  .st-btn-acc{background:var(--acc);color:#111827}
+  .st-btn-acc:hover{filter:brightness(1.06);transform:translateY(-1px)}
+  .st-private{display:flex;align-items:center;justify-content:center;gap:.35rem;font-size:.78rem;color:var(--muted);text-align:center;margin-top:.15rem}
+  .st-private .material-symbols-outlined{font-size:1rem;color:var(--acc)}
+  .st-foot{text-align:center;font-size:.72rem;color:var(--muted);margin-top:1.25rem;letter-spacing:.02em}
+</style>
 
-      <div class="id-body">
-        <p class="id-note">Registered to <strong><%= p.name %></strong></p>
-        <% if (p.note) { %><p class="id-note mt-1" style="font-style:italic;">"<%= p.note %>"</p><% } %>
-
-        <% if (notified) { %>
-          <div class="text-center py-6">
-            <div class="text-4xl">✅</div>
-            <h2 class="font-semibold mt-2">Message sent</h2>
-            <p class="text-sm text-slate-500 mt-1">The owner has been notified. Thank you!</p>
-          </div>
-        <% } else { %>
-          <form method="POST" action="/t/<%= tag_id %>/notify" class="space-y-3 mt-4">
-            <%- include('../layout/_csrf') %>
-            <input type="text" name="website" class="hidden" tabindex="-1" autocomplete="off" aria-hidden="true" />
-            <div>
-              <label class="label">Message to the owner</label>
-              <textarea class="input" name="message" rows="3" required maxlength="1000"
-                placeholder="e.g. Your lights are on / you're blocking the exit"></textarea>
-            </div>
-            <div>
-              <label class="label">How can they reach you? (optional)</label>
-              <input class="input" name="reply" maxlength="120" placeholder="Phone or email" />
-            </div>
-            <button type="submit" class="btn-acc" style="color:#111827;">📨 Notify the owner</button>
-            <p class="text-xs text-slate-400 text-center">🔒 The owner's number stays private.</p>
-          </form>
-        <% } %>
-      </div>
+<div class="st-wrap" style="--acc:#f59e0b;">
+  <div class="st-card reveal">
+    <div class="st-head">
+      <div class="st-avatar"><span class="material-symbols-outlined">directions_car</span></div>
+      <h1 class="st-name">Vehicle Owner</h1>
+      <!-- license-plate motif -->
+      <div class="st-plate"><%= p.vehicleNo %></div>
     </div>
-    <p class="id-foot">Powered by SafeTag</p>
+
+    <div class="st-body">
+      <p class="st-note">Registered to <strong style="color:var(--ink);"><%= p.name %></strong></p>
+      <% if (p.note) { %><p class="st-note" style="font-style:italic;margin-top:.4rem;">"<%= p.note %>"</p><% } %>
+
+      <% if (notified) { %>
+        <div class="st-sent">
+          <span class="material-symbols-outlined">check_circle</span>
+          <h2>Message sent</h2>
+          <p>The owner has been notified. Thank you!</p>
+        </div>
+      <% } else { %>
+        <form method="POST" action="/t/<%= tag_id %>/notify" class="space-y-3 mt-4">
+          <%- include('../layout/_csrf') %>
+          <input type="text" name="website" class="hidden" tabindex="-1" autocomplete="off" aria-hidden="true" />
+          <div>
+            <label class="label">Message to the owner</label>
+            <textarea class="input" name="message" rows="3" required maxlength="1000"
+              placeholder="e.g. Your lights are on / you're blocking the exit"></textarea>
+          </div>
+          <div>
+            <label class="label">How can they reach you? (optional)</label>
+            <input class="input" name="reply" maxlength="120" placeholder="Phone or email" />
+          </div>
+          <button type="submit" class="st-btn st-btn-acc"><span class="material-symbols-outlined">send</span>Notify the owner</button>
+          <p class="st-private"><span class="material-symbols-outlined">lock</span>The owner's number stays private.</p>
+        </form>
+      <% } %>
+    </div>
   </div>
+  <p class="st-foot">Powered by SafeTag</p>
 </div>
 
 <%- include('../layout/_foot', { hideFooter: true }) %>
