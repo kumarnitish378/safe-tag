@@ -9,195 +9,241 @@
   .pm-opt[data-sel="1"] .pm-ring { border-color:#0D9488 !important; }
   .pm-dot  { width:10px; height:10px; border-radius:50%; background:transparent; transition:background .15s; }
   .pm-opt[data-sel="1"] .pm-dot  { background:#0D9488 !important; }
+
+  .hidden { display:none !important; }
+  .co-breadcrumb{display:flex;align-items:center;gap:.5rem;font-size:.9rem;color:var(--muted);flex-wrap:wrap;margin-bottom:1.5rem}
+  .co-breadcrumb a{color:var(--teal-d);font-weight:600}
+  .co-breadcrumb a:hover{text-decoration:underline}
+  .co-breadcrumb .cur{color:var(--navy);font-weight:600}
+  .co-grid{display:grid;grid-template-columns:2fr 1fr;gap:2rem;align-items:start}
+  .co-head h1{font-size:clamp(1.7rem,3vw,2.2rem);font-weight:800;margin:.5rem 0 .5rem}
+  .co-left{display:flex;flex-direction:column;gap:1.25rem}
+  .co-card{background:#fff;border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow-sm);padding:1.5rem}
+  .co-card h2{display:flex;align-items:center;gap:.6rem;font-size:1.05rem;font-weight:700;margin-bottom:1.25rem}
+  .co-num{width:28px;height:28px;border-radius:999px;background:var(--teal);color:#fff;font-size:.85rem;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0}
+  .co-fields{display:flex;flex-direction:column;gap:1rem}
+  .co-2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+  .co-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem}
+  .co-note{display:flex;gap:.6rem;align-items:flex-start;padding:.8rem 1rem;border-radius:12px;background:#f0fdfa;border:1px solid #99f6e4;color:#115e59;font-size:.88rem;margin-bottom:1rem}
+  .co-note .material-symbols-outlined{color:#0d9488;font-size:1.15rem;flex-shrink:0}
+  .co-phone{display:flex}
+  .co-phone .pfx{display:flex;align-items:center;padding:0 .75rem;background:#f1f5f9;border:1px solid var(--line);border-right:0;border-radius:8px 0 0 8px;color:var(--muted);font-size:.85rem;flex-shrink:0}
+  .co-phone .input{border-top-left-radius:0;border-bottom-left-radius:0}
+  .co-optional{font-size:.75rem;color:#94a3b8;font-weight:400}
+  .pm-list{display:flex;flex-direction:column;gap:.65rem}
+  .pm-opt{display:flex;align-items:center;gap:1rem;padding:1rem}
+  .pm-opt .pm-body{flex:1}
+  .pm-opt .pm-name{font-weight:700;font-size:.9rem;color:#0A2342}
+  .pm-opt .pm-desc{font-size:.78rem;color:var(--muted);margin-top:.15rem}
+  .pm-opt .pm-ico .material-symbols-outlined{color:var(--teal);font-size:1.6rem}
+  .co-cod{display:flex;gap:.6rem;align-items:flex-start;margin-top:1rem;padding:.8rem 1rem;border-radius:12px;background:#fffbeb;border:1px solid #fde68a;color:#92400e;font-size:.88rem}
+  .co-cod .material-symbols-outlined{color:#d97706;font-size:1.15rem;flex-shrink:0}
+  .co-place{width:100%;justify-content:center;font-size:1.05rem;padding:1.05rem}
+  .co-fineprint{font-size:.75rem;text-align:center;color:#94a3b8;margin-top:.75rem;display:flex;align-items:center;justify-content:center;gap:.4rem;flex-wrap:wrap}
+  .co-summary{background:#fff;border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow-sm);padding:1.4rem;position:sticky;top:1.5rem}
+  .co-summary h3{font-size:1.05rem;font-weight:700;margin-bottom:1.1rem}
+  .co-sumtop{display:flex;gap:.8rem;padding-bottom:1rem;border-bottom:1px solid var(--line)}
+  .co-thumb{width:64px;height:64px;border-radius:12px;background:#f1f5f9;display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden}
+  .co-thumb img{width:64px;height:64px;object-fit:cover}
+  .co-thumb .material-symbols-outlined{color:#94a3b8;font-size:1.8rem}
+  .co-thumb-info{min-width:0}
+  .co-thumb-info .nm{font-weight:700;color:var(--navy);font-size:.9rem;line-height:1.35}
+  .co-thumb-info .ct{font-size:.78rem;color:var(--muted);text-transform:capitalize;margin-top:.15rem}
+  .co-thumb-info .qt{font-size:.78rem;color:#94a3b8;margin-top:.2rem}
+  .co-rows{padding-top:1rem;display:flex;flex-direction:column;gap:.6rem;font-size:.9rem}
+  .sum-row{display:flex;justify-content:space-between}
+  .sum-row .mut{color:var(--muted)}
+  .sum-row.total{font-weight:700;color:var(--navy);font-size:1rem;border-top:1px solid var(--line);padding-top:.85rem}
+  .co-assure{margin-top:1.25rem;padding-top:1rem;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:.55rem;font-size:.78rem;color:var(--muted)}
+  .co-assure div{display:flex;align-items:center;gap:.5rem}
+  .co-assure .material-symbols-outlined{color:var(--teal);font-size:1.05rem}
+  .btn .material-symbols-outlined{color:currentColor}
+  @media(max-width:900px){.co-grid{grid-template-columns:1fr}.co-summary{position:static}}
 </style>
 
-<div class="page-shell">
-  <!-- Breadcrumb -->
-  <nav class="breadcrumb">
-    <a href="/store" class="text-brand font-semibold hover:underline">Store</a>
-    <span>›</span>
-    <a href="/store/<%= product.id %>" class="hover:underline truncate max-w-xs"><%= product.name %></a>
-    <span>›</span>
-    <span class="text-navy font-medium">Checkout</span>
-  </nav>
+<section class="section">
+  <div class="wrap">
 
-  <div class="grid lg:grid-cols-3 gap-8 items-start">
+    <nav class="co-breadcrumb">
+      <a href="/store">Store</a>
+      <span>›</span>
+      <a href="/store/<%= product.id %>"><%= product.name %></a>
+      <span>›</span>
+      <span class="cur">Checkout</span>
+    </nav>
 
-    <!-- LEFT: Form sections (2/3) -->
-    <div class="lg:col-span-2 space-y-5">
-      <div class="page-hero reveal">
-        <div class="page-kicker">Secure checkout</div>
-        <h1 class="page-title">Confirm delivery and payment</h1>
-        <p class="page-subtitle">Your SafeTag ships across India with setup details included in the package.</p>
-      </div>
+    <div class="co-grid">
 
-      <% if (errors && errors._form) { %>
-        <div class="flash flash-error">⚠️ <%= errors._form %></div>
-      <% } %>
+      <!-- LEFT: Form sections -->
+      <div class="co-left">
+        <div class="co-head reveal">
+          <span class="eyebrow">Secure checkout</span>
+          <h1>Confirm delivery and payment</h1>
+          <p class="lead">Your SafeTag ships across India with setup details included in the package.</p>
+        </div>
 
-      <form method="POST" action="/checkout/<%= product.id %>" id="checkoutForm" class="space-y-5">
-        <%- include('layout/_csrf') %>
-        <input type="hidden" name="quantity" value="<%= quantity %>" />
-        <input type="hidden" name="payment_method" id="pmHidden" value="upi" />
+        <% if (errors && errors._form) { %>
+          <div class="flash flash-error"><span class="material-symbols-outlined" style="color:currentColor">error</span> <%= errors._form %></div>
+        <% } %>
 
-        <!-- Section 1: Contact & Delivery -->
-        <div class="glass-light form-panel p-6 reveal">
-          <h2 class="font-semibold text-navy mb-5 flex items-center gap-2.5 text-base">
-            <span class="w-7 h-7 rounded-full bg-brand text-white text-sm flex items-center justify-center font-bold flex-shrink-0">1</span>
-            Delivery Details
-          </h2>
-          <% if (typeof prefilled !== 'undefined' && prefilled) { %>
-            <div class="mb-4 p-3 rounded-card bg-teal-50 dark:bg-teal-900/20 border border-teal-200 dark:border-teal-800 text-sm text-teal-800 dark:text-teal-200 flex gap-2 items-start">
-              <span class="flex-shrink-0">📍</span>
-              <span>We've filled in your last delivery address — check it and edit anything that changed.</span>
-            </div>
-          <% } %>
-          <div class="space-y-4">
-            <div class="grid sm:grid-cols-2 gap-4">
+        <form method="POST" action="/checkout/<%= product.id %>" id="checkoutForm">
+          <%- include('layout/_csrf') %>
+          <input type="hidden" name="quantity" value="<%= quantity %>" />
+          <input type="hidden" name="payment_method" id="pmHidden" value="upi" />
+
+          <!-- Section 1: Contact & Delivery -->
+          <div class="co-card reveal" style="margin-bottom:1.25rem">
+            <h2><span class="co-num">1</span> Delivery Details</h2>
+            <% if (typeof prefilled !== 'undefined' && prefilled) { %>
+              <div class="co-note">
+                <span class="material-symbols-outlined">location_on</span>
+                <span>We've filled in your last delivery address — check it and edit anything that changed.</span>
+              </div>
+            <% } %>
+            <div class="co-fields">
+              <div class="co-2">
+                <div>
+                  <label class="label">Full Name *</label>
+                  <input class="input" name="recipient_name" required placeholder="Name on address label" maxlength="100" value="<%= values.recipient_name||'' %>" />
+                </div>
+                <div>
+                  <label class="label">Mobile Number *</label>
+                  <div class="co-phone">
+                    <span class="pfx">+91</span>
+                    <input class="input" name="recipient_phone" required pattern="[6-9][0-9]{9}" placeholder="10-digit number" maxlength="10" value="<%= values.recipient_phone||'' %>" />
+                  </div>
+                </div>
+              </div>
+
               <div>
-                <label class="label">Full Name *</label>
-                <input class="input" name="recipient_name" required placeholder="Name on address label" maxlength="100" value="<%= values.recipient_name||'' %>" />
+                <label class="label">Address Line 1 *</label>
+                <input class="input" name="address_line1" required placeholder="House / Flat no., Building name, Street" maxlength="200" value="<%= values.address_line1||'' %>" />
               </div>
               <div>
-                <label class="label">Mobile Number *</label>
-                <div class="flex">
-                  <span class="px-3 py-2 bg-slate-100 border border-slate-200 border-r-0 rounded-l-card text-sm text-slate-600 flex-shrink-0">+91</span>
-                  <input class="input rounded-l-none" name="recipient_phone" required pattern="[6-9][0-9]{9}" placeholder="10-digit number" maxlength="10" value="<%= values.recipient_phone||'' %>" />
+                <label class="label">Address Line 2 <span class="co-optional">(optional)</span></label>
+                <input class="input" name="address_line2" placeholder="Landmark, Colony, Area" maxlength="200" value="<%= values.address_line2||'' %>" />
+              </div>
+
+              <div class="co-3">
+                <div>
+                  <label class="label">City *</label>
+                  <input class="input" name="city" required placeholder="e.g. Jaipur" maxlength="100" value="<%= values.city||'' %>" />
+                </div>
+                <div>
+                  <label class="label">State *</label>
+                  <select class="input" name="state" required>
+                    <option value="">Select state</option>
+                    <% ['Andhra Pradesh','Arunachal Pradesh','Assam','Bihar','Chhattisgarh','Goa','Gujarat','Haryana','Himachal Pradesh','Jharkhand','Karnataka','Kerala','Madhya Pradesh','Maharashtra','Manipur','Meghalaya','Mizoram','Nagaland','Odisha','Punjab','Rajasthan','Sikkim','Tamil Nadu','Telangana','Tripura','Uttar Pradesh','Uttarakhand','West Bengal','Delhi','Jammu & Kashmir','Ladakh','Puducherry','Chandigarh','Andaman & Nicobar','Lakshadweep','Other'].forEach(function(s){ %>
+                      <option value="<%= s %>" <%= values.state===s?'selected':'' %>><%= s %></option>
+                    <% }); %>
+                  </select>
+                </div>
+                <div>
+                  <label class="label">PIN Code *</label>
+                  <input class="input" name="pincode" required pattern="[1-9][0-9]{5}" placeholder="6 digits" maxlength="6" value="<%= values.pincode||'' %>" />
                 </div>
               </div>
             </div>
-
-            <div>
-              <label class="label">Address Line 1 *</label>
-              <input class="input" name="address_line1" required placeholder="House / Flat no., Building name, Street" maxlength="200" value="<%= values.address_line1||'' %>" />
-            </div>
-            <div>
-              <label class="label">Address Line 2 <span class="text-xs text-slate-400 font-normal">(optional)</span></label>
-              <input class="input" name="address_line2" placeholder="Landmark, Colony, Area" maxlength="200" value="<%= values.address_line2||'' %>" />
-            </div>
-
-            <div class="grid sm:grid-cols-3 gap-4">
-              <div>
-                <label class="label">City *</label>
-                <input class="input" name="city" required placeholder="e.g. Jaipur" maxlength="100" value="<%= values.city||'' %>" />
-              </div>
-              <div>
-                <label class="label">State *</label>
-                <select class="input" name="state" required>
-                  <option value="">Select state</option>
-                  <% ['Andhra Pradesh','Arunachal Pradesh','Assam','Bihar','Chhattisgarh','Goa','Gujarat','Haryana','Himachal Pradesh','Jharkhand','Karnataka','Kerala','Madhya Pradesh','Maharashtra','Manipur','Meghalaya','Mizoram','Nagaland','Odisha','Punjab','Rajasthan','Sikkim','Tamil Nadu','Telangana','Tripura','Uttar Pradesh','Uttarakhand','West Bengal','Delhi','Jammu & Kashmir','Ladakh','Puducherry','Chandigarh','Andaman & Nicobar','Lakshadweep','Other'].forEach(function(s){ %>
-                    <option value="<%= s %>" <%= values.state===s?'selected':'' %>><%= s %></option>
-                  <% }); %>
-                </select>
-              </div>
-              <div>
-                <label class="label">PIN Code *</label>
-                <input class="input" name="pincode" required pattern="[1-9][0-9]{5}" placeholder="6 digits" maxlength="6" value="<%= values.pincode||'' %>" />
-              </div>
-            </div>
           </div>
-        </div>
 
-        <!-- Section 2: Payment Method -->
-        <div class="glass-light form-panel p-6 reveal">
-          <h2 class="font-semibold text-navy mb-5 flex items-center gap-2.5 text-base">
-            <span class="w-7 h-7 rounded-full bg-brand text-white text-sm flex items-center justify-center font-bold flex-shrink-0">2</span>
-            Payment Method
-          </h2>
+          <!-- Section 2: Payment Method -->
+          <div class="co-card reveal" style="margin-bottom:1.25rem">
+            <h2><span class="co-num">2</span> Payment Method</h2>
 
-          <div class="space-y-2.5" id="paymentOptions">
-            <!-- UPI — selected by default (data-sel="1") -->
-            <div class="pm-opt flex items-center gap-4 p-4" data-value="upi" data-sel="1" onclick="selectPM(this)">
-              <div class="pm-ring"><div class="pm-dot"></div></div>
-              <div class="flex-1">
-                <div class="font-semibold text-sm" style="color:#0A2342">UPI Payment</div>
-                <div class="text-xs text-slate-500 mt-0.5">Google Pay · PhonePe · Paytm · BHIM · Any UPI app</div>
+            <div class="pm-list" id="paymentOptions">
+              <!-- UPI — selected by default (data-sel="1") -->
+              <div class="pm-opt" data-value="upi" data-sel="1" onclick="selectPM(this)">
+                <div class="pm-ring"><div class="pm-dot"></div></div>
+                <div class="pm-body">
+                  <div class="pm-name">UPI Payment</div>
+                  <div class="pm-desc">Google Pay · PhonePe · Paytm · BHIM · Any UPI app</div>
+                </div>
+                <span class="pm-ico"><span class="material-symbols-outlined">qr_code_2</span></span>
               </div>
-              <span class="text-2xl">📱</span>
+              <!-- Card -->
+              <div class="pm-opt" data-value="card" data-sel="0" onclick="selectPM(this)">
+                <div class="pm-ring"><div class="pm-dot"></div></div>
+                <div class="pm-body">
+                  <div class="pm-name">Credit / Debit Card</div>
+                  <div class="pm-desc">Visa · Mastercard · RuPay — all cards accepted</div>
+                </div>
+                <span class="pm-ico"><span class="material-symbols-outlined">credit_card</span></span>
+              </div>
+              <!-- COD -->
+              <div class="pm-opt" data-value="cod" data-sel="0" onclick="selectPM(this)">
+                <div class="pm-ring"><div class="pm-dot"></div></div>
+                <div class="pm-body">
+                  <div class="pm-name">Cash on Delivery</div>
+                  <div class="pm-desc">Pay when your order arrives · +₹30 handling charge applies</div>
+                </div>
+                <span class="pm-ico"><span class="material-symbols-outlined">payments</span></span>
+              </div>
             </div>
-            <!-- Card -->
-            <div class="pm-opt flex items-center gap-4 p-4" data-value="card" data-sel="0" onclick="selectPM(this)">
-              <div class="pm-ring"><div class="pm-dot"></div></div>
-              <div class="flex-1">
-                <div class="font-semibold text-sm" style="color:#0A2342">Credit / Debit Card</div>
-                <div class="text-xs text-slate-500 mt-0.5">Visa · Mastercard · RuPay — all cards accepted</div>
-              </div>
-              <span class="text-2xl">💳</span>
-            </div>
-            <!-- COD -->
-            <div class="pm-opt flex items-center gap-4 p-4" data-value="cod" data-sel="0" onclick="selectPM(this)">
-              <div class="pm-ring"><div class="pm-dot"></div></div>
-              <div class="flex-1">
-                <div class="font-semibold text-sm" style="color:#0A2342">Cash on Delivery</div>
-                <div class="text-xs text-slate-500 mt-0.5">Pay when your order arrives · +₹30 handling charge applies</div>
-              </div>
-              <span class="text-2xl">💵</span>
+
+            <div id="codNotice" class="hidden co-cod">
+              <span class="material-symbols-outlined">info</span>
+              <span>Cash on Delivery has an additional ₹30 handling charge. New total: <strong>₹<span id="codTotal"><%= totalInr + 30 %></span></strong></span>
             </div>
           </div>
 
-          <div id="codNotice" class="hidden mt-4 p-3 bg-amber-50 border border-amber-200 rounded-card text-sm text-amber-800 flex gap-2 items-start">
-            <span class="flex-shrink-0">ℹ️</span>
-            <span>Cash on Delivery has an additional ₹30 handling charge. New total: <strong>₹<span id="codTotal"><%= totalInr + 30 %></span></strong></span>
-          </div>
-        </div>
+          <!-- Place Order -->
+          <button type="submit" class="btn co-place">
+            <span class="material-symbols-outlined">lock</span> Place Order — ₹<span id="btnTotal"><%= totalInr %></span>
+          </button>
+          <p class="co-fineprint">SSL encrypted · 7-day returns · Made in India</p>
+        </form>
+      </div>
 
-        <!-- Place Order -->
-        <button type="submit" class="btn-warn btn-lq w-full justify-center text-lg py-4 font-bold rounded-card">
-          🔒 Place Order — ₹<span id="btnTotal"><%= totalInr %></span>
-        </button>
-        <p class="text-xs text-center text-slate-400 mt-1">SSL encrypted · 7-day returns · Made in India 🇮🇳</p>
-      </form>
-    </div>
+      <!-- RIGHT: Order Summary -->
+      <div>
+        <div class="co-summary reveal">
+          <h3>Order Summary</h3>
 
-    <!-- RIGHT: Order Summary (1/3) -->
-    <div>
-      <div class="glass-light stable-panel p-5 sticky top-20 reveal">
-        <h3 class="font-semibold text-navy mb-4">Order Summary</h3>
+          <div class="co-sumtop">
+            <div class="co-thumb">
+              <% if (product.photo_url) { %>
+                <img src="<%= product.photo_url %>" alt="<%= product.name %>" />
+              <% } else { %>
+                <span class="material-symbols-outlined">sell</span>
+              <% } %>
+            </div>
+            <div class="co-thumb-info">
+              <div class="nm"><%= product.name %></div>
+              <div class="ct"><%= product.category %></div>
+              <div class="qt">Qty: <%= quantity %></div>
+            </div>
+          </div>
 
-        <div class="flex gap-3 pb-4 border-b border-slate-100">
-          <div class="w-16 h-16 bg-slate-100 rounded-card flex items-center justify-center flex-shrink-0 overflow-hidden">
-            <% if (product.photo_url) { %>
-              <img src="<%= product.photo_url %>" class="w-16 h-16 object-cover" alt="<%= product.name %>" />
-            <% } else { %>
-              <span class="text-3xl">🏷️</span>
-            <% } %>
+          <div class="co-rows">
+            <div class="sum-row">
+              <span class="mut">Subtotal (×<%= quantity %>)</span>
+              <span>₹<%= totalInr %></span>
+            </div>
+            <div class="sum-row">
+              <span class="mut">Shipping</span>
+              <span style="color:#16a34a;font-weight:600">FREE</span>
+            </div>
+            <div id="codRowSidebar" class="hidden sum-row" style="color:#b45309">
+              <span>COD charge</span>
+              <span>+₹30</span>
+            </div>
+            <div class="sum-row total">
+              <span>Total</span>
+              <span id="totalSidebar">₹<%= totalInr %></span>
+            </div>
           </div>
-          <div class="flex-1 min-w-0">
-            <div class="font-semibold text-navy text-sm leading-snug"><%= product.name %></div>
-            <div class="text-xs text-slate-500 capitalize mt-0.5"><%= product.category %></div>
-            <div class="text-xs text-slate-400 mt-1">Qty: <%= quantity %></div>
-          </div>
-        </div>
 
-        <div class="pt-4 space-y-2.5 text-sm">
-          <div class="flex justify-between">
-            <span class="text-slate-500">Subtotal (×<%= quantity %>)</span>
-            <span class="font-medium">₹<%= totalInr %></span>
+          <div class="co-assure">
+            <div><span class="material-symbols-outlined">lock</span> 256-bit SSL secure checkout</div>
+            <div><span class="material-symbols-outlined">local_shipping</span> Pan-India delivery in 5–7 days</div>
+            <div><span class="material-symbols-outlined">undo</span> 7-day hassle-free returns</div>
+            <div><span class="material-symbols-outlined">mail</span> support@safe-tag.in</div>
           </div>
-          <div class="flex justify-between">
-            <span class="text-slate-500">Shipping</span>
-            <span class="font-semibold" style="color:#22C55E">FREE</span>
-          </div>
-          <div id="codRowSidebar" class="hidden flex justify-between" style="color:#b45309">
-            <span>COD charge</span>
-            <span>+₹30</span>
-          </div>
-          <div class="flex justify-between font-bold text-navy text-base border-t border-slate-100 pt-3">
-            <span>Total</span>
-            <span id="totalSidebar">₹<%= totalInr %></span>
-          </div>
-        </div>
-
-        <div class="mt-5 pt-4 border-t border-slate-100 space-y-2.5 text-xs text-slate-500">
-          <div class="flex gap-2">🔒 256-bit SSL secure checkout</div>
-          <div class="flex gap-2">🚚 Pan-India delivery in 5–7 days</div>
-          <div class="flex gap-2">↩️ 7-day hassle-free returns</div>
-          <div class="flex gap-2">📞 support@safe-tag.in</div>
         </div>
       </div>
     </div>
   </div>
-</div>
+</section>
 
 <script>
 var _baseTotal = <%= totalInr %>;

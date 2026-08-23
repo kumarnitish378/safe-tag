@@ -1,20 +1,33 @@
 <%- include('../layout/_head') %>
 
-<section class="page-shell page-shell-compact">
-    <div class="glass-light form-panel p-6 reveal">
-      <h1 class="text-2xl font-bold mb-1">Manufacturer sign in</h1>
-      <p class="text-sm text-slate-500 mb-5">Sign in to manage your batches and product listings.</p>
+<style>
+  .mf-input{width:100%;background:#fff;border:1.5px solid var(--line);border-radius:10px;padding:.72rem .85rem;font-size:.95rem;color:var(--navy);font-family:'Inter',sans-serif;transition:.15s}
+  .mf-input:focus{outline:none;border-color:var(--teal);box-shadow:0 0 0 3px rgba(13,148,136,.15)}
+  .mf-label{display:block;font-weight:600;font-size:.88rem;color:var(--navy);margin-bottom:.35rem}
+  .mf-err{color:#dc2626;font-size:.8rem;margin-top:.25rem}
+  .mf-flash{background:#fef2f2;border:1px solid #fecaca;color:#b91c1c;border-radius:10px;padding:.7rem .85rem;font-size:.88rem;display:flex;align-items:center;gap:.5rem;margin-bottom:1rem}
+  .mf-flash .material-symbols-outlined{color:#dc2626;font-size:1.1rem}
+  .mf-card{background:#fff;border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow-sm);padding:2.2rem}
+  .mf-form{display:flex;flex-direction:column;gap:1rem}
+</style>
 
-      <% if (errors._form) { %><div class="flash flash-error">⚠️ <%= errors._form %></div><% } %>
+<section class="section" style="background:var(--cream)">
+  <div class="wrap" style="max-width:480px">
+    <div class="mf-card">
+      <h1 style="font-family:'Sora',sans-serif;font-size:1.6rem;font-weight:700;color:var(--navy);margin:0 0 .35rem;">Manufacturer sign in</h1>
+      <p style="color:var(--muted);font-size:.9rem;margin:0 0 1.5rem;">Sign in to manage your batches and product listings.</p>
 
-      <form method="POST" action="/manufacturer/login" class="space-y-4">
+      <% if (errors._form) { %><div class="mf-flash"><span class="material-symbols-outlined">error</span><%= errors._form %></div><% } %>
+
+      <form method="POST" action="/manufacturer/login" class="mf-form">
       <%- include('../layout/_csrf') %>
-        <div><label class="label">Email</label><input class="input" type="email" name="email" required value="<%= values.email||'' %>" /></div>
-        <div><label class="label">Password</label><input class="input" type="password" name="password" required /></div>
-        <button class="btn-brand btn-lq w-full justify-center">Sign in</button>
+        <div><label class="mf-label">Email</label><input class="mf-input" type="email" name="email" required value="<%= values.email||'' %>" /></div>
+        <div><label class="mf-label">Password</label><input class="mf-input" type="password" name="password" required /></div>
+        <button class="btn" style="justify-content:center;width:100%;">Sign in</button>
       </form>
-      <p class="text-sm text-slate-500 mt-4 text-center">New here? <a class="text-brand font-semibold" href="/manufacturer/register">Register your workshop</a>.</p>
+      <p style="color:var(--muted);font-size:.875rem;margin-top:1.25rem;text-align:center;">New here? <a style="color:var(--teal-d);font-weight:600;" href="/manufacturer/register">Register your workshop</a>.</p>
     </div>
+  </div>
 </section>
 
 <%- include('../layout/_foot') %>

@@ -1,59 +1,61 @@
 <%- include('../layout/_head') %>
 
 <section class="page-shell page-shell-narrow">
-    <a href="/manufacturer/dashboard" class="text-sm text-brand font-semibold">← Dashboard</a>
+    <a href="/manufacturer/dashboard" class="text-sm font-semibold" style="color:var(--teal-d)">← Dashboard</a>
     <h1 class="text-3xl font-bold mt-2 mb-6">Create new tag batch</h1>
 
-    <% if (errors._form) { %><div class="flash flash-error">⚠️ <%= errors._form %></div><% } %>
+    <% if (errors._form) { %>
+      <div class="flash flash-error"><span class="material-symbols-outlined" style="color:currentColor">warning</span><%= errors._form %></div>
+    <% } %>
 
     <!-- Pricing tiers -->
-    <div class="glass-light data-panel p-5 mb-5 reveal">
-      <p class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3">Tag ID generation fee</p>
+    <div class="p-5 mb-5 reveal" style="background:var(--white);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow-sm)">
+      <p class="text-sm font-semibold mb-3" style="color:var(--navy)">Tag ID generation fee</p>
       <table class="w-full text-sm">
         <thead>
-          <tr class="text-left text-xs text-slate-500 uppercase tracking-wide">
+          <tr class="text-left text-xs uppercase tracking-wide" style="color:var(--muted)">
             <th class="pb-2">Batch size</th>
             <th class="pb-2">Rate per tag</th>
             <th class="pb-2 text-right">Max total</th>
           </tr>
         </thead>
-        <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
+        <tbody class="divide-y divide-slate-100">
           <tr id="tier-1" class="transition-colors">
             <td class="py-2">1 – 100 tags</td>
             <td class="py-2 font-mono">₹5.00 / tag</td>
-            <td class="py-2 text-right text-slate-500">₹500</td>
+            <td class="py-2 text-right" style="color:var(--muted)">₹500</td>
           </tr>
           <tr id="tier-2" class="transition-colors">
             <td class="py-2">101 – 1,000 tags</td>
             <td class="py-2 font-mono">₹3.00 / tag</td>
-            <td class="py-2 text-right text-slate-500">₹3,000</td>
+            <td class="py-2 text-right" style="color:var(--muted)">₹3,000</td>
           </tr>
           <tr id="tier-3" class="transition-colors">
             <td class="py-2">1,001 – 10,000 tags</td>
             <td class="py-2 font-mono">₹1.50 / tag</td>
-            <td class="py-2 text-right text-slate-500">₹15,000</td>
+            <td class="py-2 text-right" style="color:var(--muted)">₹15,000</td>
           </tr>
         </tbody>
       </table>
     </div>
 
-    <form method="POST" action="/manufacturer/batch/new" class="glass-light form-panel p-6 space-y-5 reveal">
+    <form method="POST" action="/manufacturer/batch/new" class="p-6 space-y-5 reveal" style="background:var(--white);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow-sm)">
       <%- include('../layout/_csrf') %>
       <div>
         <label class="label">Tag type</label>
         <select class="input" name="tag_type" required>
           <% (typeof tagTypes !== 'undefined' ? tagTypes : []).forEach(function(t){ %>
             <option value="<%= t.id %>" <%= (values.tag_type || 'medical') === t.id ? 'selected' : '' %>>
-              <%= t.icon %> <%= t.label %>
+              <%= t.label %>
             </option>
           <% }); %>
         </select>
-        <p class="text-xs text-slate-500 mt-1">All tags in this batch will be of this type. This cannot be changed later.</p>
+        <p class="text-xs mt-1" style="color:var(--muted)">All tags in this batch will be of this type. This cannot be changed later.</p>
       </div>
       <div>
         <label class="label">Quantity</label>
         <input id="qty" class="input" type="number" name="quantity" min="1" max="10000" required value="<%= values.quantity || 100 %>" />
-        <p class="text-xs text-slate-500 mt-1">Up to 10,000 tags per batch.</p>
+        <p class="text-xs mt-1" style="color:var(--muted)">Up to 10,000 tags per batch.</p>
       </div>
       <div>
         <label class="label">Batch name</label>
@@ -61,18 +63,18 @@
       </div>
 
       <!-- Live price display -->
-      <div class="rounded-lg bg-teal-50 dark:bg-teal-900/20 border border-teal-200 dark:border-teal-800 p-4 flex items-center justify-between">
+      <div class="p-4 flex items-center justify-between" style="background:#e6fbf7;border:1px solid var(--teal);border-radius:14px">
         <div>
-          <p class="text-xs text-slate-500 uppercase tracking-wide">You will be charged</p>
-          <p id="priceDisplay" class="text-2xl font-bold text-brand mt-0.5">₹500</p>
+          <p class="text-xs uppercase tracking-wide" style="color:var(--muted)">You will be charged</p>
+          <p id="priceDisplay" class="text-2xl font-bold mt-0.5" style="color:var(--teal-d)">₹500</p>
         </div>
-        <div class="text-right text-xs text-slate-500">
+        <div class="text-right text-xs" style="color:var(--muted)">
           <span id="priceBreakdown">100 tags × ₹5</span>
         </div>
       </div>
 
-      <button class="btn-brand btn-lq w-full justify-center">Proceed to Payment →</button>
-      <p class="text-xs text-slate-500 text-center">Secure payment via Razorpay. Tags are generated immediately after payment.</p>
+      <button class="btn w-full" style="justify-content:center">Proceed to Payment →</button>
+      <p class="text-xs text-center" style="color:var(--muted)">Secure payment via Razorpay. Tags are generated immediately after payment.</p>
     </form>
 </section>
 

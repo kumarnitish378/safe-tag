@@ -1,14 +1,15 @@
 <%- include('../layout/_head') %>
 
 <section class="page-shell">
-    <a href="/manufacturer/dashboard" class="text-sm text-brand font-semibold">← Dashboard</a>
-    <div class="flex items-center justify-between mt-2 mb-6 flex-wrap gap-2 reveal">
+    <a href="/manufacturer/dashboard" class="text-sm font-semibold" style="color:var(--teal-d)">← Dashboard</a>
+    <div class="flex items-center justify-between mt-2 mb-6 flex-wrap gap-3 reveal">
       <div>
-        <h1 class="text-3xl font-bold">Orders</h1>
-        <p class="text-sm text-slate-500 mt-1">Orders for your product listings. Dispatch and add tracking here.</p>
+        <span class="eyebrow">Fulfilment</span>
+        <h1 class="text-3xl font-bold mt-2">Orders</h1>
+        <p class="text-sm mt-1" style="color:var(--muted)">Orders for your product listings. Dispatch and add tracking here.</p>
       </div>
       <form method="GET" action="/manufacturer/orders">
-        <select name="status" class="input py-2" onchange="this.form.submit()">
+        <select name="status" class="input" style="width:auto" onchange="this.form.submit()">
           <option value="">All statuses</option>
           <% ['pending','dispatched','delivered','cancelled'].forEach(function(s){ %>
             <option value="<%= s %>" <%= statusFilter===s?'selected':'' %>><%= s %></option>
@@ -17,20 +18,20 @@
       </form>
     </div>
 
-    <div class="glass-light data-panel table-wrap reveal">
+    <div class="table-wrap reveal" style="background:var(--white);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow-sm)">
       <table class="table">
         <thead><tr><th>#</th><th>Customer</th><th>Ship to</th><th>Product</th><th>Qty</th><th>Amount</th><th>Status</th><th>Tracking</th><th>Actions</th></tr></thead>
         <tbody>
           <% if (!orders.length) { %>
-            <tr><td colspan="9" class="text-center py-6 text-slate-500">No orders yet.</td></tr>
+            <tr><td colspan="9" class="text-center py-6" style="color:var(--muted)">No orders yet.</td></tr>
           <% } else { orders.forEach(function(o){ %>
             <tr>
               <td class="mono">#<%= o.id %></td>
               <td>
                 <div><%= o.user ? o.user.email : '—' %></div>
-                <div class="text-xs text-slate-500"><%= o.addr && o.addr.recipient_phone ? '+91 ' + o.addr.recipient_phone : (o.user ? o.user.mobile : '') %></div>
+                <div class="text-xs" style="color:var(--muted)"><%= o.addr && o.addr.recipient_phone ? '+91 ' + o.addr.recipient_phone : (o.user ? o.user.mobile : '') %></div>
               </td>
-              <td class="text-xs text-slate-500 max-w-[14rem]">
+              <td class="text-xs max-w-[14rem]" style="color:var(--muted)">
                 <%= o.addr ? [o.addr.recipient_name, o.addr.address_line1, o.addr.city, o.addr.state, o.addr.pincode].filter(Boolean).join(', ') : '—' %>
               </td>
               <td><%= o.product ? o.product.name : '—' %></td>
@@ -43,16 +44,16 @@
                   <form method="POST" action="/manufacturer/orders/<%= o.id %>/dispatch" class="flex gap-1">
                     <%- include('../layout/_csrf') %>
                     <input class="input py-1 px-2 text-xs w-24 mono" name="tracking_id" placeholder="Tracking" />
-                    <button class="btn-brand btn-lq text-xs py-1 px-2">Dispatch</button>
+                    <button class="btn" style="padding:.35rem .75rem;font-size:.75rem;box-shadow:none">Dispatch</button>
                   </form>
                 <% } else if (o.status === 'dispatched') { %>
                   <form method="POST" action="/manufacturer/orders/<%= o.id %>/status">
                     <%- include('../layout/_csrf') %>
                     <input type="hidden" name="status" value="delivered" />
-                    <button class="btn-outline btn-lq text-xs py-1 px-2">Mark delivered</button>
+                    <button class="btn-ghost" style="padding:.35rem .75rem;font-size:.75rem;white-space:nowrap">Mark delivered</button>
                   </form>
                 <% } else { %>
-                  <span class="text-xs text-slate-400">—</span>
+                  <span class="text-xs" style="color:var(--muted)">—</span>
                 <% } %>
               </td>
             </tr>

@@ -1,132 +1,177 @@
 <%- include('layout/_head') %>
 
-<!-- Breadcrumb -->
-<div class="page-shell pb-0">
-  <nav class="breadcrumb">
-    <a href="/store" class="text-brand font-semibold hover:underline">Store</a>
-    <span>›</span>
-    <span class="capitalize"><%= product.category %></span>
-    <span>›</span>
-    <span class="text-navy font-medium truncate"><%= product.name %></span>
-  </nav>
-</div>
+<style>
+  .pd-breadcrumb{display:flex;align-items:center;gap:.5rem;font-size:.9rem;color:var(--muted);flex-wrap:wrap;margin-bottom:1.5rem}
+  .pd-breadcrumb a{color:var(--teal-d);font-weight:600}
+  .pd-breadcrumb a:hover{text-decoration:underline}
+  .pd-breadcrumb .cur{color:var(--navy);font-weight:600}
+  .pd-grid{display:grid;grid-template-columns:1fr 1fr;gap:2.5rem;align-items:start}
+  .pd-media{border:1px solid var(--line);border-radius:var(--r);overflow:hidden;background:#f1f5f9;min-height:360px;display:flex;align-items:center;justify-content:center}
+  .pd-media img{width:100%;max-height:440px;object-fit:cover}
+  .pd-media .material-symbols-outlined{font-size:5rem;color:#94a3b8}
+  .pd-badges{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.9rem}
+  .pd-by{font-size:.72rem;color:#94a3b8;text-transform:uppercase;font-weight:700;letter-spacing:.05em}
+  .pd-title{font-size:clamp(1.7rem,3vw,2.2rem);font-weight:800;margin:.35rem 0 .9rem}
+  .pd-pricerow{display:flex;align-items:center;gap:.8rem;flex-wrap:wrap}
+  .pd-price{font-size:2.4rem;font-weight:800;color:var(--navy);font-family:'Sora',sans-serif}
+  .pd-strike{color:#94a3b8;text-decoration:line-through;font-size:.95rem}
+  .pd-card{background:#fff;border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow-sm);padding:1.4rem}
+  .pd-card .cap{font-size:.72rem;text-transform:uppercase;font-weight:800;color:var(--muted);letter-spacing:.05em;margin-bottom:.85rem}
+  .pd-box{list-style:none;display:flex;flex-direction:column;gap:.55rem;font-size:.92rem;color:var(--ink)}
+  .pd-box li{display:flex;gap:.5rem;align-items:flex-start}
+  .pd-box .material-symbols-outlined{color:var(--teal);font-size:1.15rem}
+  .pd-qtyrow{display:flex;align-items:center;gap:1rem;margin-bottom:1rem}
+  .pd-stepper{display:flex;align-items:center;gap:.5rem}
+  .pd-stepbtn{width:34px;height:34px;border-radius:8px;border:1px solid var(--line);background:#fff;font-weight:700;color:var(--navy);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.1rem}
+  .pd-stepbtn:hover{background:#f1f5f9;border-color:var(--teal)}
+  .pd-qtyinput{width:64px;text-align:center;padding:.45rem;border:1px solid var(--line);border-radius:8px;font-family:inherit;color:var(--navy)}
+  .pd-qtyinput:focus{outline:none;border-color:var(--teal);box-shadow:0 0 0 3px rgba(13,148,136,.15)}
+  .pd-trust{display:grid;grid-template-columns:repeat(3,1fr);gap:.6rem;text-align:center}
+  .pd-trust .t{border:1px solid var(--line);border-radius:14px;padding:.9rem .4rem;font-size:.72rem;color:var(--muted)}
+  .pd-trust .t .material-symbols-outlined{font-size:1.5rem;color:var(--teal)}
+  .pd-trust .t b{display:block;color:var(--navy);font-size:.8rem;margin-top:.25rem}
+  .pd-stack{display:flex;flex-direction:column;gap:1.25rem}
+  .btn.full{width:100%;justify-content:center}
+  .btn .material-symbols-outlined{color:currentColor}
+  .steps{margin-top:0}
+  .step .stepnum{width:44px;height:44px;border-radius:999px;background:#e6fbf7;display:flex;align-items:center;justify-content:center;margin-bottom:.7rem}
+  .step .stepnum .material-symbols-outlined{color:var(--teal);font-size:1.5rem}
+  .pd-section h2{font-size:1.35rem;font-weight:800;margin-bottom:1rem}
+  .pd-about{color:var(--muted);line-height:1.7;white-space:pre-line}
+  @media(max-width:820px){.pd-grid{grid-template-columns:1fr;gap:1.6rem}}
+</style>
 
-<!-- Hero: image + buy panel -->
-<section class="page-shell pt-0">
-  <div class="grid md:grid-cols-2 gap-10 items-start">
+<section class="section">
+  <div class="wrap">
 
-    <!-- Left: Image + badges -->
-    <div class="reveal-left">
-      <div class="w-full bg-slate-100 rounded-cardLg overflow-hidden flex items-center justify-center" style="min-height:360px;">
-        <% if (product.photo_url) { %>
-          <img src="<%= product.photo_url %>" class="w-full max-h-[440px] object-cover" alt="<%= product.name %>" />
-        <% } else { %>
-          <div class="text-7xl">🏷️</div>
-        <% } %>
-      </div>
-      <div class="mt-3 flex flex-wrap gap-2">
-        <span class="pill pill-brand capitalize"><%= product.category %></span>
-        <% if (product.is_featured) { %><span class="pill pill-warning">⭐ Best Value</span><% } %>
-        <% if (product.quantity_available > 0) { %>
-          <span class="pill pill-success">✓ In Stock (<%= product.quantity_available %> left)</span>
-        <% } else { %>
-          <span class="pill pill-danger">Out of Stock</span>
-        <% } %>
-      </div>
-    </div>
+    <nav class="pd-breadcrumb">
+      <a href="/store">Store</a>
+      <span>›</span>
+      <span class="cur" style="text-transform:capitalize"><%= product.category %></span>
+      <span>›</span>
+      <span class="cur"><%= product.name %></span>
+    </nav>
 
-    <!-- Right: Info + buy -->
-    <div class="space-y-5 reveal">
-      <div>
-        <p class="text-xs text-slate-400 uppercase font-semibold tracking-wide">by <%= product.manufacturer_name %></p>
-        <h1 class="text-3xl font-bold mt-1 mb-3"><%= product.name %></h1>
-        <div class="flex items-center gap-3 flex-wrap">
-          <span class="font-sora text-4xl text-navy font-bold">₹<%= product.price_inr %></span>
-          <% if (product.is_featured) { %>
-            <span class="text-sm text-slate-400 line-through">₹<%= Math.round(product.price_inr * 1.2) %></span>
-            <span class="pill pill-success">Save ₹<%= Math.round(product.price_inr * 0.2) %></span>
+    <div class="pd-grid">
+
+      <!-- Left: image + badges -->
+      <div class="reveal-left">
+        <div class="pd-media">
+          <% if (product.photo_url) { %>
+            <img src="<%= product.photo_url %>" alt="<%= product.name %>" />
+          <% } else { %>
+            <span class="material-symbols-outlined">sell</span>
+          <% } %>
+        </div>
+        <div class="pd-badges">
+          <span class="pill pill-brand" style="text-transform:capitalize"><%= product.category %></span>
+          <% if (product.is_featured) { %><span class="pill pill-warning"><span class="material-symbols-outlined" style="color:currentColor;font-size:1rem">star</span> Best Value</span><% } %>
+          <% if (product.quantity_available > 0) { %>
+            <span class="pill pill-success"><span class="material-symbols-outlined" style="color:currentColor;font-size:1rem">check_circle</span> In Stock (<%= product.quantity_available %> left)</span>
+          <% } else { %>
+            <span class="pill pill-danger">Out of Stock</span>
           <% } %>
         </div>
       </div>
 
-      <!-- What's in the box -->
-      <div class="glass-light stable-panel p-4">
-        <p class="text-xs uppercase font-bold text-slate-500 mb-3">What's in the box</p>
-        <ul class="text-sm space-y-1.5">
-          <li class="flex gap-2"><span class="text-brand font-bold">✓</span>1× SafeTag (<span class="capitalize"><%= product.category %></span>)</li>
-          <li class="flex gap-2"><span class="text-brand font-bold">✓</span>Unique Tag ID + Security Key card</li>
-          <li class="flex gap-2"><span class="text-brand font-bold">✓</span>QR code label (pre-applied)</li>
-          <li class="flex gap-2"><span class="text-brand font-bold">✓</span>Setup guide (scan to activate)</li>
-        </ul>
-      </div>
-
-      <!-- Buy / OOS -->
-      <% if (product.quantity_available > 0) { %>
-        <div class="glass-light stable-panel p-5 space-y-4">
-          <div class="flex items-center gap-3">
-            <label class="label mb-0">Quantity</label>
-            <div class="flex items-center gap-2">
-              <button onclick="var q=document.getElementById('qtyInput'); q.value=Math.max(1,+q.value-1); updateTotal();" class="w-8 h-8 rounded border border-slate-200 flex items-center justify-center font-bold text-slate-600 hover:bg-slate-100">−</button>
-              <input id="qtyInput" class="input text-center w-16 py-1.5" type="number" min="1" max="<%= product.quantity_available %>" value="1" onchange="updateTotal()" />
-              <button onclick="var q=document.getElementById('qtyInput'); q.value=Math.min(<%= product.quantity_available %>,+q.value+1); updateTotal();" class="w-8 h-8 rounded border border-slate-200 flex items-center justify-center font-bold text-slate-600 hover:bg-slate-100">+</button>
-            </div>
+      <!-- Right: info + buy -->
+      <div class="pd-stack reveal">
+        <div>
+          <p class="pd-by">by <%= product.manufacturer_name %></p>
+          <h1 class="pd-title"><%= product.name %></h1>
+          <div class="pd-pricerow">
+            <span class="pd-price">₹<%= product.price_inr %></span>
+            <% if (product.is_featured) { %>
+              <span class="pd-strike">₹<%= Math.round(product.price_inr * 1.2) %></span>
+              <span class="pill pill-success">Save ₹<%= Math.round(product.price_inr * 0.2) %></span>
+            <% } %>
           </div>
-          <a id="buyBtn" href="/checkout/<%= product.id %>?qty=1" class="btn-warn btn-lq w-full justify-center text-base py-3 block text-center">
-            Buy Now — ₹<span id="totalPrice"><%= product.price_inr %></span>
-          </a>
-          <% if (!user) { %><p class="text-xs text-center text-slate-500">You'll be asked to sign in to complete the purchase.</p><% } %>
         </div>
-        <script>
-          var _unitPrice = <%= product.price_inr %>;
-          function updateTotal(){
-            var q = Math.max(1, Math.min(<%= product.quantity_available %>, parseInt(document.getElementById('qtyInput').value)||1));
-            document.getElementById('totalPrice').textContent = _unitPrice * q;
-            document.getElementById('buyBtn').href = '/checkout/<%= product.id %>?qty=' + q;
-          }
-        </script>
-      <% } else { %>
-        <div class="glass-light stable-panel p-5 text-center">
-          <span class="pill pill-danger text-base">Out of Stock</span>
-          <p class="text-sm text-slate-500 mt-3">Check back soon or <a href="/store" class="text-brand font-semibold">browse other products</a>.</p>
-        </div>
-      <% } %>
 
-      <!-- Trust badges -->
-      <div class="grid grid-cols-3 gap-2 text-center text-xs text-slate-500">
-        <div class="glass-light p-3">🔒<br/><span class="font-semibold">Secure</span><br/>checkout</div>
-        <div class="glass-light p-3">🚚<br/><span class="font-semibold">Pan-India</span><br/>shipping</div>
-        <div class="glass-light p-3">↩️<br/><span class="font-semibold">7-day</span><br/>returns</div>
+        <!-- What's in the box -->
+        <div class="pd-card">
+          <p class="cap">What's in the box</p>
+          <ul class="pd-box">
+            <li><span class="material-symbols-outlined">check</span>1× SafeTag (<span style="text-transform:capitalize"><%= product.category %></span>)</li>
+            <li><span class="material-symbols-outlined">check</span>Unique Tag ID + Security Key card</li>
+            <li><span class="material-symbols-outlined">check</span>QR code label (pre-applied)</li>
+            <li><span class="material-symbols-outlined">check</span>Setup guide (scan to activate)</li>
+          </ul>
+        </div>
+
+        <!-- Buy / OOS -->
+        <% if (product.quantity_available > 0) { %>
+          <div class="pd-card">
+            <div class="pd-qtyrow">
+              <label class="label" style="margin-bottom:0">Quantity</label>
+              <div class="pd-stepper">
+                <button type="button" onclick="var q=document.getElementById('qtyInput'); q.value=Math.max(1,+q.value-1); updateTotal();" class="pd-stepbtn">−</button>
+                <input id="qtyInput" class="pd-qtyinput" type="number" min="1" max="<%= product.quantity_available %>" value="1" onchange="updateTotal()" />
+                <button type="button" onclick="var q=document.getElementById('qtyInput'); q.value=Math.min(<%= product.quantity_available %>,+q.value+1); updateTotal();" class="pd-stepbtn">+</button>
+              </div>
+            </div>
+            <a id="buyBtn" href="/checkout/<%= product.id %>?qty=1" class="btn full">
+              Buy Now — ₹<span id="totalPrice"><%= product.price_inr %></span>
+            </a>
+            <% if (!user) { %><p style="font-size:.78rem;text-align:center;color:var(--muted);margin-top:.7rem">You'll be asked to sign in to complete the purchase.</p><% } %>
+          </div>
+          <script>
+            var _unitPrice = <%= product.price_inr %>;
+            function updateTotal(){
+              var q = Math.max(1, Math.min(<%= product.quantity_available %>, parseInt(document.getElementById('qtyInput').value)||1));
+              document.getElementById('totalPrice').textContent = _unitPrice * q;
+              document.getElementById('buyBtn').href = '/checkout/<%= product.id %>?qty=' + q;
+            }
+          </script>
+        <% } else { %>
+          <div class="pd-card" style="text-align:center">
+            <span class="pill pill-danger">Out of Stock</span>
+            <p style="font-size:.9rem;color:var(--muted);margin-top:.8rem">Check back soon or <a href="/store" style="color:var(--teal-d);font-weight:600">browse other products</a>.</p>
+          </div>
+        <% } %>
+
+        <!-- Trust badges -->
+        <div class="pd-trust">
+          <div class="t"><span class="material-symbols-outlined">lock</span><b>Secure</b>checkout</div>
+          <div class="t"><span class="material-symbols-outlined">local_shipping</span><b>Pan-India</b>shipping</div>
+          <div class="t"><span class="material-symbols-outlined">undo</span><b>7-day</b>returns</div>
+        </div>
       </div>
     </div>
+  </div>
 </section>
 
 <!-- About -->
-<section class="bg-white border-t border-slate-100">
-  <div class="page-shell page-shell-narrow">
-    <h2 class="text-xl font-bold mb-4 reveal">About this product</h2>
-    <div class="text-base leading-relaxed whitespace-pre-line text-slate-600 reveal"><%= product.description %></div>
+<section class="section" style="padding-top:0">
+  <div class="wrap" style="max-width:820px">
+    <div class="pd-section reveal">
+      <h2>About this product</h2>
+      <div class="pd-about"><%= product.description %></div>
+    </div>
   </div>
 </section>
 
 <!-- How it works -->
-<section class="section bg-slate-50 border-t border-slate-100">
-  <div class="page-shell page-shell-narrow">
-    <h2 class="text-xl font-bold mb-5 reveal">How it works</h2>
-    <div class="grid sm:grid-cols-3 gap-4">
-      <div class="glass-light p-4 text-center tilt-card glow-on-hover d1 reveal">
-        <div class="text-3xl mb-2">📦</div>
-        <div class="font-semibold mb-1">1. Receive &amp; Attach</div>
-        <div class="text-sm text-slate-500">Attach the tag to a bag, lanyard, collar or wristband.</div>
-      </div>
-      <div class="glass-light p-4 text-center tilt-card glow-on-hover d2 reveal">
-        <div class="text-3xl mb-2">📱</div>
-        <div class="font-semibold mb-1">2. Scan to Activate</div>
-        <div class="text-sm text-slate-500">Scan the QR, fill in emergency info. Takes under 2 minutes.</div>
-      </div>
-      <div class="glass-light p-4 text-center tilt-card glow-on-hover d3 reveal">
-        <div class="text-3xl mb-2">🆘</div>
-        <div class="font-semibold mb-1">3. One Scan in Emergency</div>
-        <div class="text-sm text-slate-500">Any phone camera opens the emergency profile instantly.</div>
+<section class="section" style="background:var(--cream)">
+  <div class="wrap" style="max-width:820px">
+    <div class="pd-section">
+      <h2 class="reveal">How it works</h2>
+      <div class="steps">
+        <div class="step reveal">
+          <div class="stepnum"><span class="material-symbols-outlined">inventory_2</span></div>
+          <h3>1. Receive &amp; Attach</h3>
+          <p>Attach the tag to a bag, lanyard, collar or wristband.</p>
+        </div>
+        <div class="step reveal">
+          <div class="stepnum"><span class="material-symbols-outlined">qr_code_scanner</span></div>
+          <h3>2. Scan to Activate</h3>
+          <p>Scan the QR, fill in emergency info. Takes under 2 minutes.</p>
+        </div>
+        <div class="step reveal">
+          <div class="stepnum"><span class="material-symbols-outlined">emergency</span></div>
+          <h3>3. One Scan in Emergency</h3>
+          <p>Any phone camera opens the emergency profile instantly.</p>
+        </div>
       </div>
     </div>
   </div>

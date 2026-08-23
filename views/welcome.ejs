@@ -1,60 +1,58 @@
 <%- include('layout/_head') %>
 
-<section class="relative overflow-hidden lq-mesh" style="background:linear-gradient(135deg,#0A2342 0%,#0B1E3D 60%,#091224 100%);min-height:100vh;display:flex;align-items:center;">
-  <div class="lq-blob" style="width:420px;height:420px;background:#0D9488;top:-100px;right:-80px;opacity:.18;"></div>
-  <div class="lq-blob lq-blob-c" style="width:280px;height:280px;background:#5eead4;bottom:-60px;left:-60px;opacity:.12;"></div>
+<style>
+  .wc-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:1.4rem;margin-top:3rem;text-align:left}
+  @media (max-width:820px){.wc-steps{grid-template-columns:1fr}}
+  .wc-step{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:1.9rem 1.6rem;box-shadow:var(--shadow-sm)}
+  .wc-ic{width:48px;height:48px;border-radius:999px;background:#e6fbf7;display:flex;align-items:center;justify-content:center;margin-bottom:1rem}
+  .wc-ic .material-symbols-outlined{color:var(--teal-d);font-size:1.5rem}
+  .wc-step .wc-num{font-size:.72rem;font-weight:800;letter-spacing:.12em;color:var(--teal-d);margin-bottom:.35rem}
+  .wc-step h3{font-family:'Sora',sans-serif;font-size:1.15rem;color:var(--navy);margin-bottom:.4rem}
+  .wc-step p{color:var(--muted);font-size:.95rem}
+  .wc-cta{display:flex;flex-wrap:wrap;gap:.8rem;justify-content:center;margin-top:2.75rem}
+</style>
 
-  <div class="relative z-10 max-w-2xl mx-auto px-4 py-16 w-full text-center">
+<section class="section center">
+  <div class="wrap">
 
-    <!-- Welcome header -->
-    <div class="lq-float-slow text-6xl mb-6">🎉</div>
-    <h1 class="reveal text-4xl md:text-5xl font-extrabold mb-3" style="color:#fff;">
-      Welcome<% if (user && user.name) { %>, <%= user.name.split(' ')[0] %><% } %>!
-    </h1>
-    <p class="reveal d1 text-lg mb-10" style="color:#94a3b8;">
-      Your SafeTag account is ready. Three steps to protect your family.
-    </p>
+    <span class="eyebrow"><span class="material-symbols-outlined" style="font-size:1rem;">celebration</span> Account ready</span>
+    <h2 style="margin-top:1.1rem;">
+      Welcome<% if (user && user.name) { %>, <%= user.name.split(' ')[0] %><% } %>
+    </h2>
+    <p class="lead">Your SafeTag account is ready. Three steps to protect your family.</p>
 
-    <!-- 3-step cards -->
-    <div class="grid md:grid-cols-3 gap-4 mb-10 text-left">
+    <div class="wc-steps">
 
-      <div class="reveal d1 glass p-6 rounded-2xl" style="border-top:3px solid #0D9488;">
-        <div class="text-3xl mb-3">🛒</div>
-        <div class="text-xs font-bold mb-1" style="color:#0D9488;letter-spacing:.1em;">STEP 1</div>
-        <h3 class="font-bold text-white text-lg mb-2">Get Your Tag</h3>
-        <p class="text-sm leading-relaxed" style="color:#94a3b8;">
-          Order a SafeTag keychain, sticker, wristband, or card. Ships across India from ₹149.
-        </p>
+      <div class="wc-step">
+        <div class="wc-ic"><span class="material-symbols-outlined">shopping_cart</span></div>
+        <div class="wc-num">STEP 1</div>
+        <h3>Get your tag</h3>
+        <p>Order a SafeTag keychain, sticker, wristband, or card. Ships across India from ₹149.</p>
       </div>
 
-      <div class="reveal d2 glass p-6 rounded-2xl" style="border-top:3px solid #5eead4;">
-        <div class="text-3xl mb-3">📷</div>
-        <div class="text-xs font-bold mb-1" style="color:#5eead4;letter-spacing:.1em;">STEP 2</div>
-        <h3 class="font-bold text-white text-lg mb-2">Activate It</h3>
-        <p class="text-sm leading-relaxed" style="color:#94a3b8;">
-          When your tag arrives, scan the QR code on it to link it to this account. Takes 10 seconds.
-        </p>
+      <div class="wc-step">
+        <div class="wc-ic"><span class="material-symbols-outlined">photo_camera</span></div>
+        <div class="wc-num">STEP 2</div>
+        <h3>Activate it</h3>
+        <p>When your tag arrives, scan the QR code on it to link it to this account. Takes 10 seconds.</p>
       </div>
 
-      <div class="reveal d3 glass p-6 rounded-2xl" style="border-top:3px solid #f59e0b;">
-        <div class="text-3xl mb-3">✏️</div>
-        <div class="text-xs font-bold mb-1" style="color:#f59e0b;letter-spacing:.1em;">STEP 3</div>
-        <h3 class="font-bold text-white text-lg mb-2">Set Up Profile</h3>
-        <p class="text-sm leading-relaxed" style="color:#94a3b8;">
-          Fill in blood group, allergies, and emergency contacts. Done in 2 minutes. Update any time.
-        </p>
+      <div class="wc-step">
+        <div class="wc-ic"><span class="material-symbols-outlined">edit</span></div>
+        <div class="wc-num">STEP 3</div>
+        <h3>Set up profile</h3>
+        <p>Fill in blood group, allergies, and emergency contacts. Done in 2 minutes. Update any time.</p>
       </div>
 
     </div>
 
-    <!-- CTAs -->
-    <div class="reveal d4 flex flex-col sm:flex-row gap-3 justify-center">
-      <a href="/store" class="btn-lq btn-warn text-base px-8 py-3 font-bold">🛒 Browse Store — from ₹149</a>
-      <a href="/dashboard" class="btn-lq glass px-7 py-3 text-base font-semibold" style="color:#fff;">I already have a tag →</a>
+    <div class="wc-cta">
+      <a href="/store" class="btn">Browse store — from ₹149</a>
+      <a href="/dashboard" class="btn-ghost">I already have a tag →</a>
     </div>
 
-    <p class="reveal d5 text-sm mt-5" style="color:#475569;">
-      You can also go to your <a href="/dashboard" style="color:#5eead4;font-weight:600;">dashboard</a> any time to manage tags and orders.
+    <p style="margin-top:1.5rem;color:var(--muted);font-size:.9rem;">
+      You can also go to your <a href="/dashboard" style="color:var(--teal-d);font-weight:600;">dashboard</a> any time to manage tags and orders.
     </p>
 
   </div>

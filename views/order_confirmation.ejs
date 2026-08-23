@@ -1,115 +1,165 @@
 <%- include('layout/_head', { noIndex: true }) %>
 
-<div class="page-shell page-shell-narrow">
+<style>
+  .stp{max-width:720px;margin:0 auto;padding:2.5rem 20px 4rem}
+  .stp-card{background:var(--white);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow-sm)}
+  .succ{text-align:center;margin-bottom:2rem}
+  .succ-ic{width:80px;height:80px;border-radius:50%;background:#dcfce7;display:flex;align-items:center;justify-content:center;margin:0 auto 1.2rem}
+  .succ-ic .material-symbols-outlined{color:#16a34a;font-size:2.5rem}
+  .succ h1{font-size:1.7rem;font-weight:800;color:var(--navy)}
+  .succ p{color:var(--muted);margin-top:.5rem}
+  .succ .mini{font-size:.8rem;color:#94a3b8;margin-top:.35rem}
+  .oc{padding:1.5rem;margin-bottom:1.25rem}
+  .oc-top{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;margin-bottom:1.2rem}
+  .oc-k{font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:700;margin-bottom:.25rem}
+  .oc-id{font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--navy);font-size:1.3rem}
+  .oc-date{font-size:.8rem;color:#94a3b8;margin-top:.3rem}
+  .chip-s{display:inline-flex;align-items:center;gap:.3rem;padding:.28rem .7rem;border-radius:999px;font-size:.75rem;font-weight:700}
+  .chip-green{background:#dcfce7;color:#166534}
+  .chip-s .material-symbols-outlined{font-size:1.05em;color:inherit}
+  .prod-row{display:flex;gap:1rem;padding:1.1rem 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .prod-thumb{width:64px;height:64px;border-radius:14px;background:var(--cream);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden}
+  .prod-thumb img{width:100%;height:100%;object-fit:cover}
+  .prod-thumb .material-symbols-outlined{color:var(--muted);font-size:1.8rem}
+  .prod-name{font-family:'Sora',sans-serif;font-weight:700;color:var(--navy)}
+  .prod-cat{font-size:.85rem;color:var(--muted);margin-top:.2rem;text-transform:capitalize}
+  .prod-qty{font-size:.8rem;color:#94a3b8;margin-top:.25rem}
+  .prod-price{text-align:right}
+  .prod-price .amt{font-family:'Sora',sans-serif;font-weight:800;color:var(--navy)}
+  .prod-price .ship{font-size:.78rem;color:#16a34a;margin-top:.3rem}
+  .info-grid{margin-top:1.25rem;display:grid;grid-template-columns:1fr 1fr;gap:.9rem}
+  @media(max-width:520px){.info-grid{grid-template-columns:1fr}}
+  .info-box{background:var(--cream);border:1px solid var(--line);border-radius:14px;padding:.85rem .95rem}
+  .info-box .k{font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:700;margin-bottom:.3rem}
+  .info-box .v{font-weight:700;color:var(--navy);font-size:.95rem}
+  .info-box .v.mono{font-family:'JetBrains Mono',monospace}
+  .info-box .v.small{font-size:.8rem;font-weight:500;line-height:1.5}
+  .info-box .sub{font-size:.75rem;color:#94a3b8;margin-top:.3rem}
+  .info-box .sub.ok{color:#16a34a}
+  .nx{padding:1.5rem;margin-bottom:1.25rem}
+  .nx h2{font-size:1.1rem;font-weight:700;color:var(--navy);margin-bottom:1.2rem}
+  .nx-step{display:flex;gap:.8rem;align-items:flex-start;margin-bottom:1.1rem}
+  .nx-step:last-child{margin-bottom:0}
+  .nx-num{width:28px;height:28px;border-radius:50%;background:var(--teal);color:#fff;font-size:.78rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:.1rem}
+  .nx-t{font-weight:700;color:var(--navy);font-size:.9rem}
+  .nx-d{font-size:.8rem;color:var(--muted);margin-top:.2rem}
+  .share{padding:1.2rem 1.4rem;margin-bottom:1.5rem;display:flex;align-items:center;gap:1rem}
+  .share-ic{width:44px;height:44px;border-radius:12px;background:#dcfce7;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .share-ic .material-symbols-outlined{color:#16a34a;font-size:1.5rem}
+  .share-body{flex:1;min-width:0}
+  .share-t{font-weight:700;color:var(--navy);font-size:.9rem}
+  .share-d{font-size:.8rem;color:var(--muted);margin-top:.2rem}
+  .final-row{display:flex;flex-wrap:wrap;gap:.8rem;justify-content:center}
+</style>
+
+<div class="stp">
 
   <!-- Success header -->
-  <div class="text-center mb-8 reveal">
-    <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-5 text-4xl">✅</div>
-    <h1 class="text-2xl font-bold text-navy">Order Confirmed!</h1>
-    <p class="text-slate-500 mt-2">Thank you, <strong><%= recipientName %></strong>. Your SafeTag is on its way.</p>
+  <div class="succ reveal">
+    <div class="succ-ic"><span class="material-symbols-outlined">check_circle</span></div>
+    <h1>Order Confirmed!</h1>
+    <p>Thank you, <strong><%= recipientName %></strong>. Your SafeTag is on its way.</p>
     <% if (emailSent) { %>
-      <p class="text-xs text-slate-400 mt-1">Confirmation email sent to <strong><%= userEmail %></strong></p>
+      <p class="mini">Confirmation email sent to <strong><%= userEmail %></strong></p>
     <% } %>
   </div>
 
   <!-- Order details card -->
-  <div class="glass-light stable-panel p-6 mb-5 reveal">
-    <div class="flex items-start justify-between mb-5">
+  <div class="stp-card oc reveal">
+    <div class="oc-top">
       <div>
-        <div class="text-xs uppercase text-slate-400 font-semibold mb-1">Order ID</div>
-        <div class="font-mono font-bold text-navy text-xl">#ST<%= String(order.id).padStart(6, '0') %></div>
-        <div class="text-xs text-slate-400 mt-1"><%= new Date(order.created_at).toLocaleDateString('en-IN', { day:'numeric', month:'long', year:'numeric' }) %></div>
+        <div class="oc-k">Order ID</div>
+        <div class="oc-id">#ST<%= String(order.id).padStart(6, '0') %></div>
+        <div class="oc-date"><%= new Date(order.created_at).toLocaleDateString('en-IN', { day:'numeric', month:'long', year:'numeric' }) %></div>
       </div>
-      <span class="pill pill-success">✓ Confirmed</span>
+      <span class="chip-s chip-green"><span class="material-symbols-outlined">check</span>Confirmed</span>
     </div>
 
     <!-- Product row -->
-    <div class="flex gap-4 py-4 border-y border-slate-100">
-      <div class="w-16 h-16 bg-slate-100 rounded-card flex items-center justify-center flex-shrink-0 overflow-hidden">
+    <div class="prod-row">
+      <div class="prod-thumb">
         <% if (product.photo_url) { %>
-          <img src="<%= product.photo_url %>" class="w-16 h-16 object-cover" alt="<%= product.name %>" />
+          <img src="<%= product.photo_url %>" alt="<%= product.name %>" />
         <% } else { %>
-          <span class="text-3xl">🏷️</span>
+          <span class="material-symbols-outlined">sell</span>
         <% } %>
       </div>
-      <div class="flex-1">
-        <div class="font-semibold text-navy"><%= product.name %></div>
-        <div class="text-sm text-slate-500 capitalize mt-0.5"><%= product.category %></div>
-        <div class="text-xs text-slate-400 mt-1">Qty: <%= order.quantity %></div>
+      <div style="flex:1">
+        <div class="prod-name"><%= product.name %></div>
+        <div class="prod-cat"><%= product.category %></div>
+        <div class="prod-qty">Qty: <%= order.quantity %></div>
       </div>
-      <div class="text-right">
-        <div class="font-bold text-navy">₹<%= Math.round(order.amount / 100) %></div>
-        <div class="text-xs text-success mt-1">FREE shipping</div>
+      <div class="prod-price">
+        <div class="amt">₹<%= Math.round(order.amount / 100) %></div>
+        <div class="ship">FREE shipping</div>
       </div>
     </div>
 
     <!-- Tracking and delivery info grid -->
-    <div class="mt-5 grid sm:grid-cols-2 gap-4 text-sm">
-      <div class="bg-slate-50 rounded-card p-3">
-        <div class="text-xs uppercase text-slate-400 font-semibold mb-1">Tracking ID</div>
-        <div class="font-mono font-bold text-navy text-base"><%= trackingId %></div>
-        <div class="text-xs text-slate-400 mt-1">Updates via SMS & email</div>
+    <div class="info-grid">
+      <div class="info-box">
+        <div class="k">Tracking ID</div>
+        <div class="v mono"><%= trackingId %></div>
+        <div class="sub">Updates via SMS &amp; email</div>
       </div>
-      <div class="bg-slate-50 rounded-card p-3">
-        <div class="text-xs uppercase text-slate-400 font-semibold mb-1">Expected Delivery</div>
-        <div class="font-semibold text-navy"><%= deliveryDate %></div>
-        <div class="text-xs text-slate-400 mt-1">5–7 business days</div>
+      <div class="info-box">
+        <div class="k">Expected Delivery</div>
+        <div class="v"><%= deliveryDate %></div>
+        <div class="sub">5–7 business days</div>
       </div>
-      <div class="bg-slate-50 rounded-card p-3">
-        <div class="text-xs uppercase text-slate-400 font-semibold mb-1">Payment</div>
-        <div class="font-semibold text-navy capitalize"><%= paymentLabel %></div>
-        <div class="text-xs text-success mt-1">✓ Confirmed</div>
+      <div class="info-box">
+        <div class="k">Payment</div>
+        <div class="v" style="text-transform:capitalize"><%= paymentLabel %></div>
+        <div class="sub ok">Confirmed</div>
       </div>
-      <div class="bg-slate-50 rounded-card p-3">
-        <div class="text-xs uppercase text-slate-400 font-semibold mb-1">Ship To</div>
-        <div class="text-navy text-xs leading-relaxed"><%= shippingAddress %></div>
+      <div class="info-box">
+        <div class="k">Ship To</div>
+        <div class="v small"><%= shippingAddress %></div>
       </div>
     </div>
   </div>
 
   <!-- What happens next -->
-  <div class="glass-light stable-panel p-6 mb-5 reveal">
-    <h2 class="font-semibold text-navy mb-5">What happens next?</h2>
-    <div class="space-y-4">
-      <div class="flex gap-3 items-start">
-        <div class="w-7 h-7 rounded-full bg-brand text-white text-xs flex items-center justify-center font-bold flex-shrink-0 mt-0.5">1</div>
-        <div>
-          <div class="font-semibold text-sm text-navy">Order confirmation email</div>
-          <div class="text-xs text-slate-500 mt-0.5">Check your inbox for a detailed receipt. Also check spam.</div>
-        </div>
+  <div class="stp-card nx reveal">
+    <h2>What happens next?</h2>
+    <div class="nx-step">
+      <div class="nx-num">1</div>
+      <div>
+        <div class="nx-t">Order confirmation email</div>
+        <div class="nx-d">Check your inbox for a detailed receipt. Also check spam.</div>
       </div>
-      <div class="flex gap-3 items-start">
-        <div class="w-7 h-7 rounded-full bg-brand text-white text-xs flex items-center justify-center font-bold flex-shrink-0 mt-0.5">2</div>
-        <div>
-          <div class="font-semibold text-sm text-navy">Dispatched in 1–2 business days</div>
-          <div class="text-xs text-slate-500 mt-0.5">You'll get an SMS and email with your shipping tracking link.</div>
-        </div>
+    </div>
+    <div class="nx-step">
+      <div class="nx-num">2</div>
+      <div>
+        <div class="nx-t">Dispatched in 1–2 business days</div>
+        <div class="nx-d">You'll get an SMS and email with your shipping tracking link.</div>
       </div>
-      <div class="flex gap-3 items-start">
-        <div class="w-7 h-7 rounded-full bg-brand text-white text-xs flex items-center justify-center font-bold flex-shrink-0 mt-0.5">3</div>
-        <div>
-          <div class="font-semibold text-sm text-navy">Activate your SafeTag on arrival</div>
-          <div class="text-xs text-slate-500 mt-0.5">Scan the QR code and fill emergency info in under 2 minutes. Your tag is live immediately.</div>
-        </div>
+    </div>
+    <div class="nx-step">
+      <div class="nx-num">3</div>
+      <div>
+        <div class="nx-t">Activate your SafeTag on arrival</div>
+        <div class="nx-d">Scan the QR code and fill emergency info in under 2 minutes. Your tag is live immediately.</div>
       </div>
     </div>
   </div>
 
   <!-- WhatsApp share -->
-  <div class="glass-light stable-panel p-5 mb-6 flex items-center gap-4 reveal">
-    <div class="text-3xl">💬</div>
-    <div class="flex-1">
-      <div class="font-semibold text-navy text-sm">Tell someone who needs this</div>
-      <div class="text-xs text-slate-500 mt-0.5">SafeTag can protect a child, parent, or pet in your circle too.</div>
+  <div class="stp-card share reveal">
+    <div class="share-ic"><span class="material-symbols-outlined">chat</span></div>
+    <div class="share-body">
+      <div class="share-t">Tell someone who needs this</div>
+      <div class="share-d">SafeTag can protect a child, parent, or pet in your circle too.</div>
     </div>
-    <a href="https://wa.me/?text=<%= encodeURIComponent('I just ordered a SafeTag emergency ID tag for my family. One QR scan opens emergency contacts + blood group in seconds. From ₹149: https://safe-tag.in') %>" target="_blank" rel="noopener" class="btn-brand btn-lq text-sm flex-shrink-0">
-      Share →
+    <a href="https://wa.me/?text=<%= encodeURIComponent('I just ordered a SafeTag emergency ID tag for my family. One QR scan opens emergency contacts + blood group in seconds. From ₹149: https://safe-tag.in') %>" target="_blank" rel="noopener" class="btn" style="flex-shrink:0">
+      Share <span class="material-symbols-outlined" style="font-size:1.1em;color:#fff">north_east</span>
     </a>
   </div>
 
-  <div class="flex flex-wrap gap-3 justify-center reveal">
-    <a href="/dashboard" class="btn-brand btn-lq">View My Tags</a>
-    <a href="/store" class="btn-outline btn-lq">Continue Shopping</a>
+  <div class="final-row reveal">
+    <a href="/dashboard" class="btn">View My Tags</a>
+    <a href="/store" class="btn-ghost">Continue Shopping</a>
   </div>
 </div>
 

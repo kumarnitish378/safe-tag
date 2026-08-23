@@ -1,173 +1,201 @@
 <%- include('layout/_head', { hideNav: true }) %>
 
-<div class="page-shell page-shell-compact">
-  <!-- Brand header -->
-  <div class="bg-brand text-white rounded-cardLg p-4 flex items-center gap-3">
-    <img src="/static/images/faviconIcon.png" alt="SafeTag" class="h-10 w-10 object-contain bg-white rounded-full p-1.5" onerror="this.outerHTML='<span class=\'w-10 h-10 rounded-full bg-white text-brand font-bold flex items-center justify-center\'>ST</span>'" />
-    <div>
-      <div class="font-semibold leading-none">Register Your SafeTag</div>
-      <div class="text-xs opacity-90">Tag ID <span class="mono"><%= tag_id %></span></div>
-    </div>
-  </div>
+<style>
+  .rt-wrap{max-width:640px;margin:0 auto}
+  .rt-header{display:flex;align-items:center;gap:.85rem;background:var(--teal);color:#fff;border-radius:var(--r);padding:1rem 1.15rem}
+  .rt-header img{height:40px;width:40px;object-fit:contain;background:#fff;border-radius:999px;padding:6px}
+  .rt-header .ht{font-family:'Sora',sans-serif;font-weight:700;line-height:1.1}
+  .rt-header .hs{font-size:.78rem;opacity:.9;margin-top:.15rem}
+  .rt-card{background:#fff;border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow-sm);padding:1.4rem;margin-bottom:1.25rem}
+  .rt-card h2{font-size:1.05rem;font-weight:700;margin-bottom:1rem}
+  .rt-fields{display:flex;flex-direction:column;gap:1rem}
+  .rt-2{display:grid;grid-template-columns:1fr 1fr;gap:.85rem}
+  .rt-phone{display:flex}
+  .rt-phone .pfx{display:flex;align-items:center;padding:0 .75rem;background:#f1f5f9;border:1px solid var(--line);border-right:0;border-radius:8px 0 0 8px;color:var(--muted);font-size:.85rem;flex-shrink:0}
+  .rt-phone .input{border-top-left-radius:0;border-bottom-left-radius:0}
+  .rt-hint{font-size:.75rem;color:var(--muted);margin-top:.35rem}
+  .btn.full{width:100%;justify-content:center}
+  .btn-ghost.full{width:100%;justify-content:center}
+  .btn .material-symbols-outlined,.btn-ghost .material-symbols-outlined{color:currentColor}
+</style>
 
-  <!-- Stepper -->
-  <div class="flex items-center mt-6 mb-4 px-2">
-    <div class="stepper-step"><div class="stepper-bubble active">1</div><div class="stepper-label">Personal</div></div>
-    <div class="stepper-line"></div>
-    <div class="stepper-step"><div class="stepper-bubble active">2</div><div class="stepper-label">Contact</div></div>
-    <div class="stepper-line"></div>
-    <div class="stepper-step"><div class="stepper-bubble active">3</div><div class="stepper-label">Medical</div></div>
-  </div>
+<section class="section" style="padding:2.5rem 0">
+  <div class="wrap rt-wrap">
 
-  <% if (errors._form) { %><div class="flash flash-error">⚠️ <%= errors._form %></div><% } %>
-
-  <form method="POST" action="/register/<%= tag_id %>" class="space-y-5">
-      <%- include('layout/_csrf') %>
-      <% if (typeof chosenType !== 'undefined' && chosenType) { %><input type="hidden" name="chosen_type" value="<%= chosenType %>"><% } %>
-
-    <!-- Personal -->
-    <div class="glass-light form-panel p-5 space-y-4 reveal">
-      <h2 class="font-semibold">Personal Info</h2>
+    <!-- Brand header -->
+    <div class="rt-header">
+      <img src="/static/images/faviconIcon.png" alt="SafeTag" onerror="this.outerHTML='<span style=\'width:40px;height:40px;border-radius:999px;background:#fff;color:#0D9488;font-weight:700;display:flex;align-items:center;justify-content:center\'>ST</span>'" />
       <div>
-        <label class="label">Full Name *</label>
-        <input class="input" name="name" required maxlength="100" value="<%= (values.name||'') %>" />
-        <% if (errors.name) { %><div class="field-error"><%= errors.name %></div><% } %>
-      </div>
-      <div class="grid grid-cols-2 gap-3">
-        <div>
-          <label class="label">Age *</label>
-          <input class="input" type="number" min="1" max="120" name="age" required value="<%= (values.age||'') %>" />
-          <% if (errors.age) { %><div class="field-error"><%= errors.age %></div><% } %>
-        </div>
-        <div>
-          <label class="label">Blood Group</label>
-          <select class="input" name="blood_group">
-            <option value="">—</option>
-            <% ['A+','A-','B+','B-','O+','O-','AB+','AB-','Unknown'].forEach(function(b){ %>
-              <option <%= values.blood_group===b?'selected':'' %>><%= b %></option>
-            <% }); %>
-          </select>
-        </div>
-      </div>
-      <div>
-        <label class="label">Parent / Guardian Name</label>
-        <input class="input" name="parent_name" maxlength="100" value="<%= (values.parent_name||'') %>" />
-      </div>
-      <div>
-        <label class="label">Category</label>
-        <select class="input" name="category">
-          <option value="">—</option>
-          <% ['ADULT','CHILD','ELDERLY','TRAVELER','PET'].forEach(function(c){ %>
-            <option <%= values.category===c?'selected':'' %>><%= c %></option>
-          <% }); %>
-        </select>
+        <div class="ht">Register Your SafeTag</div>
+        <div class="hs">Tag ID <span class="mono"><%= tag_id %></span></div>
       </div>
     </div>
 
-    <!-- Contact -->
-    <div class="glass-light form-panel p-5 space-y-4 reveal">
-      <h2 class="font-semibold">Contact</h2>
-      <div>
-        <label class="label">Address</label>
-        <textarea class="input" name="address" rows="3" maxlength="500"><%= (values.address||'') %></textarea>
-      </div>
-      <div class="grid grid-cols-2 gap-3">
-        <div>
-          <label class="label">Latitude</label>
-          <input class="input mono text-sm" name="latitude" value="<%= (values.latitude||'') %>" placeholder="optional" />
-        </div>
-        <div>
-          <label class="label">Longitude</label>
-          <input class="input mono text-sm" name="longitude" value="<%= (values.longitude||'') %>" placeholder="optional" />
-        </div>
-      </div>
-      <button type="button" id="pinBtn" class="btn-outline btn-lq w-full justify-center">📍 Pin my current location</button>
-      <div>
-        <label class="label">Primary Mobile *</label>
-        <div class="flex">
-          <span class="px-3 py-2 bg-slate-100 rounded-l-card border border-slate-200 text-sm">+91</span>
-          <input class="input rounded-l-none" name="mobile_primary" required pattern="[6-9][0-9]{9}" value="<%= (values.mobile_primary||'') %>" />
-        </div>
-        <% if (errors.mobile_primary) { %><div class="field-error"><%= errors.mobile_primary %></div><% } %>
-      </div>
-      <div>
-        <label class="label">Emergency Contact 2</label>
-        <div class="flex">
-          <span class="px-3 py-2 bg-slate-100 rounded-l-card border border-slate-200 text-sm">+91</span>
-          <input class="input rounded-l-none" name="mobile_secondary" value="<%= (values.mobile_secondary||'') %>" />
-        </div>
-      </div>
-      <div>
-        <label class="label">Email</label>
-        <input class="input" name="email" type="email" value="<%= (values.email||'') %>" />
-        <p class="text-xs text-slate-500 mt-1">For future OTP verification.</p>
-      </div>
+    <!-- Stepper -->
+    <div class="flex items-center mt-6 mb-4 px-2" style="display:flex;align-items:center;margin:1.5rem 0 1rem;padding:0 .5rem">
+      <div class="stepper-step"><div class="stepper-bubble active">1</div><div class="stepper-label">Personal</div></div>
+      <div class="stepper-line"></div>
+      <div class="stepper-step"><div class="stepper-bubble active">2</div><div class="stepper-label">Contact</div></div>
+      <div class="stepper-line"></div>
+      <div class="stepper-step"><div class="stepper-bubble active">3</div><div class="stepper-label">Medical</div></div>
     </div>
 
-    <!-- Medical -->
-    <div class="glass-light form-panel p-5 space-y-4 reveal">
-      <h2 class="font-semibold">Medical Info</h2>
-      <div>
-        <label class="label">Medical Conditions</label>
-        <textarea class="input" name="medical_conditions" rows="2" placeholder="e.g. Epilepsy, Diabetes" maxlength="500"><%= (values.medical_conditions||'') %></textarea>
-      </div>
-      <div>
-        <label class="label">Allergies</label>
-        <textarea class="input" name="allergies" rows="2" placeholder="e.g. Penicillin, Peanuts" maxlength="500"><%= (values.allergies||'') %></textarea>
-      </div>
-      <div>
-        <label class="label">Medications</label>
-        <textarea class="input" name="medications" rows="2" maxlength="500"><%= (values.medications||'') %></textarea>
-      </div>
-      <div>
-        <label class="label">Note to Rescuer</label>
-        <textarea class="input" name="custom_message" rows="2" maxlength="300" placeholder="e.g. I am deaf, please call this number"><%= (values.custom_message||'') %></textarea>
-      </div>
-      <div>
-        <label class="label">Owner WhatsApp (for alerts)</label>
-        <div class="flex">
-          <span class="px-3 py-2 bg-slate-100 rounded-l-card border border-slate-200 text-sm">+91</span>
-          <input class="input rounded-l-none" name="owner_whatsapp" value="<%= (values.owner_whatsapp||'') %>" />
-        </div>
-        <p class="text-xs text-slate-500 mt-1">Receive a WhatsApp alert when your tag is scanned.</p>
-      </div>
-    </div>
+    <% if (errors._form) { %><div class="flash flash-error"><span class="material-symbols-outlined" style="color:currentColor">error</span> <%= errors._form %></div><% } %>
 
-    <!-- Emergency Page Theme -->
-    <div class="glass-light form-panel p-5 space-y-4 reveal">
-      <h2 class="font-semibold">Emergency Page Theme</h2>
-      <p class="text-xs text-slate-500">Choose how your emergency profile looks when someone scans your tag.</p>
-      <input type="hidden" name="theme" id="themeInput" value="<%= (values.theme||'classic') %>" />
-      <div class="grid grid-cols-5 gap-2" id="themePicker">
-        <%
-          var _themes = [
-            { id:'classic',   label:'Classic',   top:'#0D9488', alert:'#EF4444', id_bg:'#0A2342' },
-            { id:'guardian',  label:'Guardian',  top:'#1e293b', alert:'#7f1d1d', id_bg:'#0f172a' },
-            { id:'care',      label:'Care',      top:'#ea580c', alert:'#dc2626', id_bg:'#7c2d12' },
-            { id:'medical',   label:'Medical',   top:'#1d4ed8', alert:'#b91c1c', id_bg:'#1e3a8a' },
-            { id:'adventure', label:'Adventure', top:'#166534', alert:'#dc2626', id_bg:'#14532d' },
-            { id:'rose',      label:'Rose',      top:'#be123c', alert:'#9f1239', id_bg:'#881337' },
-          ];
-          _themes.forEach(function(t) {
-        %>
-        <div onclick="selectTheme('<%= t.id %>')" id="tp-<%= t.id %>"
-             class="theme-card cursor-pointer rounded-card overflow-hidden border-2 transition <%= (values.theme||'classic')===t.id ? 'border-brand ring-2 ring-brand/40' : 'border-slate-200' %>">
-          <!-- mini preview -->
-          <div style="background:<%= t.top %>;height:20px;"></div>
-          <div style="background:<%= t.alert %>;height:10px;"></div>
-          <div style="background:<%= t.id_bg %>;height:16px;"></div>
-          <div style="background:#fff;padding:4px 6px;">
-            <div class="text-center text-xs font-semibold text-slate-700 leading-tight"><%= t.label %></div>
+    <form method="POST" action="/register/<%= tag_id %>">
+        <%- include('layout/_csrf') %>
+        <% if (typeof chosenType !== 'undefined' && chosenType) { %><input type="hidden" name="chosen_type" value="<%= chosenType %>"><% } %>
+
+      <!-- Personal -->
+      <div class="rt-card reveal">
+        <h2>Personal Info</h2>
+        <div class="rt-fields">
+          <div>
+            <label class="label">Full Name *</label>
+            <input class="input" name="name" required maxlength="100" value="<%= (values.name||'') %>" />
+            <% if (errors.name) { %><div class="field-error"><%= errors.name %></div><% } %>
+          </div>
+          <div class="rt-2">
+            <div>
+              <label class="label">Age *</label>
+              <input class="input" type="number" min="1" max="120" name="age" required value="<%= (values.age||'') %>" />
+              <% if (errors.age) { %><div class="field-error"><%= errors.age %></div><% } %>
+            </div>
+            <div>
+              <label class="label">Blood Group</label>
+              <select class="input" name="blood_group">
+                <option value="">—</option>
+                <% ['A+','A-','B+','B-','O+','O-','AB+','AB-','Unknown'].forEach(function(b){ %>
+                  <option <%= values.blood_group===b?'selected':'' %>><%= b %></option>
+                <% }); %>
+              </select>
+            </div>
+          </div>
+          <div>
+            <label class="label">Parent / Guardian Name</label>
+            <input class="input" name="parent_name" maxlength="100" value="<%= (values.parent_name||'') %>" />
+          </div>
+          <div>
+            <label class="label">Category</label>
+            <select class="input" name="category">
+              <option value="">—</option>
+              <% ['ADULT','CHILD','ELDERLY','TRAVELER','PET'].forEach(function(c){ %>
+                <option <%= values.category===c?'selected':'' %>><%= c %></option>
+              <% }); %>
+            </select>
           </div>
         </div>
-        <% }); %>
       </div>
-    </div>
 
-    <button type="submit" class="btn-brand btn-lq w-full justify-center text-base py-3">Activate My SafeTag ✓</button>
-    <p class="text-xs text-center text-slate-500">Your data is only shown when someone scans your physical tag.</p>
-  </form>
-</div>
+      <!-- Contact -->
+      <div class="rt-card reveal">
+        <h2>Contact</h2>
+        <div class="rt-fields">
+          <div>
+            <label class="label">Address</label>
+            <textarea class="input" name="address" rows="3" maxlength="500"><%= (values.address||'') %></textarea>
+          </div>
+          <div class="rt-2">
+            <div>
+              <label class="label">Latitude</label>
+              <input class="input mono text-sm" name="latitude" value="<%= (values.latitude||'') %>" placeholder="optional" />
+            </div>
+            <div>
+              <label class="label">Longitude</label>
+              <input class="input mono text-sm" name="longitude" value="<%= (values.longitude||'') %>" placeholder="optional" />
+            </div>
+          </div>
+          <button type="button" id="pinBtn" class="btn-ghost full"><span class="material-symbols-outlined">my_location</span> Pin my current location</button>
+          <div>
+            <label class="label">Primary Mobile *</label>
+            <div class="rt-phone">
+              <span class="pfx">+91</span>
+              <input class="input" name="mobile_primary" required pattern="[6-9][0-9]{9}" value="<%= (values.mobile_primary||'') %>" />
+            </div>
+            <% if (errors.mobile_primary) { %><div class="field-error"><%= errors.mobile_primary %></div><% } %>
+          </div>
+          <div>
+            <label class="label">Emergency Contact 2</label>
+            <div class="rt-phone">
+              <span class="pfx">+91</span>
+              <input class="input" name="mobile_secondary" value="<%= (values.mobile_secondary||'') %>" />
+            </div>
+          </div>
+          <div>
+            <label class="label">Email</label>
+            <input class="input" name="email" type="email" value="<%= (values.email||'') %>" />
+            <p class="rt-hint">For future OTP verification.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Medical -->
+      <div class="rt-card reveal">
+        <h2>Medical Info</h2>
+        <div class="rt-fields">
+          <div>
+            <label class="label">Medical Conditions</label>
+            <textarea class="input" name="medical_conditions" rows="2" placeholder="e.g. Epilepsy, Diabetes" maxlength="500"><%= (values.medical_conditions||'') %></textarea>
+          </div>
+          <div>
+            <label class="label">Allergies</label>
+            <textarea class="input" name="allergies" rows="2" placeholder="e.g. Penicillin, Peanuts" maxlength="500"><%= (values.allergies||'') %></textarea>
+          </div>
+          <div>
+            <label class="label">Medications</label>
+            <textarea class="input" name="medications" rows="2" maxlength="500"><%= (values.medications||'') %></textarea>
+          </div>
+          <div>
+            <label class="label">Note to Rescuer</label>
+            <textarea class="input" name="custom_message" rows="2" maxlength="300" placeholder="e.g. I am deaf, please call this number"><%= (values.custom_message||'') %></textarea>
+          </div>
+          <div>
+            <label class="label">Owner WhatsApp (for alerts)</label>
+            <div class="rt-phone">
+              <span class="pfx">+91</span>
+              <input class="input" name="owner_whatsapp" value="<%= (values.owner_whatsapp||'') %>" />
+            </div>
+            <p class="rt-hint">Receive a WhatsApp alert when your tag is scanned.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Emergency Page Theme -->
+      <div class="rt-card reveal">
+        <h2>Emergency Page Theme</h2>
+        <p class="rt-hint" style="margin-bottom:.9rem">Choose how your emergency profile looks when someone scans your tag.</p>
+        <input type="hidden" name="theme" id="themeInput" value="<%= (values.theme||'classic') %>" />
+        <div class="grid grid-cols-5 gap-2" id="themePicker">
+          <%
+            var _themes = [
+              { id:'classic',   label:'Classic',   top:'#0D9488', alert:'#EF4444', id_bg:'#0A2342' },
+              { id:'guardian',  label:'Guardian',  top:'#1e293b', alert:'#7f1d1d', id_bg:'#0f172a' },
+              { id:'care',      label:'Care',      top:'#ea580c', alert:'#dc2626', id_bg:'#7c2d12' },
+              { id:'medical',   label:'Medical',   top:'#1d4ed8', alert:'#b91c1c', id_bg:'#1e3a8a' },
+              { id:'adventure', label:'Adventure', top:'#166534', alert:'#dc2626', id_bg:'#14532d' },
+              { id:'rose',      label:'Rose',      top:'#be123c', alert:'#9f1239', id_bg:'#881337' },
+            ];
+            _themes.forEach(function(t) {
+          %>
+          <div onclick="selectTheme('<%= t.id %>')" id="tp-<%= t.id %>"
+               class="theme-card cursor-pointer rounded-card overflow-hidden border-2 transition <%= (values.theme||'classic')===t.id ? 'border-brand ring-2 ring-brand/40' : 'border-slate-200' %>">
+            <!-- mini preview -->
+            <div style="background:<%= t.top %>;height:20px;"></div>
+            <div style="background:<%= t.alert %>;height:10px;"></div>
+            <div style="background:<%= t.id_bg %>;height:16px;"></div>
+            <div style="background:#fff;padding:4px 6px;">
+              <div class="text-center text-xs font-semibold text-slate-700 leading-tight"><%= t.label %></div>
+            </div>
+          </div>
+          <% }); %>
+        </div>
+      </div>
+
+      <button type="submit" class="btn full" style="padding:.9rem"><span class="material-symbols-outlined">check_circle</span> Activate My SafeTag</button>
+      <p class="rt-hint" style="text-align:center;margin-top:.75rem">Your data is only shown when someone scans your physical tag.</p>
+    </form>
+  </div>
+</section>
 
 <script>
   document.getElementById('pinBtn').addEventListener('click', function(){

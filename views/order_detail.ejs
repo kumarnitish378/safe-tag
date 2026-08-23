@@ -2,9 +2,9 @@
 
 <%
   var steps = [
-    { key: 'pending',    label: 'Order Placed', icon: '🧾' },
-    { key: 'dispatched', label: 'Dispatched',   icon: '🚚' },
-    { key: 'delivered',  label: 'Delivered',    icon: '📦' },
+    { key: 'pending',    label: 'Order Placed', icon: 'receipt_long' },
+    { key: 'dispatched', label: 'Dispatched',   icon: 'local_shipping' },
+    { key: 'delivered',  label: 'Delivered',    icon: 'inventory_2' },
   ];
   var cancelled = order.status === 'cancelled';
   var curIdx = ['pending','dispatched','delivered'].indexOf(order.status);
@@ -12,104 +12,162 @@
   var paidLabel = pm === 'cod' ? 'Cash on Delivery' : 'Paid online';
 %>
 
-<section class="page-shell">
-  <nav class="breadcrumb">
-    <a href="/dashboard" class="text-brand font-semibold hover:underline">Dashboard</a>
-    <span>›</span>
-    <a href="/orders" class="hover:underline">My Orders</a>
-    <span>›</span>
-    <span class="text-navy font-medium">Order #<%= order.id %></span>
+<style>
+  .stp{max-width:1120px;margin:0 auto;padding:1.6rem 20px 4rem}
+  .stp-card{background:var(--white);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow-sm)}
+  .stp-bc{display:flex;align-items:center;gap:.5rem;font-size:.85rem;color:var(--muted);margin-bottom:1.4rem;flex-wrap:wrap}
+  .stp-bc a{color:var(--teal-d);font-weight:600}
+  .stp-bc a:hover{text-decoration:underline}
+  .stp-bc .sep{color:#cbd5e1}
+  .stp-bc .cur{color:var(--navy);font-weight:600}
+  .stp-hero{margin-bottom:1.6rem}
+  .stp-kicker{font-size:.8rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--teal-d)}
+  .stp-title{font-size:clamp(1.6rem,3.2vw,2.1rem);font-weight:800;margin-top:.4rem}
+  .stp-sub{color:var(--muted);margin-top:.4rem}
+  /* timeline */
+  .tl{display:flex;align-items:flex-start;justify-content:space-between;padding:1.6rem 1rem .4rem}
+  .tl-step{flex:1;display:flex;flex-direction:column;align-items:center;text-align:center;position:relative}
+  .tl-line{position:absolute;top:23px;left:-50%;width:100%;height:3px;z-index:0}
+  .tl-dot{position:relative;z-index:1;width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+  .tl-dot .material-symbols-outlined{color:inherit;font-size:1.35rem}
+  .tl-label{font-size:.78rem;margin-top:.6rem;font-weight:700}
+  .grid3{display:grid;grid-template-columns:2fr 1fr;gap:1.25rem;align-items:start}
+  @media(max-width:900px){.grid3{grid-template-columns:1fr}}
+  .col-l{display:flex;flex-direction:column;gap:1.25rem}
+  .pcard{padding:1.5rem}
+  .pcard h2{font-size:1.1rem;font-weight:700;color:var(--navy);margin-bottom:.9rem}
+  .kv{font-size:.92rem;color:var(--muted);line-height:1.7}
+  .kv .strong{color:var(--navy);font-weight:600}
+  .track-row{display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+  .track-k{font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+  .track-v{font-family:'JetBrains Mono',monospace;color:var(--navy);font-weight:600;font-size:1.05rem;margin-top:.15rem}
+  .btn-track{display:inline-flex;align-items:center;gap:.4rem;font-weight:600;font-size:.86rem;padding:.6rem 1.1rem;border-radius:999px;border:1px solid #cdd7e2;color:var(--navy)}
+  .btn-track:hover{border-color:var(--teal);color:var(--teal-d)}
+  .btn-track .material-symbols-outlined{font-size:1.1em;color:inherit}
+  .flash-cancel{display:flex;align-items:center;gap:.55rem;background:#fee2e2;color:#991b1b;padding:.9rem 1.1rem;border-radius:12px;font-weight:600;font-size:.92rem}
+  .flash-cancel .material-symbols-outlined{color:inherit}
+  /* summary */
+  .sum{padding:1.4rem;position:sticky;top:1.5rem}
+  .sum h3{font-size:1.05rem;font-weight:700;color:var(--navy);margin-bottom:1rem}
+  .sum-prod{display:flex;gap:.9rem;padding-bottom:1rem;border-bottom:1px solid var(--line)}
+  .sum-thumb{width:60px;height:60px;border-radius:14px;background:var(--cream);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden}
+  .sum-thumb img{width:100%;height:100%;object-fit:cover}
+  .sum-thumb .material-symbols-outlined{color:var(--muted);font-size:1.7rem}
+  .sum-pname{font-family:'Sora',sans-serif;font-weight:700;color:var(--navy);font-size:.95rem;line-height:1.3}
+  .sum-qty{font-size:.8rem;color:var(--muted);margin-top:.3rem}
+  .sum-rows{padding-top:1rem;display:flex;flex-direction:column;gap:.7rem;font-size:.9rem}
+  .sum-line{display:flex;justify-content:space-between;align-items:center}
+  .sum-line .k{color:var(--muted)}
+  .sum-line .v{font-weight:600;color:var(--navy)}
+  .sum-line .v.mono{font-family:'JetBrains Mono',monospace;font-size:.78rem}
+  .chip-s{display:inline-flex;align-items:center;gap:.35rem;padding:.26rem .68rem;border-radius:999px;font-size:.74rem;font-weight:700;text-transform:capitalize}
+  .chip-green{background:#dcfce7;color:#166534}
+  .chip-amber{background:#fef3c7;color:#92400e}
+  .chip-red{background:#fee2e2;color:#991b1b}
+  .chip-teal{background:#ccfbf1;color:#115e59}
+  .btn-all{display:inline-flex;align-items:center;justify-content:center;gap:.4rem;width:100%;margin-top:1.3rem;padding:.7rem 1rem;border-radius:999px;border:1px solid #cdd7e2;color:var(--navy);font-weight:600;font-size:.88rem}
+  .btn-all:hover{border-color:var(--teal);color:var(--teal-d)}
+  .btn-all .material-symbols-outlined{font-size:1.1em;color:inherit}
+</style>
+
+<section class="stp">
+  <nav class="stp-bc">
+    <a href="/dashboard">Dashboard</a>
+    <span class="sep">›</span>
+    <a href="/orders">My Orders</a>
+    <span class="sep">›</span>
+    <span class="cur">Order #<%= order.id %></span>
   </nav>
 
-  <div class="page-hero reveal">
-    <div class="page-kicker">Order #<%= order.id %> · <%= order.created_at ? order.created_at.split('T')[0] : '' %></div>
-    <h1 class="page-title"><%= order.product ? order.product.name : 'SafeTag order' %></h1>
-    <p class="page-subtitle">Qty <%= order.quantity %> · ₹<%= order.amount_inr %> · <%= paidLabel %></p>
+  <div class="stp-hero reveal">
+    <div class="stp-kicker">Order #<%= order.id %> · <%= order.created_at ? order.created_at.split('T')[0] : '' %></div>
+    <h1 class="stp-title"><%= order.product ? order.product.name : 'SafeTag order' %></h1>
+    <p class="stp-sub">Qty <%= order.quantity %> · ₹<%= order.amount_inr %> · <%= paidLabel %></p>
   </div>
 
   <!-- Status timeline -->
-  <div class="glass-light data-panel p-6 mb-5 reveal">
+  <div class="stp-card reveal" style="margin-bottom:1.25rem">
     <% if (cancelled) { %>
-      <div class="flash flash-error">This order was cancelled.</div>
+      <div style="padding:1.4rem">
+        <div class="flash-cancel"><span class="material-symbols-outlined">cancel</span>This order was cancelled.</div>
+      </div>
     <% } else { %>
-      <div class="flex items-center justify-between">
+      <div class="tl">
         <% steps.forEach(function(s, i){
              var done = i <= curIdx;
              var active = i === curIdx;
         %>
-          <div class="flex-1 flex flex-col items-center text-center relative">
+          <div class="tl-step">
             <% if (i > 0) { %>
-              <div style="position:absolute; top:22px; left:-50%; width:100%; height:3px; background:<%= i <= curIdx ? '#0D9488' : '#e2e8f0' %>; z-index:0;"></div>
+              <div class="tl-line" style="background:<%= i <= curIdx ? 'var(--teal)' : 'var(--line)' %>;"></div>
             <% } %>
-            <div style="position:relative; z-index:1; width:46px; height:46px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1.2rem;
-                        background:<%= done ? '#0D9488' : '#e2e8f0' %>; color:<%= done ? '#fff' : '#94a3b8' %>;
-                        box-shadow:<%= active ? '0 0 0 4px rgba(13,148,136,.2)' : 'none' %>;">
-              <%= s.icon %>
+            <div class="tl-dot" style="background:<%= done ? 'var(--teal)' : '#eef2f7' %>; color:<%= done ? '#fff' : '#94a3b8' %>; box-shadow:<%= active ? '0 0 0 4px rgba(13,148,136,.2)' : 'none' %>;">
+              <span class="material-symbols-outlined"><%= s.icon %></span>
             </div>
-            <div class="text-xs mt-2 font-semibold <%= done ? 'text-navy' : 'text-slate-400' %>"><%= s.label %></div>
+            <div class="tl-label" style="color:<%= done ? 'var(--navy)' : '#94a3b8' %>;"><%= s.label %></div>
           </div>
         <% }); %>
       </div>
     <% } %>
   </div>
 
-  <div class="grid lg:grid-cols-3 gap-5 items-start">
+  <div class="grid3">
     <!-- Left: shipping + tracking -->
-    <div class="lg:col-span-2 space-y-5">
-      <div class="glass-light form-panel p-6 reveal">
-        <h2 class="font-semibold text-navy mb-3">Shipping details</h2>
-        <div class="text-sm text-slate-600 space-y-1">
-          <div class="font-semibold text-navy"><%= addr.recipient_name || '—' %><%= addr.recipient_phone ? ' · +91 ' + addr.recipient_phone : '' %></div>
+    <div class="col-l">
+      <div class="stp-card pcard reveal">
+        <h2>Shipping details</h2>
+        <div class="kv">
+          <div class="strong"><%= addr.recipient_name || '—' %><%= addr.recipient_phone ? ' · +91 ' + addr.recipient_phone : '' %></div>
           <div><%= addr.address_line1 || '' %><%= addr.address_line2 ? ', ' + addr.address_line2 : '' %></div>
           <div><%= [addr.city, addr.state, addr.pincode].filter(Boolean).join(', ') %></div>
         </div>
       </div>
 
-      <div class="glass-light form-panel p-6 reveal">
-        <h2 class="font-semibold text-navy mb-3">Tracking</h2>
+      <div class="stp-card pcard reveal">
+        <h2>Tracking</h2>
         <% if (order.tracking_id) { %>
-          <div class="flex items-center justify-between gap-3 flex-wrap">
+          <div class="track-row">
             <div>
-              <div class="text-xs text-slate-500 uppercase tracking-wide">Tracking ID</div>
-              <div class="mono text-navy font-semibold text-lg"><%= order.tracking_id %></div>
+              <div class="track-k">Tracking ID</div>
+              <div class="track-v"><%= order.tracking_id %></div>
             </div>
-            <a class="btn-outline btn-lq text-sm" target="_blank" rel="noopener"
+            <a class="btn-track" target="_blank" rel="noopener"
                href="https://www.google.com/search?q=<%= encodeURIComponent('track parcel ' + order.tracking_id) %>">
-              Track parcel →
+              Track parcel <span class="material-symbols-outlined">north_east</span>
             </a>
           </div>
         <% } else { %>
-          <p class="text-sm text-slate-500">No tracking yet. You'll see the tracking ID here once your order is dispatched.</p>
+          <p class="kv">No tracking yet. You'll see the tracking ID here once your order is dispatched.</p>
         <% } %>
       </div>
     </div>
 
     <!-- Right: summary -->
     <div>
-      <div class="glass-light stable-panel p-5 sticky top-20 reveal">
-        <h3 class="font-semibold text-navy mb-4">Summary</h3>
-        <div class="flex gap-3 pb-4 border-b border-slate-100">
-          <div class="w-16 h-16 bg-slate-100 rounded-card flex items-center justify-center flex-shrink-0 overflow-hidden">
+      <div class="stp-card sum reveal">
+        <h3>Summary</h3>
+        <div class="sum-prod">
+          <div class="sum-thumb">
             <% if (order.product && order.product.photo_url) { %>
-              <img src="<%= order.product.photo_url %>" class="w-16 h-16 object-cover" alt="<%= order.product.name %>" />
-            <% } else { %><span class="text-3xl">🏷️</span><% } %>
+              <img src="<%= order.product.photo_url %>" alt="<%= order.product.name %>" />
+            <% } else { %><span class="material-symbols-outlined">sell</span><% } %>
           </div>
-          <div class="flex-1 min-w-0">
-            <div class="font-semibold text-navy text-sm leading-snug"><%= order.product ? order.product.name : 'SafeTag' %></div>
-            <div class="text-xs text-slate-400 mt-1">Qty: <%= order.quantity %></div>
+          <div>
+            <div class="sum-pname"><%= order.product ? order.product.name : 'SafeTag' %></div>
+            <div class="sum-qty">Qty: <%= order.quantity %></div>
           </div>
         </div>
-        <div class="pt-4 space-y-2.5 text-sm">
-          <div class="flex justify-between"><span class="text-slate-500">Amount</span><span class="font-semibold">₹<%= order.amount_inr %></span></div>
-          <div class="flex justify-between"><span class="text-slate-500">Payment</span><span class="font-medium"><%= (addr.payment_method || '—').toUpperCase() %></span></div>
-          <div class="flex justify-between"><span class="text-slate-500">Status</span>
-            <span class="pill <%= order.status==='delivered'?'pill-success':(order.status==='dispatched'?'pill-brand':(order.status==='cancelled'?'pill-danger':'pill-warning')) %>"><%= order.status %></span>
+        <div class="sum-rows">
+          <div class="sum-line"><span class="k">Amount</span><span class="v">₹<%= order.amount_inr %></span></div>
+          <div class="sum-line"><span class="k">Payment</span><span class="v"><%= (addr.payment_method || '—').toUpperCase() %></span></div>
+          <div class="sum-line"><span class="k">Status</span>
+            <span class="chip-s <%= order.status==='delivered'?'chip-green':(order.status==='dispatched'?'chip-teal':(order.status==='cancelled'?'chip-red':'chip-amber')) %>"><%= order.status %></span>
           </div>
           <% if (order.razorpay_payment_id && pm !== 'cod') { %>
-            <div class="flex justify-between"><span class="text-slate-500">Payment ID</span><span class="mono text-xs"><%= order.razorpay_payment_id %></span></div>
+            <div class="sum-line"><span class="k">Payment ID</span><span class="v mono"><%= order.razorpay_payment_id %></span></div>
           <% } %>
         </div>
-        <a href="/orders" class="btn-outline btn-lq w-full justify-center mt-5 text-sm">← All orders</a>
+        <a href="/orders" class="btn-all"><span class="material-symbols-outlined">arrow_back</span> All orders</a>
       </div>
     </div>
   </div>

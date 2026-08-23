@@ -1,10 +1,14 @@
 <%- include('layout/_head') %>
 
-<section class="page-shell page-shell-compact text-center">
-    <div class="text-6xl mb-3 lq-float">🔍</div>
-    <h1 class="text-3xl font-bold mb-2 reveal">Tag not found</h1>
-    <p class="text-slate-600 mb-6 reveal">This SafeTag URL is invalid or the security key doesn't match. If you found a physical SafeTag, please double-check the printed URL.</p>
-    <a href="/" class="btn-brand btn-lq reveal">Back to safe-tag.in</a>
+<section class="section center">
+  <div class="wrap" style="max-width:640px;">
+    <span class="material-symbols-outlined" style="font-size:3.5rem;color:var(--teal);">search_off</span>
+    <h1 style="font-family:'Sora',sans-serif;font-size:clamp(2rem,5vw,3rem);font-weight:800;color:var(--navy);margin:1rem 0 .6rem;">Tag not found</h1>
+    <p class="lead">This SafeTag URL is invalid or the security key doesn't match. If you found a physical SafeTag, please double-check the printed URL.</p>
+    <div style="margin-top:2rem;">
+      <a href="/" class="btn">Back to safe-tag.in</a>
+    </div>
+  </div>
 </section>
 
 <%- include('layout/_foot') %>

@@ -1,32 +1,64 @@
 <%- include('layout/_head') %>
 
-<section class="page-shell">
-    <div class="page-hero reveal">
-      <div class="page-kicker">Order history</div>
-      <h1 class="page-title">My Orders</h1>
-      <p class="page-subtitle">Track SafeTag purchases, shipping progress and delivery status.</p>
+<style>
+  .stp{max-width:1120px;margin:0 auto;padding:2.5rem 20px 4rem}
+  .stp-hero{margin-bottom:2rem}
+  .stp-title{font-size:clamp(1.7rem,3.4vw,2.3rem);font-weight:800;margin-top:.6rem}
+  .stp-sub{color:var(--muted);margin-top:.5rem;font-size:1.02rem;max-width:46rem}
+  .stp-card{background:var(--white);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow-sm)}
+  .stp-empty{text-align:center;padding:3.6rem 1.5rem}
+  .stp-empty .material-symbols-outlined{font-size:3rem;color:var(--teal)}
+  .stp-empty p{color:var(--muted);margin-top:.6rem}
+  .stp-link{color:var(--teal-d);font-weight:700}
+  .stp-link:hover{text-decoration:underline}
+  /* table */
+  .stp-tablewrap{overflow-x:auto;border-radius:var(--r)}
+  .stp-table{width:100%;border-collapse:collapse;min-width:640px}
+  .stp-table thead th{text-align:left;font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding:.95rem 1rem;border-bottom:1px solid var(--line)}
+  .stp-table tbody td{padding:.95rem 1rem;border-bottom:1px solid var(--line);font-size:.92rem;color:var(--ink)}
+  .stp-table tbody tr:last-child td{border-bottom:none}
+  .stp-table tbody tr:hover td{background:var(--cream)}
+  .stp-table .num{font-weight:700}
+  .stp-table .dim{color:var(--muted);font-size:.85rem}
+  .stp-table a.plink{color:var(--teal-d);font-weight:700}
+  .stp-table a.plink:hover{text-decoration:underline}
+  .chip-s{display:inline-flex;align-items:center;gap:.35rem;padding:.26rem .68rem;border-radius:999px;font-size:.74rem;font-weight:700;text-transform:capitalize}
+  .chip-green{background:#dcfce7;color:#166534}
+  .chip-amber{background:#fef3c7;color:#92400e}
+  .chip-red{background:#fee2e2;color:#991b1b}
+  .chip-teal{background:#ccfbf1;color:#115e59}
+  .details-link{color:var(--teal-d);font-weight:700;font-size:.86rem;display:inline-flex;align-items:center;gap:.15rem;white-space:nowrap}
+  .details-link:hover{text-decoration:underline}
+  .details-link .material-symbols-outlined{font-size:1.1em}
+</style>
+
+<section class="stp">
+    <div class="stp-hero reveal">
+      <span class="eyebrow">Order history</span>
+      <h1 class="stp-title">My Orders</h1>
+      <p class="stp-sub">Track SafeTag purchases, shipping progress and delivery status.</p>
     </div>
 
     <% if (!orders.length) { %>
-      <div class="empty-state reveal">
-        <div class="text-5xl mb-2">📦</div>
-        <p>No orders yet. <a class="text-brand font-semibold" href="/store">Browse the store</a>.</p>
+      <div class="stp-card stp-empty reveal">
+        <span class="material-symbols-outlined">inventory_2</span>
+        <p>No orders yet. <a class="stp-link" href="/store">Browse the store</a>.</p>
       </div>
     <% } else { %>
-      <div class="glass-light data-panel table-wrap reveal">
-        <table class="table">
+      <div class="stp-card stp-tablewrap reveal">
+        <table class="stp-table">
           <thead><tr><th>#</th><th>Product</th><th>Qty</th><th>Amount</th><th>Status</th><th>Tracking</th><th>Date</th><th></th></tr></thead>
           <tbody>
             <% orders.forEach(function(o){ %>
               <tr>
-                <td class="mono"><a class="text-brand font-semibold" href="/orders/<%= o.id %>">#<%= o.id %></a></td>
-                <td><a class="hover:underline" href="/orders/<%= o.id %>"><%= o.product ? o.product.name : '—' %></a></td>
+                <td class="mono"><a class="plink" href="/orders/<%= o.id %>">#<%= o.id %></a></td>
+                <td><a class="plink" href="/orders/<%= o.id %>"><%= o.product ? o.product.name : '—' %></a></td>
                 <td><%= o.quantity %></td>
-                <td>₹<%= o.amount_inr %></td>
-                <td><span class="pill <%= o.status==='delivered'?'pill-success':(o.status==='dispatched'?'pill-brand':(o.status==='cancelled'?'pill-danger':'pill-warning')) %>"><%= o.status %></span></td>
-                <td><%= o.tracking_id || '—' %></td>
-                <td class="text-xs text-slate-500"><%= o.created_at ? o.created_at.split('T')[0] : '' %></td>
-                <td><a class="text-brand font-semibold text-sm" href="/orders/<%= o.id %>">Details →</a></td>
+                <td class="num">₹<%= o.amount_inr %></td>
+                <td><span class="chip-s <%= o.status==='delivered'?'chip-green':(o.status==='dispatched'?'chip-teal':(o.status==='cancelled'?'chip-red':'chip-amber')) %>"><%= o.status %></span></td>
+                <td class="dim"><%= o.tracking_id || '—' %></td>
+                <td class="dim"><%= o.created_at ? o.created_at.split('T')[0] : '' %></td>
+                <td><a class="details-link" href="/orders/<%= o.id %>">Details<span class="material-symbols-outlined">chevron_right</span></a></td>
               </tr>
             <% }); %>
           </tbody>
