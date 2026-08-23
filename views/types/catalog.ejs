@@ -1,37 +1,61 @@
 <%- include('../layout/_head', { hideNav: true, hideFooter: true }) %>
 
-<div class="id-shell" style="--acc:#7c3aed; --head-bg:linear-gradient(135deg,#a78bfa 0%,#7c3aed 55%,#4c1d95 130%);">
-  <div class="w-full" style="max-width:25rem;">
-    <div class="id-card reveal">
-      <div class="id-head">
-        <div class="id-avatar">🛍️</div>
-        <h1 class="id-name"><%= p.business %></h1>
-        <span class="id-chip acc">OPEN FOR ORDERS</span>
-      </div>
+<div class="scan-wrap" style="--acc:#7c3aed;">
+  <style>
+    .scan-wrap{min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:1.75rem 1.15rem;background:var(--cream);font-family:'Inter',system-ui,sans-serif}
+    .scan-card{width:100%;max-width:28rem;background:var(--white);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden}
+    .scan-head{text-align:center;padding:2.25rem 1.5rem 1.75rem;color:#fff;background:linear-gradient(135deg,#a78bfa 0%,#7c3aed 55%,#4c1d95 130%)}
+    .scan-avatar{width:84px;height:84px;margin:0 auto 1rem;border-radius:9999px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.18);box-shadow:0 0 0 6px rgba(255,255,255,.12)}
+    .scan-avatar .material-symbols-outlined{color:#fff;font-size:2.3rem}
+    .scan-name{font-family:'Sora',system-ui,sans-serif;font-weight:800;font-size:1.5rem;line-height:1.15;letter-spacing:-.02em;color:#fff}
+    .scan-chip{display:inline-block;margin-top:.7rem;padding:.3rem .85rem;border-radius:9999px;background:rgba(255,255,255,.2);font-size:.7rem;font-weight:700;letter-spacing:.1em;color:#fff}
+    .scan-body{padding:1.5rem}
+    .scan-about{font-size:.92rem;line-height:1.6;color:var(--muted);text-align:center;margin-bottom:1.25rem}
+    .scan-label{display:block;font-size:.7rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--acc);margin-bottom:.55rem}
+    .prod-list{display:flex;flex-direction:column;gap:.55rem;margin-bottom:1.35rem}
+    .prod-row{display:flex;align-items:center;gap:.7rem;padding:.7rem .85rem;border-radius:12px;background:rgba(124,58,237,.06);border:1px solid rgba(124,58,237,.14)}
+    .prod-row .material-symbols-outlined{color:var(--acc);font-size:1.25rem}
+    .prod-row .txt{font-size:.96rem;color:var(--ink)}
+    .scan-actions{display:flex;flex-direction:column;gap:.6rem}
+    .scan-btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;width:100%;min-height:48px;padding:.85rem 1.2rem;border-radius:9999px;font-weight:700;font-size:1rem;color:#fff;background:var(--acc);border:none;cursor:pointer;transition:filter .15s,transform .15s}
+    .scan-btn:hover{filter:brightness(1.08);transform:translateY(-1px)}
+    .scan-btn .material-symbols-outlined{color:#fff;font-size:1.3rem}
+    .scan-btn-outline{background:#fff;color:var(--ink);border:1.5px solid var(--line)}
+    .scan-btn-outline:hover{filter:none;border-color:var(--acc);color:var(--acc)}
+    .scan-btn-outline .material-symbols-outlined{color:var(--acc)}
+    .scan-foot{text-align:center;font-size:.72rem;color:var(--muted);letter-spacing:.02em;margin-top:1.35rem}
+  </style>
 
-      <div class="id-body">
-        <% if (p.about) { %><p class="id-note mb-4"><%= p.about %></p><% } %>
-
-        <% if (Array.isArray(p.products) && p.products.length) { %>
-          <div class="id-label" style="color:#7c3aed;margin-bottom:.5rem;">Our products</div>
-          <div class="space-y-2 mb-1">
-            <% p.products.forEach(function(item){ %>
-              <div style="display:flex;align-items:center;gap:.6rem;background:rgba(124,58,237,.06);border:1px solid rgba(124,58,237,.14);border-radius:12px;padding:.6rem .8rem;">
-                <span style="font-size:1.1rem;">🏷️</span>
-                <span class="id-value" style="margin:0;"><%= item %></span>
-              </div>
-            <% }); %>
-          </div>
-        <% } %>
-
-        <div class="id-actions">
-          <% if (p.whatsapp) { %><a href="https://wa.me/91<%= p.whatsapp %>?text=<%= encodeURIComponent('Hi, I saw your catalog on SafeTag') %>" class="btn-acc">💬 Order on WhatsApp</a><% } %>
-          <% if (p.phone) { %><a href="tel:<%= p.phone %>" class="btn-outline btn-pill">📞 Call</a><% } %>
-          <% if (p.website) { %><a href="<%= p.website %>" target="_blank" rel="noopener" class="btn-outline btn-pill">🌐 Visit Website</a><% } %>
-        </div>
-      </div>
+  <div class="scan-card reveal">
+    <div class="scan-head">
+      <div class="scan-avatar"><span class="material-symbols-outlined">storefront</span></div>
+      <h1 class="scan-name"><%= p.business %></h1>
+      <span class="scan-chip">OPEN FOR ORDERS</span>
     </div>
-    <p class="id-foot">Powered by SafeTag</p>
+
+    <div class="scan-body">
+      <% if (p.about) { %><p class="scan-about"><%= p.about %></p><% } %>
+
+      <% if (Array.isArray(p.products) && p.products.length) { %>
+        <div class="scan-label">Our products</div>
+        <div class="prod-list">
+          <% p.products.forEach(function(item){ %>
+            <div class="prod-row">
+              <span class="material-symbols-outlined">sell</span>
+              <span class="txt"><%= item %></span>
+            </div>
+          <% }); %>
+        </div>
+      <% } %>
+
+      <div class="scan-actions">
+        <% if (p.whatsapp) { %><a href="https://wa.me/91<%= p.whatsapp %>?text=<%= encodeURIComponent('Hi, I saw your catalog on SafeTag') %>" class="scan-btn"><span class="material-symbols-outlined">chat</span>Order on WhatsApp</a><% } %>
+        <% if (p.phone) { %><a href="tel:<%= p.phone %>" class="scan-btn scan-btn-outline"><span class="material-symbols-outlined">call</span>Call</a><% } %>
+        <% if (p.website) { %><a href="<%= p.website %>" target="_blank" rel="noopener" class="scan-btn scan-btn-outline"><span class="material-symbols-outlined">language</span>Visit Website</a><% } %>
+      </div>
+
+      <p class="scan-foot">Powered by SafeTag</p>
+    </div>
   </div>
 </div>
 

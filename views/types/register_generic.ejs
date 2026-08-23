@@ -1,19 +1,19 @@
 <%- include('../layout/_head', { hideNav: true }) %>
 
-<div class="id-shell" style="align-items:flex-start; padding-top:2rem; padding-bottom:3rem; --acc:<%= typeDef.accent || '#0D9488' %>; --head-bg:<%= typeDef.headBg || 'linear-gradient(150deg,#0D9488 0%,#0f766e 55%,#0A2342 130%)' %>;">
+<div class="id-shell ds-scan" style="align-items:flex-start; padding-top:2.5rem; padding-bottom:3rem; --acc:<%= typeDef.accent || '#0D9488' %>; --head-bg:<%= typeDef.headBg || 'linear-gradient(150deg,#0D9488 0%,#0f766e 55%,#0A2342 130%)' %>;">
   <div class="w-full" style="max-width:28rem;">
     <div class="id-card reveal">
       <div class="id-head">
-        <div class="id-avatar"><%= typeDef.icon || '🏷️' %></div>
+        <div class="id-avatar"><span class="material-symbols-outlined"><%= typeDef.icon || 'sell' %></span></div>
         <h1 class="id-name" style="font-size:1.3rem;"><%= typeof submitLabel !== 'undefined' && submitLabel.indexOf('Save') === 0 ? 'Edit your ' : 'Set up your ' %><%= typeDef.label %></h1>
         <p class="id-sub">Tag <span class="mono"><%= tag_id %></span></p>
       </div>
 
       <div class="id-body">
         <% if (typeDef.tagline) { %><p class="id-note mb-4"><%= typeDef.tagline %></p><% } %>
-        <% if (errors._form) { %><div class="flash flash-error mb-3">⚠️ <%= errors._form %></div><% } %>
+        <% if (errors._form) { %><div class="flash flash-error mb-3"><span class="material-symbols-outlined">error</span><span><%= errors._form %></span></div><% } %>
 
-        <form method="POST" action="<%= typeof formAction !== 'undefined' ? formAction : ('/register/' + tag_id) %>" class="space-y-4">
+        <form method="POST" action="<%= typeof formAction !== 'undefined' ? formAction : ('/register/' + tag_id) %>" class="ds-form">
           <%- include('../layout/_csrf') %>
           <% if (typeof chosenType !== 'undefined' && chosenType) { %><input type="hidden" name="chosen_type" value="<%= chosenType %>"><% } %>
 
@@ -22,7 +22,7 @@
                if (Array.isArray(v)) v = v.join('\n');
                v = (v == null) ? '' : v;
           %>
-            <div>
+            <div class="ds-field">
               <label class="label"><%= f.label %><%= f.required ? ' *' : '' %></label>
 
               <% if (f.type === 'textarea' || f.type === 'list') { %>
@@ -54,12 +54,45 @@
             </div>
           <% }); %>
 
-          <button type="submit" class="btn-acc text-base"><%= typeof submitLabel !== 'undefined' ? submitLabel : 'Activate Tag ✓' %></button>
-          <p class="text-xs text-center text-slate-500">You can edit these details anytime from your dashboard.</p>
+          <button type="submit" class="btn-acc"><span class="material-symbols-outlined">check</span><%= typeof submitLabel !== 'undefined' ? submitLabel : 'Activate Tag' %></button>
+          <p class="ds-help">You can edit these details anytime from your dashboard.</p>
         </form>
       </div>
     </div>
+    <p class="id-foot">Powered by SafeTag</p>
   </div>
 </div>
+
+<style>
+  /* Generic registration / edit form — design-system light scan page */
+  .ds-scan{
+    background:
+      radial-gradient(70% 50% at 50% 0%, rgba(13,148,136,.06), transparent 60%),
+      linear-gradient(180deg,#f4faf9 0%, var(--cream) 100%);
+  }
+  .ds-scan .id-card{ border-radius:24px; box-shadow:var(--shadow); border:1px solid var(--line); }
+  .ds-scan .id-avatar .material-symbols-outlined{
+    color:#fff; font-size:2.2rem; font-variation-settings:'FILL' 0,'wght' 500,'opsz' 24;
+  }
+  .ds-form{ display:flex; flex-direction:column; gap:1.1rem; }
+  /* clean form controls */
+  .ds-scan .label{ font-family:'Inter',sans-serif; font-weight:600; color:var(--navy); font-size:.9rem; margin-bottom:.45rem; }
+  .ds-scan .input{
+    width:100%; padding:.72rem .9rem; border:1.5px solid var(--line); border-radius:10px;
+    background:var(--white); color:var(--ink); font-family:'Inter',sans-serif; font-size:.98rem;
+    transition:border-color .15s, box-shadow .15s;
+  }
+  .ds-scan .input:focus{ outline:none; border-color:var(--teal); box-shadow:0 0 0 3px rgba(13,148,136,.15); }
+  .ds-scan .input::placeholder{ color:#94a3b8; }
+  .ds-scan select.input{ appearance:none; -webkit-appearance:none; background-image:none; }
+  .ds-scan .btn-acc{ margin-top:.35rem; }
+  .ds-scan .btn-acc .material-symbols-outlined{ color:#fff; font-size:1.2rem; }
+  .ds-scan .flash{ align-items:center; border-radius:12px; }
+  .ds-scan .flash .material-symbols-outlined{ color:#dc2626; font-size:1.15rem; }
+  .id-note{ color:var(--muted); }
+  .id-foot{ color:var(--muted); }
+  .ds-help{ font-size:.78rem; text-align:center; color:var(--muted); margin-top:.15rem; }
+  .field-error{ color:#dc2626; font-size:.82rem; margin-top:.3rem; }
+</style>
 
 <%- include('../layout/_foot') %>

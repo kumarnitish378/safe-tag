@@ -1,36 +1,35 @@
 <%- include('../layout/_head', { hideNav: true, hideFooter: true }) %>
 
-<div class="id-shell" style="--acc:#059669; --head-bg:linear-gradient(135deg,#34d399 0%,#059669 55%,#065f46 130%); align-items:flex-start; padding-top:2rem;">
-  <div class="w-full" style="max-width:25rem;">
+<div class="id-shell ds-scan" style="--acc:#059669; --head-bg:linear-gradient(135deg,#34d399 0%,#059669 55%,#065f46 130%); align-items:flex-start; padding-top:2.5rem;">
+  <div class="w-full" style="max-width:26rem;">
     <div class="id-card reveal">
       <div class="id-head">
-        <div class="id-avatar">📝</div>
+        <div class="id-avatar"><span class="material-symbols-outlined">assignment</span></div>
         <h1 class="id-name" style="font-size:1.35rem;"><%= p.title %></h1>
       </div>
 
       <div class="id-body">
         <% if (typeof submitted !== 'undefined' && submitted) { %>
-          <div class="text-center py-8">
-            <div class="text-5xl">🎉</div>
-            <h2 class="font-semibold mt-3">Thank you!</h2>
-            <p class="text-sm text-slate-500 mt-1">Your response has been recorded.</p>
+          <div class="ds-thanks">
+            <div class="ds-thanks-icon"><span class="material-symbols-outlined">check_circle</span></div>
+            <h2 class="ds-thanks-title">Thank you!</h2>
+            <p class="ds-thanks-sub">Your response has been recorded.</p>
           </div>
         <% } else { %>
           <% if (p.intro) { %><p class="id-note mb-4"><%= p.intro %></p><% } %>
-          <form method="POST" action="/t/<%= tag_id %>/submit" class="space-y-4">
+          <form method="POST" action="/t/<%= tag_id %>/submit" class="ds-form">
             <%- include('../layout/_csrf') %>
             <input type="text" name="website" class="hidden" tabindex="-1" autocomplete="off" aria-hidden="true" />
             <% (p.questions || []).forEach(function(q, i){ %>
-              <div>
-                <label class="label" style="display:flex;align-items:center;gap:.5rem;">
-                  <span style="flex:0 0 auto;width:22px;height:22px;border-radius:9999px;background:#059669;color:#fff;
-                               font-size:.7rem;font-weight:800;display:inline-flex;align-items:center;justify-content:center;"><%= i+1 %></span>
+              <div class="ds-field">
+                <label class="label ds-qlabel">
+                  <span class="ds-qnum"><%= i+1 %></span>
                   <span><%= q %></span>
                 </label>
                 <input class="input" name="q<%= i %>" maxlength="500" />
               </div>
             <% }); %>
-            <button type="submit" class="btn-acc">Submit response</button>
+            <button type="submit" class="btn-acc"><span class="material-symbols-outlined">send</span>Submit response</button>
           </form>
         <% } %>
       </div>
@@ -38,5 +37,42 @@
     <p class="id-foot">Powered by SafeTag</p>
   </div>
 </div>
+
+<style>
+  /* Survey / Feedback (Collect) — design-system light scan page */
+  .ds-scan{
+    background:
+      radial-gradient(70% 55% at 50% 0%, rgba(13,148,136,.06), transparent 60%),
+      linear-gradient(180deg,#f4faf9 0%, var(--cream) 100%);
+  }
+  .ds-scan .id-card{ border-radius:24px; box-shadow:var(--shadow); border:1px solid var(--line); }
+  .ds-scan .id-avatar .material-symbols-outlined{
+    color:#fff; font-size:2.2rem; font-variation-settings:'FILL' 0,'wght' 500,'opsz' 24;
+  }
+  .ds-form{ display:flex; flex-direction:column; gap:1.1rem; }
+  /* clean form controls */
+  .ds-scan .label{ font-family:'Inter',sans-serif; font-weight:600; color:var(--navy); font-size:.9rem; margin-bottom:.45rem; }
+  .ds-scan .input{
+    width:100%; padding:.72rem .9rem; border:1.5px solid var(--line); border-radius:10px;
+    background:var(--white); color:var(--ink); font-family:'Inter',sans-serif; font-size:.98rem;
+    transition:border-color .15s, box-shadow .15s;
+  }
+  .ds-scan .input:focus{ outline:none; border-color:var(--teal); box-shadow:0 0 0 3px rgba(13,148,136,.15); }
+  .ds-scan .input::placeholder{ color:#94a3b8; }
+  .ds-qlabel{ display:flex; align-items:center; gap:.55rem; }
+  .ds-qnum{
+    flex:0 0 auto; width:22px; height:22px; border-radius:9999px; background:var(--acc,#059669);
+    color:#fff; font-size:.7rem; font-weight:800; display:inline-flex; align-items:center; justify-content:center;
+  }
+  .ds-scan .btn-acc{ margin-top:.35rem; }
+  .ds-scan .btn-acc .material-symbols-outlined{ color:#fff; font-size:1.15rem; }
+  .id-note{ color:var(--muted); }
+  .id-foot{ color:var(--muted); }
+  /* thank-you success state */
+  .ds-thanks{ text-align:center; padding:1.4rem 0 1rem; }
+  .ds-thanks-icon .material-symbols-outlined{ color:var(--acc,#059669); font-size:3.2rem; font-variation-settings:'FILL' 1,'wght' 500,'opsz' 40; }
+  .ds-thanks-title{ font-family:'Sora',sans-serif; font-weight:700; color:var(--navy); margin-top:.55rem; font-size:1.25rem; letter-spacing:-.02em; }
+  .ds-thanks-sub{ font-size:.9rem; color:var(--muted); margin-top:.35rem; }
+</style>
 
 <%- include('../layout/_foot', { hideFooter: true }) %>
