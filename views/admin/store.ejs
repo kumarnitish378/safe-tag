@@ -1,42 +1,76 @@
 <%- include('../layout/_head') %>
 
-<section class="page-shell">
-    <a href="/admin" class="text-sm text-brand font-semibold">← Admin dashboard</a>
-    <h1 class="text-3xl font-bold mt-2 mb-6 reveal">Store listings</h1>
+<style>
+  .adm{padding:2.5rem 0}
+  .adm-back{display:inline-flex;align-items:center;gap:.25rem;color:var(--teal-d);font-weight:600;font-size:.9rem;margin-bottom:.6rem}
+  .adm-head{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin-bottom:1.6rem}
+  .adm-head h1{font-family:'Sora',sans-serif;font-size:clamp(1.7rem,3vw,2.2rem);font-weight:800;color:var(--navy)}
+  .btn-xs{padding:.4rem .7rem;font-size:.78rem;box-shadow:none;gap:.3rem}
+  .panel{background:var(--white);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow-sm);overflow:hidden}
+  .tscroll{overflow-x:auto}
+  table.atbl{width:100%;border-collapse:collapse;font-size:.9rem}
+  table.atbl thead th{text-align:left;padding:.8rem 1rem;font-size:.7rem;text-transform:uppercase;letter-spacing:.05em;font-weight:700;color:var(--muted);background:var(--cream);border-bottom:1px solid var(--line);white-space:nowrap}
+  table.atbl tbody td{padding:.8rem 1rem;border-bottom:1px solid var(--line);color:var(--ink);vertical-align:middle}
+  table.atbl tbody tr:last-child td{border-bottom:none}
+  table.atbl tbody tr:hover{background:#fafcff}
+  .capitalize{text-transform:capitalize}
+  .mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--muted);font-size:.85rem}
+  .empty{text-align:center;color:var(--muted);padding:2rem 1rem}
+  .rowact{display:flex;flex-wrap:wrap;gap:.4rem;align-items:center}
+  .rowact form{display:inline-flex;margin:0}
+  .pill{display:inline-flex;align-items:center;gap:.2rem;font-size:.72rem;font-weight:700;padding:.25rem .6rem;border-radius:999px;white-space:nowrap}
+  .pill .material-symbols-outlined{color:currentColor;font-size:1em}
+  .pill-green{background:#dcfce7;color:#15803d}
+  .pill-amber{background:#fef3c7;color:#b45309}
+  .pill-red{background:#fee2e2;color:#b91c1c}
+  .pill-feat{background:#fef3c7;color:#b45309;margin-left:.3rem}
+</style>
 
-    <div class="glass-light data-panel table-wrap reveal">
-      <table class="table">
-        <thead><tr><th>#</th><th>Name</th><th>Category</th><th>Price</th><th>Stock</th><th>Manufacturer</th><th>Status</th><th>Actions</th></tr></thead>
-        <tbody>
-          <% if (!listings.length) { %>
-            <tr><td colspan="8" class="text-center py-6 text-slate-500">No listings yet.</td></tr>
-          <% } else { listings.forEach(function(l){ %>
-            <tr>
-              <td class="mono">#<%= l.id %></td>
-              <td><%= l.name %></td>
-              <td class="capitalize"><%= l.category %></td>
-              <td>₹<%= l.price_inr %></td>
-              <td><%= l.quantity_available %></td>
-              <td><%= l.manufacturer_name %></td>
-              <td>
-                <% if (l.is_rejected) { %><span class="pill pill-danger">Rejected</span>
-                <% } else if (l.is_approved) { %><span class="pill pill-success">Live</span>
-                <% } else { %><span class="pill pill-warning">Pending</span><% } %>
-                <% if (l.is_featured) { %><span class="pill pill-warning ml-1">★ Featured</span><% } %>
-              </td>
-              <td class="flex flex-wrap gap-1">
-                <% if (!l.is_approved) { %><form method="POST" action="/admin/store/<%= l.id %>/approve">
-      <%- include('../layout/_csrf') %><button class="btn-brand btn-lq text-xs py-1 px-2">Approve</button></form><% } %>
-                <% if (!l.is_rejected) { %><form method="POST" action="/admin/store/<%= l.id %>/reject">
-      <%- include('../layout/_csrf') %><button class="btn-outline btn-lq text-xs py-1 px-2">Reject</button></form><% } %>
-                <form method="POST" action="/admin/store/<%= l.id %>/feature">
-      <%- include('../layout/_csrf') %><button class="btn-outline btn-lq text-xs py-1 px-2"><%= l.is_featured?'Unfeature':'Feature' %></button></form>
-              </td>
-            </tr>
-          <% }); } %>
-        </tbody>
-      </table>
+<section class="adm">
+  <div class="wrap">
+    <a href="/admin" class="adm-back"><span class="material-symbols-outlined" style="font-size:1.1em">arrow_back</span> Admin dashboard</a>
+    <div class="adm-head reveal">
+      <h1>Store listings</h1>
     </div>
+
+    <div class="panel reveal">
+      <div class="tscroll">
+        <table class="atbl">
+          <thead><tr><th>#</th><th>Name</th><th>Category</th><th>Price</th><th>Stock</th><th>Manufacturer</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody>
+            <% if (!listings.length) { %>
+              <tr><td colspan="8" class="empty">No listings yet.</td></tr>
+            <% } else { listings.forEach(function(l){ %>
+              <tr>
+                <td class="mono">#<%= l.id %></td>
+                <td><%= l.name %></td>
+                <td class="capitalize"><%= l.category %></td>
+                <td>₹<%= l.price_inr %></td>
+                <td><%= l.quantity_available %></td>
+                <td><%= l.manufacturer_name %></td>
+                <td>
+                  <% if (l.is_rejected) { %><span class="pill pill-red">Rejected</span>
+                  <% } else if (l.is_approved) { %><span class="pill pill-green">Live</span>
+                  <% } else { %><span class="pill pill-amber">Pending</span><% } %>
+                  <% if (l.is_featured) { %><span class="pill pill-feat"><span class="material-symbols-outlined">star</span> Featured</span><% } %>
+                </td>
+                <td>
+                  <div class="rowact">
+                  <% if (!l.is_approved) { %><form method="POST" action="/admin/store/<%= l.id %>/approve">
+        <%- include('../layout/_csrf') %><button class="btn btn-xs">Approve</button></form><% } %>
+                  <% if (!l.is_rejected) { %><form method="POST" action="/admin/store/<%= l.id %>/reject">
+        <%- include('../layout/_csrf') %><button class="btn-ghost btn-xs">Reject</button></form><% } %>
+                  <form method="POST" action="/admin/store/<%= l.id %>/feature">
+        <%- include('../layout/_csrf') %><button class="btn-ghost btn-xs"><%= l.is_featured?'Unfeature':'Feature' %></button></form>
+                  </div>
+                </td>
+              </tr>
+            <% }); } %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
 </section>
 
 <%- include('../layout/_foot') %>

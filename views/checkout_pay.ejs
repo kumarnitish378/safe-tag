@@ -1,53 +1,73 @@
 <%- include('layout/_head', { noIndex: true }) %>
 
-<section class="page-shell page-shell-compact">
-  <a href="/checkout/<%= product.id %>?qty=<%= quantity %>" class="text-sm text-brand font-semibold">← Back to delivery</a>
-  <h1 class="text-3xl font-bold mt-2 mb-6">Complete payment</h1>
+<style>
+  .cp-wrap{max-width:560px;margin:0 auto}
+  .cp-back{display:inline-flex;align-items:center;gap:.3rem;font-size:.9rem;color:var(--teal-d);font-weight:600}
+  .cp-back:hover{text-decoration:underline}
+  .cp-title{font-size:clamp(1.6rem,3vw,2.1rem);font-weight:800;margin:.6rem 0 1.5rem}
+  .cp-card{background:#fff;border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow-sm);padding:1.5rem;margin-bottom:1.25rem}
+  .cp-row{display:flex;justify-content:space-between;gap:1rem;font-size:.9rem;margin-bottom:.85rem}
+  .cp-row .k{color:var(--muted)}
+  .cp-row .v{font-weight:600;color:var(--navy);text-align:right}
+  .cp-hr{border:none;border-top:1px solid var(--line);margin:.25rem 0 1rem}
+  .cp-total{display:flex;justify-content:space-between;align-items:center}
+  .cp-total .k{font-weight:700;color:var(--navy)}
+  .cp-total .amt{font-size:1.6rem;font-weight:800;color:var(--teal-d);font-family:'Sora',sans-serif}
+  .cp-pay{width:100%;justify-content:center;font-size:1.05rem;padding:1.05rem}
+  .cp-secure{font-size:.75rem;color:#94a3b8;text-align:center;margin-top:.85rem}
+  .btn .material-symbols-outlined{color:currentColor}
+</style>
 
-  <div id="payError" class="flash flash-error mb-4 hidden"></div>
+<section class="section">
+  <div class="wrap cp-wrap">
+    <a href="/checkout/<%= product.id %>?qty=<%= quantity %>" class="cp-back">← Back to delivery</a>
+    <h1 class="cp-title">Complete payment</h1>
 
-  <!-- Order summary -->
-  <div class="glass-light stable-panel p-6 mb-5 space-y-3 reveal">
-    <div class="flex justify-between text-sm">
-      <span class="text-slate-500">Product</span>
-      <span class="font-semibold"><%= product.name %></span>
+    <div id="payError" class="flash flash-error hidden" style="margin-bottom:1rem"></div>
+
+    <!-- Order summary -->
+    <div class="cp-card reveal">
+      <div class="cp-row">
+        <span class="k">Product</span>
+        <span class="v"><%= product.name %></span>
+      </div>
+      <div class="cp-row">
+        <span class="k">Quantity</span>
+        <span class="v"><%= quantity %></span>
+      </div>
+      <div class="cp-row">
+        <span class="k">Deliver to</span>
+        <span class="v"><%= addr.recipient_name %> · <%= addr.city %> <%= addr.pincode %></span>
+      </div>
+      <hr class="cp-hr" />
+      <div class="cp-total">
+        <span class="k">Total</span>
+        <span class="amt">₹<%= (amount / 100).toLocaleString('en-IN', { minimumFractionDigits: 2 }) %></span>
+      </div>
     </div>
-    <div class="flex justify-between text-sm">
-      <span class="text-slate-500">Quantity</span>
-      <span class="font-semibold"><%= quantity %></span>
-    </div>
-    <div class="flex justify-between text-sm">
-      <span class="text-slate-500">Deliver to</span>
-      <span class="font-semibold text-right"><%= addr.recipient_name %> · <%= addr.city %> <%= addr.pincode %></span>
-    </div>
-    <hr class="border-slate-200 dark:border-slate-700" />
-    <div class="flex justify-between">
-      <span class="font-bold">Total</span>
-      <span class="text-2xl font-bold text-brand">₹<%= (amount / 100).toLocaleString('en-IN', { minimumFractionDigits: 2 }) %></span>
-    </div>
+
+    <!-- Hidden form: POSTs the payment result + address for server-side verification -->
+    <form id="verifyForm" method="POST" action="/checkout/<%= product.id %>/verify">
+      <%- include('layout/_csrf') %>
+      <input type="hidden" name="razorpay_order_id" id="rzpOrderId" />
+      <input type="hidden" name="razorpay_payment_id" id="rzpPaymentId" />
+      <input type="hidden" name="razorpay_signature" id="rzpSignature" />
+      <input type="hidden" name="quantity" value="<%= quantity %>" />
+      <input type="hidden" name="payment_method" value="<%= addr.payment_method %>" />
+      <input type="hidden" name="recipient_name" value="<%= addr.recipient_name %>" />
+      <input type="hidden" name="recipient_phone" value="<%= addr.recipient_phone %>" />
+      <input type="hidden" name="address_line1" value="<%= addr.address_line1 %>" />
+      <input type="hidden" name="address_line2" value="<%= addr.address_line2 %>" />
+      <input type="hidden" name="city" value="<%= addr.city %>" />
+      <input type="hidden" name="state" value="<%= addr.state %>" />
+      <input type="hidden" name="pincode" value="<%= addr.pincode %>" />
+    </form>
+
+    <button id="payBtn" class="btn cp-pay">
+      <span class="material-symbols-outlined">lock</span> Pay ₹<%= (amount / 100).toLocaleString('en-IN', { minimumFractionDigits: 2 }) %> →
+    </button>
+    <p class="cp-secure">Secured by Razorpay · UPI, cards, net banking accepted</p>
   </div>
-
-  <!-- Hidden form: POSTs the payment result + address for server-side verification -->
-  <form id="verifyForm" method="POST" action="/checkout/<%= product.id %>/verify">
-    <%- include('layout/_csrf') %>
-    <input type="hidden" name="razorpay_order_id" id="rzpOrderId" />
-    <input type="hidden" name="razorpay_payment_id" id="rzpPaymentId" />
-    <input type="hidden" name="razorpay_signature" id="rzpSignature" />
-    <input type="hidden" name="quantity" value="<%= quantity %>" />
-    <input type="hidden" name="payment_method" value="<%= addr.payment_method %>" />
-    <input type="hidden" name="recipient_name" value="<%= addr.recipient_name %>" />
-    <input type="hidden" name="recipient_phone" value="<%= addr.recipient_phone %>" />
-    <input type="hidden" name="address_line1" value="<%= addr.address_line1 %>" />
-    <input type="hidden" name="address_line2" value="<%= addr.address_line2 %>" />
-    <input type="hidden" name="city" value="<%= addr.city %>" />
-    <input type="hidden" name="state" value="<%= addr.state %>" />
-    <input type="hidden" name="pincode" value="<%= addr.pincode %>" />
-  </form>
-
-  <button id="payBtn" class="btn-warn btn-lq w-full justify-center text-lg py-4 font-bold rounded-card">
-    🔒 Pay ₹<%= (amount / 100).toLocaleString('en-IN', { minimumFractionDigits: 2 }) %> →
-  </button>
-  <p class="text-xs text-slate-500 text-center mt-3">Secured by Razorpay · UPI, cards, net banking accepted</p>
 </section>
 
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
@@ -55,11 +75,11 @@
 (function () {
   var btn    = document.getElementById('payBtn');
   var errBox = document.getElementById('payError');
-  var payLabel = <%- JSON.stringify('🔒 Pay ₹' + (amount / 100).toLocaleString('en-IN', { minimumFractionDigits: 2 }) + ' →') %>;
+  var payLabel = <%- JSON.stringify('Pay ₹' + (amount / 100).toLocaleString('en-IN', { minimumFractionDigits: 2 }) + ' →') %>;
   var opened = false;
 
   function showError(msg) {
-    errBox.textContent = '⚠️ ' + msg;
+    errBox.textContent = msg;
     errBox.classList.remove('hidden');
   }
 

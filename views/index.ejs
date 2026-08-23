@@ -1,492 +1,337 @@
 <%- include('layout/_head') %>
 
-<!-- ============================================================
-  HERO — Liquid animated background + glass stats
-  ============================================================ -->
-<section class="relative overflow-hidden lq-mesh" style="background:linear-gradient(135deg,#0A2342 0%,#0B1E3D 55%,#091224 100%);min-height:92vh;display:flex;align-items:center;">
+<a id="top"></a>
 
-  <!-- Animated blobs -->
-  <div class="lq-blob" style="width:520px;height:520px;background:#0D9488;top:-120px;left:-100px;opacity:.22;"></div>
-  <div class="lq-blob lq-blob-b" style="width:380px;height:380px;background:#5eead4;top:40%;right:-80px;opacity:.14;"></div>
-  <div class="lq-blob lq-blob-c" style="width:280px;height:280px;background:#0D9488;bottom:-60px;left:35%;opacity:.18;"></div>
-
-  <!-- Cursor glow -->
-  <div class="cursor-glow"></div>
-
-  <div class="relative z-10 max-w-5xl mx-auto px-4 py-16 w-full">
-    <div class="grid md:grid-cols-2 gap-10 lg:gap-16 items-center">
-
-      <!-- LEFT: Story + CTAs -->
-      <div>
-        <span class="reveal inline-flex items-center gap-1.5 text-sm font-semibold badge-pulse rounded-full mb-5 px-4 py-1.5"
-              style="background:rgba(239,68,68,0.18);color:#fca5a5;border:1px solid rgba(239,68,68,0.3);"
-              data-i18n="hero.badge">
-          ⚠️ 12,000+ children go missing in India every month
-        </span>
-
-        <h1 class="reveal d1 text-xl font-bold mb-2 tracking-wide" style="color:#5eead4;">India's QR + NFC Emergency ID Tag</h1>
-
-        <blockquote class="reveal d2 text-3xl md:text-4xl lg:text-5xl font-extrabold leading-tight mb-4" style="color:#fff;">
-          "14 hours.<br/>No ID. No way<br/>to reach her family."
-        </blockquote>
-
-        <p class="reveal d3 text-lg leading-relaxed mb-3" style="color:#cbd5e1;">
-          A 6-year-old went missing at Kumbh Mela. No phone, no voice, fourteen hours of terror before her family found her. One small tag would have ended it in 7 minutes.
-        </p>
-        <p class="reveal d3 font-semibold text-xl mb-5" style="color:#5eead4;" data-i18n="hero.tagline">
-          SafeTag exists so this never happens to your family.
-        </p>
-
-        <p class="reveal d4 text-base leading-relaxed mb-3" style="color:#cbd5e1;">
-          Every SafeTag has <strong style="color:#fff;">two ways to save a life</strong>: a QR code any camera can scan, and a built-in NFC chip that works even if the QR is scratched.
-        </p>
-
-        <div class="reveal d4 flex items-center gap-3 mb-7 flex-wrap">
-          <span class="glass px-3 py-1.5 text-sm font-semibold" style="color:#5eead4;">📷 QR Scan</span>
-          <span style="color:#475569;">+</span>
-          <span class="glass px-3 py-1.5 text-sm font-semibold" style="color:#5eead4;">📡 NFC Tap</span>
-          <span style="color:#475569;">=</span>
-          <span class="glass px-3 py-1.5 text-sm font-bold" style="color:#fff;border-color:rgba(13,148,136,0.4);">Dual Protection</span>
+<!-- HERO -->
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div class="hero-head rv in">
+      <span class="eyebrow"><span class="material-symbols-outlined">verified</span>India's QR + NFC Emergency ID</span>
+      <h1 style="margin-top:1rem">When you can't speak,<br><span class="hl">your SafeTag will.</span></h1>
+    </div>
+    <div class="hero-media rv in">
+      <div class="hero-slider" id="heroSlider" aria-roledescription="carousel" aria-label="SafeTag in real life">
+        <div class="hero-track">
+          <img class="hero-slide" src="/static/images/hero-crowd-scan.jpg" alt="SafeTag in real life — a child wears a teal SafeTag QR wristband in a festival crowd" width="720" height="540" fetchpriority="high" />
+          <img class="hero-slide" src="/static/images/hero-phone-scan.jpg" alt="SafeTag in real life — a bystander scans a SafeTag QR tag to see an emergency profile" width="720" height="540" loading="lazy" />
+          <img class="hero-slide" src="/static/images/hero-relief.jpg" alt="SafeTag in real life — a family reached in an emergency" width="720" height="540" loading="lazy" />
+          <img class="hero-slide" src="/static/images/usecase-elderly.jpg" alt="SafeTag in real life — an elderly person wearing a SafeTag wristband" width="720" height="540" loading="lazy" />
         </div>
-
-        <div class="reveal d5 flex flex-wrap gap-3">
-          <a href="/store" class="btn-lq btn-warn text-base px-7 py-3" data-i18n="hero.cta1">🛒 Protect My Family — from ₹149</a>
-          <a href="/demo" class="btn-lq glass px-6 py-3 text-base font-semibold" style="color:#fff;" data-i18n="hero.cta2">See Live Demo</a>
-        </div>
-
-        <!-- Stats row -->
-        <div class="reveal d5 mt-8 grid grid-cols-3 gap-4 pt-6" style="border-top:1px solid rgba(255,255,255,0.1);">
-          <div class="glass p-4 text-center rounded-xl">
-            <div class="font-sora font-bold text-3xl stat-num" style="color:#fff;" data-count="12400" data-suffix="+">0</div>
-            <div class="text-xs mt-1" style="color:#94a3b8;">Tags Activated</div>
-          </div>
-          <div class="glass p-4 text-center rounded-xl">
-            <div class="font-sora font-bold text-3xl stat-num" style="color:#5eead4;" data-count="182">0</div>
-            <div class="text-xs mt-1" style="color:#94a3b8;">Happy Reunions</div>
-          </div>
-          <div class="glass p-4 text-center rounded-xl">
-            <div class="font-sora font-bold text-3xl stat-num" style="color:#fff;">< 3s</div>
-            <div class="text-xs mt-1" style="color:#94a3b8;">Avg Open Time</div>
-          </div>
-        </div>
+        <button class="hero-nav prev" type="button" aria-label="Previous image">&#8249;</button>
+        <button class="hero-nav next" type="button" aria-label="Next image">&#8250;</button>
+        <div class="hero-dots" role="tablist" aria-label="Choose image"></div>
       </div>
-
-      <!-- RIGHT: Emergency profile mockup -->
-      <div class="hidden md:flex flex-col items-end justify-center gap-5">
-        <!-- Apple-liquid glass card -->
-        <div class="lq-float-slow w-full max-w-sm" style="filter:drop-shadow(0 32px 64px rgba(0,0,0,0.45));margin-top:-10rem;">
-          <div style="
-            background: rgba(255,255,255,0.11);
-            backdrop-filter: blur(40px) saturate(1.8);
-            -webkit-backdrop-filter: blur(40px) saturate(1.8);
-            border: 1px solid rgba(255,255,255,0.18);
-            border-radius: 28px;
-            padding: 24px 22px 20px;
-            display: flex; flex-direction: column; gap: 16px;
-          ">
-
-            <!-- Top label — subtle, not aggressive -->
-            <div style="display:flex;align-items:center;justify-content:space-between;">
-              <span style="font-size:.7rem;font-weight:700;letter-spacing:.1em;color:rgba(255,255,255,0.45);text-transform:uppercase;">Emergency Profile</span>
-              <span style="display:flex;align-items:center;gap:5px;background:rgba(239,68,68,0.18);border:1px solid rgba(239,68,68,0.3);border-radius:99px;padding:3px 10px;">
-                <span style="width:6px;height:6px;border-radius:50%;background:#ef4444;display:inline-block;animation:badge-pulse 2s infinite;"></span>
-                <span style="font-size:.68rem;font-weight:700;color:#fca5a5;letter-spacing:.04em;">LIVE</span>
-              </span>
-            </div>
-
-            <!-- Identity -->
-            <div style="display:flex;align-items:center;gap:14px;">
-              <div class="pulse-ring-wrap" style="width:58px;height:58px;flex-shrink:0;">
-                <div class="lq-pulse"></div>
-                <div class="lq-pulse p2"></div>
-                <div style="width:58px;height:58px;border-radius:50%;background:rgba(13,148,136,0.2);border:2px solid rgba(13,148,136,0.5);display:flex;align-items:center;justify-content:center;font-size:1.75rem;position:relative;z-index:1;backdrop-filter:blur(8px);">👧</div>
-              </div>
-              <div style="flex:1;">
-                <div style="font-size:1.2rem;font-weight:700;color:#fff;line-height:1.25;letter-spacing:-.01em;">Aarav Sharma</div>
-                <div style="font-size:.78rem;color:rgba(255,255,255,0.5);margin-top:2px;">👨‍👩‍👧 Guardian: Priya Sharma</div>
-                <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;">
-                  <span style="background:rgba(239,68,68,0.2);border:1px solid rgba(239,68,68,0.4);color:#fca5a5;border-radius:99px;padding:3px 10px;font-size:.75rem;font-weight:700;font-family:monospace;letter-spacing:.03em;">O+</span>
-                  <span style="background:rgba(13,148,136,0.15);border:1px solid rgba(13,148,136,0.3);color:#5eead4;border-radius:99px;padding:3px 10px;font-size:.73rem;font-weight:600;">Age 8</span>
-                  <span style="background:rgba(13,148,136,0.15);border:1px solid rgba(13,148,136,0.3);color:#5eead4;border-radius:99px;padding:3px 10px;font-size:.73rem;font-weight:600;">Child</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- Divider -->
-            <div style="height:1px;background:rgba(255,255,255,0.08);border-radius:1px;"></div>
-
-            <!-- Allergy pill — soft, not a box -->
-            <div style="display:flex;align-items:center;gap:8px;background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.25);border-radius:12px;padding:9px 12px;">
-              <span style="font-size:1rem;flex-shrink:0;">⚠️</span>
-              <div>
-                <div style="font-size:.67rem;font-weight:700;color:rgba(251,191,36,0.7);text-transform:uppercase;letter-spacing:.07em;margin-bottom:1px;">Allergies</div>
-                <div style="font-size:.82rem;font-weight:600;color:#fef3c7;">Peanuts · Penicillin</div>
-              </div>
-            </div>
-
-            <!-- Action buttons — glass style -->
-            <div style="display:flex;flex-direction:column;gap:8px;">
-              <div style="
-                background: rgba(22,163,74,0.25);
-                border: 1px solid rgba(22,163,74,0.4);
-                border-radius: 14px; padding: 11px;
-                text-align:center; font-weight:700; font-size:.88rem;
-                color:#86efac; letter-spacing:.01em;
-                backdrop-filter:blur(8px);
-              ">📞 Call Emergency Contact</div>
-              <div style="
-                background: rgba(37,211,102,0.18);
-                border: 1px solid rgba(37,211,102,0.3);
-                border-radius: 14px; padding: 10px;
-                text-align:center; font-weight:600; font-size:.82rem;
-                color:#86efac; letter-spacing:.01em;
-                backdrop-filter:blur(8px);
-              ">💬 Send Location via WhatsApp</div>
-            </div>
-
-          </div>
-        </div>
-        <div class="text-center">
-          <div class="text-sm mb-2" style="color:#94a3b8;">↑ What a rescuer sees after scanning</div>
-          <div class="flex justify-center gap-2 flex-wrap">
-            <span class="glass text-xs px-3 py-1 font-semibold rounded-full" style="color:#5eead4;">📷 Any phone camera</span>
-            <span class="glass text-xs px-3 py-1 font-semibold rounded-full" style="color:#5eead4;">📡 NFC tap also works</span>
-          </div>
-        </div>
+    </div>
+    <div class="hero-body rv in">
+      <p class="lead">In an emergency, a stranger has seconds to help — but no way to know your blood group, allergies or who to call. One scan of your SafeTag shows it all in <strong>3 seconds</strong>. No app. No delay.</p>
+      <div class="hero-cta">
+        <a class="btn" href="/store">Get your SafeTag →</a>
+        <a class="btn-ghost" href="/demo">▶ See a live demo</a>
       </div>
-
+      <div class="hero-trust">
+        <span><span class="material-symbols-outlined">check_circle</span>No app needed</span>
+        <span><span class="material-symbols-outlined">smartphone</span>Works on any phone</span>
+        <span><span class="material-symbols-outlined">lock</span>You control what's shown</span>
+      </div>
     </div>
   </div>
 </section>
 
-<!-- ============================================================
-  TRUST BAR
-  ============================================================ -->
-<section class="bg-white border-y border-slate-100">
-  <div class="max-w-5xl mx-auto px-4 py-4 flex flex-wrap items-center justify-center gap-6 text-sm font-semibold text-slate-600">
-    <span class="flex items-center gap-2">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#FF9933"/><circle cx="12" cy="12" r="4" fill="#138808" opacity=".6"/><circle cx="12" cy="12" r="2" fill="#000080"/></svg>
-      Made in India
-    </span>
-    <span class="text-slate-300">|</span>
-    <span class="flex items-center gap-2">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="5" y="2" width="14" height="20" rx="3" stroke="#0D9488" stroke-width="2"/><line x1="9" y1="2" x2="9" y2="22" stroke="#EF4444" stroke-width="2.5"/><line x1="13" y1="2" x2="13" y2="22" stroke="#EF4444" stroke-width="2.5"/><line x1="9" y1="12" x2="13" y2="12" stroke="#EF4444" stroke-width="2.5"/></svg>
-      No app required
-    </span>
-    <span class="text-slate-300">|</span>
-    <span class="flex items-center gap-2">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 2L4 6v6c0 5.25 3.5 10.15 8 11.35C16.5 22.15 20 17.25 20 12V6l-8-4z" fill="#ccfbf1" stroke="#0D9488" stroke-width="2"/><path d="M9 12l2 2 4-4" stroke="#0D9488" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      Data never shared
-    </span>
-    <span class="text-slate-300">|</span>
-    <span class="flex items-center gap-2 text-brand font-bold">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><ellipse cx="12" cy="12" rx="8" ry="5" stroke="#0D9488" stroke-width="2"/><ellipse cx="12" cy="12" rx="5" ry="3" stroke="#0D9488" stroke-width="1.5" opacity=".6"/><ellipse cx="12" cy="12" rx="2" ry="1.2" fill="#0D9488"/></svg>
-      QR + RFID/NFC backup
-    </span>
-    <span class="text-slate-300">|</span>
-    <span class="flex items-center gap-2">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#ccfbf1" stroke="#0D9488" stroke-width="2"/><path d="M12 7v5l3 3" stroke="#0D9488" stroke-width="2" stroke-linecap="round"/></svg>
-      Opens in under 3 seconds
-    </span>
+<!-- PRODUCTS -->
+<section class="section" id="products">
+  <div class="wrap center">
+    <span class="eyebrow">Pick your SafeTag</span>
+    <h2 style="margin-top:1rem">One for every pocket, wrist and bag.</h2>
+    <p class="lead">Durable tags starting under ₹200. Set up in minutes.</p>
   </div>
-</section>
-
-<!-- ============================================================
-  STORE PREVIEW
-  ============================================================ -->
-<section class="section bg-white" id="shop">
-  <div class="section-inner">
-    <div class="reveal flex items-end justify-between mb-6">
-      <div>
-        <h2 class="text-4xl font-bold" data-i18n="section.shop">Buy Emergency QR + NFC ID Tags</h2>
-        <p class="text-slate-500 mt-1 text-lg" data-i18n="section.shop.sub">Keychains, stickers, wristbands — from ₹149. Ships across India.</p>
-      </div>
-      <a href="/store" class="text-brand font-semibold hover:underline">See all →</a>
-    </div>
-    <% if (featured && featured.length) { %>
-      <div class="relative">
-        <button id="shopPrev" aria-label="Previous" class="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-9 h-9 bg-white dark:bg-slate-700 shadow-md rounded-full flex items-center justify-center text-navy dark:text-white hover:bg-brand hover:text-white transition -ml-4 text-xl leading-none select-none">‹</button>
-        <div id="shopTrack" class="flex gap-4 overflow-x-auto snap-x snap-mandatory scrollbar-none pb-2 px-10">
-          <% featured.forEach(function(p){ %>
-            <a href="/store/<%= p.id %>" class="glass-light flex-shrink-0 w-52 snap-start block tilt-card glow-on-hover p-4">
-              <div class="w-full h-36 bg-slate-100 rounded-xl mb-3 flex items-center justify-center overflow-hidden">
-                <% if (p.photo_url) { %>
-                  <img src="<%= p.photo_url %>" class="w-full h-36 object-cover rounded-xl" alt="<%= p.name %>" />
-                <% } else { %>
-                  <span class="text-5xl">🏷️</span>
-                <% } %>
-              </div>
-              <% if (p.is_featured) { %><span class="pill pill-warning text-xs mb-1 inline-block">⭐ Best Value</span><% } %>
-              <div class="capitalize text-xs text-slate-500 mb-1"><%= p.category %></div>
-              <h3 class="font-semibold text-sm mb-2 text-navy leading-snug"><%= p.name %></h3>
-              <div class="flex items-center justify-between">
-                <span class="font-sora text-lg text-navy font-bold">₹<%= p.price_inr %></span>
-                <span class="btn-brand btn-lq text-xs py-1 px-2.5">Buy →</span>
-              </div>
-            </a>
-          <% }); %>
-          <a href="/store" class="glass-light flex-shrink-0 w-44 snap-start flex flex-col items-center justify-center text-center gap-2 border-dashed glow-on-hover p-4" style="border:2px dashed rgba(13,148,136,0.3);">
-            <span class="text-3xl">🏪</span>
-            <span class="text-sm font-semibold text-brand">See all products →</span>
+  <div class="wrap">
+    <div class="prods">
+      <% if (typeof featured !== 'undefined' && featured && featured.length) { %>
+        <% featured.forEach(function(p){ %>
+          <a class="prod rv" href="/store/<%= p.id %>">
+            <img src="<%= p.photo_url ? p.photo_url : '/static/images/product-card.jpg' %>" alt="<%= p.name %>" loading="lazy" />
+            <div class="pb">
+              <b><%= p.name %></b>
+              <span><%= p.category %></span>
+              <div class="price">₹<%= p.price_inr %></div>
+            </div>
           </a>
-        </div>
-        <button id="shopNext" aria-label="Next" class="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-9 h-9 bg-white dark:bg-slate-700 shadow-md rounded-full flex items-center justify-center text-navy dark:text-white hover:bg-brand hover:text-white transition -mr-4 text-xl leading-none select-none">›</button>
+        <% }); %>
+      <% } else { %>
+        <div class="prod rv"><img src="/static/images/product-keychain.jpg" alt="SafeTag keychain"><div class="pb"><b>Keychain</b><span>For keys &amp; bags</span><div class="price">from ₹199</div></div></div>
+        <div class="prod rv"><img src="/static/images/product-wristband.jpg" alt="SafeTag wristband"><div class="pb"><b>Wristband</b><span>For kids &amp; athletes</span><div class="price">from ₹249</div></div></div>
+        <div class="prod rv"><img src="/static/images/product-stickers.jpg" alt="SafeTag stickers"><div class="pb"><b>Stickers</b><span>Phone, helmet, bottle</span><div class="price">from ₹149</div></div></div>
+        <div class="prod rv"><img src="/static/images/product-family-pack.jpg" alt="SafeTag family pack"><div class="pb"><b>Family Pack</b><span>Protect everyone</span><div class="price">Best value</div></div></div>
+      <% } %>
+    </div>
+    <div class="center" style="margin-top:2.4rem">
+      <a class="btn" href="/store">Shop all SafeTags →</a>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<section class="stats">
+  <div class="wrap">
+    <div class="grid">
+      <div class="stat"><b>3 sec</b><span>to your emergency info</span></div>
+      <div class="stat"><b>0 apps</b><span>for the rescuer to install</span></div>
+      <div class="stat"><b>24×7</b><span>accessible, anywhere</span></div>
+      <div class="stat"><b>100%</b><span>you choose what shows</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- STORY -->
+<section class="section story" id="story">
+  <div class="wrap story-grid">
+    <div class="rv">
+      <img src="/static/images/hero-relief.jpg" alt="A paramedic shows a phone reading ‘Emergency Profile Loaded’ to a relieved mother, her son and a nurse in a hospital" loading="lazy" width="720" height="405" />
+    </div>
+    <div class="rv">
+      <span class="eyebrow">The first 10 minutes</span>
+      <h2 style="margin-top:1rem">The minutes after an emergency decide everything.</h2>
+      <p class="big">Every day, people are rushed to hospitals in India as “unknown.”</p>
+      <p>A commuter faints on a platform. A grandfather forgets the way home. A child is separated in a festival crowd. The people who <em>want</em> to help — bystanders, police, paramedics — have no way to know who they are, what they're allergic to, or who to call.</p>
+      <p>Those lost minutes cost lives. <strong style="color:var(--navy)">SafeTag gives everyone who finds you a way to help — instantly.</strong></p>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="section" id="how">
+  <div class="wrap center">
+    <span class="eyebrow">Simple by design</span>
+    <h2 style="margin-top:1rem">Help, in three seconds.</h2>
+    <p class="lead">No apps to download. No accounts for the rescuer. It just works.</p>
+  </div>
+  <div class="wrap">
+    <div class="steps">
+      <div class="step rv"><div class="n">1</div><h3>Wear it</h3><p>Clip on a keychain, wristband, sticker or card. Your SafeTag goes wherever you do.</p></div>
+      <div class="step rv"><div class="n">2</div><h3>Someone scans</h3><p>Any phone camera or NFC tap opens your emergency profile in a browser — no app, no login.</p></div>
+      <div class="step rv"><div class="n">3</div><h3>Help arrives faster</h3><p>Blood group, allergies, conditions and emergency contacts appear instantly, with one-tap calling.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- WHAT A RESCUER SEES -->
+<section class="section preview">
+  <div class="wrap preview-grid">
+    <div class="rv">
+      <span class="eyebrow">What a rescuer sees</span>
+      <h2 style="margin-top:1rem">Clear, calm, and life-saving.</h2>
+      <p class="lead" style="margin-top:1rem">The moment your tag is scanned, the exact information a first responder needs appears — nothing more, nothing less. No scrolling, no clutter, no confusion.</p>
+      <div style="margin-top:1.6rem">
+        <a class="btn" href="/demo">Try the live demo →</a>
       </div>
-      <script>
-      (function(){
-        var track=document.getElementById('shopTrack'),btnPrev=document.getElementById('shopPrev'),btnNext=document.getElementById('shopNext');
-        if(!track||!btnPrev||!btnNext) return;
-        var STEP=224,timer;
-        function slide(dir){var max=track.scrollWidth-track.clientWidth,pos=track.scrollLeft+dir*STEP;if(pos>max+10)pos=0;if(pos<-10)pos=max;track.scrollTo({left:pos,behavior:'smooth'});}
-        function startAuto(){timer=setInterval(function(){slide(1);},3200);}
-        function stopAuto(){clearInterval(timer);}
-        btnNext.addEventListener('click',function(){stopAuto();slide(1);startAuto();});
-        btnPrev.addEventListener('click',function(){stopAuto();slide(-1);startAuto();});
-        track.addEventListener('mouseenter',stopAuto);track.addEventListener('mouseleave',startAuto);
-        track.addEventListener('touchstart',stopAuto,{passive:true});track.addEventListener('touchend',startAuto,{passive:true});
-        startAuto();
-      })();
-      </script>
-    <% } else { %>
-      <div class="glass-light p-10 text-center rounded-2xl">
-        <div class="text-4xl mb-2">🏷️</div>
-        <p>New products coming soon. <a class="text-brand font-semibold" href="/store">Browse store</a>.</p>
-      </div>
-    <% } %>
-    <div class="text-center mt-6">
-      <a href="/store" class="btn-lq btn-warn px-10 py-3 text-base">See All SafeTag Products →</a>
     </div>
-  </div>
-</section>
-
-<!-- ============================================================
-  HOW IT WORKS
-  ============================================================ -->
-<section id="how" class="section bg-slate-50 dark:bg-slate-900">
-  <div class="section-inner">
-    <div class="reveal text-center mb-10">
-      <h2 class="text-4xl font-bold mb-2" data-i18n="section.how">How Our Emergency QR + NFC ID Tag Works</h2>
-      <p class="text-slate-500 max-w-xl mx-auto text-lg" data-i18n="section.how.sub">From order to life-saving — 4 steps. Works on any Android or iPhone camera.</p>
-    </div>
-    <div class="grid md:grid-cols-4 gap-5">
-      <% [
-        { step:'01', icon:'🛒', title:'Buy & Attach', body:'Order a SafeTag keychain, card, sticker or wristband. Attach it to a bag, lanyard, collar, or ID badge.' },
-        { step:'02', icon:'✏️', title:'Set Up Profile', body:'Scan the QR on your tag, fill in name, blood group, emergency contacts, and medical info. Takes 2 minutes.' },
-        { step:'03', icon:'📷', title:'Scan QR or Tap NFC', body:'Anyone scans the QR with their camera — or taps the NFC chip. Either opens the emergency profile instantly. No app ever.' },
-        { step:'04', icon:'📞', title:'Instant Contact', body:'The emergency profile opens in under 3 seconds. They call directly. Your WhatsApp gets the location alert.' },
-      ].forEach(function(s, i){ %>
-        <div class="reveal glass-light p-6 rounded-2xl d<%= i+1 %>" style="border-top:3px solid #0D9488;">
-          <div class="text-xs font-bold mb-3" style="color:#0D9488;letter-spacing:.08em;">STEP <%= s.step %></div>
-          <div class="text-3xl mb-3"><%= s.icon %></div>
-          <h3 class="font-semibold mb-2 text-navy text-lg"><%= s.title %></h3>
-          <p class="text-base leading-relaxed text-slate-600"><%= s.body %></p>
+    <div class="rv">
+      <div class="idcard" role="img" aria-label="Example SafeTag emergency profile">
+        <div class="top">
+          <div class="av"><span class="material-symbols-outlined">person</span></div>
+          <div><b>Ravi Kumar</b><small>Age 34 · Bengaluru</small></div>
         </div>
-      <% }); %>
-    </div>
-    <div class="text-center mt-8">
-      <a href="/demo" class="btn-lq btn-brand px-8 py-3">See the Emergency Page Live →</a>
-    </div>
-  </div>
-</section>
-
-<!-- ============================================================
-  REVIEWS
-  ============================================================ -->
-<section class="section lq-mesh" style="background:#0A2342;">
-  <div class="lq-blob lq-blob-b" style="width:300px;height:300px;background:#0D9488;top:-50px;right:-50px;opacity:.15;"></div>
-  <div class="section-inner relative z-10">
-    <div class="reveal text-center mb-10">
-      <h2 class="text-4xl font-bold text-white mb-2" data-i18n="section.reviews">Real families. Real reunions.</h2>
-      <p class="max-w-xl mx-auto text-lg" style="color:#94a3b8;" data-i18n="section.reviews.sub">These are the moments SafeTag was built for.</p>
-    </div>
-    <div class="grid md:grid-cols-3 gap-6">
-      <% [
-        { quote:'"My son Arjun went missing at Pushkar Mela. Because of his SafeTag, a kind stranger called me within <strong>7 minutes</strong>. Seven minutes. I cannot explain what that felt like."',
-          name:'Rekha Mishra', location:'Jaipur, Rajasthan · Child tag', img:'review-rekha.jpg', init:'R', color:'teal' },
-        { quote:'"My mother has dementia. She walked out of the house three times last year. Each time, a neighbour scanned her SafeTag and called me. This device gives our whole family <strong>peace of mind</strong>."',
-          name:'Suresh Venkataraman', location:'Chennai, Tamil Nadu · Elderly tag', img:'review-suresh.jpg', init:'S', color:'blue' },
-        { quote:'"On a trek in Himachal I got separated from my group. A local farmer found me, scanned my SafeTag keychain, and reached my emergency contact in minutes. <strong>No language barrier</strong>."',
-          name:'Ananya Kapoor', location:'Mumbai, Maharashtra · Traveler tag', img:'review-ananya.jpg', init:'A', color:'orange' },
-      ].forEach(function(r, i){ %>
-        <div class="reveal glass p-6 flex flex-col rounded-2xl d<%= i+1 %>">
-          <div class="flex items-center gap-1 mb-3 text-sm" style="color:#f59e0b;">★★★★★</div>
-          <blockquote class="text-base leading-relaxed flex-1 mb-4" style="color:#e2e8f0;"><%- r.quote %></blockquote>
-          <div class="flex items-center gap-3 pt-4" style="border-top:1px solid rgba(255,255,255,0.1);">
-            <img src="/static/images/<%= r.img %>" alt="<%= r.name %>" class="w-9 h-9 rounded-full object-cover flex-shrink-0"
-                 onerror="this.outerHTML='<div style=\'width:36px;height:36px;border-radius:50%;background:rgba(13,148,136,0.3);color:#5eead4;font-weight:700;display:flex;align-items:center;justify-content:center;font-size:.85rem;flex-shrink:0\'><%= r.init %></div>'" />
-            <div>
-              <div class="font-semibold text-white text-sm"><%= r.name %></div>
-              <div class="text-xs" style="color:#94a3b8;"><%= r.location %></div>
-            </div>
-          </div>
+        <div class="body">
+          <div class="idrow"><span class="k">Blood group</span><span class="v">O+</span></div>
+          <div class="idrow"><span class="k">Allergies</span><span class="v red">Penicillin</span></div>
+          <div class="idrow"><span class="k">Condition</span><span class="v">Diabetic (Type 1)</span></div>
+          <div class="idrow"><span class="k">Emergency contact</span><span class="v">Priya · Wife</span></div>
         </div>
-      <% }); %>
-    </div>
-  </div>
-</section>
-
-<!-- ============================================================
-  WHO NEEDS IT
-  ============================================================ -->
-<section class="section bg-white border-b border-slate-100">
-  <div class="section-inner">
-    <div class="reveal text-center mb-10">
-      <h2 class="text-4xl font-bold mb-2" data-i18n="section.who">Who Needs an Emergency ID Tag?</h2>
-      <p class="text-slate-500 max-w-xl mx-auto text-lg" data-i18n="section.who.sub">If they could be separated from the people who love them — they need a SafeTag.</p>
-    </div>
-    <div class="grid md:grid-cols-3 sm:grid-cols-2 gap-4">
-      <% [
-        { img:'usecase-child.jpg',    alt:'Child with SafeTag',  icon:'👧', title:'Children',   body:'Lost at a railway station, fair, or temple? One scan finds the parents — before police reports are even filed.' },
-        { img:'usecase-elderly.jpg',  alt:'Elderly with SafeTag',icon:'👴', title:'Elderly',    body:'Dementia patients or seniors with no phone — a stranger can call family within seconds, no questions asked.' },
-        { img:'usecase-traveler.jpg', alt:'Traveler',            icon:'🧳', title:'Travelers',  body:'Solo trips, Kumbh Mela, pilgrimages — instant ID for any helper. No language barrier, no app needed.' },
-        { img:'usecase-pet.jpg',      alt:'Pet with SafeTag',    icon:'🐕', title:'Pets',       body:'Lost dogs and cats — the finder calls you directly. No separate database or app for the finder.' },
-        { img:'usecase-athlete.jpg',  alt:'Athlete',             icon:'🚴', title:'Athletes',   body:'Cyclists, marathon runners, trekkers — full medical info for paramedics if you\'re in an accident.' },
-        { img:'usecase-school.jpg',   alt:'School children',     icon:'🏫', title:'Schools',    body:'Bulk SafeTags for school ID badges — every student identified in seconds on any trip or emergency.' },
-      ].forEach(function(u, i){ %>
-        <div class="reveal glass-light rounded-2xl overflow-hidden glow-on-hover d<%= (i%4)+1 %>">
-          <div class="h-36 bg-slate-100 overflow-hidden">
-            <img src="/static/images/<%= u.img %>" alt="<%= u.alt %>" class="w-full h-full object-cover transition-transform duration-500 hover:scale-105" />
-          </div>
-          <div class="p-4 flex gap-3 items-start">
-            <span class="text-2xl shrink-0"><%= u.icon %></span>
-            <div>
-              <h4 class="font-semibold mb-1 text-navy text-lg"><%= u.title %></h4>
-              <p class="text-base text-slate-600 leading-relaxed"><%= u.body %></p>
-            </div>
-          </div>
-        </div>
-      <% }); %>
-    </div>
-  </div>
-</section>
-
-<!-- ============================================================
-  STORY SECTION (navy bg)
-  ============================================================ -->
-<section class="section lq-mesh" style="background:#0A2342;">
-  <div class="lq-blob" style="width:400px;height:400px;background:#0D9488;bottom:-100px;left:-80px;opacity:.18;"></div>
-  <div class="section-inner relative z-10">
-    <div class="grid md:grid-cols-2 gap-10 items-center">
-      <div class="reveal-left">
-        <h2 class="text-4xl font-bold mb-4" style="color:#fff;">India's Dual-Tech Emergency ID Tag — Built for the Worst Moments.</h2>
-        <p class="text-lg leading-relaxed mb-4" style="color:#94a3b8;">
-          A 6-year-old went missing at Kumbh Mela. No phone, no voice, fourteen hours of terror. SafeTag would have ended it in minutes — one scan by a bystander, one call to her parents.
-        </p>
-        <p class="text-lg leading-relaxed" style="color:#94a3b8;">
-          Every SafeTag carries <strong style="color:#fff;">two independent technologies</strong>: a QR code for any camera, and an RFID/NFC chip for a tap. Even if the sticker is scratched, worn, or the rescuer is in the dark — the chip still works.
-        </p>
-        <div class="mt-5 grid grid-cols-2 gap-3 max-w-sm">
-          <div class="glass p-4 rounded-xl">
-            <div class="font-bold text-base mb-1" style="color:#5eead4;">📷 QR Code</div>
-            <div class="text-sm leading-relaxed" style="color:#94a3b8;">Any phone camera, any angle, 3 seconds without touching the tag</div>
-          </div>
-          <div class="glass p-4 rounded-xl">
-            <div class="font-bold text-base mb-1" style="color:#5eead4;">📡 RFID / NFC</div>
-            <div class="text-sm leading-relaxed" style="color:#94a3b8;">Works in darkness, water, or if QR is scratched beyond recognition</div>
-          </div>
-        </div>
-        <p class="mt-5 font-semibold text-xl" style="color:#5eead4;">SafeTag. Dual protection. One tag.</p>
-        <div class="mt-5 flex flex-wrap gap-3">
-          <a href="/store" class="btn-lq btn-warn text-base">Get Your SafeTag — from ₹149</a>
-          <a href="/demo" class="font-semibold text-base self-center" style="color:#5eead4;">See the emergency page demo →</a>
-        </div>
-      </div>
-      <div class="reveal-right flex justify-center md:justify-end">
-        <div class="grad-border rounded-2xl overflow-hidden shadow-2xl max-w-xs w-full lq-float-slow">
-          <img src="/static/images/hero-relief.jpg" alt="Paramedic using SafeTag" class="w-full h-64 object-cover" />
-          <div class="px-4 py-2 text-xs text-center" style="background:rgba(255,255,255,0.06);color:#5eead4;">
-            A paramedic reads blood group + contacts — in under 3 seconds.
-          </div>
-        </div>
+        <div class="call"><span class="material-symbols-outlined">call</span>Call emergency contact</div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ============================================================
-  MANUFACTURER CTA
-  ============================================================ -->
-<section class="section bg-white border-y border-slate-100">
-  <div class="section-inner">
-    <div class="grid md:grid-cols-3 gap-6 items-center">
-      <div class="reveal-left md:col-span-2">
-        <span class="pill pill-brand mb-3">For manufacturers</span>
-        <h2 class="text-4xl font-bold mt-2 mb-3">Manufacture &amp; Sell QR + NFC Emergency ID Tags Across India.</h2>
-        <p class="text-lg leading-relaxed text-slate-600">If you produce keychains, ID cards, PVC stickers, or wristbands — list your products on SafeTag and reach Indian families. We provide unique tag IDs, QR codes, RFID payloads, and activation infrastructure.</p>
-        <div class="mt-5 flex flex-wrap gap-3">
-          <a href="/manufacturer/register" class="btn-lq btn-brand">🏭 Become a Manufacturer</a>
-          <a href="/manufacturer/login" class="btn-outline">Already registered? Sign in</a>
-        </div>
+<!-- WHO IT'S FOR -->
+<section class="section" id="uses">
+  <div class="wrap center">
+    <span class="eyebrow">Peace of mind for everyone you love</span>
+    <h2 style="margin-top:1rem">Made for the people who matter most.</h2>
+    <p class="lead">If they could be somewhere without you, they should have a SafeTag.</p>
+  </div>
+  <div class="wrap">
+    <div class="uses">
+      <div class="use rv"><img src="/static/images/usecase-elderly.jpg" alt="Elderly man walking outdoors" loading="lazy"><div class="cap"><b>Elderly parents</b><span>For memory loss &amp; sudden illness</span></div></div>
+      <div class="use rv"><img src="/static/images/usecase-child.jpg" alt="Young child playing" loading="lazy"><div class="cap"><b>Children</b><span>If they ever get separated</span></div></div>
+      <div class="use rv"><img src="/static/images/usecase-traveler.jpg" alt="Traveler with a backpack" loading="lazy"><div class="cap"><b>Travellers &amp; pilgrims</b><span>Safe in any crowd or city</span></div></div>
+      <div class="use rv"><img src="/static/images/usecase-athlete.jpg" alt="Runner training outdoors" loading="lazy"><div class="cap"><b>Riders &amp; athletes</b><span>For solo runs and long rides</span></div></div>
+      <div class="use rv"><img src="/static/images/usecase-school.jpg" alt="School children with bags" loading="lazy"><div class="cap"><b>School kids</b><span>On the bag, every school day</span></div></div>
+      <div class="use rv"><img src="/static/images/usecase-pet.jpg" alt="Pet dog wearing a tag" loading="lazy"><div class="cap"><b>Pets</b><span>Bring them home faster</span></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- MANY USES -->
+<section class="section many">
+  <div class="wrap center">
+    <span class="eyebrow" style="background:rgba(255,255,255,.1);color:#8fe9dc">One tag, many lives</span>
+    <h2 style="margin-top:1rem">More than an emergency tag.</h2>
+    <p class="lead" style="margin-left:auto;margin-right:auto">The same SafeTag can become whatever you need — a digital visiting card, a pet ID, a car-owner contact, a lost-&-found tag and more. One scan, endless possibilities.</p>
+    <div class="chips">
+      <span class="chip"><span class="material-symbols-outlined">medical_services</span>Medical Emergency</span>
+      <span class="chip"><span class="material-symbols-outlined">badge</span>Digital Visiting Card</span>
+      <span class="chip"><span class="material-symbols-outlined">pets</span>Pet ID</span>
+      <span class="chip"><span class="material-symbols-outlined">directions_car</span>Car Owner</span>
+      <span class="chip"><span class="material-symbols-outlined">key</span>Lost &amp; Found</span>
+      <span class="chip"><span class="material-symbols-outlined">storefront</span>Business Catalog</span>
+      <span class="chip"><span class="material-symbols-outlined">hub</span>Social Hub</span>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="section">
+  <div class="wrap center">
+    <span class="eyebrow">Why families trust SafeTag</span>
+    <h2 style="margin-top:1rem">Thoughtful where it counts.</h2>
+  </div>
+  <div class="wrap">
+    <div class="feat">
+      <div class="fcard rv"><div class="ic"><span class="material-symbols-outlined">photo_camera</span></div><h3>No app required</h3><p>The rescuer just points their camera. Anyone can help you — instantly.</p></div>
+      <div class="fcard rv"><div class="ic"><span class="material-symbols-outlined">lock</span></div><h3>Private by default</h3><p>Nothing is public. Your details only appear when your physical tag is scanned.</p></div>
+      <div class="fcard rv"><div class="ic"><span class="material-symbols-outlined">tune</span></div><h3>You're in control</h3><p>Choose exactly what to show, and update or hide it anytime from your dashboard.</p></div>
+      <div class="fcard rv"><div class="ic"><span class="material-symbols-outlined">qr_code_scanner</span></div><h3>QR + NFC</h3><p>Scan the code or tap the chip — whichever is faster in the moment.</p></div>
+      <div class="fcard rv"><div class="ic"><span class="material-symbols-outlined">water_drop</span></div><h3>Built to last</h3><p>Rugged, water-resistant tags that survive daily life, travel and play.</p></div>
+      <div class="fcard rv"><div class="ic"><span class="material-symbols-outlined">flag</span></div><h3>Made in India</h3><p>Designed for Indian emergencies, hospitals and languages. Support you can reach.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="section" style="background:var(--cream)">
+  <div class="wrap center">
+    <span class="eyebrow">Real families, real relief</span>
+    <h2 style="margin-top:1rem">Stories that keep us going.</h2>
+  </div>
+  <div class="wrap">
+    <div class="tgrid">
+      <div class="quote rv">
+        <div class="stars">★★★★★</div>
+        <p>“My father has dementia. He wandered off once and a kind auto driver scanned his SafeTag and called me. I can't describe that relief.”</p>
+        <div class="who"><img src="/static/images/review-rekha.jpg" alt="Rekha"><div><b>Rekha M.</b><span>Daughter · Pune</span></div></div>
       </div>
-      <div class="reveal-right">
-        <div class="glass-light p-5 rounded-2xl">
-          <div class="text-sm uppercase font-bold text-slate-500 mb-3">What you get</div>
-          <ul class="text-base space-y-2.5 text-slate-700">
-            <% ['Bulk batches up to 10,000 unique tag IDs','Instant CSV with QR codes and RFID payloads','Dedicated manufacturer dashboard','Direct customer orders via SafeTag store','Activation analytics for every batch'].forEach(function(item){ %>
-              <li class="flex gap-2 items-start"><span class="text-brand font-bold mt-0.5">✓</span><%= item %></li>
-            <% }); %>
-          </ul>
-        </div>
+      <div class="quote rv">
+        <div class="stars">★★★★★</div>
+        <p>“I ride 60 km every weekend. Knowing paramedics can see my blood group and call my wife instantly — that peace of mind is worth everything.”</p>
+        <div class="who"><img src="/static/images/review-suresh.jpg" alt="Suresh"><div><b>Suresh R.</b><span>Cyclist · Bengaluru</span></div></div>
+      </div>
+      <div class="quote rv">
+        <div class="stars">★★★★★</div>
+        <p>“I put one on my daughter's school bag. At a crowded fair she got lost for ten minutes — a shopkeeper scanned it and brought her right back.”</p>
+        <div class="who"><img src="/static/images/review-ananya.jpg" alt="Ananya"><div><b>Ananya S.</b><span>Mother · Hyderabad</span></div></div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ============================================================
-  FAQ
-  ============================================================ -->
-<section id="faq" class="section bg-slate-50 dark:bg-slate-900">
-  <div class="section-inner max-w-3xl">
-    <div class="reveal text-center mb-8">
-      <h2 class="text-4xl font-bold" data-i18n="section.faq">Frequently Asked Questions</h2>
+<!-- PRIVACY -->
+<section class="section privacy">
+  <div class="wrap">
+    <div class="center">
+      <span class="eyebrow">Your data, your rules</span>
+      <h2 style="margin-top:1rem">Private by design. Always.</h2>
+      <p class="lead center">A life-safety product must earn your trust. Here's exactly how we protect you.</p>
     </div>
-    <div class="space-y-3">
-      <% var faqs=[
-        {q:'Do I need an app to scan a SafeTag?',a:'No app, ever — for either the owner or the rescuer. Any modern phone camera opens the emergency profile by scanning the QR code. Phones with NFC can also tap the built-in RFID chip. The rescuer just points their camera or brings their phone close. That\'s it.'},
-        {q:'What if the QR code gets scratched or damaged?',a:'Every SafeTag has a built-in RFID/NFC chip — completely independent of the printed QR. If the QR is scratched, wet, faded, or used in darkness, a rescuer can tap their NFC-enabled phone to the chip and instantly open the same emergency profile. One physical tag. Two ways to save a life.'},
-        {q:'How does the RFID/NFC chip work?',a:'The NFC chip inside every SafeTag is pre-programmed with a secure URL. When an NFC-enabled smartphone (most Android and iPhone 7+) is held near the tag, the phone reads the chip and opens a browser tab automatically — no scanning required. Works in darkness, at any angle, and in wet conditions.'},
-        {q:'Can I update the information after buying?',a:'Yes. Sign in to your dashboard and update the profile at any time. Changes go live in seconds on both the QR link and the NFC chip URL — no need to replace the physical tag.'},
-        {q:'Is my personal information private?',a:'Your emergency profile is only accessible when someone physically scans your tag or taps the NFC chip — it cannot be found by searching the internet. We never share your data with third parties.'},
-        {q:'Can I use it for my pet?',a:'Yes. Select "PET" as the category and enter your own contact details as the emergency contact. Any finder can scan the QR or tap the NFC chip to reach you immediately — no separate pet-finding app needed.'},
-        {q:'Do you do bulk orders for schools or hospitals?',a:'Yes. Batches of up to 10,000 tags can be created at once with a CSV export containing QR codes, NFC payloads, and unique tag IDs. Contact us via the manufacturer portal.'},
-      ]; faqs.forEach(function(f,i){ %>
-        <details class="reveal glass-light rounded-xl p-5 cursor-pointer group d<%= (i%3)+1 %>">
-          <summary class="font-semibold text-navy text-lg list-none flex items-center justify-between gap-3">
-            <%= f.q %>
-            <span class="text-brand text-xl flex-shrink-0 transition-transform duration-200 group-open:rotate-45">+</span>
-          </summary>
-          <p class="mt-3 text-base leading-relaxed text-slate-600"><%= f.a %></p>
-        </details>
-      <% }); %>
+    <div class="privacy-grid">
+      <div class="pitem"><div class="ic"><span class="material-symbols-outlined">visibility_off</span></div><div><b>Nothing is public</b><p>Your profile can't be searched or found online. It only opens when your physical tag is scanned.</p></div></div>
+      <div class="pitem"><div class="ic"><span class="material-symbols-outlined">checklist</span></div><div><b>You choose the fields</b><p>Show only what you're comfortable with — and change your mind anytime.</p></div></div>
+      <div class="pitem"><div class="ic"><span class="material-symbols-outlined">sync</span></div><div><b>Update or hide instantly</b><p>Edit your details or switch a tag off from your dashboard in seconds.</p></div></div>
+      <div class="pitem"><div class="ic"><span class="material-symbols-outlined">verified_user</span></div><div><b>Secure &amp; encrypted</b><p>Your account is protected, and sensitive contact actions never expose raw numbers.</p></div></div>
     </div>
   </div>
 </section>
 
-<!-- ============================================================
-  FINAL CTA — Liquid gradient
-  ============================================================ -->
-<section class="relative overflow-hidden" style="background:linear-gradient(135deg,#0D9488 0%,#0F766E 100%);">
-  <div class="lq-blob lq-blob-b" style="width:400px;height:400px;background:#5eead4;top:-80px;right:-80px;opacity:.2;"></div>
-  <div class="lq-blob lq-blob-c" style="width:300px;height:300px;background:#0A2342;bottom:-60px;left:-60px;opacity:.25;"></div>
-  <div class="section-inner section text-center max-w-2xl relative z-10">
-    <div class="text-6xl mb-4 lq-float">🏷️</div>
-    <h2 class="text-4xl font-bold mb-3" style="color:#fff;" data-i18n="cta.final">Don't wait for an emergency to wish you had it.</h2>
-    <p class="text-xl mb-7" style="color:#ccfbf1;" data-i18n="cta.final.sub">SafeTag takes 2 minutes to set up. It lasts years. One scan could be the difference between 7 minutes and 14 hours.</p>
-    <div class="flex flex-wrap justify-center gap-3">
-      <a href="/store" class="btn-lq text-base px-8 py-3 font-bold rounded-xl" style="background:#fff;color:#0A2342;" data-i18n="btn.buy">Get SafeTag Now — from ₹149</a>
-      <a href="/demo" class="btn-lq glass px-7 py-3 text-base font-semibold" style="color:#fff;" data-i18n="btn.demo">See It Work First</a>
+<!-- FAQ -->
+<section class="section" id="faq">
+  <div class="wrap" style="max-width:800px">
+    <div class="center"><span class="eyebrow">Good questions</span><h2 style="margin-top:1rem">Everything you're wondering.</h2></div>
+    <div style="margin-top:2.2rem">
+      <details open><summary>Does the person scanning need an app?</summary><p>No. Any phone camera or NFC tap opens your emergency profile in a normal web browser. No app and no account are needed to help you — that's the whole point.</p></details>
+      <details><summary>Is my personal data safe and private?</summary><p>Yes. Nothing is public or searchable. Your profile only appears when someone scans your physical tag, and you decide exactly what information is shown. You can update or hide it whenever you like.</p></details>
+      <details><summary>What if there's no internet where it's scanned?</summary><p>The tag opens a web page, so a basic internet connection is needed to load your profile — the same connection used to make a call or open a map. In most public places in India that's readily available.</p></details>
+      <details><summary>What happens if I lose my tag?</summary><p>Your information lives in your account, not the tag itself. Deactivate the lost tag from your dashboard and activate a new one — your details carry over.</p></details>
+      <details><summary>Does it work on all phones?</summary><p>Yes. The QR code works on any smartphone camera, and NFC works on most modern phones with a simple tap.</p></details>
+      <details><summary>How do I set it up?</summary><p>Scan your new tag, create your profile in a couple of minutes, and activate. A printed guide comes with every tag. That's it — you're protected.</p></details>
     </div>
-    <p class="text-sm mt-5" style="color:#99f6e4;">Ships across India · 7-day returns · 🇮🇳 Made in India</p>
   </div>
 </section>
 
-<script type="application/ld+json">
-{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
-  {"@type":"Question","name":"Do I need an app to scan a SafeTag?","acceptedAnswer":{"@type":"Answer","text":"No app, ever — for either the owner or the rescuer. Any modern phone camera opens the emergency profile by scanning the QR code."}},
-  {"@type":"Question","name":"What if the QR code gets scratched or damaged?","acceptedAnswer":{"@type":"Answer","text":"Every SafeTag has a built-in RFID/NFC chip — completely independent of the printed QR. If the QR is scratched, a rescuer can tap their NFC-enabled phone to the chip and instantly open the same emergency profile."}},
-  {"@type":"Question","name":"Can I update the information after buying?","acceptedAnswer":{"@type":"Answer","text":"Yes. Sign in to your dashboard and update the profile at any time. Changes go live in seconds."}},
-  {"@type":"Question","name":"Is my personal information private?","acceptedAnswer":{"@type":"Answer","text":"Your emergency profile is only accessible when someone physically scans your tag — it cannot be found by searching the internet."}}
-]}
+<!-- FINAL CTA -->
+<section class="section cta">
+  <div class="wrap">
+    <h2 class="rv">Give your family one less thing to fear.</h2>
+    <p class="rv">You can't always be there. Your SafeTag can. Set one up today — it takes minutes, and it could change everything.</p>
+    <a class="btn btn-light rv" href="/store">Get your SafeTag now →</a>
+  </div>
+</section>
+
+<script>
+  // Scroll reveal
+  (function(){
+    var els = document.querySelectorAll('.rv');
+    if(!('IntersectionObserver' in window)){els.forEach(function(e){e.classList.add('in')});return;}
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){ if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); } });
+    }, {threshold:.12, rootMargin:'0px 0px -40px 0px'});
+    els.forEach(function(e){io.observe(e)});
+  })();
+
+  // Hero image slider — auto-advance + arrows + dots + swipe, pauses on hover.
+  // Static slides only (no external fetch).
+  (function(){
+    var slider = document.getElementById('heroSlider');
+    if(!slider) return;
+    var track = slider.querySelector('.hero-track');
+    var dotsWrap = slider.querySelector('.hero-dots');
+    var reduce = window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+    var slides = [], dots = [], n = 0, i = 0, timer = null;
+
+    function go(idx){
+      if(!n) return;
+      i = (idx + n) % n;
+      track.style.transform = 'translateX(-' + (i * 100) + '%)';
+      dots.forEach(function(d, k){ d.classList.toggle('active', k === i); });
+    }
+    function next(){ go(i + 1); }
+    function prev(){ go(i - 1); }
+    function start(){ if(!reduce && !timer && n > 1){ timer = setInterval(next, 4500); } }
+    function stop(){ if(timer){ clearInterval(timer); timer = null; } }
+    function restart(){ stop(); start(); }
+
+    function setup(){
+      slides = [].slice.call(track.querySelectorAll('.hero-slide'));
+      n = slides.length;
+      slider.classList.toggle('single', n < 2);
+      dotsWrap.innerHTML = '';
+      slides.forEach(function(_, idx){
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.setAttribute('aria-label', 'Go to image ' + (idx + 1));
+        b.addEventListener('click', function(){ go(idx); restart(); });
+        dotsWrap.appendChild(b);
+      });
+      dots = [].slice.call(dotsWrap.children);
+      i = 0; go(0); restart();
+    }
+
+    slider.querySelector('.next').addEventListener('click', function(){ next(); restart(); });
+    slider.querySelector('.prev').addEventListener('click', function(){ prev(); restart(); });
+    slider.addEventListener('mouseenter', stop);
+    slider.addEventListener('mouseleave', start);
+    slider.addEventListener('focusin', stop);
+    slider.addEventListener('focusout', start);
+    var x0 = null;
+    slider.addEventListener('touchstart', function(e){ x0 = e.touches[0].clientX; stop(); }, {passive:true});
+    slider.addEventListener('touchend', function(e){
+      if(x0 === null) return;
+      var dx = e.changedTouches[0].clientX - x0;
+      if(Math.abs(dx) > 40){ dx < 0 ? next() : prev(); }
+      x0 = null; start();
+    }, {passive:true});
+
+    setup();
+  })();
 </script>
 
 <%- include('layout/_foot') %>

@@ -1,27 +1,38 @@
 <%- include('../layout/_head') %>
 
 <section class="page-shell">
-    <div class="flex items-center justify-between flex-wrap gap-2 mb-6 reveal">
+    <div class="flex items-center justify-between flex-wrap gap-3 mb-6 reveal">
       <div>
-        <h1 class="text-3xl font-bold"><%= manufacturer.business_name %></h1>
-        <p class="text-sm text-slate-500"><%= manufacturer.email %> · <%= manufacturer.mobile %></p>
+        <span class="eyebrow">Manufacturer</span>
+        <h1 class="text-3xl font-bold mt-2"><%= manufacturer.business_name %></h1>
+        <p class="text-sm mt-1" style="color:var(--muted)"><%= manufacturer.email %> · <%= manufacturer.mobile %></p>
       </div>
-      <div class="flex gap-2">
-        <a class="btn-outline btn-lq text-sm" href="/manufacturer/orders">Orders</a>
-        <a class="btn-outline btn-lq text-sm" href="/manufacturer/listings">My Listings</a>
-        <a class="btn-brand btn-lq text-sm" href="/manufacturer/batch/new">+ New Batch</a>
+      <div class="flex gap-2 flex-wrap">
+        <a class="btn-ghost" style="padding:.6rem 1.15rem;font-size:.9rem" href="/manufacturer/orders">
+          <span class="material-symbols-outlined" style="color:currentColor;font-size:1.15em">list_alt</span>Orders
+        </a>
+        <a class="btn-ghost" style="padding:.6rem 1.15rem;font-size:.9rem" href="/manufacturer/listings">
+          <span class="material-symbols-outlined" style="color:currentColor;font-size:1.15em">inventory_2</span>My Listings
+        </a>
+        <a class="btn" style="padding:.6rem 1.25rem;font-size:.9rem;box-shadow:none" href="/manufacturer/batch/new">
+          <span class="material-symbols-outlined" style="color:#fff;font-size:1.15em">add</span>New Batch
+        </a>
       </div>
     </div>
 
     <% if (!manufacturer.is_approved) { %>
-      <div class="glass-light p-5 mb-4 border border-blue-200 bg-blue-50 flex flex-col sm:flex-row sm:items-center gap-4">
+      <div class="p-5 mb-6 flex flex-col sm:flex-row sm:items-center gap-4 reveal"
+           style="background:#eef5ff;border:1px solid #d4e3f7;border-radius:var(--r)">
+        <span class="material-symbols-outlined" style="color:#2563eb;font-size:1.8rem">hourglass_top</span>
         <div class="flex-1">
-          <p class="font-semibold text-navy">Your account is pending admin approval.</p>
-          <p class="text-sm text-slate-500 mt-1">You can prepare batches and listings now, but they won't go live until SafeTag admin approves you. Click the button to send a request.</p>
+          <p class="font-semibold" style="color:var(--navy)">Your account is pending admin approval.</p>
+          <p class="text-sm mt-1" style="color:var(--muted)">You can prepare batches and listings now, but they won't go live until SafeTag admin approves you. Click the button to send a request.</p>
         </div>
         <form method="POST" action="/manufacturer/request-approval" class="shrink-0">
           <%- include('../layout/_csrf') %>
-          <button class="btn-brand btn-lq text-sm whitespace-nowrap">📧 Request Approval</button>
+          <button class="btn" style="padding:.65rem 1.25rem;font-size:.9rem;box-shadow:none;white-space:nowrap">
+            <span class="material-symbols-outlined" style="color:#fff;font-size:1.15em">mail</span>Request Approval
+          </button>
         </form>
       </div>
     <% } %>
@@ -31,17 +42,27 @@
        var rate = totalTags ? Math.round(totalActive*1000/totalTags)/10 : 0;
     %>
 
-    <div class="grid sm:grid-cols-3 gap-3 mb-6">
-      <div class="glass-light metric-card reveal d1"><div class="metric-label">Total tags produced</div><div class="text-3xl font-sora font-bold text-navy" data-count="<%= totalTags %>"><%= totalTags %></div></div>
-      <div class="glass-light metric-card reveal d2"><div class="metric-label">Activated</div><div class="text-3xl font-sora font-bold text-success" data-count="<%= totalActive %>"><%= totalActive %></div><div class="text-xs"><%= rate %>%</div></div>
-      <div class="glass-light metric-card reveal d3"><div class="metric-label">Listings</div><div class="text-3xl font-sora font-bold text-navy" data-count="<%= listings.length %>"><%= listings.length %></div></div>
+    <div class="grid sm:grid-cols-3 gap-3 mb-8">
+      <div class="metric-card reveal d1" style="background:var(--white);border:1px solid var(--line);box-shadow:var(--shadow-sm)">
+        <div class="metric-label">Total tags produced</div>
+        <div class="text-3xl font-sora font-bold mt-1" style="color:var(--navy)" data-count="<%= totalTags %>"><%= totalTags %></div>
+      </div>
+      <div class="metric-card reveal d2" style="background:var(--white);border:1px solid var(--line);box-shadow:var(--shadow-sm)">
+        <div class="metric-label">Activated</div>
+        <div class="text-3xl font-sora font-bold mt-1 text-success" data-count="<%= totalActive %>"><%= totalActive %></div>
+        <div class="text-xs" style="color:var(--muted)"><%= rate %>%</div>
+      </div>
+      <div class="metric-card reveal d3" style="background:var(--white);border:1px solid var(--line);box-shadow:var(--shadow-sm)">
+        <div class="metric-label">Listings</div>
+        <div class="text-3xl font-sora font-bold mt-1" style="color:var(--navy)" data-count="<%= listings.length %>"><%= listings.length %></div>
+      </div>
     </div>
 
     <h2 class="text-xl font-bold mb-3">Batches</h2>
     <% if (!batches.length) { %>
-      <div class="empty-state reveal">No batches yet. <a class="text-brand font-semibold" href="/manufacturer/batch/new">Create your first batch</a>.</div>
+      <div class="empty-state reveal">No batches yet. <a class="font-semibold" style="color:var(--teal-d)" href="/manufacturer/batch/new">Create your first batch</a>.</div>
     <% } else { %>
-      <div class="glass-light data-panel table-wrap mb-8 reveal">
+      <div class="table-wrap mb-8 reveal" style="background:var(--white);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow-sm)">
         <table class="table">
           <thead><tr><th>#</th><th>Batch name</th><th>Quantity</th><th>Activated</th><th>Rate</th><th></th></tr></thead>
           <tbody>
@@ -52,7 +73,7 @@
                 <td><%= b.quantity %></td>
                 <td><%= b.activated_count %></td>
                 <td><%= b.activation_rate %>%</td>
-                <td><a class="text-brand font-semibold" href="/manufacturer/batch/<%= b.id %>">Open →</a></td>
+                <td><a class="font-semibold" style="color:var(--teal-d)" href="/manufacturer/batch/<%= b.id %>">Open →</a></td>
               </tr>
             <% }); %>
           </tbody>
@@ -62,9 +83,9 @@
 
     <h2 class="text-xl font-bold mb-3">My listings</h2>
     <% if (!listings.length) { %>
-      <div class="empty-state reveal">No listings yet. <a class="text-brand font-semibold" href="/manufacturer/listings/new">List a product</a>.</div>
+      <div class="empty-state reveal">No listings yet. <a class="font-semibold" style="color:var(--teal-d)" href="/manufacturer/listings/new">List a product</a>.</div>
     <% } else { %>
-      <div class="glass-light data-panel table-wrap reveal">
+      <div class="table-wrap reveal" style="background:var(--white);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow-sm)">
         <table class="table">
           <thead><tr><th>Name</th><th>Category</th><th>Price</th><th>Stock</th><th>Status</th></tr></thead>
           <tbody>

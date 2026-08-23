@@ -1,95 +1,177 @@
 <%- include('layout/_head') %>
 
-<section class="page-shell">
-    <div class="page-hero">
+<style>
+  .stp{max-width:1120px;margin:0 auto;padding:2.5rem 20px 4rem}
+  .stp-hero{display:flex;flex-wrap:wrap;gap:1.2rem;align-items:flex-end;justify-content:space-between;margin-bottom:2rem}
+  .stp-title{font-size:clamp(1.7rem,3.4vw,2.3rem);font-weight:800;margin-top:.6rem}
+  .stp-sub{color:var(--muted);margin-top:.5rem;font-size:1.02rem;max-width:46rem}
+  .stp-actions{display:flex;gap:.7rem;flex-wrap:wrap}
+  .stp-card{background:var(--white);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow-sm)}
+  /* metrics */
+  .stp-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:2.2rem}
+  @media(max-width:640px){.stp-metrics{grid-template-columns:1fr}}
+  .metric{padding:1.3rem 1.4rem}
+  .metric-k{font-size:.78rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+  .metric-v{font-family:'Sora',sans-serif;font-weight:800;font-size:2.1rem;margin-top:.35rem;line-height:1}
+  .metric-v.c-navy{color:var(--navy)}
+  .metric-v.c-green{color:#16a34a}
+  .metric-v.c-amber{color:#d97706}
+  /* section head */
+  .stp-sechead{display:flex;align-items:center;justify-content:space-between;margin:0 0 1.1rem}
+  .stp-sechead h2{font-size:1.4rem;font-weight:700}
+  .stp-link{color:var(--teal-d);font-weight:700;font-size:.9rem;display:inline-flex;align-items:center;gap:.25rem}
+  .stp-link:hover{text-decoration:underline}
+  /* chips */
+  .chip-s{display:inline-flex;align-items:center;gap:.35rem;padding:.28rem .7rem;border-radius:999px;font-size:.74rem;font-weight:700}
+  .chip-green{background:#dcfce7;color:#166534}
+  .chip-amber{background:#fef3c7;color:#92400e}
+  .chip-red{background:#fee2e2;color:#991b1b}
+  .chip-teal{background:#ccfbf1;color:#115e59}
+  .chip-mono{background:#f1f5f9;color:var(--navy);font-family:'JetBrains Mono',monospace;font-size:.75rem;letter-spacing:0}
+  /* action buttons */
+  .tbtn{display:inline-flex;align-items:center;gap:.35rem;font-weight:600;font-size:.85rem;padding:.5rem .9rem;border-radius:999px;transition:.15s;border:1px solid transparent;cursor:pointer;line-height:1}
+  .tbtn .material-symbols-outlined{font-size:1.05em;color:inherit}
+  .tbtn-solid{background:var(--teal);color:#fff}
+  .tbtn-solid:hover{background:var(--teal-d)}
+  .tbtn-ghost{background:#fff;color:var(--navy);border-color:#cdd7e2}
+  .tbtn-ghost:hover{border-color:var(--teal);color:var(--teal-d)}
+  /* tag cards */
+  .stp-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1.1rem;margin-bottom:2.4rem}
+  @media(max-width:720px){.stp-grid{grid-template-columns:1fr}}
+  .tag-card{padding:1.3rem 1.4rem;display:flex;flex-direction:column}
+  .tag-row{display:flex;align-items:center;justify-content:space-between;gap:.6rem;margin-bottom:.7rem}
+  .tag-type{display:inline-flex;align-items:center;gap:.4rem;font-size:.78rem;color:var(--muted);font-weight:600;margin-bottom:.35rem}
+  .tag-type .material-symbols-outlined{font-size:1.1rem;color:var(--teal)}
+  .tag-name{font-family:'Sora',sans-serif;font-size:1.12rem;font-weight:700;color:var(--navy)}
+  .tag-name.muted{color:#94a3b8}
+  .tag-meta{font-size:.88rem;color:var(--muted);margin-top:.15rem}
+  .tag-btns{margin-top:1.1rem;display:flex;flex-wrap:wrap;gap:.5rem}
+  /* note + empty */
+  .stp-note{display:flex;gap:.9rem;align-items:flex-start;padding:1.2rem 1.3rem;border-left:4px solid var(--teal);margin-bottom:2rem}
+  .stp-note .material-symbols-outlined{font-size:1.8rem}
+  .stp-note h3{font-size:1.02rem;color:var(--navy);font-weight:700;margin-bottom:.2rem}
+  .stp-note p{color:var(--muted);font-size:.92rem}
+  .stp-empty{text-align:center;padding:3.6rem 1.5rem;margin-bottom:2rem}
+  .stp-empty .material-symbols-outlined{font-size:3rem;color:var(--teal)}
+  .stp-empty h3{font-size:1.25rem;margin:.6rem 0 .35rem}
+  .stp-empty p{color:var(--muted);margin-bottom:1.4rem}
+  .stp-empty .row{display:flex;gap:.7rem;justify-content:center;flex-wrap:wrap}
+  /* orders */
+  .stp-orders{display:flex;flex-direction:column;gap:.9rem}
+  .order-card{display:flex;gap:1rem;align-items:flex-start;padding:1.2rem 1.3rem}
+  .order-thumb{width:56px;height:56px;border-radius:14px;background:var(--cream);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden}
+  .order-thumb img{width:100%;height:100%;object-fit:cover}
+  .order-thumb .material-symbols-outlined{color:var(--muted);font-size:1.6rem}
+  .order-main{flex:1;min-width:0}
+  .order-top{display:flex;align-items:flex-start;justify-content:space-between;gap:.6rem;flex-wrap:wrap}
+  .order-name{font-family:'Sora',sans-serif;font-weight:700;color:var(--navy);font-size:.98rem}
+  .order-line{font-size:.82rem;color:var(--muted);margin-top:.25rem}
+  .order-line.dim{color:#94a3b8}
+  .order-hint{font-size:.8rem;color:var(--muted);margin-top:.6rem}
+  /* modal */
+  .stp-modal{position:fixed;inset:0;background:rgba(10,35,66,.45);z-index:60;display:flex;align-items:center;justify-content:center;padding:1rem}
+  .stp-modal.hidden{display:none}
+  .stp-modal-card{background:#fff;border-radius:var(--r);box-shadow:var(--shadow);max-width:28rem;width:100%;padding:1.6rem}
+  .stp-modal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:.8rem}
+  .stp-modal-head h3{font-size:1.15rem;font-weight:700}
+  .stp-x{background:none;border:none;cursor:pointer;color:var(--muted);display:inline-flex;line-height:0}
+  .stp-x .material-symbols-outlined{color:inherit}
+  .stp-field{margin-bottom:.9rem}
+  .stp-modal-btns{display:flex;justify-content:flex-end;gap:.6rem;margin-top:.3rem}
+</style>
+
+<section class="stp">
+    <div class="stp-hero">
       <div>
-        <div class="page-kicker">Family safety dashboard</div>
-        <h1 class="page-title">My SafeTags</h1>
-        <p class="page-subtitle">Welcome, <%= user.name || user.email %>. Manage activated tags, orders, QR codes and emergency profiles from one place.</p>
+        <span class="eyebrow">Family safety dashboard</span>
+        <h1 class="stp-title">My SafeTags</h1>
+        <p class="stp-sub">Welcome, <%= user.name || user.email %>. Manage activated tags, orders, QR codes and emergency profiles from one place.</p>
       </div>
-      <div class="page-actions">
-        <button onclick="document.getElementById('claimModal').classList.remove('hidden')" class="btn-outline text-sm">+ Activate a Tag</button>
-        <a class="btn-warn text-sm" href="/store">Buy More Tags</a>
+      <div class="stp-actions">
+        <button onclick="document.getElementById('claimModal').classList.remove('hidden')" class="btn-ghost">
+          <span class="material-symbols-outlined">add</span> Activate a Tag
+        </button>
+        <a class="btn" href="/store">Buy More Tags</a>
       </div>
     </div>
 
-    <div class="grid sm:grid-cols-3 gap-3 mb-6">
-      <div class="glass-light metric-card reveal">
-        <div class="metric-label mb-1">Total tags</div>
-        <div class="text-3xl font-sora font-bold text-navy stat-num" data-count="<%= stats.total %>">0</div>
+    <div class="stp-metrics">
+      <div class="stp-card metric reveal">
+        <div class="metric-k">Total tags</div>
+        <div class="metric-v c-navy stat-num" data-count="<%= stats.total %>">0</div>
       </div>
-      <div class="glass-light metric-card reveal d2">
-        <div class="metric-label mb-1">Active</div>
-        <div class="text-3xl font-sora font-bold text-success stat-num" data-count="<%= stats.active %>">0</div>
+      <div class="stp-card metric reveal d2">
+        <div class="metric-k">Active</div>
+        <div class="metric-v c-green stat-num" data-count="<%= stats.active %>">0</div>
       </div>
-      <div class="glass-light metric-card reveal d3">
-        <div class="metric-label mb-1">Pending Activation</div>
-        <div class="text-3xl font-sora font-bold text-warning stat-num" data-count="<%= stats.pending %>">0</div>
+      <div class="stp-card metric reveal d3">
+        <div class="metric-k">Pending Activation</div>
+        <div class="metric-v c-amber stat-num" data-count="<%= stats.pending %>">0</div>
       </div>
     </div>
 
     <% if (!tags.length && orders && orders.length) { %>
       <!-- User has orders but no activated tags yet -->
-      <div class="card p-6 mb-6 border-l-4 border-brand">
-        <div class="flex gap-3 items-start">
-          <span class="text-3xl flex-shrink-0">📦</span>
-          <div>
-            <h3 class="font-semibold text-navy mb-1">Your tags are on the way!</h3>
-            <p class="text-sm text-slate-600">Once you receive your SafeTag, scan the QR code on the tag to activate it — it will appear here automatically.</p>
-          </div>
+      <div class="stp-card stp-note reveal">
+        <span class="material-symbols-outlined">local_shipping</span>
+        <div>
+          <h3>Your tags are on the way!</h3>
+          <p>Once you receive your SafeTag, scan the QR code on the tag to activate it — it will appear here automatically.</p>
         </div>
       </div>
     <% } %>
 
     <% if (!tags.length && (!orders || !orders.length)) { %>
-      <div class="empty-state">
-        <div class="text-5xl mb-2">🏷️</div>
-        <h3 class="text-xl font-semibold mb-1">No tags yet</h3>
-        <p class="mb-5">Order a SafeTag and scan it once you receive it — you'll be brought right back here.</p>
-        <div class="flex gap-3 justify-center">
-          <a href="/store" class="btn-brand">Buy a Tag</a>
-          <button onclick="document.getElementById('claimModal').classList.remove('hidden')" class="btn-outline">Already have one?</button>
+      <div class="stp-card stp-empty">
+        <span class="material-symbols-outlined">sell</span>
+        <h3>No tags yet</h3>
+        <p>Order a SafeTag and scan it once you receive it — you'll be brought right back here.</p>
+        <div class="row">
+          <a href="/store" class="btn">Buy a Tag</a>
+          <button onclick="document.getElementById('claimModal').classList.remove('hidden')" class="btn-ghost">Already have one?</button>
         </div>
       </div>
     <% } %>
 
     <% if (tags.length) { %>
-      <div class="section-heading"><h2>My Tags</h2></div>
-      <div class="grid md:grid-cols-2 gap-4 mb-8">
+      <div class="stp-sechead"><h2>My Tags</h2></div>
+      <div class="stp-grid">
         <% tags.forEach(function(t){
-             var meta = (typeMap && typeMap[t.tag_type]) || { label: 'Tag', icon: '🏷️', interaction: 'display' };
+             var meta = (typeMap && typeMap[t.tag_type]) || { label: 'Tag', interaction: 'display' };
              var isMedical = (t.tag_type || 'medical') === 'medical';
+             var iconMap = { medical:'medical_services', vcard:'contact_page', card:'contact_page', car:'directions_car', vehicle:'directions_car', pet:'pets', lostfound:'travel_explore', lost:'travel_explore', catalog:'storefront', business:'storefront', url:'link', redirect:'link', survey:'quiz', feedback:'quiz', social:'share', universal:'category' };
+             var micon = iconMap[t.tag_type] || 'sell';
         %>
-          <div class="card p-5 stable-panel">
-            <div class="flex items-center justify-between mb-2">
-              <span class="pill pill-mono"><%= t.tag_id %></span>
-              <% if (t.is_active) { %><span class="pill pill-success">Active</span><% } else { %><span class="pill pill-warning">Pending</span><% } %>
+          <div class="stp-card tag-card">
+            <div class="tag-row">
+              <span class="chip-s chip-mono"><%= t.tag_id %></span>
+              <% if (t.is_active) { %><span class="chip-s chip-green">Active</span><% } else { %><span class="chip-s chip-amber">Pending</span><% } %>
             </div>
-            <div class="text-xs text-slate-400 mb-1"><%= meta.icon %> <%= meta.label %></div>
+            <div class="tag-type"><span class="material-symbols-outlined"><%= micon %></span><%= meta.label %></div>
             <% if (isMedical && t.profile) { %>
-              <h3 class="text-lg font-semibold"><%= t.profile.name %></h3>
-              <p class="text-sm text-slate-500"><%= t.profile.mobile_primary ? '+91 ' + t.profile.mobile_primary : '' %></p>
+              <div class="tag-name"><%= t.profile.name %></div>
+              <p class="tag-meta"><%= t.profile.mobile_primary ? '+91 ' + t.profile.mobile_primary : '' %></p>
             <% } else if (t.is_active) { %>
-              <h3 class="text-lg font-semibold"><%= meta.label %></h3>
-              <p class="text-sm text-slate-500">Active</p>
+              <div class="tag-name"><%= meta.label %></div>
+              <p class="tag-meta">Active</p>
             <% } else { %>
-              <h3 class="text-lg font-semibold text-slate-400">No profile yet</h3>
-              <p class="text-sm text-slate-500">Scan your tag to activate.</p>
+              <div class="tag-name muted">No profile yet</div>
+              <p class="tag-meta">Scan your tag to activate.</p>
             <% } %>
-            <div class="mt-4 flex flex-wrap gap-2">
+            <div class="tag-btns">
               <% if (t.is_active) { %>
                 <% if (isMedical) { %>
-                  <a class="btn-brand text-sm" href="/profile/edit/<%= t.tag_id %>">Edit Profile</a>
-                  <a class="btn-outline text-sm" href="/emergency/<%= t.tag_id %>" target="_blank">Preview</a>
+                  <a class="tbtn tbtn-solid" href="/profile/edit/<%= t.tag_id %>"><span class="material-symbols-outlined">edit</span>Edit Profile</a>
+                  <a class="tbtn tbtn-ghost" href="/emergency/<%= t.tag_id %>" target="_blank"><span class="material-symbols-outlined">visibility</span>Preview</a>
                 <% } else { %>
-                  <a class="btn-brand text-sm" href="/profile/edit/<%= t.tag_id %>">Edit</a>
-                  <a class="btn-outline text-sm" href="/t/<%= t.tag_id %>" target="_blank">Preview</a>
+                  <a class="tbtn tbtn-solid" href="/profile/edit/<%= t.tag_id %>"><span class="material-symbols-outlined">edit</span>Edit</a>
+                  <a class="tbtn tbtn-ghost" href="/t/<%= t.tag_id %>" target="_blank"><span class="material-symbols-outlined">visibility</span>Preview</a>
                   <% if (meta.interaction === 'collect' || meta.privacy === 'contact-relay') { %>
-                    <a class="btn-outline text-sm" href="/dashboard/tag/<%= t.tag_id %>/submissions"><%= meta.interaction === 'collect' ? 'View Responses' : 'Messages' %></a>
+                    <a class="tbtn tbtn-ghost" href="/dashboard/tag/<%= t.tag_id %>/submissions"><span class="material-symbols-outlined">inbox</span><%= meta.interaction === 'collect' ? 'View Responses' : 'Messages' %></a>
                   <% } %>
                 <% } %>
               <% } %>
-              <a class="btn-outline text-sm" href="/qr/<%= t.tag_id %>" target="_blank">QR PNG</a>
+              <a class="tbtn tbtn-ghost" href="/qr/<%= t.tag_id %>" target="_blank"><span class="material-symbols-outlined">qr_code_2</span>QR PNG</a>
             </div>
           </div>
         <% }); %>
@@ -97,8 +179,8 @@
     <% } %>
 
     <% if (orders && orders.length) { %>
-      <div class="section-heading"><h2>My Orders</h2><a class="text-brand text-sm font-semibold" href="/orders">View all</a></div>
-      <div class="space-y-3">
+      <div class="stp-sechead"><h2>My Orders</h2><a class="stp-link" href="/orders">View all<span class="material-symbols-outlined" style="font-size:1.1em">chevron_right</span></a></div>
+      <div class="stp-orders">
         <% orders.forEach(function(o){ %>
           <%
             var statusLabel = o.status === 'paid' ? 'Paid'
@@ -106,35 +188,35 @@
               : o.status === 'delivered' ? 'Delivered'
               : o.status === 'cancelled' ? 'Cancelled'
               : 'Order Placed';
-            var statusClass = o.status === 'delivered' ? 'pill-success'
-              : o.status === 'dispatched' ? 'pill-brand'
-              : o.status === 'cancelled' ? 'pill-danger'
-              : 'pill-warning';
+            var statusClass = o.status === 'delivered' ? 'chip-green'
+              : o.status === 'dispatched' ? 'chip-teal'
+              : o.status === 'cancelled' ? 'chip-red'
+              : 'chip-amber';
             var shippingAddr = '';
             try { var addr = JSON.parse(o.shipping_address || '{}'); shippingAddr = [addr.address_line1, addr.city, addr.state, addr.pincode].filter(Boolean).join(', '); } catch(e) {}
           %>
-          <div class="card p-5 flex gap-4 items-start stable-panel">
-            <div class="w-14 h-14 bg-slate-100 rounded-xl flex items-center justify-center flex-shrink-0 overflow-hidden">
+          <div class="stp-card order-card">
+            <div class="order-thumb">
               <% if (o.product && o.product.photo_url) { %>
-                <img src="<%= o.product.photo_url %>" class="w-14 h-14 object-cover" alt="<%= o.product.name %>" />
+                <img src="<%= o.product.photo_url %>" alt="<%= o.product.name %>" />
               <% } else { %>
-                <span class="text-2xl">🏷️</span>
+                <span class="material-symbols-outlined">sell</span>
               <% } %>
             </div>
-            <div class="flex-1 min-w-0">
-              <div class="flex items-start justify-between gap-2 flex-wrap">
+            <div class="order-main">
+              <div class="order-top">
                 <div>
-                  <div class="font-semibold text-navy text-sm"><%= o.product ? o.product.name : 'SafeTag' %></div>
-                  <div class="text-xs text-slate-500 mt-0.5">Qty: <%= o.quantity %> &nbsp;·&nbsp; ₹<%= o.amount_inr %></div>
-                  <% if (shippingAddr) { %><div class="text-xs text-slate-400 mt-0.5 truncate max-w-xs"><%= shippingAddr %></div><% } %>
-                  <% if (o.tracking_id) { %><div class="text-xs text-slate-500 mt-1">Tracking: <span class="font-mono"><%= o.tracking_id %></span></div><% } %>
+                  <div class="order-name"><%= o.product ? o.product.name : 'SafeTag' %></div>
+                  <div class="order-line">Qty: <%= o.quantity %> &nbsp;·&nbsp; ₹<%= o.amount_inr %></div>
+                  <% if (shippingAddr) { %><div class="order-line dim"><%= shippingAddr %></div><% } %>
+                  <% if (o.tracking_id) { %><div class="order-line">Tracking: <span class="mono"><%= o.tracking_id %></span></div><% } %>
                 </div>
-                <span class="pill <%= statusClass %> flex-shrink-0"><%= statusLabel %></span>
+                <span class="chip-s <%= statusClass %>"><%= statusLabel %></span>
               </div>
               <% if (o.status !== 'delivered' && o.status !== 'cancelled') { %>
-                <p class="text-xs text-slate-500 mt-2">Once delivered, scan the QR code on your tag to activate it and it will appear in <strong>My Tags</strong> above.</p>
+                <p class="order-hint">Once delivered, scan the QR code on your tag to activate it and it will appear in <strong>My Tags</strong> above.</p>
               <% } %>
-              <a class="text-brand font-semibold text-xs mt-2 inline-block" href="/orders/<%= o.id %>">View details &amp; tracking →</a>
+              <a class="stp-link" style="margin-top:.6rem;font-size:.82rem" href="/orders/<%= o.id %>">View details &amp; tracking<span class="material-symbols-outlined" style="font-size:1.1em">chevron_right</span></a>
             </div>
           </div>
         <% }); %>
@@ -144,15 +226,18 @@
 </section>
 
 <!-- Claim tag modal -->
-<div id="claimModal" class="hidden fixed inset-0 bg-black/40 z-50 flex items-center justify-center px-4">
-  <div class="card max-w-md w-full p-6">
-    <div class="flex items-center justify-between mb-3"><h3 class="text-lg font-bold">Activate / Claim a tag</h3><button onclick="document.getElementById('claimModal').classList.add('hidden')" class="text-slate-500">✕</button></div>
-    <p class="text-sm text-slate-600 mb-4">Enter the tag ID and security key printed on your SafeTag to link it to this account. Or, if not yet registered, scan the physical tag to begin.</p>
-    <form method="POST" action="/dashboard/claim" class="space-y-3">
+<div id="claimModal" class="stp-modal hidden">
+  <div class="stp-modal-card">
+    <div class="stp-modal-head">
+      <h3>Activate / Claim a tag</h3>
+      <button onclick="document.getElementById('claimModal').classList.add('hidden')" class="stp-x" aria-label="Close"><span class="material-symbols-outlined">close</span></button>
+    </div>
+    <p class="stp-sub" style="margin:0 0 1.1rem;font-size:.92rem">Enter the tag ID and security key printed on your SafeTag to link it to this account. Or, if not yet registered, scan the physical tag to begin.</p>
+    <form method="POST" action="/dashboard/claim">
       <%- include('layout/_csrf') %>
-      <div><label class="label">Tag ID</label><input class="input mono" name="tag_id" required maxlength="10" /></div>
-      <div><label class="label">Security key</label><input class="input mono" name="security_key" required maxlength="32" /></div>
-      <div class="flex justify-end gap-2"><button type="button" onclick="document.getElementById('claimModal').classList.add('hidden')" class="btn-outline">Cancel</button><button class="btn-brand">Claim</button></div>
+      <div class="stp-field"><label class="label">Tag ID</label><input class="input mono" name="tag_id" required maxlength="10" /></div>
+      <div class="stp-field"><label class="label">Security key</label><input class="input mono" name="security_key" required maxlength="32" /></div>
+      <div class="stp-modal-btns"><button type="button" onclick="document.getElementById('claimModal').classList.add('hidden')" class="btn-ghost">Cancel</button><button class="btn">Claim</button></div>
     </form>
   </div>
 </div>

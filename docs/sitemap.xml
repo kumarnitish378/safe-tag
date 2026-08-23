@@ -1,4 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://www.sftg.in/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>
+  <url><loc>https://www.sftg.in/blog/</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://www.sftg.in/blog/how-safetag-works.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.sftg.in/blog/emergency-id-tag-for-children-india.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.sftg.in/blog/qr-vs-nfc-emergency-tag.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.sftg.in/blog/what-info-on-medical-id-tag.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.sftg.in/blog/emergency-id-for-elderly-dementia.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.sftg.in/blog/golden-hour-emergency-first-minutes.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.sftg.in/blog/road-safety-emergency-id-for-riders.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.sftg.in/blog/blood-group-allergies-emergency.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.sftg.in/blog/festival-travel-crowd-safety-india.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.sftg.in/blog/qr-nfc-tag-uses-beyond-medical.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
 </urlset>

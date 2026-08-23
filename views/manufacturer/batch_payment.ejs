@@ -1,31 +1,31 @@
 <%- include('../layout/_head') %>
 
 <section class="page-shell page-shell-compact">
-    <a href="/manufacturer/dashboard" class="text-sm text-brand font-semibold">← Dashboard</a>
+    <a href="/manufacturer/dashboard" class="text-sm font-semibold" style="color:var(--teal-d)">← Dashboard</a>
     <h1 class="text-3xl font-bold mt-2 mb-6">Complete payment</h1>
 
     <!-- Order summary -->
-    <div class="glass-light stable-panel p-6 mb-5 space-y-3 reveal">
+    <div class="p-6 mb-5 space-y-3 reveal" style="background:var(--white);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow-sm)">
       <div class="flex justify-between text-sm">
-        <span class="text-slate-500">Batch</span>
+        <span style="color:var(--muted)">Batch</span>
         <span class="font-semibold"><%= batch.batch_name %></span>
       </div>
       <div class="flex justify-between text-sm">
-        <span class="text-slate-500">Tag IDs</span>
+        <span style="color:var(--muted)">Tag IDs</span>
         <span class="font-semibold"><%= batch.quantity.toLocaleString() %></span>
       </div>
       <div class="flex justify-between text-sm">
-        <span class="text-slate-500">Rate</span>
+        <span style="color:var(--muted)">Rate</span>
         <span class="font-semibold">
           <% if (batch.quantity <= 100) { %>₹5.00 / tag
           <% } else if (batch.quantity <= 1000) { %>₹3.00 / tag
           <% } else { %>₹1.50 / tag<% } %>
         </span>
       </div>
-      <hr class="border-slate-200 dark:border-slate-700" />
-      <div class="flex justify-between">
+      <hr style="border:none;border-top:1px solid var(--line)" />
+      <div class="flex justify-between items-center">
         <span class="font-bold">Total</span>
-        <span class="text-2xl font-bold text-brand">
+        <span class="text-2xl font-bold" style="color:var(--teal-d)">
           ₹<%= (batch.paid_amount / 100).toLocaleString('en-IN', { minimumFractionDigits: 2 }) %>
         </span>
       </div>
@@ -34,11 +34,12 @@
     <% if (isDummy) { %>
       <!-- Dev mode: no real Razorpay, just simulate -->
       <div class="flash flash-info mb-4 text-sm">
-        ⚙️ <strong>Dev mode</strong> — DUMMY_PAYMENT=true. No real charge will be made.
+        <span class="material-symbols-outlined" style="color:currentColor">build</span>
+        <span><strong>Dev mode</strong> — DUMMY_PAYMENT=true. No real charge will be made.</span>
       </div>
       <form method="POST" action="/manufacturer/batch/<%= batch.id %>/pay-verify">
         <%- include('../layout/_csrf') %>
-        <button type="submit" class="btn-brand btn-lq w-full justify-center text-lg py-3">
+        <button type="submit" class="btn w-full" style="justify-content:center;font-size:1.05rem;padding:.9rem 1.7rem">
           Simulate Payment →
         </button>
       </form>
@@ -51,10 +52,10 @@
         <input type="hidden" name="razorpay_signature" id="rzpSignature" />
       </form>
 
-      <button id="payBtn" class="btn-brand btn-lq w-full justify-center text-lg py-3">
+      <button id="payBtn" class="btn w-full" style="justify-content:center;font-size:1.05rem;padding:.9rem 1.7rem">
         Pay ₹<%= (batch.paid_amount / 100).toLocaleString('en-IN', { minimumFractionDigits: 2 }) %> →
       </button>
-      <p class="text-xs text-slate-500 text-center mt-3">
+      <p class="text-xs text-center mt-3" style="color:var(--muted)">
         Secured by Razorpay · UPI, cards, net banking accepted
       </p>
     <% } %>

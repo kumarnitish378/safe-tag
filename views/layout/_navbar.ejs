@@ -1,50 +1,67 @@
-<nav class="lq-nav sticky top-0 z-30">
-  <div class="max-w-6xl mx-auto px-4 py-3 flex items-center gap-3">
-    <a href="/" class="flex items-center gap-2 flex-shrink-0" aria-label="SafeTag home">
-      <img src="/static/images/websiteLogo.png" alt="SafeTag" class="h-9 w-auto object-contain" onerror="this.style.display='none'" />
+<style>
+  /* Navbar — light glass header (theme.css design system) */
+  .nav-actions{display:flex;align-items:center;gap:.7rem}
+  .st-link{font-weight:600;font-size:.94rem;color:#334155;transition:color .15s}
+  .st-link:hover{color:var(--teal-d)}
+  .lang-toggle{display:flex;align-items:center;border:1px solid var(--line);border-radius:10px;
+    overflow:hidden;font-size:.72rem;font-weight:700;user-select:none;box-shadow:0 1px 3px rgba(10,35,66,.06)}
+  .lang-toggle button{border:none;cursor:pointer;font-family:inherit}
+  .hamburger{display:none;width:34px;height:34px;flex-direction:column;align-items:center;
+    justify-content:center;gap:6px;background:none;border:none;cursor:pointer;padding:0}
+  .hamburger span{display:block;height:2px;width:20px;border-radius:2px;background:var(--navy);transition:all .2s}
+  /* Re-show desktop links between 768–820px (theme hides .nav-links ≤820) */
+  @media(max-width:820px){.nav-links{display:flex}}
+  /* True mobile ≤767px: hide desktop cluster, show hamburger (matches #mobile-menu breakpoint) */
+  @media(max-width:767px){
+    .nav-links{display:none}
+    .desk-only{display:none !important}
+    .hamburger{display:flex}
+  }
+</style>
+
+<header>
+  <div class="wrap nav">
+    <a class="brand" href="/" aria-label="SafeTag home">
+      <img src="/static/images/websiteLogo.png" alt="SafeTag" style="height:34px;width:auto;object-fit:contain" onerror="this.style.display='none'" />
     </a>
 
     <!-- Desktop nav links -->
-    <div class="hidden md:flex items-center gap-1 ml-3">
-      <a class="navlink" href="/store" data-i18n="nav.store">Store</a>
-      <a class="navlink" href="/#how" data-i18n="nav.how">How it Works</a>
-      <a class="navlink" href="/#faq" data-i18n="nav.faq">FAQ</a>
-      <% if (!manufacturer) { %><a class="navlink" href="/manufacturer/login" data-i18n="nav.manufacturer">Manufacturer</a><% } %>
-    </div>
+    <nav class="nav-links" aria-label="Primary">
+      <a href="/store" data-i18n="nav.store">Store</a>
+      <a href="/#how" data-i18n="nav.how">How it Works</a>
+      <a href="/#faq" data-i18n="nav.faq">FAQ</a>
+      <% if (!manufacturer) { %><a href="/manufacturer/login" data-i18n="nav.manufacturer">Manufacturer</a><% } %>
+    </nav>
 
-    <div class="ml-auto flex items-center gap-1.5">
+    <div class="nav-actions">
       <!-- Language toggle -->
-      <div class="hidden sm:flex items-center rounded-lg border border-slate-300 dark:border-slate-600 overflow-hidden text-xs font-bold select-none" style="box-shadow:0 1px 3px rgba(0,0,0,0.08);">
+      <div class="lang-toggle desk-only">
         <button onclick="setLang('en')" id="langEn" class="px-2.5 py-1.5 transition bg-brand text-white" title="English">EN</button>
-        <button onclick="setLang('hi')" id="langHi" class="px-2.5 py-1.5 transition text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700" title="हिन्दी">हिं</button>
+        <button onclick="setLang('hi')" id="langHi" class="px-2.5 py-1.5 transition text-slate-500 hover:bg-slate-100" title="हिन्दी">हिं</button>
       </div>
-      <!-- Dark mode toggle -->
-      <button onclick="toggleTheme()" id="themeBtn" class="w-8 h-8 flex items-center justify-center rounded-lg border border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700 transition text-base" style="box-shadow:0 1px 3px rgba(0,0,0,0.08);" title="Toggle dark/light mode">
-        <span id="themeIcon">🌙</span>
-      </button>
 
       <!-- Desktop auth buttons -->
       <% if (user) { %>
-        <a class="navlink hidden md:block" href="/dashboard" data-i18n="nav.dashboard">Dashboard</a>
-        <% if (user.is_admin) { %><a class="navlink hidden md:block" href="/admin" data-i18n="nav.admin">Admin</a><% } %>
-        <form method="POST" action="/logout" class="hidden md:inline">
-          <%- include('_csrf') %><button class="btn-outline text-sm" data-i18n="nav.signout">Sign out</button>
+        <a class="st-link desk-only" href="/dashboard" data-i18n="nav.dashboard">Dashboard</a>
+        <% if (user.is_admin) { %><a class="st-link desk-only" href="/admin" data-i18n="nav.admin">Admin</a><% } %>
+        <form method="POST" action="/logout" class="desk-only" style="display:inline">
+          <%- include('_csrf') %><button class="btn-ghost" style="padding:.5rem 1.1rem;font-size:.88rem" data-i18n="nav.signout">Sign out</button>
         </form>
       <% } else if (manufacturer) { %>
-        <a class="navlink hidden md:block" href="/manufacturer/dashboard" data-i18n="nav.workshop">My Workshop</a>
-        <form method="POST" action="/manufacturer/logout" class="hidden md:inline">
-          <%- include('_csrf') %><button class="btn-outline text-sm" data-i18n="nav.signout">Sign out</button>
+        <a class="st-link desk-only" href="/manufacturer/dashboard" data-i18n="nav.workshop">My Workshop</a>
+        <form method="POST" action="/manufacturer/logout" class="desk-only" style="display:inline">
+          <%- include('_csrf') %><button class="btn-ghost" style="padding:.5rem 1.1rem;font-size:.88rem" data-i18n="nav.signout">Sign out</button>
         </form>
       <% } else { %>
-        <a class="navlink font-semibold hidden md:block" href="/login" data-i18n="nav.login">Login</a>
-        <a class="btn-warn text-sm hidden sm:inline-flex" href="/store" data-i18n="nav.gettag">Get Your Tag</a>
+        <a class="st-link desk-only" href="/login" data-i18n="nav.login">Login</a>
+        <a class="btn desk-only" href="/store" data-i18n="nav.gettag">Get Your Tag</a>
       <% } %>
 
       <!-- Hamburger (mobile only) -->
-      <button id="hamburgerBtn" class="md:hidden w-8 h-8 flex flex-col items-center justify-center gap-1.5 ml-1" aria-label="Menu" onclick="toggleMobileMenu()">
-        <span class="block h-0.5 w-5 rounded bg-slate-700 dark:bg-slate-200 transition-all duration-200" id="hb1"></span>
-        <span class="block h-0.5 w-5 rounded bg-slate-700 dark:bg-slate-200 transition-all duration-200" id="hb2"></span>
-        <span class="block h-0.5 w-5 rounded bg-slate-700 dark:bg-slate-200 transition-all duration-200" id="hb3"></span>
+      <button id="hamburgerBtn" class="hamburger" aria-label="Menu" onclick="toggleMobileMenu()">
+        <span id="hb1"></span>
+        <span id="hb2"></span>
+        <span id="hb3"></span>
       </button>
     </div>
   </div>
@@ -55,7 +72,7 @@
     <a href="/#how" data-i18n="nav.how">How it Works</a>
     <a href="/#faq" data-i18n="nav.faq">FAQ</a>
     <% if (!manufacturer) { %><a href="/manufacturer/login" data-i18n="nav.manufacturer">Manufacturer</a><% } %>
-    <div style="height:1px;background:rgba(226,232,240,0.6);margin:4px 0;"></div>
+    <div style="height:1px;background:var(--line);margin:4px 0;"></div>
     <% if (user) { %>
       <a href="/dashboard" data-i18n="nav.dashboard">Dashboard</a>
       <% if (user.is_admin) { %><a href="/admin" data-i18n="nav.admin">Admin</a><% } %>
@@ -65,10 +82,10 @@
       <form method="POST" action="/manufacturer/logout"><%- include('_csrf') %><button type="submit" data-i18n="nav.signout">Sign out</button></form>
     <% } else { %>
       <a href="/login" data-i18n="nav.login">Login</a>
-      <a href="/store" data-i18n="nav.gettag" style="color:#0D9488;font-weight:700;">Get Your Tag →</a>
+      <a href="/store" data-i18n="nav.gettag" style="color:var(--teal-d);font-weight:700;">Get Your Tag →</a>
     <% } %>
   </div>
-</nav>
+</header>
 
 <script>
 function _setHamburger(open) {

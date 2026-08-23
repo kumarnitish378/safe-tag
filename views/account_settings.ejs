@@ -1,28 +1,44 @@
 <%- include('layout/_head') %>
 
-<section class="page-shell page-shell-compact">
-    <div class="page-hero reveal">
-      <div class="page-kicker">Account</div>
-      <h1 class="page-title">Settings</h1>
-      <p class="page-subtitle">Keep your contact details current so SafeTag can reach you when it matters.</p>
+<style>
+  .stp{max-width:640px;margin:0 auto;padding:2.5rem 20px 4rem}
+  .stp-hero{margin-bottom:1.8rem}
+  .stp-title{font-size:clamp(1.6rem,3.2vw,2.1rem);font-weight:800;margin-top:.5rem}
+  .stp-sub{color:var(--muted);margin-top:.45rem}
+  .stp-card{background:var(--white);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow-sm);padding:1.6rem}
+  .stp-field{margin-bottom:1rem}
+  .stp-card h3{font-size:1.05rem;font-weight:700;color:var(--navy);margin:.4rem 0 .2rem}
+  .stp-hr{border:none;border-top:1px solid var(--line);margin:1.3rem 0}
+  .flash-err{display:flex;align-items:center;gap:.55rem;background:#fee2e2;color:#991b1b;padding:.85rem 1.05rem;border-radius:12px;font-weight:600;font-size:.92rem;margin-bottom:1.2rem}
+  .flash-err .material-symbols-outlined{color:inherit}
+  .btn-save{width:100%;justify-content:center;margin-top:.6rem}
+</style>
+
+<section class="stp">
+    <div class="stp-hero reveal">
+      <span class="eyebrow">Account</span>
+      <h1 class="stp-title">Settings</h1>
+      <p class="stp-sub">Keep your contact details current so SafeTag can reach you when it matters.</p>
     </div>
 
-    <% if (errors._form) { %><div class="flash flash-error">⚠️ <%= errors._form %></div><% } %>
+    <% if (errors._form) { %><div class="flash-err"><span class="material-symbols-outlined">error</span><%= errors._form %></div><% } %>
 
-    <form method="POST" action="/account/settings" class="glass-light form-panel p-6 space-y-4 reveal">
+    <form method="POST" action="/account/settings" class="stp-card reveal">
       <%- include('layout/_csrf') %>
-      <div><label class="label">Email</label><input class="input" disabled value="<%= values.email %>" /></div>
-      <div><label class="label">Display name</label><input class="input" name="name" value="<%= values.name||'' %>" /></div>
-      <div><label class="label">Mobile</label><input class="input" name="mobile" value="<%= values.mobile||'' %>" />
+      <div class="stp-field"><label class="label">Email</label><input class="input" disabled value="<%= values.email %>" /></div>
+      <div class="stp-field"><label class="label">Display name</label><input class="input" name="name" value="<%= values.name||'' %>" /></div>
+      <div class="stp-field"><label class="label">Mobile</label><input class="input" name="mobile" value="<%= values.mobile||'' %>" />
         <% if (errors.mobile) { %><div class="field-error"><%= errors.mobile %></div><% } %>
       </div>
-      <hr class="border-slate-200" />
-      <h3 class="font-semibold">Change password</h3>
-      <div><label class="label">Current password</label><input class="input" type="password" name="current_password" /></div>
-      <% if (errors.current_password) { %><div class="field-error"><%= errors.current_password %></div><% } %>
-      <div><label class="label">New password</label><input class="input" type="password" name="new_password" /></div>
-      <% if (errors.new_password) { %><div class="field-error"><%= errors.new_password %></div><% } %>
-      <button class="btn-brand btn-lq w-full justify-center">Save</button>
+      <hr class="stp-hr" />
+      <h3>Change password</h3>
+      <div class="stp-field"><label class="label">Current password</label><input class="input" type="password" name="current_password" />
+        <% if (errors.current_password) { %><div class="field-error"><%= errors.current_password %></div><% } %>
+      </div>
+      <div class="stp-field"><label class="label">New password</label><input class="input" type="password" name="new_password" />
+        <% if (errors.new_password) { %><div class="field-error"><%= errors.new_password %></div><% } %>
+      </div>
+      <button class="btn btn-save">Save</button>
     </form>
 </section>
 

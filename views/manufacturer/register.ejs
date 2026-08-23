@@ -1,56 +1,73 @@
 <%- include('../layout/_head') %>
 
-<section class="page-shell page-shell-narrow">
-    <div class="glass-light form-panel p-6 reveal">
-      <h1 class="text-2xl font-bold mb-1">Manufacturer registration</h1>
-      <p class="text-sm text-slate-500 mb-6">Your account will be reviewed and approved by SafeTag admin before you can create batches and list products.</p>
+<style>
+  .mf-input{width:100%;background:#fff;border:1.5px solid var(--line);border-radius:10px;padding:.72rem .85rem;font-size:.95rem;color:var(--navy);font-family:'Inter',sans-serif;transition:.15s}
+  .mf-input:focus{outline:none;border-color:var(--teal);box-shadow:0 0 0 3px rgba(13,148,136,.15)}
+  .mf-label{display:block;font-weight:600;font-size:.88rem;color:var(--navy);margin-bottom:.35rem}
+  .mf-req{color:#dc2626}
+  .mf-hint{color:var(--muted);font-size:.78rem;margin-top:.3rem}
+  .mf-err{color:#dc2626;font-size:.8rem;margin-top:.25rem}
+  .mf-flash{background:#fef2f2;border:1px solid #fecaca;color:#b91c1c;border-radius:10px;padding:.7rem .85rem;font-size:.88rem;display:flex;align-items:center;gap:.5rem;margin-bottom:1rem}
+  .mf-flash .material-symbols-outlined{color:#dc2626;font-size:1.1rem}
+  .mf-card{background:#fff;border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow-sm);padding:2.2rem}
+  .mf-form{display:flex;flex-direction:column;gap:1rem}
+  .mf-grid2{display:grid;grid-template-columns:1fr 1fr;gap:.9rem}
+  @media (max-width:520px){.mf-grid2{grid-template-columns:1fr}}
+</style>
 
-      <% if (errors._form) { %><div class="flash flash-error mb-4">⚠️ <%= errors._form %></div><% } %>
+<section class="section" style="background:var(--cream)">
+  <div class="wrap" style="max-width:560px">
+    <div class="mf-card">
+      <h1 style="font-family:'Sora',sans-serif;font-size:1.6rem;font-weight:700;color:var(--navy);margin:0 0 .35rem;">Manufacturer registration</h1>
+      <p style="color:var(--muted);font-size:.9rem;margin:0 0 1.5rem;">Your account will be reviewed and approved by SafeTag admin before you can create batches and list products.</p>
 
-      <form method="POST" action="/manufacturer/register" class="space-y-4">
+      <% if (errors._form) { %><div class="mf-flash"><span class="material-symbols-outlined">error</span><%= errors._form %></div><% } %>
+
+      <form method="POST" action="/manufacturer/register" class="mf-form">
         <%- include('../layout/_csrf') %>
 
         <div>
-          <label class="label">Business Name <span class="text-red-500">*</span></label>
-          <input class="input" name="business_name" required value="<%= values.business_name||'' %>" placeholder="e.g. Ravi Enterprises" />
-          <% if (errors.business_name) { %><div class="field-error"><%= errors.business_name %></div><% } %>
+          <label class="mf-label">Business Name <span class="mf-req">*</span></label>
+          <input class="mf-input" name="business_name" required value="<%= values.business_name||'' %>" placeholder="e.g. Ravi Enterprises" />
+          <% if (errors.business_name) { %><div class="mf-err"><%= errors.business_name %></div><% } %>
         </div>
 
-        <div class="grid grid-cols-2 gap-3">
+        <div class="mf-grid2">
           <div>
-            <label class="label">Email <span class="text-red-500">*</span></label>
-            <input class="input" type="email" name="email" required value="<%= values.email||'' %>" />
-            <% if (errors.email) { %><div class="field-error"><%= errors.email %></div><% } %>
+            <label class="mf-label">Email <span class="mf-req">*</span></label>
+            <input class="mf-input" type="email" name="email" required value="<%= values.email||'' %>" />
+            <% if (errors.email) { %><div class="mf-err"><%= errors.email %></div><% } %>
           </div>
           <div>
-            <label class="label">Mobile <span class="text-red-500">*</span></label>
-            <input class="input" name="mobile" required value="<%= values.mobile||'' %>" placeholder="10-digit number" />
-            <% if (errors.mobile) { %><div class="field-error"><%= errors.mobile %></div><% } %>
+            <label class="mf-label">Mobile <span class="mf-req">*</span></label>
+            <input class="mf-input" name="mobile" required value="<%= values.mobile||'' %>" placeholder="10-digit number" />
+            <% if (errors.mobile) { %><div class="mf-err"><%= errors.mobile %></div><% } %>
           </div>
         </div>
 
         <div>
-          <label class="label">Password <span class="text-red-500">*</span></label>
-          <input class="input" type="password" name="password" required minlength="6" />
-          <% if (errors.password) { %><div class="field-error"><%= errors.password %></div><% } %>
+          <label class="mf-label">Password <span class="mf-req">*</span></label>
+          <input class="mf-input" type="password" name="password" required minlength="6" />
+          <% if (errors.password) { %><div class="mf-err"><%= errors.password %></div><% } %>
         </div>
 
         <div>
-          <label class="label">Business Address</label>
-          <input class="input" name="address" value="<%= values.address||'' %>" placeholder="Full address with city and PIN code" />
+          <label class="mf-label">Business Address</label>
+          <input class="mf-input" name="address" value="<%= values.address||'' %>" placeholder="Full address with city and PIN code" />
         </div>
 
         <div>
-          <label class="label">Business Description</label>
-          <textarea class="input" name="description" rows="3" maxlength="1000" placeholder="Briefly describe your business — what products you make, materials used, production capacity, etc."><%= values.description||'' %></textarea>
-          <p class="text-xs text-slate-500 mt-1">Helps admin review your application faster.</p>
+          <label class="mf-label">Business Description</label>
+          <textarea class="mf-input" name="description" rows="3" maxlength="1000" placeholder="Briefly describe your business — what products you make, materials used, production capacity, etc."><%= values.description||'' %></textarea>
+          <p class="mf-hint">Helps admin review your application faster.</p>
         </div>
 
-        <button class="btn-brand btn-lq w-full justify-center">Create manufacturer account</button>
+        <button class="btn" style="justify-content:center;width:100%;">Create manufacturer account</button>
       </form>
 
-      <p class="text-sm text-slate-500 mt-4 text-center">Already approved? <a class="text-brand font-semibold" href="/manufacturer/login">Sign in</a>.</p>
+      <p style="color:var(--muted);font-size:.875rem;margin-top:1.25rem;text-align:center;">Already approved? <a style="color:var(--teal-d);font-weight:600;" href="/manufacturer/login">Sign in</a>.</p>
     </div>
+  </div>
 </section>
 
 <%- include('../layout/_foot') %>

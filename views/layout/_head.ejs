@@ -3,16 +3,13 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <!-- Anti-flash: apply saved theme and lang before any paint -->
+  <!-- Anti-flash: apply saved lang before any paint. Light-only design system. -->
   <script>
     (function(){
       try {
-        var t = localStorage.safetagTheme;
-        if (!t || t === 'dark') document.documentElement.classList.add('dark');
+        document.documentElement.classList.remove('dark'); // no dark theme anymore
         if (localStorage.safetagLang === 'hi') document.documentElement.setAttribute('lang','hi');
-      } catch(e) {
-        document.documentElement.classList.add('dark'); /* default dark when localStorage blocked */
-      }
+      } catch(e) {}
     })();
   </script>
 
@@ -471,8 +468,13 @@
 
   });
   </script>
+
+  <!-- ── Design system (light-only). Loaded LAST so its tokens/components win. ── -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/theme.css" />
 </head>
-<body class="bg-slate-50 min-h-screen flex flex-col">
+<body class="min-h-screen flex flex-col" style="background:var(--white)">
 
 <% if (typeof hideNav === 'undefined' || !hideNav) { %>
   <%- include('_navbar') %>
