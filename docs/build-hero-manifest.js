@@ -6,7 +6,7 @@
  *   npm run hero        (or)   node docs/build-hero-manifest.js
  *
  * A browser can't list a folder on a static site, so this manifest is how the
- * carousel "sees" every image — locally and on www.sftg.in.
+ * carousel "sees" every image — locally and on blog.sftg.in.
  */
 const fs = require('fs');
 const path = require('path');

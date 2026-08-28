@@ -1,7 +1,7 @@
 # Hero carousel images
 
 Drop images here and they **automatically** appear in the sliding hero on the
-landing page (`docs/index.html` → www.sftg.in). No code changes needed.
+landing page (`docs/index.html` → blog.sftg.in). No code changes needed.
 
 - **Formats:** `.jpg .jpeg .png .webp .gif .avif`
 - **Recommended size:** 1440 × 1080 (4:3), landscape.
