@@ -182,3 +182,15 @@ model Order {
 
   @@map("orders")
 }
+
+// Persistent session store (express-session via @quixo3/prisma-session-store).
+// Replaces the default in-memory MemoryStore so sessions survive restarts and
+// don't leak memory. Works for both local SQLite and prod Postgres (Neon).
+model Session {
+  id        String   @id
+  sid       String   @unique
+  data      String
+  expiresAt DateTime
+
+  @@map("sessions")
+}
