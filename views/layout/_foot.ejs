@@ -2,5 +2,56 @@
 <% if (typeof hideFooter === 'undefined' || !hideFooter) { %>
   <%- include('_footer') %>
 <% } %>
+
+<%# Global show/hide password toggle — enhances every type=password field %>
+<style>
+  .pw-wrap{ position:relative; display:block; }
+  .pw-wrap > input{ padding-right:2.75rem !important; }
+  .pw-toggle{
+    position:absolute; top:50%; right:.55rem; transform:translateY(-50%);
+    display:inline-flex; align-items:center; justify-content:center;
+    width:1.9rem; height:1.9rem; padding:0; margin:0;
+    background:transparent; border:0; cursor:pointer; border-radius:50%;
+    color:var(--muted, #5b6b7f); line-height:1; -webkit-tap-highlight-color:transparent;
+  }
+  .pw-toggle:hover{ color:var(--teal, #0D9488); }
+  .pw-toggle:focus-visible{ outline:2px solid var(--teal, #0D9488); outline-offset:1px; }
+  .pw-toggle .material-symbols-outlined{ font-size:1.3rem; }
+  /* Hide native reveal (Edge/IE) so there's only one eye */
+  .pw-wrap > input::-ms-reveal, .pw-wrap > input::-ms-clear{ display:none; }
+</style>
+<script>
+  (function () {
+    function addToggle(input) {
+      if (input.dataset.pwEnhanced) return;
+      input.dataset.pwEnhanced = '1';
+      var wrap = document.createElement('span');
+      wrap.className = 'pw-wrap';
+      input.parentNode.insertBefore(wrap, input);
+      wrap.appendChild(input);
+
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'pw-toggle';
+      btn.setAttribute('aria-label', 'Show password');
+      btn.innerHTML = '<span class="material-symbols-outlined" aria-hidden="true">visibility</span>';
+
+      btn.addEventListener('click', function () {
+        var show = input.type === 'password';
+        input.type = show ? 'text' : 'password';
+        btn.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
+        btn.firstChild.textContent = show ? 'visibility_off' : 'visibility';
+        input.focus();
+      });
+      wrap.appendChild(btn);
+    }
+    function run() {
+      document.querySelectorAll('input[type="password"]').forEach(addToggle);
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', run);
+    } else { run(); }
+  })();
+</script>
 </body>
 </html>
