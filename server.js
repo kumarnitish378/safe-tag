@@ -10,6 +10,8 @@ require('dotenv').config();
 const path = require('path');
 const crypto = require('crypto');
 const compression = require('compression');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
 const express = require('express');
 const session = require('express-session');
 const flash = require('connect-flash');
@@ -90,6 +92,29 @@ app.set('views', path.join(__dirname, 'views'));
 // Middleware
 // -----------------------------------------------------------------------------
 app.use(compression());
+
+// Security headers. CSP is left OFF because the app relies on inline scripts
+// and several external origins (Razorpay checkout, Google Maps, Google Fonts,
+// the Tailwind dev CDN); enabling the strict default CSP would break them.
+// Everything else helmet sets (HSTS, X-Content-Type-Options, frameguard,
+// Referrer-Policy, etc.) is safe and on. crossOriginEmbedderPolicy stays off so
+// third-party embeds (payment/maps) keep working.
+app.use(helmet({
+  contentSecurityPolicy: false,
+  crossOriginEmbedderPolicy: false,
+}));
+
+// Rate limiter for auth / sensitive POST endpoints — blunts brute-force and spam.
+// trust proxy is set to 1 above, so the limiter keys on the real client IP.
+const authLimiter = process.env.NODE_ENV === 'test'
+  ? (req, res, next) => next() // disabled under tests (they hammer /login)
+  : rateLimit({
+      windowMs: 15 * 60 * 1000, // 15 min
+      max: 30,                  // 30 attempts per IP per window
+      standardHeaders: true,
+      legacyHeaders: false,
+      message: 'Too many attempts. Please wait a few minutes and try again.',
+    });
 
 // Razorpay webhook — registered BEFORE the body parsers so the signature can be
 // verified against the RAW request body. Machine-to-machine: it runs before the
@@ -739,7 +764,7 @@ app.get('/login', (req, res) => {
   });
 });
 
-app.post('/login', async (req, res) => {
+app.post('/login', authLimiter, async (req, res) => {
   try {
     const email = (req.body.email || '').trim().toLowerCase();
     const password = req.body.password || '';
@@ -782,7 +807,7 @@ app.get('/register', (req, res) => {
   res.render('auth/register', { title: 'Create account', errors: {}, values: {}, hideNav: true, hideFooter: true });
 });
 
-app.post('/register', async (req, res) => {
+app.post('/register', authLimiter, async (req, res) => {
   try {
     const email = (req.body.email || '').trim().toLowerCase();
     const mobile = normaliseMobile(req.body.mobile);
@@ -1190,7 +1215,7 @@ app.get('/manufacturer/register', (req, res) => {
   res.render('manufacturer/register', { title: 'Manufacturer registration', errors: {}, values: {} });
 });
 
-app.post('/manufacturer/register', async (req, res) => {
+app.post('/manufacturer/register', authLimiter, async (req, res) => {
   try {
     const email = (req.body.email || '').trim().toLowerCase();
     const mobile = normaliseMobile(req.body.mobile);
@@ -1233,7 +1258,7 @@ app.get('/manufacturer/login', (req, res) => {
   res.render('manufacturer/login', { title: 'Manufacturer sign in', errors: {}, values: {} });
 });
 
-app.post('/manufacturer/login', async (req, res) => {
+app.post('/manufacturer/login', authLimiter, async (req, res) => {
   try {
     const email = (req.body.email || '').trim().toLowerCase();
     const password = req.body.password || '';
@@ -1275,7 +1300,7 @@ app.post('/manufacturer/logout', (req, res) => {
   req.session.save(() => res.redirect('/manufacturer/login'));
 });
 
-app.post('/manufacturer/request-approval', requireManufacturer, async (req, res) => {
+app.post('/manufacturer/request-approval', authLimiter, requireManufacturer, async (req, res) => {
   const mfr = req.session.manufacturer;
   const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'nitish.ns378@gmail.com';
   const SMTP_USER = process.env.SMTP_USER || '';
