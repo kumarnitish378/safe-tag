@@ -131,10 +131,19 @@ app.get('/favicon.ico', (req, res) => res.redirect('/static/favicon.png'));
 // Secure cookies require HTTPS. Set SECURE_COOKIES=true only in Render env vars (never locally).
 // NODE_ENV alone is NOT used — running NODE_ENV=production on localhost (HTTP) breaks sessions.
 const SECURE_COOKIES = process.env.SECURE_COOKIES === 'true';
+// Persistent, DB-backed session store (Prisma) — replaces the default in-memory
+// MemoryStore, which leaks memory and drops every session on restart/spin-down.
+// One store for both local SQLite and prod Postgres (Neon), via the Prisma client.
+const { PrismaSessionStore } = require('@quixo3/prisma-session-store');
 app.use(session({
   secret: SESSION_SECRET,
   resave: false,
   saveUninitialized: true,
+  store: new PrismaSessionStore(prisma, {
+    checkPeriod: 1000 * 60 * 60 * 2, // prune expired sessions every 2h
+    dbRecordIdIsSessionId: true,
+    dbRecordIdFunction: undefined,
+  }),
   cookie: {
     httpOnly: true,
     secure: SECURE_COOKIES,
