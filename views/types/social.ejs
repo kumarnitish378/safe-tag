@@ -1,8 +1,8 @@
-<%- include('../layout/_head', { hideNav: true, hideFooter: true }) %>
+<%- include('../layout/_head', { hideFooter: true }) %>
 
 <div class="scan-wrap" style="--acc:#8b5cf6;">
   <style>
-    .scan-wrap{min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:1.75rem 1.15rem;background:var(--cream);font-family:'Inter',system-ui,sans-serif}
+    .scan-wrap{min-height:calc(100dvh - 66px);display:flex;align-items:center;justify-content:center;padding:1.75rem 1.15rem;background:var(--cream);font-family:'Inter',system-ui,sans-serif}
     .scan-card{width:100%;max-width:28rem;background:var(--white);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden}
     .scan-head{text-align:center;padding:2.25rem 1.5rem 1.75rem;color:#fff;background:linear-gradient(150deg,#a78bfa 0%,#8b5cf6 55%,#6366f1 130%)}
     .scan-avatar{width:84px;height:84px;margin:0 auto 1rem;border-radius:9999px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.18);box-shadow:0 0 0 6px rgba(255,255,255,.12)}

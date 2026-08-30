@@ -1,7 +1,7 @@
-<%- include('../layout/_head', { hideNav: true, hideFooter: true }) %>
+<%- include('../layout/_head', { hideFooter: true }) %>
 
 <style>
-  .st-wrap{--acc:#4f46e5;min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:1.5rem;background:var(--cream)}
+  .st-wrap{--acc:#4f46e5;min-height:calc(100dvh - 66px);display:flex;align-items:center;justify-content:center;padding:1.5rem;background:var(--cream)}
   .st-card{width:100%;max-width:28rem;background:var(--white);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow);border:1px solid var(--line)}
   .st-head{position:relative;text-align:center;color:#fff;padding:2.25rem 1.5rem 1.75rem;background:var(--acc);
     background-image:linear-gradient(150deg,color-mix(in srgb,var(--acc) 84%,#0a2342) 0%,color-mix(in srgb,var(--acc) 48%,#0a2342) 130%)}
