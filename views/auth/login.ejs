@@ -1,7 +1,8 @@
 <%
-  hideNav    = true;
-  hideFooter = true;
-  head = `<style>
+  // NOTE: use `var` (function-scoped) — a bare `head = ...` inside EJS's
+  // with(locals) leaks to the process global and breaks other pages. hideNav /
+  // hideFooter are passed as include data below for the same reason.
+  var head = `<style>
     .auth-wrap{display:flex;min-height:100vh;background:var(--white)}
     .auth-left{
       display:none;width:44%;min-width:340px;background:var(--navy);
@@ -36,7 +37,7 @@
     @media (min-width:960px){.auth-logo-mobile{display:none}}
   </style>`;
 %>
-<%- include('../layout/_head') %>
+<%- include('../layout/_head', { hideNav: true, head: head }) %>
 
 <div class="auth-wrap">
 
@@ -132,4 +133,4 @@
 
 </div>
 
-<%- include('../layout/_foot') %>
+<%- include('../layout/_foot', { hideFooter: true }) %>
