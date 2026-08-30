@@ -49,7 +49,34 @@ mode** by design — no real money is charged.
 - [ ] A test payment completes with a Razorpay test card
 - [ ] Response headers include `Strict-Transport-Security` and `X-Content-Type-Options`
 
-## 4. Known / deferred
+## 4. Reset the admin password (Neon)
+
+Admins are **excluded** from the self-service "Forgot password" flow by design, so
+the production admin (`nitish.ns378@gmail.com`) is reset directly in the database.
+Run from the project root (uses the direct Neon URL in `.env.production`):
+
+```bash
+# 1) Hash the NEW password (bcryptjs, 10 rounds — same as the app)
+node -e "process.stdout.write(require('bcryptjs').hashSync('YOUR_NEW_PASSWORD',10))"
+
+# 2) Put that hash into a SQL file, e.g. reset-admin.sql:
+#    UPDATE users
+#    SET password_hash = '<PASTE_HASH>', is_admin = true, is_active = true,
+#        reset_token = NULL, reset_token_expiry = NULL
+#    WHERE email = 'nitish.ns378@gmail.com';
+
+# 3) Apply it over the DIRECT (unpooled) Neon connection
+DIRECT=$(grep '^DATABASE_URL_UNPOOLED=' .env.production | cut -d= -f2-)
+npx prisma db execute --url "$DIRECT" --file reset-admin.sql
+```
+
+To **create** a brand-new admin instead, use the same SQL as an `INSERT ... ON
+CONFLICT (email) DO UPDATE` (email, mobile, password_hash, name, is_admin=true).
+Then log in at `https://safe-tag.onrender.com/login` → `/admin`.
+
+> ⚠️ Never commit the SQL file or the hash — delete `reset-admin.sql` afterwards.
+
+## 5. Known / deferred
 - Blog is served separately at `www.sftg.in/blog/` (GitHub Pages).
 - Custom domain `sftg.in` not yet connected (see the domain setup plan).
 - `DEMO-CREDENTIALS.md` documents **local** seed accounts only — they don't exist in production.
