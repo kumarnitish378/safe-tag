@@ -23,6 +23,7 @@
       <%- include('../layout/_csrf') %>
         <div><label class="mf-label">Email</label><input class="mf-input" type="email" name="email" required value="<%= values.email||'' %>" /></div>
         <div><label class="mf-label">Password</label><input class="mf-input" type="password" name="password" required /></div>
+        <div style="text-align:right;margin-top:-.35rem;"><a href="/manufacturer/forgot-password" style="color:var(--teal-d);font-weight:600;font-size:.82rem;">Forgot password?</a></div>
         <button class="btn" style="justify-content:center;width:100%;">Sign in</button>
       </form>
       <p style="color:var(--muted);font-size:.875rem;margin-top:1.25rem;text-align:center;">New here? <a style="color:var(--teal-d);font-weight:600;" href="/manufacturer/register">Register your workshop</a>.</p>

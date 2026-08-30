@@ -101,6 +101,9 @@ model User {
   isActive     Boolean  @default(true) @map("is_active")
   createdAt    DateTime @default(now()) @map("created_at")
 
+  resetToken       String?   @map("reset_token")
+  resetTokenExpiry DateTime? @map("reset_token_expiry")
+
   tags   Tag[]
   orders Order[]
 
@@ -118,6 +121,9 @@ model Manufacturer {
   isApproved   Boolean  @default(false) @map("is_approved")
   isBlocked    Boolean  @default(false) @map("is_blocked")
   createdAt    DateTime @default(now()) @map("created_at")
+
+  resetToken       String?   @map("reset_token")
+  resetTokenExpiry DateTime? @map("reset_token_expiry")
 
   batches  TagBatch[]
   listings ProductListing[]
