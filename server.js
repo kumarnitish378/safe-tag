@@ -102,6 +102,48 @@ function sanitizeNext(next, fallback) {
   return /^\/[^/\\]/.test(next) ? next : fb;
 }
 
+// Password-reset token helpers. We store only the SHA-256 hash of the token in
+// the DB and email the raw token, so a DB leak can't be used to reset accounts.
+function makeResetToken() {
+  const raw = crypto.randomBytes(32).toString('hex');
+  const hash = crypto.createHash('sha256').update(raw).digest('hex');
+  return { raw, hash, expiry: new Date(Date.now() + 30 * 60 * 1000) }; // 30 min
+}
+function hashResetToken(raw) {
+  return crypto.createHash('sha256').update(String(raw)).digest('hex');
+}
+// Fire-and-forget password-reset email (never blocks the request).
+function sendResetEmail({ to, name, resetUrl }) {
+  const SMTP_USER = process.env.SMTP_USER || '';
+  const SMTP_PASS = process.env.SMTP_PASS || '';
+  if (!SMTP_USER || !SMTP_PASS || !to) return;
+  try {
+    const nodemailer = require('nodemailer');
+    const transporter = nodemailer.createTransport({
+      host: process.env.SMTP_HOST || 'smtp.gmail.com',
+      port: parseInt(process.env.SMTP_PORT || '587', 10),
+      secure: false,
+      auth: { user: SMTP_USER, pass: SMTP_PASS },
+      connectionTimeout: 6000, greetingTimeout: 6000, socketTimeout: 8000,
+    });
+    transporter.sendMail({
+      from: `"SafeTag" <${SMTP_USER}>`,
+      to,
+      subject: 'Reset your SafeTag password',
+      text: [
+        `Hi ${name || 'there'},`, ``,
+        `We received a request to reset your SafeTag password.`,
+        `Use this link to set a new one (it expires in 30 minutes):`, ``,
+        resetUrl, ``,
+        `If you didn't request this, you can safely ignore this email — your password won't change.`,
+        ``, `— SafeTag`,
+      ].join('\n'),
+    }).catch((e) => console.error('Reset email error (async):', e.message));
+  } catch (e) {
+    console.error('Reset email setup error:', e.message);
+  }
+}
+
 // -----------------------------------------------------------------------------
 // View engine
 // -----------------------------------------------------------------------------
@@ -846,6 +888,80 @@ app.post('/login', authLimiter, async (req, res) => {
   }
 });
 
+// ---- Forgot / reset password (users; admins excluded from self-service) ----
+app.get('/forgot-password', (req, res) => {
+  res.render('auth/forgot_password', {
+    title: 'Forgot password', errors: {}, values: {},
+    postAction: '/forgot-password', loginUrl: '/login',
+  });
+});
+
+app.post('/forgot-password', authLimiter, async (req, res) => {
+  const email = (req.body.email || '').trim().toLowerCase();
+  try {
+    if (isValidEmail(email)) {
+      const user = await prisma.user.findUnique({ where: { email } });
+      // Admins can't self-reset — they're reset manually for security.
+      if (user && user.isActive && !user.isAdmin) {
+        const { raw, hash, expiry } = makeResetToken();
+        await prisma.user.update({ where: { id: user.id }, data: { resetToken: hash, resetTokenExpiry: expiry } });
+        sendResetEmail({ to: user.email, name: user.name, resetUrl: `${BASE_URL}/reset-password/${raw}` });
+      }
+    }
+  } catch (e) { console.error('[forgot-password]', e.message); }
+  // Always the same response — no account enumeration.
+  return res.render('auth/forgot_password', {
+    title: 'Forgot password', sent: true, values: { email }, errors: {},
+    postAction: '/forgot-password', loginUrl: '/login',
+  });
+});
+
+app.get('/reset-password/:token', async (req, res) => {
+  try {
+    const hash = hashResetToken(req.params.token);
+    const user = await prisma.user.findFirst({ where: { resetToken: hash, resetTokenExpiry: { gt: new Date() } } });
+    if (!user) {
+      return res.status(400).render('auth/forgot_password', {
+        title: 'Reset password', errors: { _form: 'This reset link is invalid or has expired. Please request a new one.' },
+        values: {}, postAction: '/forgot-password', loginUrl: '/login',
+      });
+    }
+    return res.render('auth/reset_password', {
+      title: 'Set a new password', errors: {},
+      postAction: `/reset-password/${req.params.token}`, loginUrl: '/login',
+    });
+  } catch (e) { res.status(500).render('500'); }
+});
+
+app.post('/reset-password/:token', authLimiter, async (req, res) => {
+  const token = req.params.token;
+  const password = req.body.password || '';
+  const confirm = req.body.confirm || '';
+  try {
+    const hash = hashResetToken(token);
+    const user = await prisma.user.findFirst({ where: { resetToken: hash, resetTokenExpiry: { gt: new Date() } } });
+    if (!user) {
+      return res.status(400).render('auth/forgot_password', {
+        title: 'Reset password', errors: { _form: 'This reset link is invalid or has expired. Please request a new one.' },
+        values: {}, postAction: '/forgot-password', loginUrl: '/login',
+      });
+    }
+    const errors = {};
+    if (password.length < 6) errors.password = 'Password must be at least 6 characters';
+    if (password !== confirm) errors.confirm = 'Passwords do not match';
+    if (Object.keys(errors).length) {
+      return res.render('auth/reset_password', {
+        title: 'Set a new password', errors,
+        postAction: `/reset-password/${token}`, loginUrl: '/login',
+      });
+    }
+    const passwordHash = await bcrypt.hash(password, 10);
+    await prisma.user.update({ where: { id: user.id }, data: { passwordHash, resetToken: null, resetTokenExpiry: null } });
+    req.flash('success', 'Password updated. Please sign in with your new password.');
+    return res.redirect('/login');
+  } catch (e) { console.error('[reset-password]', e.message); res.status(500).render('500'); }
+});
+
 app.get('/register', (req, res) => {
   res.render('auth/register', { title: 'Create account', errors: {}, values: {}, hideNav: true, hideFooter: true });
 });
@@ -1345,6 +1461,78 @@ app.post('/manufacturer/login', authLimiter, async (req, res) => {
       values: { email: req.body.email },
     });
   }
+});
+
+// ---- Forgot / reset password (manufacturers) ----
+app.get('/manufacturer/forgot-password', (req, res) => {
+  res.render('auth/forgot_password', {
+    title: 'Forgot password', errors: {}, values: {},
+    postAction: '/manufacturer/forgot-password', loginUrl: '/manufacturer/login',
+  });
+});
+
+app.post('/manufacturer/forgot-password', authLimiter, async (req, res) => {
+  const email = (req.body.email || '').trim().toLowerCase();
+  try {
+    if (isValidEmail(email)) {
+      const mfr = await prisma.manufacturer.findUnique({ where: { email } });
+      if (mfr) {
+        const { raw, hash, expiry } = makeResetToken();
+        await prisma.manufacturer.update({ where: { id: mfr.id }, data: { resetToken: hash, resetTokenExpiry: expiry } });
+        sendResetEmail({ to: mfr.email, name: mfr.businessName, resetUrl: `${BASE_URL}/manufacturer/reset-password/${raw}` });
+      }
+    }
+  } catch (e) { console.error('[mfr forgot-password]', e.message); }
+  return res.render('auth/forgot_password', {
+    title: 'Forgot password', sent: true, values: { email }, errors: {},
+    postAction: '/manufacturer/forgot-password', loginUrl: '/manufacturer/login',
+  });
+});
+
+app.get('/manufacturer/reset-password/:token', async (req, res) => {
+  try {
+    const hash = hashResetToken(req.params.token);
+    const mfr = await prisma.manufacturer.findFirst({ where: { resetToken: hash, resetTokenExpiry: { gt: new Date() } } });
+    if (!mfr) {
+      return res.status(400).render('auth/forgot_password', {
+        title: 'Reset password', errors: { _form: 'This reset link is invalid or has expired. Please request a new one.' },
+        values: {}, postAction: '/manufacturer/forgot-password', loginUrl: '/manufacturer/login',
+      });
+    }
+    return res.render('auth/reset_password', {
+      title: 'Set a new password', errors: {},
+      postAction: `/manufacturer/reset-password/${req.params.token}`, loginUrl: '/manufacturer/login',
+    });
+  } catch (e) { res.status(500).render('500'); }
+});
+
+app.post('/manufacturer/reset-password/:token', authLimiter, async (req, res) => {
+  const token = req.params.token;
+  const password = req.body.password || '';
+  const confirm = req.body.confirm || '';
+  try {
+    const hash = hashResetToken(token);
+    const mfr = await prisma.manufacturer.findFirst({ where: { resetToken: hash, resetTokenExpiry: { gt: new Date() } } });
+    if (!mfr) {
+      return res.status(400).render('auth/forgot_password', {
+        title: 'Reset password', errors: { _form: 'This reset link is invalid or has expired. Please request a new one.' },
+        values: {}, postAction: '/manufacturer/forgot-password', loginUrl: '/manufacturer/login',
+      });
+    }
+    const errors = {};
+    if (password.length < 6) errors.password = 'Password must be at least 6 characters';
+    if (password !== confirm) errors.confirm = 'Passwords do not match';
+    if (Object.keys(errors).length) {
+      return res.render('auth/reset_password', {
+        title: 'Set a new password', errors,
+        postAction: `/manufacturer/reset-password/${token}`, loginUrl: '/manufacturer/login',
+      });
+    }
+    const passwordHash = await bcrypt.hash(password, 10);
+    await prisma.manufacturer.update({ where: { id: mfr.id }, data: { passwordHash, resetToken: null, resetTokenExpiry: null } });
+    req.flash('success', 'Password updated. Please sign in with your new password.');
+    return res.redirect('/manufacturer/login');
+  } catch (e) { console.error('[mfr reset-password]', e.message); res.status(500).render('500'); }
 });
 
 app.post('/manufacturer/logout', (req, res) => {
