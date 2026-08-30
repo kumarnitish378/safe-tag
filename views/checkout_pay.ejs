@@ -91,12 +91,12 @@
       amount:      <%= amount %>,
       currency:    <%- JSON.stringify(currency) %>,
       name:        'SafeTag',
-      description: <%- JSON.stringify(product.name + ' × ' + quantity) %>,
+      description: <%- safeJson(product.name + ' × ' + quantity) %>,
       order_id:    <%- JSON.stringify(order_id) %>,
       prefill: {
-        name:    <%- JSON.stringify(userName || '') %>,
-        email:   <%- JSON.stringify(userEmail || '') %>,
-        contact: <%- JSON.stringify(addr.recipient_phone || '') %>,
+        name:    <%- safeJson(userName || '') %>,
+        email:   <%- safeJson(userEmail || '') %>,
+        contact: <%- safeJson(addr.recipient_phone || '') %>,
       },
       theme: { color: '#0D9488' },
       handler: function (response) {

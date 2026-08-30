@@ -82,6 +82,26 @@ const TWILIO_ACCOUNT_SID = process.env.TWILIO_ACCOUNT_SID || '';
 const TWILIO_AUTH_TOKEN_ENV = process.env.TWILIO_AUTH_TOKEN || '';
 const TWILIO_WHATSAPP_FROM = process.env.TWILIO_WHATSAPP_FROM || 'whatsapp:+14155238886';
 
+// Serialize a value for safe embedding inside an inline <script>. JSON.stringify
+// alone does NOT escape < > & or the U+2028/2029 line separators, so a value
+// like "</script>..." can break out of the tag (stored XSS). Escape them.
+function safeJson(value) {
+  return JSON.stringify(value === undefined ? null : value)
+    .replace(/[<>&\u2028\u2029]/g, function (c) {
+      return '\\u' + c.charCodeAt(0).toString(16).padStart(4, '0');
+    });
+}
+
+// Only allow same-site relative redirect targets — blocks open redirects via
+// ?next=https://evil.com or protocol-relative //evil.com (and CR/LF injection).
+function sanitizeNext(next, fallback) {
+  const fb = fallback || '/dashboard';
+  if (typeof next !== 'string' || next === '') return fb;
+  if (/[\r\n]/.test(next)) return fb;
+  if (next === '/') return next;
+  return /^\/[^/\\]/.test(next) ? next : fb;
+}
+
 // -----------------------------------------------------------------------------
 // View engine
 // -----------------------------------------------------------------------------
@@ -114,6 +134,18 @@ const authLimiter = process.env.NODE_ENV === 'test'
       standardHeaders: true,
       legacyHeaders: false,
       message: 'Too many attempts. Please wait a few minutes and try again.',
+    });
+
+// Limiter for the public, unauthenticated location-alert endpoint (fires a
+// Twilio WhatsApp to the tag owner) — blunts spam/harassment and Twilio cost.
+const alertLimiter = process.env.NODE_ENV === 'test'
+  ? (req, res, next) => next()
+  : rateLimit({
+      windowMs: 10 * 60 * 1000, // 10 min
+      max: 8,                   // 8 alerts per IP per window
+      standardHeaders: true,
+      legacyHeaders: false,
+      message: { ok: false, message: 'Too many alerts. Please wait a few minutes.' },
     });
 
 // Razorpay webhook — registered BEFORE the body parsers so the signature can be
@@ -218,6 +250,7 @@ app.use((req, res, next) => {
 // Expose common locals to every template
 app.use((req, res, next) => {
   res.locals.IS_PROD = process.env.NODE_ENV === 'production';
+  res.locals.safeJson = safeJson; // XSS-safe serializer for inline <script> data
   res.locals.csrfToken = req.session.csrfToken;
   res.locals.user = req.session.user || null;
   res.locals.userToken = null; // kept for template compat
@@ -781,14 +814,19 @@ app.post('/login', authLimiter, async (req, res) => {
         hideFooter: true,
       });
     }
-    req.session.user = formatUser(user);
-    req.flash('success', 'Signed in.');
-    const nextUrl = user.isAdmin
-      ? (req.body.next && req.body.next !== '/dashboard' ? req.body.next : '/admin')
-      : (req.body.next || '/dashboard');
-    return req.session.save((err) => {
-      if (err) console.error('[session.save /login]', err);
-      res.redirect(nextUrl);
+    // Regenerate the session on login to prevent session fixation.
+    return req.session.regenerate((rErr) => {
+      if (rErr) console.error('[session.regenerate /login]', rErr);
+      req.session.user = formatUser(user);
+      req.flash('success', 'Signed in.');
+      const desired = sanitizeNext(req.body.next, '/dashboard');
+      const nextUrl = user.isAdmin
+        ? (desired !== '/dashboard' ? desired : '/admin')
+        : desired;
+      req.session.save((err) => {
+        if (err) console.error('[session.save /login]', err);
+        res.redirect(nextUrl);
+      });
     });
   } catch (e) {
     console.error('[LOGIN] error', e.message);
@@ -828,10 +866,14 @@ app.post('/register', authLimiter, async (req, res) => {
 
     const passwordHash = await bcrypt.hash(password, 10);
     const user = await prisma.user.create({ data: { email, mobile, passwordHash, name } });
-    req.session.user = formatUser(user);
-    return req.session.save((err) => {
-      if (err) console.error('[session.save /register]', err);
-      res.redirect('/welcome');
+    // Regenerate the session on sign-up (auto-login) to prevent session fixation.
+    return req.session.regenerate((rErr) => {
+      if (rErr) console.error('[session.regenerate /register]', rErr);
+      req.session.user = formatUser(user);
+      req.session.save((err) => {
+        if (err) console.error('[session.save /register]', err);
+        res.redirect('/welcome');
+      });
     });
   } catch (e) {
     console.error('[POST /register]', e);
@@ -1277,13 +1319,20 @@ app.post('/manufacturer/login', authLimiter, async (req, res) => {
         values: { email: req.body.email },
       });
     }
-    req.session.manufacturer = formatManufacturer(mfr);
-    if (!mfr.isApproved) {
-      req.flash('info', 'Your account is awaiting admin approval. You can sign in but cannot create batches yet.');
-    } else {
-      req.flash('success', 'Signed in.');
-    }
-    return res.redirect('/manufacturer/dashboard');
+    // Regenerate the session on login to prevent session fixation.
+    return req.session.regenerate((rErr) => {
+      if (rErr) console.error('[session.regenerate /manufacturer/login]', rErr);
+      req.session.manufacturer = formatManufacturer(mfr);
+      if (!mfr.isApproved) {
+        req.flash('info', 'Your account is awaiting admin approval. You can sign in but cannot create batches yet.');
+      } else {
+        req.flash('success', 'Signed in.');
+      }
+      req.session.save((err) => {
+        if (err) console.error('[session.save /manufacturer/login]', err);
+        res.redirect('/manufacturer/dashboard');
+      });
+    });
   } catch (e) {
     res.render('manufacturer/login', {
       title: 'Manufacturer sign in',
@@ -2012,7 +2061,7 @@ app.post('/admin/users/:id/activate', requireAdmin, async (req, res) => {
 // =============================================================================
 // Location alert API (called directly from browser JS on the emergency page)
 // =============================================================================
-app.post('/api/location-alert', async (req, res) => {
+app.post('/api/location-alert', alertLimiter, async (req, res) => {
   try {
     const tagId = (req.body.tag_id || '').trim();
     const lat = toFloat(req.body.lat);
