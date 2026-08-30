@@ -2253,9 +2253,14 @@ async function createStoreOrder({ userId, userEmail, product, quantity, paymentM
         port: parseInt(process.env.SMTP_PORT || '587', 10),
         secure: false,
         auth: { user: SMTP_USER, pass: SMTP_PASS },
+        connectionTimeout: 6000,
+        greetingTimeout: 6000,
+        socketTimeout: 8000,
       });
       const trackingId = `ST${Date.now().toString().slice(-6)}IN`;
-      await transporter.sendMail({
+      // Fire-and-forget — never block payment verification / order confirmation
+      // on SMTP (a slow Gmail connection was hanging "Verifying payment...").
+      transporter.sendMail({
         from: `"SafeTag Orders" <${SMTP_USER}>`,
         to: userEmail,
         subject: `Order Confirmed — SafeTag ${product.name}`,
@@ -2281,10 +2286,9 @@ async function createStoreOrder({ userId, userEmail, product, quantity, paymentM
           ``,
           `— SafeTag Team`,
         ].join('\n'),
-      });
-      meta.email_sent = true;
+      }).catch((e) => console.error('Order email error (async):', e.message));
     } catch (e) {
-      console.error('Order email error:', e.message);
+      console.error('Order email setup error:', e.message);
     }
   }
 
