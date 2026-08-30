@@ -17,6 +17,35 @@
     .desk-only{display:none !important}
     .hamburger{display:flex}
   }
+  /* Profile menu (replaces plain Sign out / Login) */
+  .profile-menu{position:relative}
+  .profile-btn{display:flex;align-items:center;gap:.3rem;background:#fff;border:1px solid var(--line);
+    border-radius:999px;padding:.26rem .46rem .26rem .3rem;cursor:pointer;transition:box-shadow .15s,border-color .15s}
+  .profile-btn:hover{border-color:var(--teal);box-shadow:0 2px 10px rgba(13,148,136,.14)}
+  .avatar{display:grid;place-items:center;width:30px;height:30px;border-radius:50%;flex:0 0 auto;
+    background:linear-gradient(135deg,var(--teal),var(--navy));color:#fff;font-weight:700;font-size:.9rem;font-family:'Sora',sans-serif}
+  .profile-btn .material-symbols-outlined{font-size:1.15rem;color:var(--muted);transition:transform .18s}
+  .profile-menu.open .profile-btn .material-symbols-outlined{transform:rotate(180deg)}
+  .profile-dropdown{position:absolute;top:calc(100% + 8px);right:0;min-width:232px;background:#fff;
+    border:1px solid var(--line);border-radius:14px;box-shadow:0 18px 40px -12px rgba(10,35,66,.28);
+    padding:.4rem;opacity:0;visibility:hidden;transform:translateY(-6px);transition:opacity .16s,transform .16s,visibility .16s;z-index:60}
+  .profile-menu.open .profile-dropdown{opacity:1;visibility:visible;transform:translateY(0)}
+  .pd-head{display:flex;align-items:center;gap:.6rem;padding:.55rem .6rem .7rem;border-bottom:1px solid var(--line);margin-bottom:.35rem}
+  .pd-name{font-weight:700;color:var(--navy);font-size:.9rem;line-height:1.2}
+  .pd-email{color:var(--muted);font-size:.76rem;word-break:break-all}
+  .profile-dropdown a,.profile-dropdown button{display:flex;align-items:center;gap:.6rem;width:100%;box-sizing:border-box;
+    padding:.55rem .6rem;border-radius:9px;font-size:.9rem;font-weight:600;color:#334155;background:none;border:none;
+    cursor:pointer;text-align:left;font-family:inherit;text-decoration:none}
+  .profile-dropdown a:hover,.profile-dropdown button:hover{background:#f1f5f9;color:var(--teal-d)}
+  .profile-dropdown .material-symbols-outlined{font-size:1.15rem;color:var(--muted)}
+  .profile-dropdown form{margin:0}
+  .profile-dropdown .pd-signout{color:#dc2626;border-top:1px solid var(--line);margin-top:.3rem}
+  .profile-dropdown .pd-signout:hover{background:#fef2f2;color:#dc2626}
+  .profile-dropdown .pd-signout .material-symbols-outlined{color:#dc2626}
+  .icon-btn{display:grid;place-items:center;width:36px;height:36px;border-radius:50%;border:1px solid var(--line);
+    color:var(--navy);transition:border-color .15s,color .15s}
+  .icon-btn:hover{border-color:var(--teal);color:var(--teal-d)}
+  .icon-btn .material-symbols-outlined{font-size:1.3rem}
 </style>
 
 <header>
@@ -41,20 +70,40 @@
         <button onclick="setLang('hi')" id="langHi" class="px-2.5 py-1.5 transition text-slate-500 hover:bg-slate-100" title="हिन्दी">हिं</button>
       </div>
 
-      <!-- Desktop auth buttons -->
-      <% if (user) { %>
-        <a class="st-link desk-only" href="/dashboard" data-i18n="nav.dashboard">Dashboard</a>
-        <% if (user.is_admin) { %><a class="st-link desk-only" href="/admin" data-i18n="nav.admin">Admin</a><% } %>
-        <form method="POST" action="/logout" class="desk-only" style="display:inline">
-          <%- include('_csrf') %><button class="btn-ghost" style="padding:.5rem 1.1rem;font-size:.88rem" data-i18n="nav.signout">Sign out</button>
-        </form>
-      <% } else if (manufacturer) { %>
-        <a class="st-link desk-only" href="/manufacturer/dashboard" data-i18n="nav.workshop">My Workshop</a>
-        <form method="POST" action="/manufacturer/logout" class="desk-only" style="display:inline">
-          <%- include('_csrf') %><button class="btn-ghost" style="padding:.5rem 1.1rem;font-size:.88rem" data-i18n="nav.signout">Sign out</button>
-        </form>
+      <!-- Desktop auth: profile menu -->
+      <% if (user || manufacturer) {
+           var _acct  = user || manufacturer;
+           var _label = user ? (user.name || user.email) : (manufacturer.business_name || manufacturer.email);
+           var _init  = ((_label || 'U').trim().charAt(0) || 'U').toUpperCase();
+      %>
+      <div class="profile-menu desk-only" id="profileMenu">
+        <button class="profile-btn" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Account menu" onclick="toggleProfileMenu(event)">
+          <span class="avatar"><%= _init %></span>
+          <span class="material-symbols-outlined">expand_more</span>
+        </button>
+        <div class="profile-dropdown" role="menu">
+          <div class="pd-head">
+            <span class="avatar"><%= _init %></span>
+            <div style="min-width:0">
+              <div class="pd-name"><%= user ? (user.name || 'SafeTag user') : manufacturer.business_name %></div>
+              <div class="pd-email"><%= _acct.email %></div>
+            </div>
+          </div>
+          <% if (user) { %>
+            <a href="/dashboard" role="menuitem"><span class="material-symbols-outlined">dashboard</span> <span data-i18n="nav.dashboard">Dashboard</span></a>
+            <a href="/orders" role="menuitem"><span class="material-symbols-outlined">receipt_long</span> My Orders</a>
+            <a href="/account/settings" role="menuitem"><span class="material-symbols-outlined">manage_accounts</span> Account</a>
+            <% if (user.is_admin) { %><a href="/admin" role="menuitem"><span class="material-symbols-outlined">shield_person</span> <span data-i18n="nav.admin">Admin</span></a><% } %>
+            <form method="POST" action="/logout"><%- include('_csrf') %><button type="submit" role="menuitem" class="pd-signout"><span class="material-symbols-outlined">logout</span> <span data-i18n="nav.signout">Sign out</span></button></form>
+          <% } else { %>
+            <a href="/manufacturer/dashboard" role="menuitem"><span class="material-symbols-outlined">factory</span> <span data-i18n="nav.workshop">My Workshop</span></a>
+            <a href="/manufacturer/orders" role="menuitem"><span class="material-symbols-outlined">receipt_long</span> Orders</a>
+            <form method="POST" action="/manufacturer/logout"><%- include('_csrf') %><button type="submit" role="menuitem" class="pd-signout"><span class="material-symbols-outlined">logout</span> <span data-i18n="nav.signout">Sign out</span></button></form>
+          <% } %>
+        </div>
+      </div>
       <% } else { %>
-        <a class="st-link desk-only" href="/login" data-i18n="nav.login">Login</a>
+        <a class="icon-btn desk-only" href="/login" title="Sign in" aria-label="Sign in"><span class="material-symbols-outlined">person</span></a>
         <a class="btn desk-only" href="/store" data-i18n="nav.gettag">Get Your Tag</a>
       <% } %>
 
@@ -77,10 +126,13 @@
     <div style="height:1px;background:var(--line);margin:4px 0;"></div>
     <% if (user) { %>
       <a href="/dashboard" data-i18n="nav.dashboard">Dashboard</a>
+      <a href="/orders">My Orders</a>
+      <a href="/account/settings">Account</a>
       <% if (user.is_admin) { %><a href="/admin" data-i18n="nav.admin">Admin</a><% } %>
       <form method="POST" action="/logout"><%- include('_csrf') %><button type="submit" data-i18n="nav.signout">Sign out</button></form>
     <% } else if (manufacturer) { %>
       <a href="/manufacturer/dashboard" data-i18n="nav.workshop">My Workshop</a>
+      <a href="/manufacturer/orders">Orders</a>
       <form method="POST" action="/manufacturer/logout"><%- include('_csrf') %><button type="submit" data-i18n="nav.signout">Sign out</button></form>
     <% } else { %>
       <a href="/login" data-i18n="nav.login">Login</a>
@@ -111,6 +163,29 @@ function toggleMobileMenu() {
   menu.setAttribute('aria-hidden', String(!open));
   _setHamburger(open);
 }
+// Profile dropdown (desktop)
+function toggleProfileMenu(e) {
+  if (e) e.stopPropagation();
+  var m = document.getElementById('profileMenu');
+  if (!m) return;
+  var open = m.classList.toggle('open');
+  var btn = m.querySelector('.profile-btn');
+  if (btn) btn.setAttribute('aria-expanded', String(open));
+}
+document.addEventListener('click', function (e) {
+  var m = document.getElementById('profileMenu');
+  if (m && m.classList.contains('open') && !m.contains(e.target)) {
+    m.classList.remove('open');
+    var btn = m.querySelector('.profile-btn');
+    if (btn) btn.setAttribute('aria-expanded', 'false');
+  }
+});
+document.addEventListener('keydown', function (e) {
+  if (e.key === 'Escape') {
+    var m = document.getElementById('profileMenu');
+    if (m) m.classList.remove('open');
+  }
+});
 // Auto-close menu when any link inside it is clicked
 document.addEventListener('DOMContentLoaded', function () {
   var menu = document.getElementById('mobile-menu');
