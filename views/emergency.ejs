@@ -514,8 +514,8 @@ html, body { background: var(--cream); margin: 0; padding: 0; }
     s: <%- JSON.stringify(Buffer.from(String(profile.mobile_secondary || ''), 'utf8').toString('base64')) %>,
     w: <%- JSON.stringify(Buffer.from(String(profile.owner_whatsapp    || ''), 'utf8').toString('base64')) %>
   };
-  var tagId   = <%- JSON.stringify(tag_id) %>;
-  var name    = <%- JSON.stringify(profile.name || '') %>;
+  var tagId   = <%- safeJson(tag_id) %>;
+  var name    = <%- safeJson(profile.name || '') %>;
   function dec(b) { try { return b ? atob(b) : ''; } catch (e) { return ''; } }
 
   window.revealContact = function () {
