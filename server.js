@@ -122,6 +122,11 @@ app.use(compression());
 app.use(helmet({
   contentSecurityPolicy: false,
   crossOriginEmbedderPolicy: false,
+  // Razorpay checkout opens a cross-origin popup and talks to it via
+  // window.opener; COOP 'same-origin' severs that and leaves the payment
+  // window blank. 'same-origin-allow-popups' keeps most COOP protection while
+  // letting popups this page opens communicate back.
+  crossOriginOpenerPolicy: { policy: 'same-origin-allow-popups' },
 }));
 
 // Rate limiter for auth / sensitive POST endpoints — blunts brute-force and spam.
