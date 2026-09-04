@@ -93,6 +93,7 @@
             <a href="/dashboard" role="menuitem"><span class="material-symbols-outlined">dashboard</span> <span data-i18n="nav.dashboard">Dashboard</span></a>
             <a href="/orders" role="menuitem"><span class="material-symbols-outlined">receipt_long</span> My Orders</a>
             <a href="/account/settings" role="menuitem"><span class="material-symbols-outlined">manage_accounts</span> Account</a>
+            <a href="/account/tokens" role="menuitem"><span class="material-symbols-outlined">smart_toy</span> AI connections</a>
             <% if (user.is_admin) { %><a href="/admin" role="menuitem"><span class="material-symbols-outlined">shield_person</span> <span data-i18n="nav.admin">Admin</span></a><% } %>
             <form method="POST" action="/logout"><%- include('_csrf') %><button type="submit" role="menuitem" class="pd-signout"><span class="material-symbols-outlined">logout</span> <span data-i18n="nav.signout">Sign out</span></button></form>
           <% } else { %>
@@ -128,6 +129,7 @@
       <a href="/dashboard" data-i18n="nav.dashboard">Dashboard</a>
       <a href="/orders">My Orders</a>
       <a href="/account/settings">Account</a>
+      <a href="/account/tokens">AI connections</a>
       <% if (user.is_admin) { %><a href="/admin" data-i18n="nav.admin">Admin</a><% } %>
       <form method="POST" action="/logout"><%- include('_csrf') %><button type="submit" data-i18n="nav.signout">Sign out</button></form>
     <% } else if (manufacturer) { %>

@@ -104,10 +104,28 @@ model User {
   resetToken       String?   @map("reset_token")
   resetTokenExpiry DateTime? @map("reset_token_expiry")
 
-  tags   Tag[]
-  orders Order[]
+  tags      Tag[]
+  orders    Order[]
+  apiTokens ApiToken[]
 
   @@map("users")
+}
+
+// Personal access tokens for the MCP server (Bearer auth). Only the SHA-256 hash
+// of the token is stored; the raw token is shown to the user once.
+model ApiToken {
+  id         Int       @id @default(autoincrement())
+  userId     Int       @map("user_id")
+  tokenHash  String    @unique @map("token_hash")
+  name       String
+  scopes     String    @default("shop,tags")
+  lastUsedAt DateTime? @map("last_used_at")
+  createdAt  DateTime  @default(now()) @map("created_at")
+  revokedAt  DateTime? @map("revoked_at")
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("api_tokens")
 }
 
 model Manufacturer {
