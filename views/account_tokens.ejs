@@ -21,6 +21,12 @@
   .tok-kv code{background:#f1f5f9;padding:.12rem .4rem;border-radius:5px;font-size:.85em}
   .btn-danger{background:#fef2f2;color:#dc2626;border:1px solid #fecaca;border-radius:9px;padding:.45rem .9rem;font-size:.82rem;font-weight:600;cursor:pointer}
   .btn-danger:hover{background:#fee2e2}
+  .prompt-wrap{position:relative}
+  .prompt-box{white-space:pre-wrap;word-break:break-word;background:#0A2342;color:#e2e8f0;border-radius:10px;
+    padding:1.1rem 1.15rem;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.82rem;line-height:1.55;margin:0;overflow-x:auto}
+  .copy-btn{position:absolute;top:.6rem;right:.6rem;background:var(--teal);color:#fff;border:none;border-radius:8px;
+    padding:.38rem .8rem;font-size:.78rem;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif}
+  .copy-btn:hover{background:var(--teal-d)}
 </style>
 
 <section class="section" style="background:var(--cream)">
@@ -38,6 +44,28 @@
         <code class="tok-code"><%= newToken %></code>
       </div>
     <% } %>
+
+    <% var tok = newToken || 'YOUR_TOKEN'; %>
+    <div class="tok-card">
+      <div class="tok-h"><span class="material-symbols-outlined" style="vertical-align:-4px;">smart_toy</span> Set up with your AI agent — copy &amp; paste</div>
+      <p class="tok-sub">Paste this into your AI assistant (Claude, ChatGPT, or any MCP-capable agent) and it will connect to your SafeTag account.</p>
+      <div class="prompt-wrap">
+        <button type="button" class="copy-btn" onclick="copyAgentPrompt(this)">Copy</button>
+        <pre id="agentPrompt" class="prompt-box">Connect to my SafeTag account through its MCP server, then help me buy SafeTag emergency ID tags and manage my tags.
+
+MCP server (Streamable HTTP): <%= mcpUrl %>
+Auth header: Authorization: Bearer <%= tok %>
+
+Tools you can use: list_products, get_product, create_order (payment_method "cod" for Cash on Delivery, or "online" which returns a Razorpay payment link I open to pay), list_my_orders, get_order, list_my_tags, get_tag, list_tag_types, activate_tag, update_medical_profile, update_tag_profile.
+
+Rules: everything acts as me. Always confirm the product, quantity and full shipping address with me before placing an order. Never invent a product id, order id, or tag code — look it up with the tools first.</pre>
+      </div>
+      <% if (!newToken) { %>
+        <p class="tok-sub" style="margin:.6rem 0 0;">Replace <code>YOUR_TOKEN</code> with a token you create below (the token is shown only once, right after you create it).</p>
+      <% } else { %>
+        <p class="tok-sub" style="margin:.6rem 0 0;color:#047857;">Your new token is already filled in above — copy the whole prompt now.</p>
+      <% } %>
+    </div>
 
     <div class="tok-card">
       <div class="tok-h">Connect your AI client</div>
@@ -90,5 +118,24 @@
     <p style="text-align:center;margin-top:.5rem;"><a href="/account/settings" style="color:var(--teal-d);font-weight:600;font-size:.9rem;">← Account settings</a></p>
   </div>
 </section>
+
+<script>
+  function copyAgentPrompt(btn) {
+    var el = document.getElementById('agentPrompt');
+    if (!el) return;
+    var text = el.innerText;
+    function done() { btn.textContent = 'Copied!'; setTimeout(function () { btn.textContent = 'Copy'; }, 1600); }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done).catch(fallback);
+    } else { fallback(); }
+    function fallback() {
+      try {
+        var r = document.createRange(); r.selectNodeContents(el);
+        var sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(r);
+        document.execCommand('copy'); sel.removeAllRanges(); done();
+      } catch (e) { btn.textContent = 'Press Ctrl+C'; }
+    }
+  }
+</script>
 
 <%- include('layout/_foot') %>
