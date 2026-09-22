@@ -1,0 +1,141 @@
+<%- include('layout/_head') %>
+
+<style>
+  .tok-wrap{max-width:760px;margin:0 auto}
+  .tok-card{background:#fff;border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow-sm);padding:1.6rem;margin-bottom:1.2rem}
+  .tok-h{font-family:'Sora',sans-serif;font-weight:700;color:var(--navy);font-size:1.15rem;margin:0 0 .2rem}
+  .tok-sub{color:var(--muted);font-size:.9rem;margin:0 0 1rem}
+  .tok-new{background:#ecfdf5;border:1px solid #a7f3d0;border-radius:12px;padding:1rem 1.1rem;margin-bottom:1.2rem}
+  .tok-code{display:block;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.9rem;background:#0A2342;color:#5eead4;
+    padding:.7rem .85rem;border-radius:8px;margin:.5rem 0;word-break:break-all;user-select:all}
+  .tok-row{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:.8rem 0;border-bottom:1px solid var(--line)}
+  .tok-row:last-child{border-bottom:none}
+  .tok-name{font-weight:600;color:var(--navy)}
+  .tok-meta{color:var(--muted);font-size:.8rem}
+  .tok-form{display:flex;gap:.6rem;align-items:flex-end;flex-wrap:wrap}
+  .tok-field{display:flex;flex-direction:column;gap:.35rem;flex:1;min-width:200px}
+  .tok-label{font-weight:600;font-size:.85rem;color:var(--navy)}
+  .tok-input{width:100%;background:#fff;border:1.5px solid var(--line);border-radius:10px;padding:.65rem .8rem;font-size:.92rem;color:var(--navy);font-family:'Inter',sans-serif}
+  .tok-input:focus{outline:none;border-color:var(--teal);box-shadow:0 0 0 3px rgba(13,148,136,.15)}
+  .tok-kv{font-size:.86rem;color:var(--ink)}
+  .tok-kv code{background:#f1f5f9;padding:.12rem .4rem;border-radius:5px;font-size:.85em}
+  .btn-danger{background:#fef2f2;color:#dc2626;border:1px solid #fecaca;border-radius:9px;padding:.45rem .9rem;font-size:.82rem;font-weight:600;cursor:pointer}
+  .btn-danger:hover{background:#fee2e2}
+  .prompt-wrap{position:relative}
+  .prompt-box{white-space:pre-wrap;word-break:break-word;background:#0A2342;color:#e2e8f0;border-radius:10px;
+    padding:1.1rem 1.15rem;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.82rem;line-height:1.55;margin:0;overflow-x:auto}
+  .copy-btn{position:absolute;top:.6rem;right:.6rem;background:var(--teal);color:#fff;border:none;border-radius:8px;
+    padding:.38rem .8rem;font-size:.78rem;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif}
+  .copy-btn:hover{background:var(--teal-d)}
+</style>
+
+<section class="section" style="background:var(--cream)">
+  <div class="wrap tok-wrap">
+    <h1 style="font-family:'Sora',sans-serif;font-weight:800;color:var(--navy);font-size:1.5rem;margin:0 0 .3rem;">AI connections (MCP)</h1>
+    <p style="color:var(--muted);font-size:.92rem;margin:0 0 1.4rem;">
+      Connect an AI assistant (via the Model Context Protocol) so it can browse products, place orders, and manage your
+      tags on your behalf. Create a token below and add it to your MCP client.
+    </p>
+
+    <% if (newToken) { %>
+      <div class="tok-new">
+        <div class="tok-h" style="color:#047857;"><span class="material-symbols-outlined" style="vertical-align:-4px;">check_circle</span> Token created</div>
+        <p class="tok-sub" style="margin-bottom:.3rem;color:#065f46;">Copy it now — for your security it won't be shown again.</p>
+        <code class="tok-code"><%= newToken %></code>
+      </div>
+    <% } %>
+
+    <% var tok = newToken || 'YOUR_TOKEN'; %>
+    <div class="tok-card">
+      <div class="tok-h"><span class="material-symbols-outlined" style="vertical-align:-4px;">smart_toy</span> Set up with your AI agent — copy &amp; paste</div>
+      <p class="tok-sub">Paste this into your AI assistant (Claude, ChatGPT, or any MCP-capable agent) and it will connect to your SafeTag account.</p>
+      <div class="prompt-wrap">
+        <button type="button" class="copy-btn" onclick="copyAgentPrompt(this)">Copy</button>
+        <pre id="agentPrompt" class="prompt-box">Connect to my SafeTag account through its MCP server, then help me buy SafeTag emergency ID tags and manage my tags.
+
+MCP server (Streamable HTTP): <%= mcpUrl %>
+Auth header: Authorization: Bearer <%= tok %>
+
+Tools you can use: list_products, get_product, create_order (payment_method "cod" for Cash on Delivery, or "online" which returns a Razorpay payment link I open to pay), list_my_orders, get_order, list_my_tags, get_tag, list_tag_types, activate_tag, update_medical_profile, update_tag_profile.
+
+Rules: everything acts as me. Always confirm the product, quantity and full shipping address with me before placing an order. Never invent a product id, order id, or tag code — look it up with the tools first.</pre>
+      </div>
+      <% if (!newToken) { %>
+        <p class="tok-sub" style="margin:.6rem 0 0;">Replace <code>YOUR_TOKEN</code> with a token you create below (the token is shown only once, right after you create it).</p>
+      <% } else { %>
+        <p class="tok-sub" style="margin:.6rem 0 0;color:#047857;">Your new token is already filled in above — copy the whole prompt now.</p>
+      <% } %>
+    </div>
+
+    <div class="tok-card">
+      <div class="tok-h">Connect your AI client</div>
+      <p class="tok-sub">Point your MCP client at the SafeTag server and authenticate with your token.</p>
+      <p class="tok-kv">Server URL &nbsp;<code><%= mcpUrl %></code></p>
+      <p class="tok-kv">Transport &nbsp;<code>Streamable HTTP</code></p>
+      <p class="tok-kv">Auth header &nbsp;<code>Authorization: Bearer &lt;your token&gt;</code></p>
+      <p class="tok-sub" style="margin-top:.7rem;margin-bottom:0;">
+        Tools include <code>list_products</code>, <code>create_order</code>, <code>list_my_tags</code>,
+        <code>activate_tag</code>, and <code>update_medical_profile</code>.
+      </p>
+    </div>
+
+    <div class="tok-card">
+      <div class="tok-h">Create a token</div>
+      <p class="tok-sub">Give it a name so you can recognise and revoke it later.</p>
+      <form method="POST" action="/account/tokens" class="tok-form">
+        <%- include('layout/_csrf') %>
+        <div class="tok-field">
+          <label class="tok-label">Token name</label>
+          <input class="tok-input" type="text" name="name" placeholder="e.g. My Claude agent" maxlength="60" />
+        </div>
+        <button type="submit" class="btn" style="white-space:nowrap;">Create token</button>
+      </form>
+    </div>
+
+    <div class="tok-card">
+      <div class="tok-h">Active tokens</div>
+      <% if (!tokens || tokens.length === 0) { %>
+        <p class="tok-sub" style="margin:0;">No active tokens yet.</p>
+      <% } else { %>
+        <% tokens.forEach(function(t){ %>
+          <div class="tok-row">
+            <div>
+              <div class="tok-name"><%= t.name %></div>
+              <div class="tok-meta">
+                Created <%= new Date(t.createdAt).toLocaleDateString('en-IN') %>
+                <% if (t.lastUsedAt) { %> · Last used <%= new Date(t.lastUsedAt).toLocaleString('en-IN') %><% } else { %> · Never used<% } %>
+              </div>
+            </div>
+            <form method="POST" action="/account/tokens/<%= t.id %>/revoke" onsubmit="return confirm('Revoke this token? Any client using it will lose access.');">
+              <%- include('layout/_csrf') %>
+              <button type="submit" class="btn-danger">Revoke</button>
+            </form>
+          </div>
+        <% }); %>
+      <% } %>
+    </div>
+
+    <p style="text-align:center;margin-top:.5rem;"><a href="/account/settings" style="color:var(--teal-d);font-weight:600;font-size:.9rem;">← Account settings</a></p>
+  </div>
+</section>
+
+<script>
+  function copyAgentPrompt(btn) {
+    var el = document.getElementById('agentPrompt');
+    if (!el) return;
+    var text = el.innerText;
+    function done() { btn.textContent = 'Copied!'; setTimeout(function () { btn.textContent = 'Copy'; }, 1600); }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done).catch(fallback);
+    } else { fallback(); }
+    function fallback() {
+      try {
+        var r = document.createRange(); r.selectNodeContents(el);
+        var sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(r);
+        document.execCommand('copy'); sel.removeAllRanges(); done();
+      } catch (e) { btn.textContent = 'Press Ctrl+C'; }
+    }
+  }
+</script>
+
+<%- include('layout/_foot') %>

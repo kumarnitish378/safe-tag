@@ -38,6 +38,9 @@ const {
   ALLOWED_CATEGORIES,
   ALLOWED_ORDER_STATUS,
 } = require('./lib/helpers');
+const { mcpAuth, generateApiToken } = require('./lib/mcp/auth');
+const { buildMcpServer } = require('./lib/mcp/server');
+const { StreamableHTTPServerTransport } = require('@modelcontextprotocol/sdk/server/streamableHttp.js');
 
 const tagTypes = require('./lib/tagTypes');
 
@@ -195,6 +198,17 @@ const alertLimiter = process.env.NODE_ENV === 'test'
       message: { ok: false, message: 'Too many alerts. Please wait a few minutes.' },
     });
 
+// Rate limiter for the MCP endpoint (per IP). Generous — agents make many calls.
+const mcpLimiter = process.env.NODE_ENV === 'test'
+  ? (req, res, next) => next()
+  : rateLimit({
+      windowMs: 60 * 1000, // 1 min
+      max: 120,
+      standardHeaders: true,
+      legacyHeaders: false,
+      message: { jsonrpc: '2.0', error: { code: -32000, message: 'Rate limit exceeded.' }, id: null },
+    });
+
 // Razorpay webhook — registered BEFORE the body parsers so the signature can be
 // verified against the RAW request body. Machine-to-machine: it runs before the
 // session/CSRF middleware, so no token is needed (and none is expected).
@@ -209,10 +223,23 @@ app.post('/webhooks/razorpay', express.raw({ type: '*/*' }), async (req, res) =>
       return res.status(400).send('invalid signature');
     }
     const event = JSON.parse(raw.toString('utf8'));
-    if (event && event.event === 'payment.captured') {
-      const entity = event.payload && event.payload.payment && event.payload.payment.entity;
-      if (entity && entity.order_id) {
-        await handleCapturedPayment(entity.order_id, entity.id, entity.notes || {});
+    const evName = event && event.event;
+    if (evName === 'payment.captured' || evName === 'payment_link.paid') {
+      const pay = event.payload && event.payload.payment && event.payload.payment.entity;
+      const plink = event.payload && event.payload.payment_link && event.payload.payment_link.entity;
+      const notes = (pay && pay.notes) || (plink && plink.notes) || {};
+      const paymentId = (pay && pay.id) || null;
+      if (notes.mcp_order_id) {
+        // MCP online order — the order already exists; just mark it paid.
+        const oid = parseInt(notes.mcp_order_id, 10);
+        if (oid) {
+          await prisma.order.updateMany({
+            where: { id: oid, razorpayPaymentId: null },
+            data: { razorpayPaymentId: paymentId || `plink_${Date.now()}` },
+          });
+        }
+      } else if (evName === 'payment.captured' && pay && pay.order_id) {
+        await handleCapturedPayment(pay.order_id, pay.id, notes);
       }
     }
     return res.json({ ok: true });
@@ -272,6 +299,7 @@ const CSRF_SKIP_PATHS = [
   /^\/qr\//,
   /^\/api\//,
   /^\/webhooks\//, // machine-to-machine (Razorpay); verified by signature
+  /^\/mcp$/,        // MCP endpoint; authenticated by Bearer token, not session/CSRF
 ];
 
 app.use((req, res, next) => {
@@ -1329,6 +1357,52 @@ app.post('/manufacturer/orders/:id/status', requireManufacturer, async (req, res
 
 app.get('/account/settings', requireUser, (req, res) => {
   res.render('account_settings', { title: 'Account settings', errors: {}, values: req.session.user });
+});
+
+// ---- MCP connection tokens (Bearer tokens for the /mcp endpoint) ----
+app.get('/account/tokens', requireUser, async (req, res) => {
+  let tokens = [];
+  try {
+    tokens = await prisma.apiToken.findMany({
+      where: { userId: req.session.user.id, revokedAt: null },
+      orderBy: { createdAt: 'desc' },
+    });
+  } catch (e) { console.error('[tokens list]', e.message); }
+  res.render('account_tokens', {
+    title: 'AI connections (MCP)', tokens, newToken: null,
+    mcpUrl: `${BASE_URL}/mcp`,
+  });
+});
+
+app.post('/account/tokens', requireUser, async (req, res) => {
+  const name = (req.body.name || '').trim().slice(0, 60) || 'My AI agent';
+  try {
+    const { raw, hash } = generateApiToken();
+    await prisma.apiToken.create({ data: { userId: req.session.user.id, name, tokenHash: hash } });
+    const tokens = await prisma.apiToken.findMany({
+      where: { userId: req.session.user.id, revokedAt: null }, orderBy: { createdAt: 'desc' },
+    });
+    return res.render('account_tokens', {
+      title: 'AI connections (MCP)', tokens, newToken: raw, mcpUrl: `${BASE_URL}/mcp`,
+    });
+  } catch (e) {
+    console.error('[tokens create]', e.message);
+    req.flash('error', 'Could not create token. Please try again.');
+    return res.redirect('/account/tokens');
+  }
+});
+
+app.post('/account/tokens/:id/revoke', requireUser, async (req, res) => {
+  const id = parseInt(req.params.id, 10);
+  try {
+    // Scope the revoke to the owner so no one can revoke another user's token.
+    await prisma.apiToken.updateMany({
+      where: { id, userId: req.session.user.id, revokedAt: null },
+      data: { revokedAt: new Date() },
+    });
+    req.flash('success', 'Token revoked.');
+  } catch (e) { console.error('[tokens revoke]', e.message); }
+  res.redirect('/account/tokens');
 });
 
 app.post('/account/settings', requireUser, async (req, res) => {
@@ -2712,6 +2786,29 @@ app.post('/checkout/:productId/verify', requireUser, async (req, res) => {
 // =============================================================================
 // 404 + error
 // =============================================================================
+// =============================================================================
+// MCP server — authenticated (Bearer token) Streamable HTTP endpoint that lets
+// an AI client shop and manage tags on the user's behalf. See lib/mcp/*.
+// Stateless: a fresh McpServer + transport per request, scoped to req.mcpUser.
+// =============================================================================
+app.post('/mcp', mcpLimiter, mcpAuth, async (req, res) => {
+  try {
+    const server = buildMcpServer({ user: req.mcpUser });
+    const transport = new StreamableHTTPServerTransport({ sessionIdGenerator: undefined });
+    res.on('close', () => { try { transport.close(); server.close(); } catch (_) {} });
+    await server.connect(transport);
+    await transport.handleRequest(req, res, req.body);
+  } catch (e) {
+    console.error('[mcp]', e);
+    if (!res.headersSent) {
+      res.status(500).json({ jsonrpc: '2.0', error: { code: -32603, message: 'Internal error' }, id: null });
+    }
+  }
+});
+// Stateless server: no GET stream / DELETE session.
+app.get('/mcp', (req, res) => res.status(405).json({ jsonrpc: '2.0', error: { code: -32000, message: 'Method not allowed. Use POST.' }, id: null }));
+app.delete('/mcp', (req, res) => res.status(405).json({ jsonrpc: '2.0', error: { code: -32000, message: 'Method not allowed.' }, id: null }));
+
 app.use((req, res) => res.status(404).render('404', { title: 'Not found' }));
 
 app.use((err, req, res, next) => {
